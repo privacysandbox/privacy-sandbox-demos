@@ -1,0 +1,33 @@
+{
+  "projects": {
+    "default": "privacy-sandbox-demos"
+  },
+  "targets": {
+    "privacy-sandbox-demos": {
+      "hosting": {
+        "home": [
+          "privacy-sandbox-demos-home"
+        ],
+        "dsp": [
+          "privacy-sandbox-demos-dsp"
+        ],
+        "shop": [
+          "privacy-sandbox-demos-shop"
+        ],
+        "ssp": [
+          "privacy-sandbox-demos-ssp"
+        ],
+        "news": [
+          "privacy-sandbox-demos-news"
+        ],
+        "travel": [
+          "privacy-sandbox-demos-travel"
+        ],
+        "collector": [
+          "privacy-sandbox-demos-collector"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

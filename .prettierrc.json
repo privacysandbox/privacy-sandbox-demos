@@ -1,0 +1,28 @@
+{
+  "printWidth": 150,
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "semi": false,
+  "arrowParens": "always",
+  "overrides": [
+    {
+      "files": [
+        "**/*.js",
+        "**/*.ts",
+        "**/*.html",
+        "**/*.css",
+        "**/*.md"
+      ]
+    },
+    {
+      "files": [
+        "**/*.json",
+        "**/*.yaml",
+        "**/tailwind.config.js"
+      ],
+      "options": {
+        "printWidth": 40
+      }
+    }
+  ]
+}

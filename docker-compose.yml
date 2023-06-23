@@ -1,0 +1,121 @@
+version: "3.8"
+
+volumes:
+  home_node_modules:
+  news_node_modules:
+  shop_node_modules:
+  travel_node_modules:
+  dsp_node_modules:
+  ssp_node_modules:
+
+services:
+  home:
+    image: gcr.io/privacy-sandbox-demos/home:latest
+    build: ./services/home
+    container_name: "sandcastle_home"
+    env_file:
+      - .env
+    networks:
+      - adnetwork
+
+  news:
+    image: gcr.io/privacy-sandbox-demos/news:latest
+    build: ./services/news
+    container_name: "sandcastle_news"
+    env_file:
+      - .env
+    volumes:
+      - ./services/news:/workspace
+      - news_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  shop:
+    image: gcr.io/privacy-sandbox-demos/shop:latest
+    build: ./services/shop
+    container_name: "sandcastle_shop"
+    env_file:
+      - .env
+    volumes:
+      - ./services/shop:/workspace
+      - shop_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  travel:
+    image: gcr.io/privacy-sandbox-demos/travel:latest
+    build: ./services/travel
+    container_name: "sandcastle_travel"
+    env_file:
+      - .env
+    volumes:
+      - ./services/travel:/workspace
+      - travel_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  dsp:
+    image: gcr.io/privacy-sandbox-demos/dsp:latest
+    build: ./services/dsp
+    container_name: "sandcastle_dsp"
+    env_file:
+      - .env
+    volumes:
+      - ./services/dsp:/workspace
+      - dsp_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  ssp:
+    image: gcr.io/privacy-sandbox-demos/ssp:latest
+    build: ./services/ssp
+    container_name: "sandcastle_ssp"
+    env_file:
+      - .env
+    volumes:
+      - ./services/ssp:/workspace
+      - ssp_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  collector:
+    image: gcr.io/privacy-sandbox-demos/collector:latest
+    build: ./services/collector
+    container_name: "sandcastle_collector"
+    env_file:
+      - .env
+    volumes:
+      - ./services/collector:/workspace
+    networks:
+      - adnetwork
+
+  nginx:
+    image: nginx:1.22.1-alpine
+    container_name: "proxy"
+    volumes:
+      # using env variables in nginx config
+      - type: bind
+        source: "./nginx/nginx.conf"
+        target: "/etc/nginx/templates/default.conf.template"
+      - type: bind
+        source: "./nginx/cert"
+        target: "/cert"
+    networks:
+      - adnetwork
+    ports:
+      - "${EXTERNAL_PORT}:443"
+    env_file:
+      - .env
+    depends_on:
+      - home
+      - news
+      - shop
+      - travel
+      - ssp
+      - dsp
+      - collector
+
+networks:
+  adnetwork:
+    name: sandcastle-network
+    driver: bridge

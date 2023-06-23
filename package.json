@@ -1,0 +1,19 @@
+{
+  "name": "privacy-sandbox-demos",
+  "version": "0.0.0",
+  "license": "apache-2.0",
+  "description": "Privacy Sandbox Demos: Mixed demo of Privacy Sandbox APIs",
+  "scripts": {
+    "start": "npm run docker",
+    "cert": "cd nginx/cert && ./mkcert.sh",
+    "build": "docker-compose build",
+    "docker": "docker-compose build && docker-compose up",
+    "deploy": "./scripts/cloudrun_deploy.sh && ./scripts/firebase_deploy.sh",
+    "clean": "docker-compose rm -af && docker volume prune -f && docker image prune -f && docker rmi -f $(docker images -q)",
+    "fmt": "prettier --write ."
+  },
+  "devDependencies": {
+    "firebase-tools": "^11.23.0",
+    "prettier": "^2.8.4"
+  }
+}
