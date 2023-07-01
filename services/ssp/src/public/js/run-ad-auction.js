@@ -23,11 +23,9 @@ async function getAuctionConfig() {
 }
 
 document.addEventListener("DOMContentLoaded", async (e) => {
-  // TODO: Call Topics API for select ads
-  const topics = await document.browsingTopics?.()
-  console.log({
-    topics
-  })
+  if (navigator.runAdAuction === undefined) {
+    return console.log("Protected Audience API is not supported")
+  }
 
   const auctionConfig = await getAuctionConfig()
 
