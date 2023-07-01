@@ -13,14 +13,16 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { NextResponse } from "next/server"
+import { fileURLToPath } from "url"
+import { readFile } from "fs/promises"
 
-import type { NextApiRequest, NextApiResponse } from "next"
-import { getItems } from "../../../lib/items"
-import { withSessionRoute } from "../../../lib/withSession"
-
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const items = await getItems()
-  res.json(items)
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const id = params.id
+  const img = `../../../../public/image/svg/emoji_u${id}.svg`
+  const path = fileURLToPath(new URL(img, import.meta.url))
+  const blob = await readFile(path)
+  const res = new NextResponse(blob)
+  res.headers.set("Content-Type", "image/svg+xml")
+  return res
 }
-
-export default withSessionRoute(handler)
