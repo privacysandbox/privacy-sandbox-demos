@@ -35,6 +35,10 @@ const { EXTERNAL_PORT, PORT, SSP_HOST, SSP_DETAIL, SSP_TOKEN, DSP_HOST, SHOP_HOS
 
 // global memory storage
 const Reports = []
+// clear storage
+setInterval(() => {
+  Reports.length = 0
+}, 1000 * 60 * 10)
 
 const app = express()
 
