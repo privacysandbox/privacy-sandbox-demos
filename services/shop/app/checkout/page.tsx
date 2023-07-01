@@ -15,11 +15,13 @@
  */
 
 import { fetchCart } from "../../lib/fetcher"
-import { Cart } from "./Cart"
+import { Order } from "../../lib/items"
+import { Checkout } from "./Checkout"
+
+const { SSP_HOST, EXTERNAL_PORT } = process.env
 
 export default async function Page() {
-  const cart = await fetchCart()
-  const { SSP_HOST, EXTERNAL_PORT } = process.env
+  const cart: Order[] = await fetchCart()
   const ssp = `https://${SSP_HOST}:${EXTERNAL_PORT}`
-  return <Cart checkout={cart} ssp={ssp}></Cart>
+  return <Checkout checkout={cart} ssp={ssp}></Checkout>
 }

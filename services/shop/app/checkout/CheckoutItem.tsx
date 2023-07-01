@@ -18,7 +18,7 @@ import Image from "next/image"
 import { displayCategory, Order } from "../../lib/items"
 import { RegisterTrigger } from "./RegisterTrigger"
 
-export const CartItem = ({ order, ssp }: { order: Order; ssp: string }) => {
+export const CheckoutItem = ({ order, ssp }: { order: Order; ssp: string }) => {
   const { item, size, quantity } = order
   return (
     <li className="grid grid-cols-12 lg:gap-8 gap-4 border">
