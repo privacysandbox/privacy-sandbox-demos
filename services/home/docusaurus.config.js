@@ -122,14 +122,15 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme
       },
+
       algolia: {
         // The application ID provided by Algolia
-        appId: "30C2Z24495",
+        appId: "APE6MO4ILP",
 
         // Public API key: it is safe to commit it
-        apiKey: "fab13a7b22e907ce81ed9ef0904f4122",
+        apiKey: "ff01a386ae243b9b46e5afeb8aa6be3f",
 
-        indexName: "privacy-sandbox-demos",
+        indexName: "privacy-sandbox-demos-home",
 
         // Optional: see doc section below
         contextualSearch: true,
