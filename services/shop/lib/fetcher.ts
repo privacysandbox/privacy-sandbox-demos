@@ -18,8 +18,8 @@ import { cookies } from "next/headers"
 import { Item, Order } from "./items"
 
 // TODO
-const HOST = "localhost"
-const PORT = "8080"
+const HOST = "127.0.0.1"
+const PORT = process.env.PORT
 const endpoint = `http://${HOST}:${PORT}/api`
 
 export async function fetchCart() {
