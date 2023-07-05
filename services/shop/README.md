@@ -9,9 +9,9 @@ This app is shopping site demo one of "advertiser" party in Privacy Sandbox Demo
 You can run this app standalone via.
 
 ```sh
-$ cd path-to-shop-dir-under-privacy-sandbox-demos
-$ npm install
-$ npm run dev
+cd path-to-shop-dir-under-privacy-sandbox-demos
+npm install
+npm run dev
 ```
 
 Default port for standalone builds are `8080` so you can access it with <http://localhost:8080>.
