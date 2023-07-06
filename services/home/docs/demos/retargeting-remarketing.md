@@ -116,9 +116,9 @@ Note right of Browser:Scenario 1 stops here
 
 ### Prerequisites
 
-- Chrome > v107
-- Enable Privacy Sandbox APIs
-- Clear your browsing history before you run one of the demo scenario below
+- Chrome > v107 (Open chrome://version to look up your current version)
+- Enable Privacy Sandbox APIs (Open chrome://settings/privacySandbox to enable this setting)
+- Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
 
 ### User Journey #1
 
