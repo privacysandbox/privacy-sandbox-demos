@@ -177,7 +177,9 @@ Look at the [code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/
 ```
 
 The `img` tag also specifies the `attributionsrc` attribute. It means that showing this ad will register a view-through attribution source event in the browser.
-Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with the value `Attribution-Reporting-Eligible`
+
+Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with the value `event-source, trigger`.
+
 In the HTTP response to the `/creative` request, you will see a new header `Attribution-Reporting-Register-Source:` with a value that contains the attribution source parameters.
 
 ```json
