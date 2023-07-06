@@ -109,10 +109,11 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 ### Prerequisites
 
-- Chrome > v107
-- Enable Privacy Sandbox APIs
-- Clear your browsing history before you run one of the demo scenario below
-- Open chrome://attribution-internals/ and click “Clear all attribution data”
+- Chrome > v107 (Open chrome://version to look up your current version)
+- Enable Privacy Sandbox APIs (Open chrome://settings/privacySandbox to enable this setting)
+- Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
+- Open chrome://attribution-internals and click “Clear all attribution data”
+
 
 ### User Journey #1
 
@@ -177,7 +178,9 @@ Look at the [code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/
 ```
 
 The `img` tag also specifies the `attributionsrc` attribute. It means that showing this ad will register a view-through attribution source event in the browser.
-Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with the value `Attribution-Reporting-Eligible`
+
+Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with the value `event-source, trigger`.
+
 In the HTTP response to the `/creative` request, you will see a new header `Attribution-Reporting-Register-Source:` with a value that contains the attribution source parameters.
 
 ```json
