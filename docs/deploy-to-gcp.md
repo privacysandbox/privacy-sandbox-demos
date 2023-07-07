@@ -38,7 +38,6 @@ If you don’t have yet a billing account, follow the documentation to Create a 
    7. Storage Object Creator
    8. Project Viewer
 
-
 ## Prepare your Development Environment for Firebase Hosting
 
 In this section you will configure your development environment to get ready to build and deploy resources to Firebase. The Instructions below are based on the Linux environment.
@@ -144,7 +143,6 @@ Adding hosting sites and deploy targets can be done using the provided script be
 scripts/firebase_setup.sh
 ```
 
-
 ## Google Cloud Platform Logging and Monitoring
 
 We recommend to Enable Cloud Logging for Firebase Hosting Project.
@@ -240,7 +238,7 @@ FIREBASE_HOSTING_DOMAIN=privacy-sandbox-demos
 
 Execute `./scripts/cloudrun_deploy.sh` to build and deploy services with Cloud Build and deploy to Cloud Run.
 
-Execute `./scripts/firebase_deploy.sh`  to deploy Firebase hosting sites and configuration.
+Execute `./scripts/firebase_deploy.sh` to deploy Firebase hosting sites and configuration.
 
 Look at the output, and verify you can access all the sites your created :
 

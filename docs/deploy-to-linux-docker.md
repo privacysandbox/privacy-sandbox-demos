@@ -17,14 +17,13 @@ The following packages must be installed
 - git
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
-
 ## Network Setup
 
 ### Domain Name / URL
 
 Privacy Sandbox APIs use the domain name in the URL (site origin) to allow/block cross-site data sharing, observe topics, etc. As a result developers cannot rely on the “localhost” domain for development.
 
-You will re-map individual domain names to loopback address (127.0.0.1),  so that each service running on your local environment can be accessed via a URL, such as:
+You will re-map individual domain names to loopback address (127.0.0.1), so that each service running on your local environment can be accessed via a URL, such as:
 
 - https://privacy-sandbox-demos-home.dev
 - https://privacy-sandbox-demos-shop.dev
@@ -72,7 +71,6 @@ google_chrome --host-resolver-rules="MAP privacy-sandbox-demos-* 127.0.0.1"
 
 Run the command below to create the development Certificate Authority:
 
-
 ```shell
 mkcert -install
 ```
@@ -80,6 +78,7 @@ mkcert -install
 ## Build & Run your local development environment
 
 ### Clone the Privacy Sandbox Demos repository
+
 1. Fork the repository https://github.com/privacysandbox/privacy-sandbox-demos using the button near the top-right corner.
 2. Clone your fork to your local development environment
 
@@ -126,7 +125,6 @@ SSP_HOST=privacy-sandbox-demos-ssp.dev
 SSP_TOKEN="xxxxx"
 SSP_DETAIL="Ad-Platform: SSP for publisher"
 ```
-
 
 ### Run setup scripts
 
@@ -189,8 +187,8 @@ sudo docker container rm sandcastle_proxy
 sudo docker container rm sandcastle_shop
 ```
 
-
 ## Clean your docker images & containers
+
 There might be some situation where your local image registry is corrupted, inconsistent, or has accumulated too many unused images. You can take a fresh start by cleaning your local images.
 
 Remove any stopped containers and all unused images (not just dangling images) :
@@ -238,4 +236,3 @@ sudo docker image rm [image_id]
 # Remove all images
 sudo docker rmi $(sudo docker images -a -q)
 ```
-

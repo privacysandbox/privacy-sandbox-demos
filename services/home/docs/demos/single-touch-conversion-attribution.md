@@ -114,7 +114,6 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 - Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
 - Open chrome://attribution-internals and click “Clear all attribution data”
 
-
 ### User Journey #1
 
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
