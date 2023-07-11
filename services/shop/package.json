@@ -11,7 +11,7 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "iron-session": "^6.3.1",
-    "next": "13.1.1",
+    "next": "13.4.9",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "swr": "^2.0.0"
