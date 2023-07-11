@@ -9,7 +9,7 @@
     "build": "tsc && cp -r src/views build/views"
   },
   "dependencies": {
-    "ejs": "^3.1.8",
+    "ejs": "^3.1.9",
     "express": "^4.18.2"
   },
   "devDependencies": {
