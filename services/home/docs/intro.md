@@ -9,10 +9,14 @@ Looking for running these demos on your local environment ?
 Check the [deployment guide](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/README.md) on the GitHub.
 :::
 
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable line-length -->
 |         **Category**          |                                   **Use Case**                                   |            **Privacy Sandbox APIs**            |        **Relevant for**         |
 | :---------------------------: | :------------------------------------------------------------------------------: | :--------------------------------------------: | :-----------------------------: |
 | Show Relevant Content and Ads |            [Retargeting / Remarketing](demos/retargeting-remarketing)            |             Protected Audience API             | Publisher, SSP, Advertiser, DSP |
 |      Measure Digital Ads      | [Single-touch conversion Attribution](demos/single-touch-conversion-attribution) | Attribution Reporting API, Aggregation Service | Publisher, SSP, Advertiser, DSP |
+<!-- markdownlint-enable line-length -->
+<!-- prettier-ignore-end -->
 
 :::info
 Looking for a use case not listed here ?
