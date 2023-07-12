@@ -1,19 +1,19 @@
 # Privacy Sandbox Demos
 
 A use case demo library for
-[Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/).
+[Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) on the web.
 
 ## Motivation
 
 The Privacy Sandbox initiative offers [20+ APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) to protect people’s privacy online while giving companies and developers tools to build thriving digital businesses.
 
-Web ecosystem developers expect new approaches to typical use cases supported today by third-party cookies. These use cases often require incorporating a combination of new Privacy Sandbox APIs into their products, which requires complex planning and a clear understanding how these APIs work.
+Web ecosystem developers expect new approaches to typical use cases supported today by third-party cookies. These use cases often require incorporating a combination of new Privacy Sandbox APIs into their products, which requires advanced planning and a clear understanding how these APIs work.
 
 ## Our proposition
 
 The Privacy Sandbox Demos repository offers cookbook recipes, sample code, and demo applications, based on Privacy Sandbox APIs. These are intended to aid businesses and developers in adapting their applications and the businesses they support to a web ecosystem without third-party cookies.
 
-The demo assets are released under open-source [license](https://github.com/privacysandbox/privacy-sandbox-demos).
+All the demo code and assets are released under the Apache open-source [license](https://github.com/privacysandbox/privacy-sandbox-demos) to allow you to extend and modify the code for your own needs.
 
 This repository contains :
 

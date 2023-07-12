@@ -18,6 +18,8 @@ If you don’t have yet a billing account, follow the documentation to Create a 
 
 ## Prepare your Google Cloud Platform Project
 
+**Note** : the instructions below assume you are creating a completely new GCP Project. However if the project already exists, instead you’ll need to get permission from the project owner to be able to deploy resources (Firebase hosting & Cloud Run).
+
 1. Create a Google Cloud Platform Project : https://cloud.google.com/resource-manager/docs/creating-managing-projects
    1. Note the name of the project/id. E.g.: _privacy-sandbox-demos_
    2. Assign the billing account created in step above
@@ -26,10 +28,19 @@ If you don’t have yet a billing account, follow the documentation to Create a 
    2. Select the GCP project you previously created. E.g. : _privacy-sandbox-demos_
    3. Since you enabled Billing Account on this project, it will automatically select the Firebase pay-as-you-go plan
    4. Enable Google Analytics for the project : Select "Default Account for Firebase" unless you have specific analytics requirements
+3. If you don’t have the project owner role , you will need to obtain at least the following IAM role to your account on the target project before you proceed with the next steps.
+   1. Cloud Build Editor
+   2. Cloud Run Admin
+   3. Firebase Hosting Admin
+   4. Service Account User
+   5. Service Usage Consumer
+   6. Storage Admin
+   7. Storage Object Creator
+   8. Project Viewer
 
 ## Prepare your Development Environment for Firebase Hosting
 
-In this section we will configure your development environment to get ready to build and deploy resources to Firebase. The Instructions below are based on the Linux environment.
+In this section you will configure your development environment to get ready to build and deploy resources to Firebase. The Instructions below are based on the Linux environment.
 
 1. Clone Privacy Sandbox Demos Git Repository : https://github.com/privacysandbox/privacy-sandbox-demos.git
 2. Install the Firebase CLI : https://firebase.google.com/docs/cli#linux
@@ -48,6 +59,13 @@ $ firebase projects:list
     3. firebase use --add
 ```
 
+5. Copy the .env.deploy.template to .env.deploy file then edit .env.deploy file with your GCP project name and Firebase site domain prefix :
+
+```sh
+GCP_PROJECT_NAME=xxx
+FIREBASE_HOSTING_DOMAIN=privacy-sandbox-demos
+```
+
 Resources :
 
 - https://firebase.google.com/docs/hosting
@@ -62,12 +80,13 @@ Your firebase project will host 5 different sites to demonstrate the capabilitie
 - Shop & Travel : The advertiser shopping or travel site = Buy side. They are buying ad space from the publisher. Site embeds the DSP tags.
 - SSP : Supply Side Platform
 - News : Publisher site where ads will be displayed = Sell side. They are selling ad space to advertisers. Site embeds SSP tags
+- Collector : Collector service collects, transforms and batches Aggregatable Reports produced by the Attribution Reporting API and Private Aggregation API, then sends them to the Aggregation Service running on TEE.
 
 Each site will have a different domain name to simulate a real life adtech scenario
 
 Open Firebase Hosting : from the Firebase console click on "hosting" or follow this link by replacing "_privacy-sandbox-demos_" with your project name
 
-`https://console.firebase.google.com/project/privacy-sandbox-demos/hosting/sites`
+`https://console.firebase.google.com/project/_privacy-sandbox-demos_/hosting/sites`
 
 Click on "Add another site" and enter site-id following your naming standards. Replace _privacy-sandbox-demos_ with the domain of your choice. E.g.
 
@@ -77,6 +96,7 @@ Click on "Add another site" and enter site-id following your naming standards. R
 - _privacy-sandbox-demos_-travel
 - _privacy-sandbox-demos_-ssp
 - _privacy-sandbox-demos_-news
+- _privacy-sandbox-demos_-collector
 
 Note, task above can be done programmatically with Firebase CLI :
 
@@ -93,6 +113,7 @@ firebase hosting:sites:create privacy-sandbox-demos-shop
 firebase hosting:sites:create privacy-sandbox-demos-travel
 firebase hosting:sites:create privacy-sandbox-demos-ssp
 firebase hosting:sites:create privacy-sandbox-demos-news
+firebase hosting:sites:create privacy-sandbox-demos-collector
 ```
 
 Set up deploy targets for your sites (When you have multiple sites and you run Firebase CLI deploy commands, the CLI needs a way to communicate which settings should be deployed to each site).
@@ -112,21 +133,15 @@ firebase target:apply hosting shop privacy-sandbox-demos-shop
 firebase target:apply hosting ssp privacy-sandbox-demos-ssp
 firebase target:apply hosting news privacy-sandbox-demos-news
 firebase target:apply hosting travel privacy-sandbox-demos-travel
+firebase target:apply hosting travel privacy-sandbox-demos-collector
 ```
 
-Adding hosting sites and deploy targets can be done using the provided script :
+Adding hosting sites and deploy targets can be done using the provided script below (make sure your `.env.deploy` file contains the right domain value for the key `FIREBASE_HOSTING_DOMAIN`)
 
 ```shell
-scripts/firebase_setup
+# From the root of the project, execute
+scripts/firebase_setup.sh
 ```
-
-Note that you will have to change the **firebase_hosting_domain** variable to match yours :
-
-```shell
-firebase_hosting_domain="privacy-sandbox-demos";
-```
-
-The firebase hosting configuration for each site is already defined for you in the `firebase.json` file.
 
 ## Google Cloud Platform Logging and Monitoring
 
@@ -136,15 +151,15 @@ By using Cloud Logging with your Firebase Hosting sites, you allow web request l
 
 Access the following URL (replace _privacy-sandbox-demos_ with your project name)
 
-https://firebase.corp.google.com/project/privacy-sandbox-demos/settings/integrations/cloudlogging
+https://firebase.corp.google.com/project/_privacy-sandbox-demos_/settings/integrations/cloudlogging
 
 Select all the sites you want to export logs from, click Save and Finish.
 
 ## Install Google Cloud SDK & Enable the Google Cloud Run API
 
-Next we will deploy containers to Cloud Run to run the content of the demo sites.
+Next you will deploy containers to Cloud Run to run the content of the demo sites.
 
-We chose to deploy everything container based for portability and flexibility and we use Firebase hosting as a frontend solution for HTTPS request handling, domain name and ssl certificates.
+For our architecture, we chose to deploy everything container based for portability and flexibility and to use Firebase hosting as a frontend solution for HTTPS request handling, domain name and ssl certificates.
 
 Install Google Cloud SDK : If Google Cloud SDK is not installed on the machine, follow instructions here : https://cloud.google.com/sdk/docs/install#linux
 
@@ -214,31 +229,16 @@ SSP_TOKEN="xxxxx"
 SSP_DETAIL="Ad-Platform: SSP for publisher"
 ```
 
-Edit "**project_name**" variable value and execute `./scripts/cloudrun_deploy.sh` to build and deploy services with Cloud Build and deploy to Cloud Run.
+Copy the `.env.deploy.template` to `.env.deploy` file then edit .env.deploy to update the GCP Project Name and the Firebase domain prefix you will use to deploy your services :
 
-```shell
-# cloudrun_deploy.sh
-
-#/usr/bin/env zsh
-
-# parameters
-project_name="privacy-sandbox-demos";
-
-...
+```sh
+GCP_PROJECT_NAME=xxx
+FIREBASE_HOSTING_DOMAIN=privacy-sandbox-demos
 ```
 
-Now edit the "**firebase_hosting_domain"** variable with your own domain and execute `./scripts/firebase_deploy.sh` to deploy Firebase hosting sites and configuration.
+Execute `./scripts/cloudrun_deploy.sh` to build and deploy services with Cloud Build and deploy to Cloud Run.
 
-```shell
-# firebase_deploy.sh
-
-#/usr/bin/env zsh
-
-# parameters
-firebase_hosting_domain="privacy-sandbox-demos";
-
-...
-```
+Execute `./scripts/firebase_deploy.sh` to deploy Firebase hosting sites and configuration.
 
 Look at the output, and verify you can access all the sites your created :
 
@@ -251,3 +251,4 @@ E.g. :
 - https://_privacy-sandbox-demos_-travel.web.app/
 - https://_privacy-sandbox-demos_-ssp.web.app/
 - https://_privacy-sandbox-demos_-news.web.app/
+- https://_privacy-sandbox-demos_-collector.web.app/
