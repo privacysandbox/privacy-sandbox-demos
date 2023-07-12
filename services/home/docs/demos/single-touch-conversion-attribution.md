@@ -109,10 +109,11 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 ### Prerequisites
 
-- Chrome > v107
-- Enable Privacy Sandbox APIs
-- Clear your browsing history before you run one of the demo scenario below
-- Open chrome://attribution-internals/ and click “Clear all attribution data”
+- Chrome > v107 (Open chrome://version to look up your current version)
+- Enable Privacy Sandbox APIs (Open chrome://settings/privacySandbox to enable this setting)
+- Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
+- Open chrome://attribution-internals and click “Clear all attribution data”
+
 
 ### User Journey #1
 
