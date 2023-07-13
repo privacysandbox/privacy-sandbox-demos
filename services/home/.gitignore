@@ -1,10 +1,8 @@
 # Dependencies
 /node_modules
 
-# Production
-# /build
-# commit build for easy to deploy
-!/build
+# Production (do not commit build files)
+/build
 
 # Generated files
 .docusaurus
