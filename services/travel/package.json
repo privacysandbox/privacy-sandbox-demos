@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "npm run build && node ./build/index.js",
-    "build": "tsc && cp -r src/views build/views"
+    "build": "tsc && cp -r src/views build/views",
+    "ncu": "npx npm-check-updates -u"
   },
   "dependencies": {
     "ejs": "^3.1.8",
