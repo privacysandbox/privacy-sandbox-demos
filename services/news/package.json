@@ -9,7 +9,8 @@
     "build": "npm-run-all -p build:*",
     "build:tsc": "tsc",
     "build:css": "npx tailwindcss -i ./src/public/css/global.tailwind.css -o ./src/public/css/global.css",
-    "dev": "npm-run-all -p start \"build:css -- --watch\""
+    "dev": "npm-run-all -p start \"build:css -- --watch\"",
+    "ncu": "npx npm-check-updates -u"
   },
   "dependencies": {
     "ejs": "^3.1.8",
