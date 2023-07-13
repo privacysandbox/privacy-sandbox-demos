@@ -84,7 +84,7 @@ mkcert -install
 
 ### Setup .env file
 
-Edit `.env` file to match the `${SERVICE}_HOST` parameter to your the content of the `/etc/hosts` configuration.
+Edit `.env` file to match the `${SERVICE}_HOST` parameter to the content of the `/etc/hosts` configuration.
 
 Example with the domain `privacy-sandbox-demos-${SERVICE}.dev`
 
@@ -134,6 +134,20 @@ $ npm install
 
 # Generate the SSL Certificates for Nginx proxy service :
 $ npm run cert
+```
+
+### Build html documentation
+
+Build the html static files that will be served by the home web server. The build process uses `docusaurus`.
+
+From the project root folder, **navigate to `services/home**` and run :
+
+```sh
+# Download package and dependencies (docusaurus)
+npm install
+
+# Build the html static files from the markdown docs.
+npm run build
 ```
 
 ### Run start scripts
