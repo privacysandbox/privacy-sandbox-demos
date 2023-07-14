@@ -13,14 +13,16 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { Order } from "./items"
+import { cookies } from "next/headers"
 
-import type { NextApiRequest, NextApiResponse } from "next"
-import { getItems } from "../../../lib/items"
-import { withSessionRoute } from "../../../lib/withSession"
-
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const items = await getItems()
-  res.json(items)
+export function getCartFromSession(): Order[] {
+  const cookie = cookies().get("cart")?.value || "[]"
+  const cart: Order[] = JSON.parse(cookie)
+  return cart
 }
 
-export default withSessionRoute(handler)
+export function saveCartToSession(cart: Order[]) {
+  const cookie = JSON.stringify(cart)
+  cookies().set("cart", cookie)
+}

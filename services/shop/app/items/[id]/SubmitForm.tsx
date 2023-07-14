@@ -14,51 +14,41 @@
  limitations under the License.
  */
 
-"use client"
-
-import { useRouter } from "next/navigation"
-import { FormEvent } from "react"
-import { Item } from "../../../lib/items"
+import { redirect } from "next/navigation"
+import { getCartFromSession, saveCartToSession } from "../../../lib/cart"
+import { fetchItem } from "../../../lib/fetcher"
+import { Item, Order, addOrderToCart } from "../../../lib/items"
 
 export default function SubmitForm({ item }: { item: Item }) {
-  const router = useRouter()
+  async function formAction(formData: FormData) {
+    "use server"
+    const id = formData.get("id") as string
+    const size = formData.get("size") as string
+    const quantity = parseInt(formData.get("quantity") as string)
+    const item: Item = await fetchItem(id)
+    const order: Order = { item, size, quantity }
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    const cart: Order[] = getCartFromSession()
+    saveCartToSession(addOrderToCart(order, cart))
 
-    const data = new FormData(event.currentTarget)
-    const id = data.get("id") as string
-    const size = data.get("size") as string
-    const quantity = data.get("quantity") as string
-
-    console.assert(item.id === id, item.id, id)
-    console.log({ id, size, quantity })
-
-    const res = await fetch("/api/cart", {
-      method: "post",
-      body: new URLSearchParams(data as URLSearchParams)
-    })
-    console.assert(res.redirected)
-    router.push(res.url)
+    return redirect(`/cart`)
   }
 
   return (
-    <form method="post" action="/api/cart" onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form action={formAction} className="flex flex-col gap-4">
       <section className="flex border-b py-4">
         <input type="hidden" name="id" value={item.id} />
         <label htmlFor="size" className="basis-1/6 text-slate-500">
           Size
         </label>
-        <select id="size" name="size" className="basis-5/6 text-slate-800">
+        <select id="size" name="size" className="basis-5/6 text-slate-800" defaultValue="25.0">
           <option value="22.0">22.0cm</option>
           <option value="22.5">22.5cm</option>
           <option value="23.0">23.0cm</option>
           <option value="23.5">23.5cm</option>
           <option value="24.0">24.0cm</option>
           <option value="24.5">24.5cm</option>
-          <option value="25.0" selected={true}>
-            25.0cm
-          </option>
+          <option value="25.0">25.0cm</option>
           <option value="25.5">25.5cm</option>
           <option value="26.0">26.0cm</option>
           <option value="26.5">26.5cm</option>

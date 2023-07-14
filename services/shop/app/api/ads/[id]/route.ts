@@ -13,22 +13,16 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { NextResponse } from "next/server"
+import { fileURLToPath } from "url"
+import { readFile } from "fs/promises"
 
-type Props = {
-  title?: string
-}
-
-export default function Head({ title = "Shopping DEMO" }: Props) {
-  const { SHOP_TOKEN } = process.env
-  return (
-    <>
-      <meta charSet="utf-8"></meta>
-      <title>{title}</title>
-      <link
-        rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👟</text></svg>"
-      ></link>
-      {/* <meta httpEquiv="origin-trial" content={SHOP_TOKEN}></meta> */}
-    </>
-  )
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const id = params.id
+  const img = `../../../../public/image/svg/emoji_u${id}.svg`
+  const path = fileURLToPath(new URL(img, import.meta.url))
+  const blob = await readFile(path)
+  const res = new NextResponse(blob)
+  res.headers.set("Content-Type", "image/svg+xml")
+  return res
 }

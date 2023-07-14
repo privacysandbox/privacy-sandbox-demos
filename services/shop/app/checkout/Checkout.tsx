@@ -18,18 +18,22 @@
 
 import Link from "next/link"
 import { Order } from "../../lib/items"
-import { CartItem } from "./CartItem"
+import { CheckoutItem } from "./CheckoutItem"
 
-export const Cart = ({ checkout, ssp }: { checkout: Order[]; ssp: string }) => {
+export const Checkout = ({ checkout, ssp }: { checkout: Order[]; ssp: string }) => {
   const subtotal = checkout.reduce((sum, { item, quantity }) => {
     return sum + item.price * quantity
   }, 0)
   const shipping = 40
 
-  fetch("/api/cart", { method: "DELETE" }).catch((res) => {
-    // TODO: move destroy session to SSR
-    console.assert(res.ok)
-  })
+  // Delete cart in cookie async
+  fetch("/api/cart", { method: "delete" })
+    .then((res) => {
+      console.assert(res.ok)
+    })
+    .catch((err) => {
+      console.error(err)
+    })
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,7 +42,7 @@ export const Cart = ({ checkout, ssp }: { checkout: Order[]; ssp: string }) => {
         <ul className="flex flex-col gap-6">
           {checkout.map((order) => {
             const key = `${order.item.id}:${order.size}`
-            return <CartItem key={key} order={order} ssp={ssp} />
+            return <CheckoutItem key={key} order={order} ssp={ssp} />
           })}
         </ul>
 

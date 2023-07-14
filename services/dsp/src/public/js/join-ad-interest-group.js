@@ -25,6 +25,10 @@ async function getInterestGroup(advertiser, id) {
 }
 
 document.addEventListener("DOMContentLoaded", async (e) => {
+  if (navigator.joinAdInterestGroup === undefined) {
+    return console.log("Protected Audience API is not supported")
+  }
+
   // Protected Audience API
   const url = new URL(location.href)
   const advertiser = url.searchParams.get("advertiser")
@@ -36,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   const kSecsPerDay = 3600 * 24 * 30
   console.log(await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay))
 
-  // Call Topics API for opt-in
-  const topics = await document.browsingTopics?.()
-  console.log({ topics })
+  // TODO: consider using Topics API for choosing Ads
+  // const topics = await document.browsingTopics?.()
+  // console.log({ topics })
 })
