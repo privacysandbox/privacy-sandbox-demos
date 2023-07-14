@@ -6,7 +6,8 @@
     "dev": "next dev --port=${port:-8080}",
     "build": "next build",
     "start": "next build && next start --port=${port:-8080}",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ncu": "npx npm-check-updates -u"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
