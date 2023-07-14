@@ -14,6 +14,7 @@
  limitations under the License.
  */
 
+import "server-only"
 import { cookies } from "next/headers"
 import { Item, Order } from "./items"
 
