@@ -1,0 +1,11 @@
+
+# ref : https://cloud.google.com/sdk/gcloud/reference/topic/gcloudignore
+
+.gcloudignore
+.git
+.gitignore
+
+#!include:.gitignore
+
+# include build/* files into `gcloud builds submit` command
+!build

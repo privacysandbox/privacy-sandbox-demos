@@ -29,19 +29,19 @@ gcloud config get-value project
 # make the default region us-central1
 gcloud config set run/region us-central1
 
+# Containerize all services with Cloud Build (config file) and upload it to Container Registry
+gcloud builds submit --config=cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="docker-repo" .
+
 # Cloud Build
 for service in $SERVICES; do
   echo deploy $GCP_PROJECT_NAME/${service}
 
-  ## push docker image
-  # docker push gcr.io/$GCP_PROJECT_NAME/${service}
-
-  # Containerize app  with Cloud Build and upload it to Container Registry
-  gcloud builds submit services/${service} --tag gcr.io/$GCP_PROJECT_NAME/${service}
+  # Containerize service with Cloud Build (Dockerfile) and upload it to Container Registry
+  # gcloud builds submit services/${service} --tag us-central1-docker.pkg.dev/$GCP_PROJECT_NAME/docker-repo/${service}
 
   # add "--min-instances 1" to have your service always on (cpu and memory billing will go up accordingly)
   gcloud run deploy ${service} \
-    --image gcr.io/$GCP_PROJECT_NAME/${service}:latest \
+    --image us-central1-docker.pkg.dev/$GCP_PROJECT_NAME/docker-repo/${service}:latest \
     --platform managed \
     --region us-central1 \
     --memory 2Gi \

@@ -155,17 +155,19 @@ https://firebase.corp.google.com/project/_privacy-sandbox-demos_/settings/integr
 
 Select all the sites you want to export logs from, click Save and Finish.
 
-## Install Google Cloud SDK & Enable the Google Cloud Run API
+## Serve dynamic content and host microservices with Cloud Run
 
 Next you will deploy containers to Cloud Run to run the content of the demo sites.
 
 For our architecture, we chose to deploy everything container based for portability and flexibility and to use Firebase hosting as a frontend solution for HTTPS request handling, domain name and ssl certificates.
 
+### Install Google Cloud SDK & Enable the Google Cloud Run API
+
 Install Google Cloud SDK : If Google Cloud SDK is not installed on the machine, follow instructions here : https://cloud.google.com/sdk/docs/install#linux
 
 Initialize Google Cloud SDK : https://cloud.google.com/sdk/docs/initializing
 
-```shell
+```sh
 # Run `gcloud init` to setup authentication and project
 gcloud init
 
@@ -175,19 +177,51 @@ gcloud config set project
 
 # Verify your configuration (account and project) with the command :
 gcloud config list
-
-# Enable Cloud Run API
-gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
-
-# Setup the default region for deployment
-gcloud config set run/region us-central1
 ```
 
 Resources : https://firebase.google.com/docs/hosting/cloud-run
 
+### Enable the APIs
+Enable Cloud Run API & Cloud Build API & Artifact Registry
+
+```sh
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+```
+
+Setup the default region for deployment
+
+```sh
+gcloud config set run/region us-central1
+```
+
+### Setup Artifact Registry
+
+```sh
+# create docker repository in Cloud Artifact Registry
+gcloud artifacts repositories create docker-repo --repository-format=docker \
+--location=us-central1 --description="Privacy Sandbox Demos Docker repository"
+
+# set default repository
+gcloud config set artifacts/repository docker-repo
+
+# set default location
+gcloud config set artifacts/location us-central1
+
+```
+
+confirm repository exists with
+
+```sh
+gcloud artifacts repositories list
+```
+
+Resources :
+- https://cloud.google.com/artifact-registry/docs/enable-service
+- https://cloud.google.com/artifact-registry/docs/transition/setup-repo
+
 ## Deploy all Cloud Run services and Firebase Sites
 
-Once you have confirmed you can deploy a sample demo application on Cloud Run and access it from Firebase hosting site, you are ready to deploy all the services and hosting sites.
+You are ready to deploy all the services and hosting sites.
 
 Edit `services/.env` file to match the `${SERVICE}_HOST` parameter to your firebase hosting domain e.g. : `privacy-sandbox-demos-${SERVICE}.dev`
 
