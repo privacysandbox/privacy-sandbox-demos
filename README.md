@@ -44,3 +44,7 @@ These use cases are based on a set of demo apps and services that we have develo
 | DSP service (Demand Side Platform) | The demo DSP service will Add a user into an Interest Group with Protected Audience API. Register conversions with Attribution Reporting API                                                                                                                                        |
 
 We’re continuing our effort to deliver comprehensive documentation and demos, and we welcome your feedback on which use cases you would like to see in future releases. Share your ideas and feedback on our issue tracker.
+
+---
+
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/privacysandbox/privacy-sandbox-demos/badge)](https://securityscorecards.dev/viewer/?uri=github.com/privacysandbox/privacy-sandbox-demos)
