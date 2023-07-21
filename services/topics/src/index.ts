@@ -16,7 +16,7 @@
 
  import express, { Application, Request, Response } from "express"
 
- const {  PORT } = process.env
+ const {  PORT, TOPICS_SERVER_HOST } = process.env
  
  const app: Application = express()
  
@@ -36,7 +36,8 @@
  
    console.log("TITLE:"+title)
    const params = {
-     title
+     title,
+     TOPICS_SERVER_HOST
    }
    res.render("index", params)
  })
