@@ -13,22 +13,16 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { Order } from "./items"
+import { cookies } from "next/headers"
 
-type Props = {
-  title?: string
+export function getCartFromSession(): Order[] {
+  const cookie = cookies().get("cart")?.value || "[]"
+  const cart: Order[] = JSON.parse(cookie)
+  return cart
 }
 
-export default function Head({ title = "Shopping DEMO" }: Props) {
-  const { SHOP_TOKEN } = process.env
-  return (
-    <>
-      <meta charSet="utf-8"></meta>
-      <title>{title}</title>
-      <link
-        rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👟</text></svg>"
-      ></link>
-      {/* <meta httpEquiv="origin-trial" content={SHOP_TOKEN}></meta> */}
-    </>
-  )
+export function saveCartToSession(cart: Order[]) {
+  const cookie = JSON.stringify(cart)
+  cookies().set("cart", cookie)
 }

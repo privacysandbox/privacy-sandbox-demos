@@ -17,9 +17,11 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { FormEvent } from "react"
+import useSWR from "swr"
 import { Order } from "../../lib/items"
 import CartItem from "./CartItem"
-import useSWR from "swr"
 
 const fetcher = (url: URL) => fetch(url).then((res) => res.json())
 
@@ -35,15 +37,23 @@ const useCart = (fallbackData: Order[]) => {
 
 export default function Cart({ cart: initialState }: { cart: Order[] }) {
   const { cart, mutate } = useCart(initialState)
+  const router = useRouter()
 
   const subtotal = cart.reduce((sum, { item, quantity }) => {
     return sum + item.price * quantity
   }, 0)
   const shipping = 40
   const disableCheckout = cart.length === 0
+
+  function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    // Do nothing here, just redirect
+    router.push("/checkout")
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <form className="flex flex-col gap-6" method="post" action="/checkout">
+      <form method="POST" action="/cart" onSubmit={onSubmit} className="flex flex-col gap-6">
         <ul className="flex flex-col gap-6">
           {cart.map((order) => {
             const key = `${order.item.id}:${order.size}`

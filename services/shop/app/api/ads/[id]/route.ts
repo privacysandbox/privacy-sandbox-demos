@@ -13,15 +13,16 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { NextResponse } from "next/server"
+import { fileURLToPath } from "url"
+import { readFile } from "fs/promises"
 
-import { fetchCart } from "../../lib/fetcher"
-import { Order } from "../../lib/items"
-import { Checkout } from "./Checkout"
-
-const { SSP_HOST, EXTERNAL_PORT } = process.env
-
-export default async function Page() {
-  const cart: Order[] = await fetchCart()
-  const ssp = `https://${SSP_HOST}:${EXTERNAL_PORT}`
-  return <Checkout checkout={cart} ssp={ssp}></Checkout>
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const id = params.id
+  const img = `../../../../public/image/svg/emoji_u${id}.svg`
+  const path = fileURLToPath(new URL(img, import.meta.url))
+  const blob = await readFile(path)
+  const res = new NextResponse(blob)
+  res.headers.set("Content-Type", "image/svg+xml")
+  return res
 }
