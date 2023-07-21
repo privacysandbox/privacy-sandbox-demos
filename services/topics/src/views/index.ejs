@@ -22,23 +22,22 @@
 
   <div id="fetch-data"><h3>Topics collected via fetch() request headers will be displayed here: </h3></div>
 
-  <iframe src="https://topics-server.privacy-sandbox-demos-news.dev/observe/index.html"></iframe>
+  <!-- <iframe src="https://${TOPICS_SERVER_HOST}/observe/index.html"></iframe> -->
 
 
 </body>
 
-<script>
+<script topics_server="<%= TOPICS_SERVER_HOST %>">
             
-
+  const topics_server = 'https://'+ document.currentScript.getAttribute('topics_server');
   const fetchDataEl = document.getElementById('fetch-data');
   const noTopicsEl = document.getElementById('no-topics');
-
   
   let currentTopics = '';
   let emptyTopics = '();p=P0000000000000000000000000000000';
   
   function makeFetchRequest() {
-    fetch('https://topics-server.privacy-sandbox-demos-news.dev/', {browsingTopics: true}).
+    fetch(topics_server, {browsingTopics: true}).
       then(function(response) {
         return response.json();
       }).then(function(json) {
