@@ -16,15 +16,14 @@
 
 import "server-only"
 import { cookies } from "next/headers"
-import { Item, Order } from "./items"
+import { Item, Order, getItem, getItems } from "./items"
+import { PORT } from "./env"
 
-// TODO
-const HOST = "127.0.0.1"
-const PORT = process.env.PORT
-const endpoint = `http://${HOST}:${PORT}/api`
+const INTERNAL_ENDPOINT = `http://127.0.0.1:${PORT}/api`
 
 export async function fetchCart() {
-  const url = new URL(`${endpoint}/cart`)
+  console.log({ INTERNAL_ENDPOINT })
+  const url = new URL(`${INTERNAL_ENDPOINT}/cart`)
   const headers: HeadersInit = {}
   const cartCookie = cookies().get("cart")
   if (cartCookie !== undefined) {
@@ -39,15 +38,17 @@ export async function fetchCart() {
 }
 
 export async function fetchItems(): Promise<Item[]> {
-  const url = new URL(`${endpoint}/items`)
-  const res = await fetch(url, { cache: "no-store" })
-  const items: Item[] = await res.json()
-  return items
+  // const url = new URL(`${endpoint}/items`)
+  // const res = await fetch(url, { cache: "no-store" })
+  // const items: Item[] = await res.json()
+  // return items
+  return getItems()
 }
 
 export async function fetchItem(id: string): Promise<Item> {
-  const url = new URL(`${endpoint}/items/${id}`)
-  const res = await fetch(url, { cache: "no-store" })
-  const item: Item = await res.json()
-  return item
+  // const url = new URL(`${endpoint}/items/${id}`)
+  // const res = await fetch(url, { cache: "no-store" })
+  // const item: Item = await res.json()
+  // return item
+  return getItem(id)
 }

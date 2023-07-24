@@ -16,8 +16,7 @@
 
 import "server-only"
 import Script from "next/script"
-
-const { SHOP_HOST, DSP_HOST, EXTERNAL_PORT } = process.env
+import { DSP_HOST, EXTERNAL_PORT, SHOP_HOST } from "../../../lib/env"
 
 export default async function DSPTag({ id }: { id: string }) {
   const dsp_url = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`).toString()

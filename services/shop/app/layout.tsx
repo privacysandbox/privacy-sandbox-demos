@@ -16,10 +16,10 @@
 
 import { Metadata } from "next"
 import Link from "next/link"
+import { SHOP_DETAIL } from "../lib/env"
 import "../styles/globals.css"
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { SHOP_DETAIL } = process.env
   return {
     title: SHOP_DETAIL,
     description: SHOP_DETAIL,
