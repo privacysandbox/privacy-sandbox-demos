@@ -22,6 +22,7 @@
  
  app.use((req, res, next) => {
    res.setHeader('Observe-Browsing-Topics', '?1')
+   res.setHeader('Access-Control-Allow-Origin', '*')
    next()
  })
  app.use(express.static("src/public"))
