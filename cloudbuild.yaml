@@ -79,6 +79,24 @@ steps:
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel",
         "services/travel"
       ]
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics",
+        "services/topics",
+      ]
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server",
+        "services/topics-server",
+      ]
 images:
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home"
@@ -86,3 +104,5 @@ images:
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server"
