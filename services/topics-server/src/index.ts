@@ -14,29 +14,27 @@
  limitations under the License.
  */
 
- import express, { Application, Request, Response } from "express"
+import express, { Application, Request, Response } from "express"
 
- const { PORT } = process.env
- 
- const app: Application = express()
- 
- app.use((req, res, next) => {
-   res.setHeader('Observe-Browsing-Topics', '?1')
-   res.setHeader('Access-Control-Allow-Origin', '*')
-   next()
- })
- app.use(express.static("src/public"))
- app.set("view engine", "ejs")
- app.set("views", "src/views")
- 
- app.get("/", async (req: Request, res: Response) => {
- 
-   var browsingTopics = req.get('Sec-Browsing-Topics')
- 
- res.json({ topics: browsingTopics })
- })
- 
- app.listen(PORT, async () => {
-   console.log(`Listening on port ${PORT}`)
- })
- 
+const { PORT } = process.env
+
+const app: Application = express()
+
+app.use((req, res, next) => {
+  res.setHeader("Observe-Browsing-Topics", "?1")
+  res.setHeader("Access-Control-Allow-Origin", "*")
+  next()
+})
+app.use(express.static("src/public"))
+app.set("view engine", "ejs")
+app.set("views", "src/views")
+
+app.get("/", async (req: Request, res: Response) => {
+  var browsingTopics = req.get("Sec-Browsing-Topics")
+
+  res.json({ topics: browsingTopics })
+})
+
+app.listen(PORT, async () => {
+  console.log(`Listening on port ${PORT}`)
+})

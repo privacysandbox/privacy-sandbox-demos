@@ -6,7 +6,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp",
-        "services/dsp",
+        "services/dsp"
       ]
   # # Push the container image to Container Registry
   # - name: "gcr.io/cloud-builders/docker"
@@ -41,7 +41,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home",
-        "services/home",
+        "services/home"
       ]
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
@@ -50,7 +50,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news",
-        "services/news",
+        "services/news"
       ]
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
@@ -59,7 +59,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop",
-        "services/shop",
+        "services/shop"
       ]
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
@@ -68,7 +68,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp",
-        "services/ssp",
+        "services/ssp"
       ]
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
@@ -77,7 +77,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel",
-        "services/travel",
+        "services/travel"
       ]
 images:
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp"

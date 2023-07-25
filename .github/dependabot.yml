@@ -8,19 +8,19 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-        interval: "daily"
+      interval: "daily"
     rebase-strategy: disabled
     commit-message:
-        prefix: "[github-actions] "
-        include: "scope"
+      prefix: "[github-actions] "
+      include: "scope"
   - package-ecosystem: docker
     directory: "/services/home"
     schedule:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[home] "
-        include: "scope"
+      prefix: "[home] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: docker
     directory: "/services/dsp"
@@ -28,8 +28,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[dsp] "
-        include: "scope"
+      prefix: "[dsp] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: docker
     directory: "/services/ssp"
@@ -37,8 +37,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[ssp] "
-        include: "scope"
+      prefix: "[ssp] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: docker
     directory: "/services/news"
@@ -46,8 +46,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[news] "
-        include: "scope"
+      prefix: "[news] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: docker
     directory: "/services/shop"
@@ -55,8 +55,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[shop] "
-        include: "scope"
+      prefix: "[shop] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: docker
     directory: "/services/travel"
@@ -64,8 +64,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[travel] "
-        include: "scope"
+      prefix: "[travel] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: docker
     directory: "/services/collector"
@@ -73,8 +73,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[collector] "
-        include: "scope"
+      prefix: "[collector] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: npm
     directory: "/services/home"
@@ -82,8 +82,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[home] "
-        include: "scope"
+      prefix: "[home] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: npm
     directory: "/services/dsp"
@@ -91,8 +91,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[dsp] "
-        include: "scope"
+      prefix: "[dsp] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: npm
     directory: "/services/ssp"
@@ -100,8 +100,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[ssp] "
-        include: "scope"
+      prefix: "[ssp] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: npm
     directory: "/services/news"
@@ -109,8 +109,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[news] "
-        include: "scope"
+      prefix: "[news] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: npm
     directory: "/services/shop"
@@ -118,8 +118,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[shop] "
-        include: "scope"
+      prefix: "[shop] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: npm
     directory: "/services/travel"
@@ -127,8 +127,8 @@ updates:
       interval: weekly
     rebase-strategy: disabled
     commit-message:
-        prefix: "[travel] "
-        include: "scope"
+      prefix: "[travel] "
+      include: "scope"
     open-pull-requests-limit: 3
   - package-ecosystem: gomod
     directory: "/services/collector/src"
@@ -136,6 +136,6 @@ updates:
       interval: daily
     rebase-strategy: disabled
     commit-message:
-        prefix: "[collector] "
-        include: "scope"
+      prefix: "[collector] "
+      include: "scope"
     open-pull-requests-limit: 3
