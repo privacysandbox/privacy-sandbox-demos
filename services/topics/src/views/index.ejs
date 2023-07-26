@@ -29,31 +29,36 @@
 
   <div id="fetch-data">
     <h3>Topics collected via fetch() request headers will be displayed here: </h3>
+    <ul id="observed-topics">
+
+    </ul>
   </div>
 
 </body>
 
-<script topics_server="<%= TOPICS_SERVER_HOST %>">
+<script id="topics-script" data-server="<%= TOPICS_SERVER_HOST %>">
 
-  const topics_server = 'https://' + document.currentScript.getAttribute('topics_server');
-  const fetchDataEl = document.getElementById('fetch-data');
-  const noTopicsEl = document.getElementById('no-topics');
+  const topicsList = document.querySelector('#observed-topics')
 
   let currentTopics = '';
-  let emptyTopics = '();p=P0000000000000000000000000000000';
+  const emptyTopics = '();p=P0000000000000000000000000000000';
 
-  function makeFetchRequest() {
-    fetch(topics_server, { browsingTopics: true }).
+  const topics_server = document.querySelector("#topics-script").dataset.server;
+  const topics_server_url = new URL(`https://${topics_server}`)
+
+
+  async function makeFetchRequest() {
+    await fetch(topics_server_url, { browsingTopics: true }).
       then(function (response) {
         return response.json();
       }).then(function (json) {
-        const topics = json['topics'];
+        const topics = json.topics;
         if (topics && topics !== currentTopics && topics != emptyTopics) {
-          fetchDataEl.innerHTML +=
-            `<p>fetch() request made with sec-browsing-topics header: ` +
-            `${JSON.stringify(topics, null, 2)}</p>`;
+          var li = document.createElement("li");
+          li.appendChild(document.createTextNode(`fetch() request made with sec-browsing-topics header: ${JSON.stringify(topics, null, 2)}`));
+          topicsList.appendChild(li);
+
           console.log(topics)
-          // clearInterval(intervalId)
           currentTopics = topics;
         }
       });

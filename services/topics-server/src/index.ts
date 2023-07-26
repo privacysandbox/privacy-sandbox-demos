@@ -30,7 +30,7 @@ app.set("view engine", "ejs")
 app.set("views", "src/views")
 
 app.get("/", async (req: Request, res: Response) => {
-  var browsingTopics = req.get("Sec-Browsing-Topics")
+  const browsingTopics = req.get("Sec-Browsing-Topics")
 
   res.json({ topics: browsingTopics })
 })
