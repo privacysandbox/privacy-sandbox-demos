@@ -48,20 +48,20 @@
 
 
   async function makeFetchRequest() {
-    await fetch(topics_server_url, { browsingTopics: true }).
-      then(function (response) {
-        return response.json();
-      }).then(function (json) {
-        const topics = json.topics;
-        if (topics && topics !== currentTopics && topics != emptyTopics) {
-          var li = document.createElement("li");
-          li.appendChild(document.createTextNode(`fetch() request made with sec-browsing-topics header: ${JSON.stringify(topics, null, 2)}`));
+
+
+    const response = await fetch(topics_server_url, { browsingTopics: true });
+    const json = await response.json();
+    const topics = json.topics;
+    if (topics && topics !== currentTopics && topics != emptyTopics) {
+          const li = document.createElement("li");
+          li.textContent =`fetch() request made with sec-browsing-topics header: ${JSON.stringify(topics, null, 2)}`;
           topicsList.appendChild(li);
 
           console.log(topics)
           currentTopics = topics;
-        }
-      });
+
+   }
   }
 
   const intervalId = setInterval(makeFetchRequest, 2000); 
