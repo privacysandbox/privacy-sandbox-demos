@@ -31,7 +31,7 @@ app.set("views", "src/views")
 
 app.get("/", async (req: Request, res: Response) => {
   const browsingTopics = req.get("Sec-Browsing-Topics")
-
+  
   res.json({ topics: browsingTopics })
 })
 

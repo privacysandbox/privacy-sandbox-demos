@@ -28,8 +28,8 @@ app.set("view engine", "ejs")
 app.set("views", "src/views")
 
 app.get("/", async (req: Request, res: Response) => {
-  var hostname = req.hostname
-  var title = hostname.substring(0, hostname.indexOf("."))
+  const hostname = req.hostname
+  const title = hostname.substring(0, hostname.indexOf("."))
 
   console.log("TITLE:" + title)
   const params = {
