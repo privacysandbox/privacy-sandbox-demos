@@ -14,35 +14,31 @@
  limitations under the License.
  */
 
- import express, { Application, Request, Response } from "express"
+import express, { Application, Request, Response } from "express"
 
- const {  PORT, TOPICS_SERVER_HOST } = process.env
- 
- const app: Application = express()
- 
- app.use((req, res, next) => {
-   next()
- })
- app.use(express.static("src/public"))
- app.set("view engine", "ejs")
- app.set("views", "src/views")
- 
- 
- app.get("/", async (req: Request, res: Response) => {
- 
- 
-   var hostname = req.hostname
-   var title = (hostname).substring(0, hostname.indexOf('.'))
- 
-   console.log("TITLE:"+title)
-   const params = {
-     title,
-     TOPICS_SERVER_HOST
-   }
-   res.render("index", params)
- })
- 
- app.listen(PORT, async () => {
-   console.log(`Listening on port ${PORT}`)
- })
- 
+const { PORT, TOPICS_SERVER_HOST } = process.env
+
+const app: Application = express()
+
+app.use((req, res, next) => {
+  next()
+})
+app.use(express.static("src/public"))
+app.set("view engine", "ejs")
+app.set("views", "src/views")
+
+app.get("/", async (req: Request, res: Response) => {
+  const hostname = req.hostname
+  const title = hostname.substring(0, hostname.indexOf("."))
+
+  console.log("TITLE:" + title)
+  const params = {
+    title,
+    TOPICS_SERVER_HOST
+  }
+  res.render("index", params)
+})
+
+app.listen(PORT, async () => {
+  console.log(`Listening on port ${PORT}`)
+})

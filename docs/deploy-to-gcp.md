@@ -182,6 +182,7 @@ gcloud config list
 Resources : https://firebase.google.com/docs/hosting/cloud-run
 
 ### Enable the APIs
+
 Enable Cloud Run API & Cloud Build API & Artifact Registry
 
 ```sh
@@ -216,6 +217,7 @@ gcloud artifacts repositories list
 ```
 
 Resources :
+
 - https://cloud.google.com/artifact-registry/docs/enable-service
 - https://cloud.google.com/artifact-registry/docs/transition/setup-repo
 

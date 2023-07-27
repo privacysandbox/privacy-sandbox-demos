@@ -101,7 +101,7 @@ services:
       - ./services/topics:/workspace
       - topics_node_modules:/workspace/node_modules
     networks:
-      - adnetwork  
+      - adnetwork
 
   topics-server:
     image: gcr.io/privacy-sandbox-demos/topics-server:latest
@@ -113,7 +113,7 @@ services:
       - ./services/topics-server:/workspace
       - topics-server_node_modules:/workspace/node_modules
     networks:
-      - adnetwork  
+      - adnetwork
 
   nginx:
     image: nginx:1.22.1-alpine
