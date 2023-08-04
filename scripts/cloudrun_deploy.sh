@@ -30,7 +30,7 @@ gcloud config get-value project
 gcloud config set run/region us-central1
 
 # Containerize all services with Cloud Build : build containers, upload to Container Registry, and deploy to Cloud Run
-gcloud builds submit --config=cloudbuild.yaml --region="us-central1" --substitutions=_LOCATION="us-central1",_REPOSITORY="docker-repo",_PROJECT_ENV="prod",COMMIT_SHA="latest" .
+gcloud builds submit --config=cicd/cloudbuild.yaml --region="us-central1" --substitutions=_LOCATION="us-central1",_REPOSITORY="docker-repo",_PROJECT_ENV="prod",COMMIT_SHA="latest" .
 
 # Cloud Build
 for service in $SERVICES; do
