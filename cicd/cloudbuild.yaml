@@ -46,10 +46,23 @@ steps:
         echo $${ENV_VARS}
         gcloud run deploy dsp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
   # HOME
+  # Build the HTML files with docusaurus
+  - name: "node"
+    id: npm-install-home
+    waitFor: ["-"]
+    entrypoint: "npm"
+    args: ["--prefix", "services/home", "install"]
+  - name: "node"
+    id: npm-run-build-home
+    waitFor:
+      - npm-install-home
+    entrypoint: "npm"
+    args: ["--prefix", "services/home", "run", "build"]
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
     id: build-home
-    waitFor: ["-"]
+    waitFor:
+      - npm-run-build-home
     args:
       [
         "build",
