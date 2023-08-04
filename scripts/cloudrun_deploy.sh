@@ -15,11 +15,11 @@
 # limitations under the License.
 
 # evaluate .env file
-source .env
+source cicd/.env.prod
 source .env.deploy
 
 # CloudRun doesn't support .env file, so grab values here and merge into single variable
-ENV_VARS=$(cat .env | grep "=" | grep -v "^PORT=" | sed '/^$/d' | tr "\n" "@")
+ENV_VARS=$(cat cicd/.env.prod | grep "=" | grep -v "^PORT=" | sed '/^$/d' | tr "\n" "@")
 echo ${ENV_VARS}
 
 # setup Google Cloud SDK project
@@ -29,29 +29,12 @@ gcloud config get-value project
 # make the default region us-central1
 gcloud config set run/region us-central1
 
-# Containerize all services with Cloud Build (config file) and upload it to Container Registry
-gcloud builds submit --config=cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="docker-repo" .
+# Containerize all services with Cloud Build : build containers, upload to Container Registry, and deploy to Cloud Run
+gcloud builds submit --config=cloudbuild.yaml --region="us-central1" --substitutions=_LOCATION="us-central1",_REPOSITORY="docker-repo",_PROJECT_ENV="prod",COMMIT_SHA="latest" .
 
 # Cloud Build
 for service in $SERVICES; do
   echo deploy $GCP_PROJECT_NAME/${service}
-
-  # Containerize service with Cloud Build (Dockerfile) and upload it to Container Registry
-  # gcloud builds submit services/${service} --tag us-central1-docker.pkg.dev/$GCP_PROJECT_NAME/docker-repo/${service}
-
-  # add "--min-instances 1" to have your service always on (cpu and memory billing will go up accordingly)
-  gcloud run deploy ${service} \
-    --image us-central1-docker.pkg.dev/$GCP_PROJECT_NAME/docker-repo/${service}:latest \
-    --platform managed \
-    --region us-central1 \
-    --memory 2Gi \
-    --min-instances 1 \
-    --set-env-vars "^@^${ENV_VARS}"
-
-  # Allowing public (unauthenticated) access to Cloud Run services
-  gcloud run services add-iam-policy-binding ${service} \
-  --member="allUsers" \
-  --role="roles/run.invoker"
 
   # Print Cloud Run URL
   gcloud run services describe ${service} --format 'value(status.url)'
