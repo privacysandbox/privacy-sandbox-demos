@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Video Ads with Protected Audience</title>
+    <link rel="stylesheet" type="text/css" href="/css/video-ad-style.css">
+  </head>
+
+  <body>
+    <div id="mainContainer">
+      <div id="content">
+        <video id="contentElement">
+          <source src="https://storage.googleapis.com/gvabox/media/samples/stock.mp4"></source>
+        </video>
+      </div>
+      <div id="adContainer"></div>
+    </div>
+    <button id="playButton">Play</button>
+    <script type="text/javascript" src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+    <script type="text/javascript" src="/js/video-ads.js"></script>
+    <ins class="ads">
+      <script type="text/javascript" class="ssp_tag"  src="https://privacy-sandbox-demos-ssp.dev/js/video-ad-tag.js"></script>
+    </ins>
+  </body>
+</html>

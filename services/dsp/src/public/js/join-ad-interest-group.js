@@ -15,12 +15,22 @@
  */
 
 // Protected Audience API
-async function getInterestGroup(advertiser, id) {
-  const url = new URL(location.origin)
-  url.pathname = "/interest-group.json"
-  url.searchParams.append("id", id)
-  url.searchParams.append("advertiser", advertiser)
-  const res = await fetch(url)
+async function getInterestGroupFromServer() {
+  const currentUrl = new URL(location.href)
+  const advertiser = currentUrl.searchParams.get("advertiser")
+  const id = currentUrl.searchParams.get("id")
+  const interestGroupUrl = new URL(location.origin)
+  interestGroupUrl.pathname = "/interest-group.json"
+  interestGroupUrl.searchParams.append("id", id)
+  interestGroupUrl.searchParams.append("advertiser", advertiser)
+  const allSearchParams = location.search.substring(1).split('&')
+    .forEach(searchParam => {
+      const keyValuePair = searchParam.split('=')
+      if (keyValuePair.length == 2) {
+        interestGroupUrl.searchParams.append(keyValuePair[0], keyValuePair[1])
+      }
+    })
+  const res = await fetch(interestGroupUrl)
   return res.json()
 }
 
@@ -31,10 +41,35 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
   // Protected Audience API
   const url = new URL(location.href)
-  const advertiser = url.searchParams.get("advertiser")
-  const id = url.searchParams.get("id")
-
-  const interestGroup = await getInterestGroup(advertiser, id)
+  let interestGroup
+  if (url.searchParams.get("ad-type") === "video") {
+    interestGroup = {
+      name: url.searchParams.get("advertiser"),
+      owner: url.origin,
+  
+      // x-allow-fledge: true
+      biddingLogicUrl: `${url.origin}/js/bidding_logic.js`,
+  
+      // x-allow-fledge: true
+      trustedBiddingSignalsUrl: `${url.origin}/bidding_signal.json`,
+      trustedBiddingSignalsKeys: ["trustedBiddingSignalsKeys-1", "trustedBiddingSignalsKeys-2"],
+  
+      // dailyUpdateUrl, // not implemented yet
+      userBiddingSignals: {
+        user_bidding_signals: "user_bidding_signals"
+      },
+      ads: [
+        {
+          renderUrl: "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=",
+          metadata: {
+            type: url.searchParams.get("advertiser")
+          }
+        }
+      ]
+    }
+  } else {
+    interestGroup = await getInterestGroupFromServer()
+  }
   console.log({ interestGroup })
 
   const kSecsPerDay = 3600 * 24 * 30

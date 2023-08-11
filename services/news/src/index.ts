@@ -43,6 +43,9 @@ app.get("/", async (req: Request, res: Response) => {
   }
   res.render("index", params)
 })
+app.get("/video-ad", async (req: Request, res: Response) => {
+  res.render("video-ad");
+});
 
 app.listen(PORT, async () => {
   console.log(`Listening on port ${PORT}`)
