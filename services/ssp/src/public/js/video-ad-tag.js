@@ -14,27 +14,23 @@
  limitations under the License.
 */
 
+
 (async () => {
-    const $ins = document.querySelector("ins.ads")
-    const $script = document.querySelector(".ssp_tag")
+    const ins = document.querySelector('ins.ads')
+    const script = document.querySelector('.ssp_tag')
+    const src = new URL(script.src)
+    src.pathname = '/video-ad-tag.html'
+    const iframe = document.createElement('iframe')
+    iframe.width = 0
+    iframe.height = 0
+    iframe.src = src
+    iframe.setAttribute('allow', 'attribution-reporting; run-ad-auction')
+    ins.appendChild(iframe)
+})()
 
-    const src = new URL($script.src)
-    src.pathname = "/video-ad-tag.html"
-  
-    const $iframe = document.createElement("iframe")
-    $iframe.width = 300
-    $iframe.height = 250
-    $iframe.src = src
-    $iframe.setAttribute("scrolling", "no")
-    $iframe.setAttribute("style", "border: none")
-    $iframe.setAttribute("allow", "attribution-reporting; run-ad-auction")
-    $ins.appendChild($iframe)
-
-    // window.addEventListener('message', )
-})();
-
-window.addEventListener("message", (event) => {
-    // if (event.origin !== 'https://privacy-sandbox-demos-ssp.dev') return;
-    if (typeof event.data !== 'string') return;
-    console.log(`Received postmessage from ${event.origin}: ${event}`);
-});
+window.addEventListener('message', (event) => {
+    if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) return
+    if (typeof event.data !== 'string') return
+    const {adVastUrl} = JSON.parse(event.data)
+    setUpIMA(adVastUrl)
+})

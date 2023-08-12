@@ -14,50 +14,31 @@
  limitations under the License.
  */
 
-// ssp
 async function getAuctionConfig() {
-    const url = new URL(location.origin)
-    url.pathname = "/auction-config.json"
-    const res = await fetch(url)
+  const url = new URL(location.origin)
+  url.pathname = '/auction-config.json'
+  const res = await fetch(url)
+  if (res.ok) {
     return res.json()
   }
-  
-  document.addEventListener("DOMContentLoaded", async (e) => {
-    if (navigator.runAdAuction === undefined) {
-      return console.log("Protected Audience API is not supported")
-    }
-  
-    const auctionConfig = await getAuctionConfig()
-    auctionConfig.resolveToConfig = false
-  
-    const adAuctionResult = await navigator.runAdAuction(auctionConfig)
-  
-    console.log({
-      auctionConfig,
-      adAuctionResult
-    })
+}
 
-    if (adAuctionResult) {
-      const videoAdUrl = await navigator.deprecatedURNToURL(adAuctionResult);
-      console.log(videoAdUrl);
-      window.parent.postMessage(videoAdUrl, "https://privacy-sandbox-demos-news.dev");
-    }
-    
-    // const $fencedframe = document.createElement("fencedframe")
-    // $fencedframe.config = adAuctionResult
-    // $fencedframe.setAttribute("mode", "opaque-ads")
-    // $fencedframe.setAttribute("scrolling", "no")
-    // // $fencedframe.setAttribute("allow", "attribution-reporting; run-ad-auction")
-    // $fencedframe.width = 300
-    // $fencedframe.height = 250
-  
-    // console.log(`display ads in ${$fencedframe}`)
-  
-    // document.body.appendChild($fencedframe)
-  })
-
-window.addEventListener("message", (event) => {
-  // if (event.origin !== 'https://privacy-sandbox-demos-ssp.dev') return;
-  if (typeof event.data !== 'string') return;
-  console.log(`Received postmessage from ${event.origin}: ${event}`);
-});
+document.addEventListener('DOMContentLoaded', async () => {
+  if (navigator.runAdAuction === undefined) {
+    return console.log('[DEMO] Protected Audience API is not supported')
+  }
+  const auctionConfig = await getAuctionConfig()
+  // FencedFrameConfing can't be rendered in iframes.
+  // This demo requires iframes.
+  auctionConfig.resolveToConfig = false
+  const adAuctionResult = await navigator.runAdAuction(auctionConfig)
+  console.log({ auctionConfig, adAuctionResult })
+  if (adAuctionResult) {
+    const adFrame = document.createElement('iframe')
+    adFrame.id = 'video-ad-frame'
+    adFrame.src = adAuctionResult
+    adFrame.width = 0
+    adFrame.height = 0
+    document.body.appendChild(adFrame)
+  }
+})
