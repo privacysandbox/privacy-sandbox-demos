@@ -32,29 +32,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   if (navigator.joinAdInterestGroup === undefined) {
     return console.log("[DEMO] Protected Audience API is not supported")
   }
-  const url = new URL(location.href)
-  let interestGroup
-  if (url.searchParams.get("ad-type") === "video") {
-    interestGroup = {
-      name: url.searchParams.get("advertiser"),
-      owner: url.origin,
-      biddingLogicUrl: `${url.origin}/js/bidding_logic.js`,
-      trustedBiddingSignalsUrl: `${url.origin}/bidding_signal.json`,
-      trustedBiddingSignalsKeys: ["trustedBiddingSignalsKeys-1", "trustedBiddingSignalsKeys-2"],
-      // dailyUpdateUrl, // not implemented yet
-      userBiddingSignals: {
-        user_bidding_signals: "user_bidding_signals",
-      },
-      ads: [{
-          renderUrl: `${url.origin}/html/video-ad.html`,
-          metadata: {
-            type: url.searchParams.get("advertiser"),
-          },
-        }],
-    }
-  } else {
-    interestGroup = await getInterestGroupFromServer()
-  }
+  const interestGroup = await getInterestGroupFromServer()
   console.log(`[DEMO] ${{interestGroup}}`)
   const kSecsPerDay = 3600 * 24 * 30
   console.log(await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay))

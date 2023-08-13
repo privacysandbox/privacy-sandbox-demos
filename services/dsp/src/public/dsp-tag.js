@@ -23,13 +23,10 @@
   src.pathname = "join-ad-interest-group.html"
   src.searchParams.append("advertiser", advertiser)
   src.searchParams.append("id", id)
-  location.search.substring(1).split('&')
-    .forEach(searchParam => {
-      const keyValuePair = searchParam.split('=')
-      if (keyValuePair.length == 2) {
-        src.searchParams.append(keyValuePair[0], keyValuePair[1])
-      }
-    })
+  const currentUrl = new URL(location.href)
+  for (const searchParam of currentUrl.searchParams) {
+    src.searchParams.append(searchParam[0], searchParam[1])
+  }
 
   const $iframe = document.createElement("iframe")
   $iframe.width = 1

@@ -48,7 +48,7 @@ app.get("/join-ad-interest-group.html", async (req: Request, res: Response) => {
 })
 
 app.get("/interest-group.json", async (req: Request, res: Response) => {
-  const { advertiser, id } = req.query
+  const { advertiser, id, adType } = req.query
   if (advertiser === undefined || id === undefined) {
     return res.sendStatus(400)
   }
@@ -57,7 +57,8 @@ app.get("/interest-group.json", async (req: Request, res: Response) => {
   const ssp = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/ads`)
   ssp.searchParams.append("advertiser", advertiser as string)
   ssp.searchParams.append("id", id as string)
-  const renderUrl = ssp.toString()
+  const videoCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`)
+  const renderUrl = 'video' === adType ? videoCreative : ssp.toString()
 
   const owner = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`)
   const biddingLogicUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`)
