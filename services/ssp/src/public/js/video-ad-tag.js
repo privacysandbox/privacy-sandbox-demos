@@ -34,7 +34,8 @@
 })();
 
 window.addEventListener("message", (event) => {
-    // if (event.origin !== 'https://privacy-sandbox-demos-ssp.dev') return;
-    if (typeof event.data !== 'string') return;
-    console.log(`Received postmessage from ${event.origin}: ${event}`);
+    if (event.origin !== 'https://privacy-sandbox-demos-ssp.dev') return
+    if (typeof event.data !== 'string') return
+    console.log(`Received postmessage from ${event.origin}: ${event}`)
+    setUpIMA()
 });
