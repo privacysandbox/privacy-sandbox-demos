@@ -53,18 +53,11 @@ app.get("/interest-group.json", async (req: Request, res: Response) => {
     return res.sendStatus(400)
   }
 
-  // const VIDEO_AD_XML = "https://pubads.g.doubleclick.net/gampad/ads?" +
-  //   "iu=/21775744923/external/single_ad_samples&sz=640x480&" +
-  //   "cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&" +
-  //   "output=vast&unviewed_position_start=1&env=vp&impl=s&correlator="
-
+  // FIXME: Render URL in interest group should be from DSP_HOST.
   const ssp = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/ads`)
   ssp.searchParams.append("advertiser", advertiser as string)
   ssp.searchParams.append("id", id as string)
-  // TODO(sidsahoo): Remove this hard-coded render url
-  // const renderUrl = "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator="
   const renderUrl = ssp.toString()
-  // const renderUrl = location.search.includes('ad-type=video') ? VIDEO_AD_XML : ssp.toString()
 
   const owner = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`)
   const biddingLogicUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`)
