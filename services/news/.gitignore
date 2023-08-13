@@ -1,3 +1,5 @@
 **/*.js
+!src/public/**/*.js
 **/*.css
+!src/public/css/video-ad-style.css
 !**/*.tailwind.css
