@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:20-alpine3.17
+FROM node:18-alpine3.17
 
 WORKDIR /workspace
 
@@ -20,5 +20,5 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-# CMD ["npm", "run", "dev"]
 CMD [ "npm", "start" ]
+# CMD ["npm", "run", "dev"]

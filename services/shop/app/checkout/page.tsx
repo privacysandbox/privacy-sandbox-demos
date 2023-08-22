@@ -14,14 +14,12 @@
  limitations under the License.
  */
 
-import { EXTERNAL_PORT, SSP_HOST } from "../../lib/env"
 import { fetchCart } from "../../lib/fetcher"
-import { Order } from "../../lib/items"
-import { Checkout } from "./Checkout"
+import { Cart } from "./Cart"
 
 export default async function Page() {
-  const cart: Order[] = await fetchCart()
+  const cart = await fetchCart()
+  const { SSP_HOST, EXTERNAL_PORT } = process.env
   const ssp = `https://${SSP_HOST}:${EXTERNAL_PORT}`
-  console.log({ ssp })
-  return <Checkout checkout={cart} ssp={ssp}></Checkout>
+  return <Cart checkout={cart} ssp={ssp}></Cart>
 }

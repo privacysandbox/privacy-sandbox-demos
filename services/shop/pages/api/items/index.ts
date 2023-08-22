@@ -14,11 +14,13 @@
  limitations under the License.
  */
 
-import "server-only"
-import Script from "next/script"
-import { DSP_HOST, EXTERNAL_PORT, SHOP_HOST } from "../../../lib/env"
+import type { NextApiRequest, NextApiResponse } from "next"
+import { getItems } from "../../../lib/items"
+import { withSessionRoute } from "../../../lib/withSession"
 
-export default async function DSPTag({ id }: { id: string }) {
-  const dsp_url = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`).toString()
-  return <Script className="dsp_tag" data-advertiser={SHOP_HOST} data-id={id} src={dsp_url}></Script>
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const items = await getItems()
+  res.json(items)
 }
+
+export default withSessionRoute(handler)

@@ -14,41 +14,36 @@
  limitations under the License.
  */
 
-import "server-only"
 import { cookies } from "next/headers"
-import { Item, Order, getItem, getItems } from "./items"
-import { PORT } from "./env"
+import { Item, Order } from "./items"
 
-const INTERNAL_ENDPOINT = `http://127.0.0.1:${PORT}/api`
+const HOST = "localhost"
+const PORT = "8080"
 
 export async function fetchCart() {
-  console.log({ INTERNAL_ENDPOINT })
-  const url = new URL(`${INTERNAL_ENDPOINT}/cart`)
-  const headers: HeadersInit = {}
-  const cartCookie = cookies().get("cart")
-  if (cartCookie !== undefined) {
-    headers["cookie"] = `cart=${cartCookie.value}`
-  }
+  const url = new URL(`http://${HOST}:${PORT}/api/cart`)
+  const cookie = cookies().get("__session")
+  const Cookie = `__session=${cookie?.value}`
   const res = await fetch(url, {
     cache: "no-store",
-    headers
+    headers: {
+      Cookie
+    }
   })
   const cart: Order[] = await res.json()
   return cart
 }
 
-export async function fetchItems(): Promise<Item[]> {
-  // const url = new URL(`${endpoint}/items`)
-  // const res = await fetch(url, { cache: "no-store" })
-  // const items: Item[] = await res.json()
-  // return items
-  return getItems()
+export async function fetchItems() {
+  const url = new URL(`http://${HOST}:${PORT}/api/items`)
+  const res = await fetch(url, { cache: "no-store" })
+  const items: Item[] = await res.json()
+  return items
 }
 
-export async function fetchItem(id: string): Promise<Item> {
-  // const url = new URL(`${endpoint}/items/${id}`)
-  // const res = await fetch(url, { cache: "no-store" })
-  // const item: Item = await res.json()
-  // return item
-  return getItem(id)
+export async function fetchItem(id: string) {
+  const url = new URL(`http://${HOST}:${PORT}/api/items/${id}`)
+  const res = await fetch(url, { cache: "no-store" })
+  const item: Item = await res.json()
+  return item
 }

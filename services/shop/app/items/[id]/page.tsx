@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import Image from "next/image"
 import Link from "next/link"
-import { fetchItem } from "../../../lib/fetcher"
+import Image from "next/image"
 import { displayCategory, Item } from "../../../lib/items"
-import DSPTag from "./DSPTag"
+
+import Script from "next/script"
 import SubmitForm from "./SubmitForm"
+import { fetchItem } from "../../../lib/fetcher"
 
 type Params = {
   id: string
@@ -28,6 +29,7 @@ type Params = {
 export default async function Page({ params }: { params: Params }) {
   const { id } = params
   const item: Item = await fetchItem(id)
+  const { SHOP_HOST, DSP_HOST, EXTERNAL_PORT } = process.env
   return (
     <div className="flex flex-col gap-6">
       <main className="grid lg:grid-cols-2">
@@ -44,11 +46,17 @@ export default async function Page({ params }: { params: Params }) {
           <SubmitForm item={item}></SubmitForm>
         </section>
       </main>
+
       <footer className="border-t-2 py-4">
         <Link href="/" className="underline before:content-['<<']">
           continue shopping
         </Link>
-        <DSPTag id={item.id}></DSPTag>
+        <Script
+          className="dsp_tag"
+          data-advertiser={SHOP_HOST}
+          data-id={item.id}
+          src={new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`).toString()}
+        ></Script>
       </footer>
     </div>
   )
