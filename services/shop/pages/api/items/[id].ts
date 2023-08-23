@@ -14,15 +14,14 @@
  limitations under the License.
  */
 
-import { NextResponse } from "next/server"
-import { getItem } from "../../../../lib/items"
+import type { NextApiRequest, NextApiResponse } from "next"
+import { getItem } from "../../../lib/items"
+import { withSessionRoute } from "../../../lib/withSession"
 
-type Params = {
-  id: string
-}
-
-export async function GET(_: Request, { params }: { params: Params }) {
-  const id = params.id
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const id = req.query.id as string
   const item = await getItem(id)
-  return NextResponse.json(item)
+  res.json(item)
 }
+
+export default withSessionRoute(handler)

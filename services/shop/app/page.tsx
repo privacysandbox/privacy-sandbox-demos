@@ -14,10 +14,10 @@
  limitations under the License.
  */
 
-import Image from "next/image"
 import Link from "next/link"
-import { fetchItems } from "../lib/fetcher"
+import Image from "next/image"
 import { Item } from "../lib/items"
+import { fetchItems } from "../lib/fetcher"
 
 const ItemCard = ({ item }: { item: Item }) => {
   return (
@@ -34,7 +34,7 @@ const ItemCard = ({ item }: { item: Item }) => {
 }
 
 export default async function Page() {
-  const items: Item[] = await fetchItems()
+  const items = await fetchItems()
   return (
     <div className="flex flex-col gap-6">
       <div className="hidden lg:block">
@@ -64,5 +64,3 @@ export default async function Page() {
     </div>
   )
 }
-
-export const dynamic = "force-dynamic"

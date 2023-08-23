@@ -23,7 +23,7 @@ const nextConfig = {
     defaultLocale: "en"
   },
   experimental: {
-    serverActions: true
+    appDir: true
   }
 }
 
