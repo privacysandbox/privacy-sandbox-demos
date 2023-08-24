@@ -36,7 +36,7 @@ export default function SubmitForm({ item }: { item: Item }) {
 
     const res = await fetch("/api/cart", {
       method: "post",
-      body: new URLSearchParams(data as URLSearchParams)
+      body: new URLSearchParams(data as any)
     })
     console.assert(res.redirected)
     router.push(res.url)
