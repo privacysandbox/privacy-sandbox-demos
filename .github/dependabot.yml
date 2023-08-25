@@ -8,7 +8,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-        interval: "daily"
+        interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[github-actions] "
@@ -16,7 +16,7 @@ updates:
   - package-ecosystem: docker
     directory: "/services/home"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[home] "
@@ -25,7 +25,7 @@ updates:
   - package-ecosystem: docker
     directory: "/services/dsp"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[dsp] "
@@ -34,7 +34,7 @@ updates:
   - package-ecosystem: docker
     directory: "/services/ssp"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[ssp] "
@@ -43,7 +43,7 @@ updates:
   - package-ecosystem: docker
     directory: "/services/news"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[news] "
@@ -52,7 +52,7 @@ updates:
   - package-ecosystem: docker
     directory: "/services/shop"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[shop] "
@@ -61,7 +61,7 @@ updates:
   - package-ecosystem: docker
     directory: "/services/travel"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[travel] "
@@ -70,7 +70,7 @@ updates:
   - package-ecosystem: docker
     directory: "/services/collector"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[collector] "
@@ -79,7 +79,7 @@ updates:
   - package-ecosystem: npm
     directory: "/services/home"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[home] "
@@ -88,7 +88,7 @@ updates:
   - package-ecosystem: npm
     directory: "/services/dsp"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[dsp] "
@@ -97,7 +97,7 @@ updates:
   - package-ecosystem: npm
     directory: "/services/ssp"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[ssp] "
@@ -106,7 +106,7 @@ updates:
   - package-ecosystem: npm
     directory: "/services/news"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[news] "
@@ -115,7 +115,7 @@ updates:
   - package-ecosystem: npm
     directory: "/services/shop"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[shop] "
@@ -124,7 +124,7 @@ updates:
   - package-ecosystem: npm
     directory: "/services/travel"
     schedule:
-      interval: weekly
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[travel] "
@@ -133,7 +133,7 @@ updates:
   - package-ecosystem: gomod
     directory: "/services/collector/src"
     schedule:
-      interval: daily
+      interval: "monthly"
     rebase-strategy: disabled
     commit-message:
         prefix: "[collector] "
