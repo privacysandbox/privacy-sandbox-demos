@@ -1,0 +1,63 @@
+<li class="grid grid-cols-12 lg:gap-8 gap-4 border">
+  <div class="lg:col-span-4 col-span-6 flex flex-col items-center py-4 gap-4 bg-slate-200">
+    <img
+      alt="<%= item.name %>"
+      width="100"
+      height="100"
+      loading="lazy"
+      decoding="async"
+      src="/image/svg/emoji_u<%= item.id %>.svg"
+    />
+    <h2 class="font-bold text-xl text-center text-slate-700 pb-4"><%= item.name %></h2>
+  </div>
+  <div class="lg:col-span-8 col-span-6 flex flex-col justify-center gap-2 text-lg text-slate-700 relative">
+    <dl class="flex flex-col">
+      <div class="flex gap-2">
+        <dt class="w-16 font-bold">price:</dt>
+        <dd>$<%= item.price %>.00</dd>
+      </div>
+      <div class="flex gap-2">
+        <dt class="w-16 font-bold">cat:</dt>
+        <dd><%= displayCategory(item.id) %></dd>
+      </div>
+      <div class="flex gap-2">
+        <dt class="w-16 font-bold">size:</dt>
+        <dd><%= size %>.0</dd>
+      </div>
+      <div class="flex gap-2">
+        <dt class="w-16 font-bold"><label for="<%= item.id %>:<%= size %>">qty:</label></dt>
+        <dd>
+          <% if (checkout) { %>
+          <%= quantity %>
+          <% } else { %>
+          <select id="<%= item.id %>:<%= size %>" name="<%= item.id %>:<%= size %>" class="text-slate-800 update-qty">
+            <option value="1" <%= quantity === "1" ? "selected": "" %>>1</option>
+            <option value="2" <%= quantity === "2" ? "selected": "" %>>2</option>
+            <option value="3" <%= quantity === "3" ? "selected": "" %>>3</option>
+            <option value="4" <%= quantity === "4" ? "selected": "" %>>4</option>
+            <option value="5" <%= quantity === "5" ? "selected": "" %>>5</option>
+          </select>
+          <% } %>
+        </dd>
+      </div>
+    </dl>
+    <% if (checkout) { %>
+      <img
+        alt=""
+        style="display: none"
+        width="1"
+        height="1"
+        src="<%= register_trigger({item, size, quantity}) %>"
+      />
+    <% } else { %>
+    <div class="absolute top-0 right-0">
+      <button
+        class="remove-item"
+        data-name="<%= item.id %>:<%= size %>"
+        type="button"
+        class="flex justify-center items-center text-xl w-8 h-8"
+      >✖️</button>
+    </div>
+    <% } %>
+  </div>
+</li>
