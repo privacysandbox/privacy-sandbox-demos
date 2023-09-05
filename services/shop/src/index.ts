@@ -17,7 +17,7 @@
 import express, { Application, Request, Response } from "express"
 import session from "express-session"
 
-import { EXTERNAL_PORT, PORT, SHOP_DETAIL, SSP_HOST } from "./env.js"
+import { DSP_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, SSP_HOST } from "./env.js"
 import { Order, addOrder, displayCategory, fromSize, getItem, getItems, removeOrder, updateOrder } from "./lib/items.js"
 
 const app: Application = express()
@@ -82,8 +82,11 @@ app.get("/", async (req: Request, res: Response) => {
 app.get("/items/:id", async (req: Request, res: Response) => {
   const { id } = req.params
   const item = await getItem(id)
+  const dsp_tag = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`)
   res.render("item", {
-    item
+    item,
+    dsp_tag,
+    SHOP_HOST
   })
 })
 

@@ -15,7 +15,7 @@
  */
 import express from "express";
 import session from "express-session";
-import { EXTERNAL_PORT, PORT, SHOP_DETAIL, SSP_HOST } from "./env.js";
+import { DSP_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, SSP_HOST } from "./env.js";
 import { addOrder, displayCategory, fromSize, getItem, getItems, removeOrder, updateOrder } from "./lib/items.js";
 const app = express();
 app.set("trust proxy", 1); // required for Set-Cookie with Secure
@@ -66,8 +66,11 @@ app.get("/", async (req, res) => {
 app.get("/items/:id", async (req, res) => {
     const { id } = req.params;
     const item = await getItem(id);
+    const dsp_tag = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`);
     res.render("item", {
-        item
+        item,
+        dsp_tag,
+        SHOP_HOST
     });
 });
 app.post("/cart", async (req, res) => {

@@ -82,11 +82,10 @@
       <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
     </div>
     <script
-      src="https://privacy-sandbox-demos-dsp.dev/dsp-tag.js"
+      src="<%= dsp_tag %>"
       class="dsp_tag"
-      data-advertiser="privacy-sandbox-demos-shop.dev"
+      data-advertiser="<%= SHOP_HOST %>"
       data-id="<%= item.id %>"
-      data-nscript="afterInteractive"
     ></script>
   </body>
 </html>

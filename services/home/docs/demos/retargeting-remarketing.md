@@ -143,7 +143,6 @@ The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/p
   class="dsp_tag"
   data-advertiser="privacy-sandbox-demos-shop.dev"
   data-id="1f45e"
-  data-nscript="afterInteractive"
 ></script>
 ```
 
