@@ -14,8 +14,9 @@
  limitations under the License.
  */
 
-import express, { Application, Request, Response } from "express"
+import express, { NextFunction, Application, Request, Response } from "express"
 import session from "express-session"
+import FileStoreFactory from "session-file-store"
 
 import { DSP_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, SSP_HOST } from "./env.js"
 import { Order, addOrder, displayCategory, fromSize, getItem, getItems, removeOrder, updateOrder } from "./lib/items.js"
@@ -29,16 +30,27 @@ declare module "express-session" {
 }
 
 app.set("trust proxy", 1) // required for Set-Cookie with Secure
+
+// Due to express >= 4 changes, we need to pass express-session to the
+// function session-file-store exports in order to extend session.Store:
+const FileStore = FileStoreFactory(session)
+
+const oneDay = 1000 * 60 * 60 * 24
 app.use(
   session({
     name: "__HOST-session_id",
-    secret: "THIS IS SECRET FOR DEMO",
+    secret: "THIS IS SECRET FOR DEMO", // replace with your secret at build time.
     resave: false,
     saveUninitialized: true,
     cookie: {
       secure: true,
-      sameSite: "lax"
-    }
+      sameSite: "lax", // change to strict ? we don't plan to use this cookie in a third aprty context
+      maxAge: oneDay
+    },
+    store: new FileStore({
+      path: "./sessions",
+      ttl: 12 * 60 * 60
+    })
   })
 )
 
@@ -90,13 +102,21 @@ app.get("/items/:id", async (req: Request, res: Response) => {
   })
 })
 
-app.post("/cart", async (req: Request, res: Response) => {
+app.post("/cart", async (req: Request, res: Response, next: NextFunction) => {
   const { id, size, quantity } = req.body
   const item = await getItem(id)
   const order: Order = { item, size, quantity }
   const cart = addOrder(order, req.session.cart as Order[])
   req.session.cart = cart
-  res.redirect(303, "/cart")
+  // save the session before redirection to ensure page
+  // load does not happen before session is saved
+  req.session.save(function (err: Error) {
+    if (err) return next(err)
+    console.log("Save session before redirect")
+    console.log(req.session)
+    res.redirect(303, "/cart")
+  })
+  //res.redirect(303, "/cart")
 })
 
 app.get("/cart", async (req: Request, res: Response) => {
