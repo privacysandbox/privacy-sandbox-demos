@@ -15,10 +15,15 @@
  */
 import express from "express";
 import session from "express-session";
+import FileStoreFactory from "session-file-store";
 import { DSP_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, SSP_HOST } from "./env.js";
 import { addOrder, displayCategory, fromSize, getItem, getItems, removeOrder, updateOrder } from "./lib/items.js";
 const app = express();
 app.set("trust proxy", 1); // required for Set-Cookie with Secure
+// Due to express >= 4 changes, we need to pass express-session to the
+// function session-file-store exports in order to extend session.Store:
+const FileStore = FileStoreFactory(session);
+const oneDay = 1000 * 60 * 60 * 24;
 app.use(session({
     name: "__HOST-session_id",
     secret: "THIS IS SECRET FOR DEMO",
@@ -26,8 +31,13 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         secure: true,
-        sameSite: "lax"
-    }
+        sameSite: "lax",
+        maxAge: oneDay
+    },
+    store: new FileStore({
+        path: "./sessions",
+        ttl: 12 * 60 * 60
+    })
 }));
 app.use((req, res, next) => {
     // res.setHeader("Origin-Trial", NEWS_TOKEN as string)
@@ -73,13 +83,22 @@ app.get("/items/:id", async (req, res) => {
         SHOP_HOST
     });
 });
-app.post("/cart", async (req, res) => {
+app.post("/cart", async (req, res, next) => {
     const { id, size, quantity } = req.body;
     const item = await getItem(id);
     const order = { item, size, quantity };
     const cart = addOrder(order, req.session.cart);
     req.session.cart = cart;
-    res.redirect(303, "/cart");
+    // save the session before redirection to ensure page
+    // load does not happen before session is saved
+    req.session.save(function (err) {
+        if (err)
+            return next(err);
+        console.log("Save session before redirect");
+        console.log(req.session);
+        res.redirect(303, "/cart");
+    });
+    //res.redirect(303, "/cart")
 });
 app.get("/cart", async (req, res) => {
     const cart = req.session.cart;
