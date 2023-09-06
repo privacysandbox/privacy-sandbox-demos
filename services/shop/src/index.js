@@ -15,33 +15,32 @@
  */
 import express from "express";
 import session from "express-session";
-import FileStoreFactory from "session-file-store";
+import MemoryStoreFactory from "memorystore";
 import { DSP_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, SSP_HOST } from "./env.js";
 import { addOrder, displayCategory, fromSize, getItem, getItems, removeOrder, updateOrder } from "./lib/items.js";
 const app = express();
 app.set("trust proxy", 1); // required for Set-Cookie with Secure
 // Due to express >= 4 changes, we need to pass express-session to the
-// function session-file-store exports in order to extend session.Store:
-const FileStore = FileStoreFactory(session);
+// function memorystore exports in order to extend session.Store:
+const MemoryStore = MemoryStoreFactory(session);
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(session({
-    name: "__HOST-session_id",
+    name: "__session",
     secret: "THIS IS SECRET FOR DEMO",
     resave: false,
     saveUninitialized: true,
     cookie: {
         secure: true,
-        sameSite: "lax",
+        sameSite: "strict",
         maxAge: oneDay
     },
-    store: new FileStore({
-        path: "./sessions",
-        ttl: 12 * 60 * 60
+    store: new MemoryStore({
+        checkPeriod: oneDay
     })
 }));
 app.use((req, res, next) => {
     // res.setHeader("Origin-Trial", NEWS_TOKEN as string)
-    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Cache-Control", "private");
     if (!req.session.cart) {
         req.session.cart = [];
     }
@@ -94,8 +93,8 @@ app.post("/cart", async (req, res, next) => {
     req.session.save(function (err) {
         if (err)
             return next(err);
-        console.log("Save session before redirect");
-        console.log(req.session);
+        // console.log("Save session before redirect")
+        // console.log(req.session)
         res.redirect(303, "/cart");
     });
     //res.redirect(303, "/cart")
