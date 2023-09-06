@@ -163,7 +163,7 @@ steps:
       - |
         ENV_VARS=$(cat /workspace/env_vars.txt)
         echo $${ENV_VARS}
-        gcloud run deploy shop --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+        gcloud run deploy shop --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --session-affinity --set-env-vars "^@^$${ENV_VARS}"
 
   # SSP
   # Build the container image
