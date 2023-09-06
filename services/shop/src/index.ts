@@ -14,8 +14,9 @@
  limitations under the License.
  */
 
-import express, { Application, Request, Response } from "express"
+import express, { NextFunction, Application, Request, Response } from "express"
 import session from "express-session"
+import MemoryStoreFactory from "memorystore"
 
 import { DSP_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, SSP_HOST } from "./env.js"
 import { Order, addOrder, displayCategory, fromSize, getItem, getItems, removeOrder, updateOrder } from "./lib/items.js"
@@ -29,22 +30,32 @@ declare module "express-session" {
 }
 
 app.set("trust proxy", 1) // required for Set-Cookie with Secure
+
+// Due to express >= 4 changes, we need to pass express-session to the
+// function memorystore exports in order to extend session.Store:
+const MemoryStore = MemoryStoreFactory(session)
+
+const oneDay = 1000 * 60 * 60 * 24
 app.use(
   session({
-    name: "__HOST-session_id",
-    secret: "THIS IS SECRET FOR DEMO",
+    name: "__session", // https://firebase.google.com/docs/hosting/manage-cache#using_cookies
+    secret: "THIS IS SECRET FOR DEMO", // replace with your secret at build time.
     resave: false,
     saveUninitialized: true,
     cookie: {
       secure: true,
-      sameSite: "lax"
-    }
+      sameSite: "strict", // we don't plan to use this cookie in a third aprty context
+      maxAge: oneDay
+    },
+    store: new MemoryStore({
+      checkPeriod: oneDay
+    })
   })
 )
 
 app.use((req, res, next) => {
   // res.setHeader("Origin-Trial", NEWS_TOKEN as string)
-  res.setHeader("Cache-Control", "no-cache")
+  res.setHeader("Cache-Control", "private")
   if (!req.session.cart) {
     req.session.cart = []
   }
@@ -90,13 +101,21 @@ app.get("/items/:id", async (req: Request, res: Response) => {
   })
 })
 
-app.post("/cart", async (req: Request, res: Response) => {
+app.post("/cart", async (req: Request, res: Response, next: NextFunction) => {
   const { id, size, quantity } = req.body
   const item = await getItem(id)
   const order: Order = { item, size, quantity }
   const cart = addOrder(order, req.session.cart as Order[])
   req.session.cart = cart
-  res.redirect(303, "/cart")
+  // save the session before redirection to ensure page
+  // load does not happen before session is saved
+  req.session.save(function (err: Error) {
+    if (err) return next(err)
+    // console.log("Save session before redirect")
+    // console.log(req.session)
+    res.redirect(303, "/cart")
+  })
+  //res.redirect(303, "/cart")
 })
 
 app.get("/cart", async (req: Request, res: Response) => {
