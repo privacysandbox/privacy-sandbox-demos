@@ -227,6 +227,10 @@ app.get("/ad-tag.html", async (req, res) => {
   res.render("ad-tag.html.ejs")
 })
 
+app.get("/video-ad-tag.html", async (req, res) => {
+  res.render("video-ad-tag.html.ejs")
+})
+
 app.get("/reports", async (req, res) => {
   res.render("reports.html.ejs", { title: "Report", Reports })
 })

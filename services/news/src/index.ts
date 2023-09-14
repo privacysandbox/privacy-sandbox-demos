@@ -20,6 +20,10 @@ const { EXTERNAL_PORT, PORT, HOME_HOST, SSP_HOST, NEWS_TOKEN, NEWS_DETAIL } = pr
 
 const app: Application = express()
 
+const TITLE = NEWS_DETAIL
+const LOREM =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
 app.use((req, res, next) => {
   res.setHeader("Origin-Trial", NEWS_TOKEN as string)
   next()
@@ -29,20 +33,25 @@ app.set("view engine", "ejs")
 app.set("views", "src/views")
 
 app.get("/", async (req: Request, res: Response) => {
-  const title = NEWS_DETAIL
-  const lorem =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-
-  const params = {
-    title,
-    lorem,
+  res.render("index", {
+    title: TITLE,
+    lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     NEWS_TOKEN,
-    SSP_HOST
-  }
-  res.render("index", params)
+    SSP_HOST,
+  })
 })
+app.get("/video-ad", async (req: Request, res: Response) => {
+  res.render("video-ad", {
+    title: TITLE,
+    lorem: LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    NEWS_TOKEN,
+    SSP_HOST,
+  });
+});
 
 app.listen(PORT, async () => {
   console.log(`Listening on port ${PORT}`)
