@@ -47,12 +47,12 @@ steps:
         gcloud run deploy dsp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
   # HOME
   # Build the HTML files with docusaurus
-  - name: "node:lts"
+  - name: "node"
     id: npm-install-home
     waitFor: ["-"]
     entrypoint: "npm"
     args: ["--prefix", "services/home", "install"]
-  - name: "node:lts"
+  - name: "node"
     id: npm-run-build-home
     waitFor:
       - npm-install-home
