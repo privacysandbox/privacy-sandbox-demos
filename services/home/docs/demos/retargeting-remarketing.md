@@ -86,9 +86,9 @@ Advertiser-->>Browser:return DSP tags
 Browser->>DSP:browser loads scripts from DSP
 DSP-->>Browser:returns interest group configuration
 
-Browser-->>Browser:navigator.joinAdInterestGroup(...)
+Browser-)Browser:navigator.joinAdInterestGroup(...)
 
-Browser-)Publisher:visits a news  site
+Browser->>Publisher:visits a news  site
 Publisher-->>Browser:return SSP tags
 Browser->>SSP:browser loads scripts from SSP
 SSP-->>Browser:returns auction configuration
@@ -133,9 +133,9 @@ Note right of Browser:Scenario 1 stops here
 
 ### Implementation details
 
-#### In (2) How is the user added to an Interest Group based on his browsing behavior ?
+#### How is the user added to an Interest Group based on his browsing behavior ? (see step #2 of User Journey)
 
-The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/shop/app/items/%5Bid%5D/page.tsx#L58) from the DSP service. This is a third-party tag from the DSP service.
+The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/shop/src/index.ts#L93) from the DSP service. This is a third-party tag from the DSP service.
 
 ```html
 <script
@@ -146,7 +146,7 @@ The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/p
 ></script>
 ```
 
-This [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp/src/public/dsp-tag.js) dynamically embeds an iframe
+The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/dsp-tag.js#L17) dynamically embeds an iframe
 
 ```html
 <iframe
@@ -157,26 +157,24 @@ This [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/
 ></iframe>
 ```
 
-The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp/src/public/js/join-ad-interest-group.js) to join interest group using Protected Audience API
+The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L31) to join interest group using Protected Audience API
 
 ```js title="https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp/src/public/js/join-ad-interest-group.js"
 document.addEventListener("DOMContentLoaded", async (e) => {
-  // Protected Audience
-  const url = new URL(location.href)
-  const advertiser = url.searchParams.get("advertiser")
-  const id = url.searchParams.get("id")
-  const interestGroup = await getInterestGroup(advertiser, id)
+  if (navigator.joinAdInterestGroup === undefined) {
+    return console.log("[DEMO] Protected Audience API is not supported")
+  }
+  const interestGroup = await getInterestGroupFromServer()
+  console.log(`[DEMO] ${{ interestGroup }}`)
   const kSecsPerDay = 3600 * 24 * 30
-
-  // Join user into an interest group
-  await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay)
+  console.log(await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay))
 })
 ```
 
-This code sets up the interest groups options. Those options are fetched dynamically from [interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/dsp/src/index.ts#L50).
-Finally the code requests the browser to [join the interest group](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/dsp/src/public/js/join-ad-interest-group.js#L37)
+This code sets up the interest groups options. Those options are fetched dynamically from [interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/index.ts#L50).
+Finally the code requests the browser to [join the interest group](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L38)
 
-#### In (4) how do we serve an ad relevant to the user’s interest ?
+#### How do we serve an ad relevant to the user’s interest ? (see step #4 of User Journey)
 
 The news page [includes ad-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/news/src/views/index.ejs#L29)from the SSP service. This is a third-party tag from the SSP service.
 
@@ -233,20 +231,12 @@ Fenced Frame size (width and height) only allow pre-defined values, please refer
 The request to the `src` url[ returns the ad creative](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/ssp/src/index.js#L87) to be displayed
 
 ```html
-<a
-  width="300"
-  height="250"
-  target="_blank"
-  attributionsrc=""
-  href="https://privacy-sandbox-demos-ssp.dev/move?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45f"
->
-  <img
-    width="294"
-    height="245"
-    loading="lazy"
-    attributionsrc=""
-    src="https://privacy-sandbox-demos-ssp.dev/creative?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45f"
-  />
+<body>
+  <a width="300" height="250" target="_blank" attributionsrc="" href="https://privacy-sandbox-demos-ssp.dev/move?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45f">
+    <!-- smaller for avoid scrollbar -->
+    <img width="294" height="245" loading="lazy" attributionsrc="" src="https://privacy-sandbox-demos-ssp.dev/creative?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45f">
+  </a>
+
 </a>
 ```
 
