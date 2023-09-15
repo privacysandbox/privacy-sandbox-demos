@@ -183,7 +183,7 @@ app.get("/creative", async (req, res) => {
   }
 
   // redirect to advertisers Ads endpoint
-  res.redirect(`https://${advertiser}/api/ads/${id}`)
+  res.redirect(`https://${advertiser}/ads/${id}`)
 })
 
 app.get("/register-trigger", async (req, res) => {
