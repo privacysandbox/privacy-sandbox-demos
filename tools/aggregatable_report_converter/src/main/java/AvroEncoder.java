@@ -1,5 +1,4 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -75,19 +74,6 @@ public class AvroEncoder {
     } catch (Exception e){
       System.out.println(e);
     }
-  }
-
-  private static String getFileNameFromPath(String path){
-    // define the regular expression
-    Pattern pattern = Pattern.compile("(^\\/.+\\/)?(.*).json");
-
-    // match regular expression with the file path
-    Matcher matcher = pattern.matcher(path);
-    matcher.find();
-
-    String fileName = matcher.group(2);
-
-    return fileName;
   }
 
 }

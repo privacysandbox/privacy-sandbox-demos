@@ -29,17 +29,13 @@ public class AvroFileReader {
 
     while (dataFileReader.hasNext()){
       report = dataFileReader.next(report);
-      // System.out.println(report);
       ByteBuffer byteBuffer = (ByteBuffer) report.get("bucket");
       StringBuilder hexString = new StringBuilder();
       for (int i=0; i<byteBuffer.capacity(); i++){
         hexString.append(String.format("%02x", byteBuffer.get(i)));
       }
-      // System.out.println(hex);
       BigInteger bucket = new BigInteger(String.valueOf(hexString), 16);
-      // System.out.println(bucket);
       report.put("bucket", bucket);
-      // System.out.println(report);
       String reportString = report.toString();
       System.out.println(reportString);
       writer.write(reportString);
