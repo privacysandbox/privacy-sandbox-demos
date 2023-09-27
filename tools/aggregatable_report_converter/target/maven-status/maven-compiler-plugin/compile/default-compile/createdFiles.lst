@@ -1,0 +1,8 @@
+AggregatableReport.class
+Main.class
+HelpOption.class
+Tools.class
+OutputDomain.class
+AvroEncoder.class
+AvroFileReader.class
+Payload.class
