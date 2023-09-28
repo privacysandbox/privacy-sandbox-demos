@@ -27,7 +27,7 @@ Remarketing is a type of online advertising that allows you to show ads to peopl
 
 ### Privacy Sandbox APIs
 
-- [Protected Audience API](https://developer.chrome.com/en/docs/privacy-sandbox/fledge/)
+- [Protected Audience API](https://developer.chrome.com/docs/privacy-sandbox/protected-audience/)
 
 ### Related parties
 
@@ -61,7 +61,7 @@ Using Protected Audience API, the user visits a shopping site, and gets added to
 
 #### Protected Audience Flow
 
-Below is a general introduction of Remarketing using Privacy Sandbox Protected Audience API. For further information see [Protected Audience API - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/fledge/).
+Below is a general introduction of Remarketing using Privacy Sandbox Protected Audience API. For further information see [Protected Audience API - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/protected-audience/#overview).
 
 ![Protected Audience Flow](./img/retargeting-remarketing-flow.png)
 
@@ -160,6 +160,20 @@ The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9
 The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L31) to join interest group using Protected Audience API
 
 ```js title="https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp/src/public/js/join-ad-interest-group.js"
+// Protected Audience API
+async function getInterestGroupFromServer() {
+  const currentUrl = new URL(location.href)
+  const interestGroupUrl = new URL(location.origin)
+  interestGroupUrl.pathname = "/interest-group.json"
+  for (const searchParam of currentUrl.searchParams) {
+    interestGroupUrl.searchParams.append(searchParam[0], searchParam[1])
+  }
+  const res = await fetch(interestGroupUrl)
+  if (res.ok) {
+    return res.json()
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async (e) => {
   if (navigator.joinAdInterestGroup === undefined) {
     return console.log("[DEMO] Protected Audience API is not supported")
@@ -244,8 +258,8 @@ This code contains the `img` tag with `src` attribute specifying the product the
 
 ### Related API documentation
 
-- [Protected Audience API - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/fledge/)
-- [Protected Audience API: developer guide](https://developer.chrome.com/docs/privacy-sandbox/fledge-api/)
+- [Protected Audience API - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/protected-audience/)
+- [Protected Audience API: developer guide](https://developer.chrome.com/docs/privacy-sandbox/protected-audience-api/)
 
 </TabItem>
 </Tabs>
