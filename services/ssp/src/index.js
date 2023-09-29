@@ -90,7 +90,7 @@ app.get("/", async (req, res) => {
 
 app.get("/ads", async (req, res) => {
   const { advertiser, id } = req.query
-  console.log({ advertiser, id })
+  console.log("Loading frame content : ", { advertiser, id })
 
   const title = `Your special ads from ${advertiser}`
 
@@ -102,15 +102,20 @@ app.get("/ads", async (req, res) => {
   creative.searchParams.append("advertiser", advertiser)
   creative.searchParams.append("id", id)
 
-  res.render("ads.html.ejs", { title, move, creative })
+  const registerSource = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/register-source`)
+  registerSource.searchParams.append("advertiser", advertiser)
+  registerSource.searchParams.append("id", id)
+
+  res.render("ads.html.ejs", { title, move, creative, registerSource })
 })
 
-app.get("/move", async (req, res) => {
+app.get("/register-source", async (req, res) => {
   const { advertiser, id } = req.query
-  console.log({ advertiser, id })
-  const url = `https://${advertiser}/items/${id}`
+  console.log("Registering source attribution for", { advertiser, id })
   if (req.headers["attribution-reporting-eligible"]) {
     const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
+
+    // register navigation source
     if (are.includes("navigation-source")) {
       const destination = `https://${advertiser}`
       const source_event_id = sourceEventId()
@@ -137,21 +142,13 @@ app.get("/move", async (req, res) => {
         }
       }
 
-      console.log({ AttributionReportingRegisterSource })
+      console.log("Registering navigation source :", { AttributionReportingRegisterSource })
       res.setHeader("Attribution-Reporting-Register-Source", JSON.stringify(AttributionReportingRegisterSource))
+      res.status(200).send("attribution nevigation (click) source registered")
     }
-  }
 
-  res.redirect(302, url)
-})
-
-app.get("/creative", async (req, res) => {
-  const { advertiser, id } = req.query
-
-  if (req.headers["attribution-reporting-eligible"]) {
-    // TODO: better to add attributionsrc to <a> or other not <img> ?
-    const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
-    if (are.includes("event-source") && are.includes("trigger")) {
+    // register event source
+    else if (are.includes("event-source") && are.includes("trigger")) {
       const destination = `https://${advertiser}`
       const source_event_id = sourceEventId()
       const debug_key = debugKey()
@@ -177,10 +174,27 @@ app.get("/creative", async (req, res) => {
         }
       }
 
-      console.log({ AttributionReportingRegisterSource })
+      console.log("Registering event source :", { AttributionReportingRegisterSource })
       res.setHeader("Attribution-Reporting-Register-Source", JSON.stringify(AttributionReportingRegisterSource))
+      res.status(200).send("attribution event (view) source registered")
+    } else {
+      res.status(400).send("'Attribution-Reporting-Eligible' header is malformed") // just send back response header. no content.
     }
+  } else {
+    res.status(400).send("'Attribution-Reporting-Eligible' header is missing") // just send back response header. no content.
   }
+})
+
+app.get("/move", async (req, res) => {
+  const { advertiser, id } = req.query
+  //console.log({ advertiser, id })
+  const url = `https://${advertiser}/items/${id}`
+
+  res.redirect(302, url)
+})
+
+app.get("/creative", async (req, res) => {
+  const { advertiser, id } = req.query
 
   // redirect to advertisers Ads endpoint
   res.redirect(`https://${advertiser}/ads/${id}`)
