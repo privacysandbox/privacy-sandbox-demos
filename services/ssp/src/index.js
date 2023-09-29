@@ -18,6 +18,7 @@
 import express from "express"
 import url from "url"
 import cbor from "cbor"
+import { decodeDict } from "structured-field-values"
 import {
   debugKey,
   sourceEventId,
@@ -113,10 +114,11 @@ app.get("/register-source", async (req, res) => {
   const { advertiser, id } = req.query
   console.log("Registering source attribution for", { advertiser, id })
   if (req.headers["attribution-reporting-eligible"]) {
-    const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
+    //const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
+    const are = decodeDict(req.headers["attribution-reporting-eligible"])
 
     // register navigation source
-    if (are.includes("navigation-source")) {
+    if ("navigation-source" in are) {
       const destination = `https://${advertiser}`
       const source_event_id = sourceEventId()
       const debug_key = debugKey()
@@ -148,7 +150,7 @@ app.get("/register-source", async (req, res) => {
     }
 
     // register event source
-    else if (are.includes("event-source") && are.includes("trigger")) {
+    else if ("event-source" in are) {
       const destination = `https://${advertiser}`
       const source_event_id = sourceEventId()
       const debug_key = debugKey()
