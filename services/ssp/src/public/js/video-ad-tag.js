@@ -14,23 +14,22 @@
  limitations under the License.
 */
 
-
-(async () => {
-    const ins = document.querySelector('ins.ads')
-    const script = document.querySelector('.ssp_tag')
-    const src = new URL(script.src)
-    src.pathname = '/video-ad-tag.html'
-    const iframe = document.createElement('iframe')
-    iframe.width = 0
-    iframe.height = 0
-    iframe.src = src
-    iframe.setAttribute('allow', 'attribution-reporting; run-ad-auction')
-    ins.appendChild(iframe)
+;(async () => {
+  const ins = document.querySelector("ins.ads")
+  const script = document.querySelector(".ssp_tag")
+  const src = new URL(script.src)
+  src.pathname = "/video-ad-tag.html"
+  const iframe = document.createElement("iframe")
+  iframe.width = 0
+  iframe.height = 0
+  iframe.src = src
+  iframe.setAttribute("allow", "attribution-reporting; run-ad-auction")
+  ins.appendChild(iframe)
 })()
 
-window.addEventListener('message', (event) => {
-    if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) return
-    if (typeof event.data !== 'string') return
-    const {adVastUrl} = JSON.parse(event.data)
-    setUpIMA(adVastUrl)
+window.addEventListener("message", (event) => {
+  if (!event.origin.startsWith("https://privacy-sandbox-demos-dsp")) return
+  if (typeof event.data !== "string") return
+  const { adVastUrl } = JSON.parse(event.data)
+  setUpIMA(adVastUrl)
 })
