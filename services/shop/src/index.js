@@ -74,6 +74,14 @@ app.get("/", async (req, res) => {
     items
   })
 })
+// serves the static ads creative from shop site (redirected from ssp)
+app.get("/ads/:id", async (req, res) => {
+  const id = req.params.id
+  const imgPath = `/image/svg/emoji_u${id}.svg`
+  //res.set("Content-Type", "image/svg+xml")
+  console.log(`redirecting to /image/svg/emoji_u${id}.svg`)
+  res.redirect(301, imgPath)
+})
 app.get("/items/:id", async (req, res) => {
   const { id } = req.params
   const item = await getItem(id)

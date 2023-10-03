@@ -1,26 +1,26 @@
-
 #mainContainer {
   position: relative;
   width: 640px;
   height: 360px;
 }
-  
-#content, #adContainer {
+
+#content,
+#adContainer {
   position: absolute;
   top: 0px;
   left: 0px;
   width: 640px;
   height: 360px;
 }
-  
+
 #contentElement {
   width: 640px;
   height: 360px;
   overflow: hidden;
 }
-  
+
 #playButton {
-  margin-top:10px;
+  margin-top: 10px;
   vertical-align: top;
   width: 350px;
   height: 60px;

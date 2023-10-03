@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     return console.log("[DEMO] Protected Audience API is not supported")
   }
   const interestGroup = await getInterestGroupFromServer()
-  console.log(`[DEMO] ${{interestGroup}}`)
+  console.log(`[DEMO] ${{ interestGroup }}`)
   const kSecsPerDay = 3600 * 24 * 30
   console.log(await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay))
 

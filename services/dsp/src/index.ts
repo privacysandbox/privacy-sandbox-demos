@@ -58,7 +58,7 @@ app.get("/interest-group.json", async (req: Request, res: Response) => {
   ssp.searchParams.append("advertiser", advertiser as string)
   ssp.searchParams.append("id", id as string)
   const videoCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`)
-  const renderUrl = 'video' === adType ? videoCreative : ssp.toString()
+  const renderUrl = "video" === adType ? videoCreative : ssp.toString()
 
   const owner = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`)
   const biddingLogicUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`)
