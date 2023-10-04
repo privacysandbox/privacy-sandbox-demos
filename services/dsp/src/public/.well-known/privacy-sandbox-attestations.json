@@ -1,0 +1,39 @@
+{
+  "privacy_sandbox_api_attestations": [
+    {
+      "attestation_parser_version": "1",
+      "attestation_version": "1",
+      "privacy_policy": ["https://policies.google.com/privacy"],
+      "ownership_token": "yE67UyEyxUmBsz0y0hyeiU44CnbliMjMS93fnBgeb8Jlst1YbwYXAE5ucVige0eX",
+      "issued_seconds_since_epoch": 1691175921,
+      "expiry_seconds_since_epoch": 1706731521,
+      "enrollment_id": "UNRJE",
+      "platform_attestations": [
+        {
+          "platform": "chrome",
+          "attestations": {
+            "attribution_reporting_api": {
+              "ServiceNotUsedForReidentification": true
+            },
+            "shared_storage_api": {
+              "ServiceNotUsedForReidentification": true
+            },
+            "private_aggregation_api": {
+              "ServiceNotUsedForReidentification": true
+            },
+            "topics_api": {
+              "ServiceNotUsedForReidentification": true
+            },
+            "protected_audience_api": {
+              "ServiceNotUsedForReidentification": true
+            }
+          }
+        },
+        {
+          "platform": "android",
+          "attestations": {}
+        }
+      ]
+    }
+  ]
+}
