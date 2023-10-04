@@ -155,7 +155,7 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 #### how do we attribute the conversion to seeing an ad ? (see step #5 of User Journey)
 
 First on the Attribution Source registration side.
-Look at the [code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/views/ads.html.ejs#L27) displaying the ad creative
+Look at the [code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/views/ads.html.ejs#L29) displaying the ad creative
 
 ```html
 <a
@@ -190,7 +190,7 @@ In the HTTP response to the `/register-source` request, you will see a new heade
 }
 ```
 
-You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/ssp/src/index.js#L177) to see how the response header `Attribution-Reporting-Register-Source` was formed.
+You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/index.js#L113) to see how the response header `Attribution-Reporting-Register-Source` was formed.
 
 Second, on the Attribution Trigger side (=Conversion)
 The checkout page contains a 1 pixel image loaded from the code
@@ -217,7 +217,7 @@ Now using the Developers Tools, look at the HTTP response to the `/register-trig
 }
 ```
 
-You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/ssp/src/index.js#L185) to see how the response header `aggregatable_trigger_data` was formed.
+You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/index.js#L205) to see how the response header `aggregatable_trigger_data` was formed.
 
 ### Related API documentation
 
