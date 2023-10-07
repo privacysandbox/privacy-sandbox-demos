@@ -16,7 +16,7 @@
 
 import express, { Application, Request, Response } from "express"
 
-const { EXTERNAL_PORT, PORT, HOME_HOST, SSP_HOST, NEWS_TOKEN, NEWS_DETAIL } = process.env
+const { EXTERNAL_PORT, PORT, HOME_HOST, SSP_HOST, NEWS_TOKEN, NEWS_DETAIL, DSP_HOST } = process.env
 
 const app: Application = express()
 
@@ -39,7 +39,8 @@ app.get("/", async (req: Request, res: Response) => {
     EXTERNAL_PORT,
     HOME_HOST,
     NEWS_TOKEN,
-    SSP_HOST
+    SSP_HOST,
+    DSP_HOST
   })
 })
 app.get("/video-ad", async (req: Request, res: Response) => {
