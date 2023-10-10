@@ -1,5 +1,7 @@
+let dsp = document.currentScript.getAttribute('dsp');
 window.addEventListener("load", (event) => {
     let iframe = document.createElement('iframe');
-    iframe.src = "https://privacy-sandbox-demos-dsp.dev/private-aggregation";
+    // let dsp = document.currentScript.getAttribute('dsp');
+    iframe.src = `https://${dsp}/private-aggregation`;
     document.body.appendChild(iframe);
   });
