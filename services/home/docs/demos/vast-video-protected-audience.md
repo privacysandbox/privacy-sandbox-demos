@@ -157,7 +157,7 @@ The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9
 </iframe>
 ```
 
-The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L31) to join interest group using Protected Audience API
+The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L18) to join interest group using Protected Audience API
 
 ```js title="https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/dsp/src/public/js/join-ad-interest-group.js"
 // Protected Audience API
@@ -191,7 +191,7 @@ Finally the code requests the browser to [join the interest group](https://githu
 
 #### How do we serve a video ad relevant to the user’s interest ? (see step #4 of User Journey)
 
-The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes an embedded video player and related video scripts. It also [includes video-ad-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/public/js/video-ad-tag.js) from the SSP service. This is a third-party tag from the SSP service.
+The [news video page](https://privacy-sandbox-demos-news.dev/news/video-ad) includes an embedded video player and related video scripts. It also [includes video-ad-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js) from the SSP service. This is a third-party tag from the SSP service.
 
 ```html
 <div id="mainContainer">
@@ -213,7 +213,7 @@ The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes 
 </ins>
 ```
 
-[Video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/public/js/video-ad-tag.js) will inject an iframe containing [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/views/video-ad-tag.html.ejs) and setup an [event listener to receive the adVastUrl](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L31) broadcast.
+[Video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js#L27) will inject an iframe containing [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) and setup an [event listener to receive the adVastUrl](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L31) broadcast.
 
 ```js
 (async () => {
@@ -237,7 +237,7 @@ window.addEventListener("message", (event) => {
 })
 ```
 
-The injected [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/views/video-ad-tag.html.ejs) iframe contains [run-video-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/public/js/run-video-ad-auction.js) which executes the auction and [injects the video ad result as an iframe](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/run-video-ad-auction.js#L37) to the page.
+The injected [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) iframe contains [run-video-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/run-video-ad-auction.js) which executes the auction and [injects the video ad result as an iframe](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/run-video-ad-auction.js#L37) to the page.
 
 ```html
 <!-- Video Ad HTML Returned From Protected Audience Auction --->
@@ -250,7 +250,7 @@ The injected [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandb
 </html>
 ```
 
-The video-ad-creative.js script contains the DSP Video Ad Creative URL and adVastURL. Using post message this will be broadcast back out to the original event listener found in [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/views/video-ad-tag.html.ejs) provided by the SSP and [setUpIMA(adVastUrl)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L35) is executed.
+The video-ad-creative.js script contains the DSP Video Ad Creative URL and adVastURL. Using post message this will be broadcast back out to the original event listener found in [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) provided by the SSP and [setUpIMA(adVastUrl)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L35) is executed.
 
 ```javascript
 (async () => {
