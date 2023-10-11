@@ -12,6 +12,7 @@ Check the [deployment guide](https://github.com/privacysandbox/privacy-sandbox-d
 
 |         **Category**          |                                **Use Case**                                |            **Privacy Sandbox APIs**            |        **Relevant for**         |
 | :---------------------------: | :------------------------------------------------------------------------: | :--------------------------------------------: | :-----------------------------: |
+| Show Relevant Video Ads       |            [VAST Video Protected Audience](vast-video-protected-audience)  |             Protected Audience API             | Publisher, SSP, Advertiser, DSP |
 | Show Relevant Content and Ads |            [Retargeting / Remarketing](retargeting-remarketing)            |             Protected Audience API             | Publisher, SSP, Advertiser, DSP |
 |      Measure Digital Ads      | [Single-touch conversion Attribution](single-touch-conversion-attribution) | Attribution Reporting API, Aggregation Service | Publisher, SSP, Advertiser, DSP |
 

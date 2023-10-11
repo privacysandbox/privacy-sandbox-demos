@@ -216,7 +216,7 @@ The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes 
 [Video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/public/js/video-ad-tag.js) will inject an iframe containing [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/views/video-ad-tag.html.ejs) and setup an [event listener to receive the adVastUrl](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L31) broadcast.
 
 ```js
-;(async () => {
+(async () => {
   const ins = document.querySelector("ins.ads")
   const script = document.querySelector(".ssp_tag")
   const src = new URL(script.src)
@@ -253,7 +253,7 @@ The injected [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandb
 The video-ad-creative.js script contains the DSP Video Ad Creative URL and adVastURL. Using post message this will be broadcast back out to the original event listener found in [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ssp/src/views/video-ad-tag.html.ejs) provided by the SSP and [setUpIMA(adVastUrl)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L35) is executed.
 
 ```javascript
-;(async () => {
+(async () => {
   const data = {
     adVastUrl:
       "https://pubads.g.doubleclick.net/gampad/ads?" +
