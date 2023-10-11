@@ -1,0 +1,33 @@
+{
+	"id": "dbf57fdf-c8e1-4b3b-8fca-6ca432cb3632",
+	"values": [
+		{
+			"key": "access_key",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "secret_key",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "frontend_api_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "region",
+			"value": "us-east-1",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2023-10-11T08:26:44.331Z",
+	"_postman_exported_using": "Postman/10.18.10-231005-0655"
+}
