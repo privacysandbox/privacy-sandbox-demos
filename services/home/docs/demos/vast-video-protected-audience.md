@@ -191,7 +191,7 @@ Finally the code requests the browser to [join the interest group](https://githu
 
 #### How do we serve a video ad relevant to the user’s interest ? (see step #4 of User Journey)
 
-The [news video page](https://privacy-sandbox-demos-news.dev/news/video-ad) includes an embedded video player and related video scripts. It also [includes video-ad-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js) from the SSP service. This is a third-party tag from the SSP service.
+The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes an embedded video player and related video scripts. It also [includes video-ad-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js) from the SSP service. This is a third-party tag from the SSP service.
 
 ```html
 <div id="mainContainer">
