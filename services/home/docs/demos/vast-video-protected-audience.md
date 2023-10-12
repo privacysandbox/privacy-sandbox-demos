@@ -157,7 +157,7 @@ The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9
 </iframe>
 ```
 
-The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L31) to join interest group using Protected Audience API
+The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L18) to join interest group using Protected Audience API
 
 ```js title="https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/dsp/src/public/js/join-ad-interest-group.js"
 // Protected Audience API
@@ -213,7 +213,7 @@ The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes 
 </ins>
 ```
 
-[Video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js) will inject an iframe containing [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) and setup an [event listener to receive the adVastUrl](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js#L30) broadcast.
+[Video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js#L27) will inject an iframe containing [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) and setup an [event listener to receive the adVastUrl](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L31) broadcast.
 
 ```js
 ;(async () => {
