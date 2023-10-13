@@ -86,28 +86,7 @@ app.set("views", "src/views")
 
 app.get("/", async (req, res) => {
   const title = SSP_DETAIL
-  res.render("index.html.ejs", { title, SSP_HOST, EXTERNAL_PORT, SHOP_HOST })
-})
-
-app.get("/ads", async (req, res) => {
-  const { advertiser, id } = req.query
-  console.log("Loading frame content : ", { advertiser, id })
-
-  const title = `Your special ads from ${advertiser}`
-
-  const move = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/move`)
-  move.searchParams.append("advertiser", advertiser)
-  move.searchParams.append("id", id)
-
-  const creative = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/creative`)
-  creative.searchParams.append("advertiser", advertiser)
-  creative.searchParams.append("id", id)
-
-  const registerSource = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/register-source`)
-  registerSource.searchParams.append("advertiser", advertiser)
-  registerSource.searchParams.append("id", id)
-
-  res.render("ads.html.ejs", { title, move, creative, registerSource })
+  res.render("index.html.ejs", { title, DSP_HOST, SSP_HOST, EXTERNAL_PORT, SHOP_HOST })
 })
 
 app.get("/register-source", async (req, res) => {
@@ -185,21 +164,6 @@ app.get("/register-source", async (req, res) => {
   } else {
     res.status(400).send("'Attribution-Reporting-Eligible' header is missing") // just send back response header. no content.
   }
-})
-
-app.get("/move", async (req, res) => {
-  const { advertiser, id } = req.query
-  //console.log({ advertiser, id })
-  const url = `https://${advertiser}/items/${id}`
-
-  res.redirect(302, url)
-})
-
-app.get("/creative", async (req, res) => {
-  const { advertiser, id } = req.query
-
-  // redirect to advertisers Ads endpoint
-  res.redirect(`https://${advertiser}/ads/${id}`)
 })
 
 app.get("/register-trigger", async (req, res) => {

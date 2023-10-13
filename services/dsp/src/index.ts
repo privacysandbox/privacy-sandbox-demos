@@ -42,8 +42,34 @@ app.use(
     }
   })
 )
+
+app.use((req, res, next) => {
+  // opt-in fencedframe
+  if (req.get("sec-fetch-dest") === "fencedframe") {
+    res.setHeader("Supports-Loading-Mode", "fenced-frame")
+  }
+  next()
+})
+
 app.set("view engine", "ejs")
 app.set("views", "src/views")
+
+app.get("/ads", async (req, res) => {
+  const { advertiser, id } = req.query
+  console.log("Loading frame content : ", { advertiser, id })
+
+  const title = `Your special ads from ${advertiser}`
+
+  const move = new URL(`https://${advertiser}:${EXTERNAL_PORT}/items/${id}`)
+
+  const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}/ads/${id}`)
+
+  const registerSource = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/register-source`)
+  registerSource.searchParams.append("advertiser", advertiser as string)
+  registerSource.searchParams.append("id", id as string)
+
+  res.render("ads.html.ejs", { title, move, creative, registerSource })
+})
 
 app.get("/join-ad-interest-group.html", async (req: Request, res: Response) => {
   const title = "Join Ad Interest Group"
@@ -56,12 +82,11 @@ app.get("/interest-group.json", async (req: Request, res: Response) => {
     return res.sendStatus(400)
   }
 
-  // FIXME: Render URL in interest group should be from DSP_HOST.
-  const ssp = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/ads`)
-  ssp.searchParams.append("advertiser", advertiser as string)
-  ssp.searchParams.append("id", id as string)
+  const imageCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/ads`)
+  imageCreative.searchParams.append("advertiser", advertiser as string)
+  imageCreative.searchParams.append("id", id as string)
   const videoCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`)
-  const renderUrl = "video" === adType ? videoCreative : ssp.toString()
+  const renderUrl = adType === "video" ? videoCreative : imageCreative.toString()
 
   const owner = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`)
   const biddingLogicUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`)
