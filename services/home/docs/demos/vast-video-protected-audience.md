@@ -121,10 +121,10 @@ deactivate iframe
 
 ### User Journey #1
 
-1. [Navigate to shop site](https://privacy-sandcastle-shop.dev/) (advertiser)
+1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on a “shoe” product item on the shop site. Append ?adType=video to the product page url and refresh the page.
    - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the browser to join an ad interest group for this product or this specific product category.
-3. [Navigate to the news site video page](https://privacy-sandcastle-news.dev/video-ad) (publisher)
+3. [Navigate to the news site video page](https://privacy-sandbox-demos-news.dev/video-ad) (publisher)
 4. Scroll to the embedded video player and click ‘Play Content’. Observe the video ad pre-roll served on the news sites embedded player.
    - When the page was loaded, Protected Audience API allowed the SSP to run an ad auction on the publisher site.
    - The winning advertiser of this ad auction gets their video ad creative displayed on the publisher site within the embedded video player.
