@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Setup and Running locally
 
 ## Prerequisites
@@ -21,7 +17,7 @@ The following packages must be installed
 
 ### Domain Name / URL
 
-Privacy Sandbox APIs use the domain name in the URL (site origin) to allow/block cross-site data sharing, observe topics, etc. As a result developers cannot rely on the “localhost” domain for development.
+Privacy Sandbox APIs use the domain name in the URL (site origin) to allow/block cross-site data sharing, observe topics, etc. As a result developers cannot rely only on the “localhost” domain for development.
 
 You will re-map individual domain names to loopback address (127.0.0.1), so that each service running on your local environment can be accessed via a URL, such as:
 
@@ -69,7 +65,7 @@ google_chrome --host-resolver-rules="MAP privacy-sandbox-demos-* 127.0.0.1"
 
 `https://` protocol requires a valid certificate for your browser. To get a valid certificate, use mkcert to create a local certification authority that will be trusted by your local browser. Later you will be creating a certificate for each of the Privacy Sandbox Demos services and configure nginx to serve those certificates.
 
-Run the command below to create the development Certificate Authority:
+Run the command below _with your current user (not root !)_ to create the development Certificate Authority:
 
 ```shell
 mkcert -install
@@ -84,7 +80,7 @@ mkcert -install
 
 ### Setup .env file
 
-Edit `.env` file to match the `${SERVICE}_HOST` parameter to the content of the `/etc/hosts` configuration.
+Edit `.env` file. For each`${SERVICE}_HOST` key, set a value matching the content of the `/etc/hosts` configuration. (if you are fine with the default site name, you don’t need to edit the file)
 
 Example with the domain `privacy-sandbox-demos-${SERVICE}.dev`
 
@@ -111,22 +107,9 @@ NEWS_DETAIL="Publisher: News media site"
 ...
 ```
 
-On the same file `.env` update the Origin Trial token on dsp and ssp service to match yours
-
-```sh
-# Adtech
-## dsp
-DSP_HOST=privacy-sandbox-demos-dsp.dev
-DSP_TOKEN="xxxxx"
-DSP_DETAIL="Ad-Platform: DSP for advertiser"
-
-## ssp
-SSP_HOST=privacy-sandbox-demos-ssp.dev
-SSP_TOKEN="xxxxx"
-SSP_DETAIL="Ad-Platform: SSP for publisher"
-```
-
 ### Run setup scripts
+
+From the project **root folder** run :
 
 ```sh
 # Download packages and dependencies :
@@ -140,7 +123,7 @@ $ npm run cert
 
 Build the html static files that will be served by the home web server. The build process uses `docusaurus`.
 
-From the project root folder, **navigate to `services/home**` and run :
+From the project root folder, **navigate to `services/home`** folder and run :
 
 ```sh
 # Download package and dependencies (docusaurus)
@@ -203,7 +186,16 @@ sudo docker container rm sandcastle_shop
 
 ## Clean your docker images & containers
 
-There might be some situation where your local image registry is corrupted, inconsistent, or has accumulated too many unused images. You can take a fresh start by cleaning your local images.
+After node dependency updates or major updates, you will need to clean your container images and volumes. There might be some situation where your local image registry is corrupted, inconsistent, or has accumulated too many unused images. You can take a fresh start by cleaning your local images.
+
+Execute the following commands from the project root directory :
+
+```sh
+# prune docker images and volumes
+sudo npm run clean
+```
+
+if it does not work, you can troubleshoot by running the following commands one at a time.
 
 Remove any stopped containers and all unused images (not just dangling images) :
 
