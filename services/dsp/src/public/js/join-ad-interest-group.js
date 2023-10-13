@@ -15,28 +15,25 @@
  */
 
 // Protected Audience API
-async function getInterestGroup(advertiser, id) {
-  const url = new URL(location.origin)
-  url.pathname = "/interest-group.json"
-  url.searchParams.append("id", id)
-  url.searchParams.append("advertiser", advertiser)
-  const res = await fetch(url)
-  return res.json()
+async function getInterestGroupFromServer() {
+  const currentUrl = new URL(location.href)
+  const interestGroupUrl = new URL(location.origin)
+  interestGroupUrl.pathname = "/interest-group.json"
+  for (const searchParam of currentUrl.searchParams) {
+    interestGroupUrl.searchParams.append(searchParam[0], searchParam[1])
+  }
+  const res = await fetch(interestGroupUrl)
+  if (res.ok) {
+    return res.json()
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async (e) => {
   if (navigator.joinAdInterestGroup === undefined) {
-    return console.log("Protected Audience API is not supported")
+    return console.log("[DEMO] Protected Audience API is not supported")
   }
-
-  // Protected Audience API
-  const url = new URL(location.href)
-  const advertiser = url.searchParams.get("advertiser")
-  const id = url.searchParams.get("id")
-
-  const interestGroup = await getInterestGroup(advertiser, id)
-  console.log({ interestGroup })
-
+  const interestGroup = await getInterestGroupFromServer()
+  console.log(`[DEMO] ${{ interestGroup }}`)
   const kSecsPerDay = 3600 * 24 * 30
   console.log(await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay))
 

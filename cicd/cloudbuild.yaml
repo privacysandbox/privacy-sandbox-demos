@@ -1,0 +1,334 @@
+steps:
+  - name: "bash"
+    id: read-env
+    waitFor: ["-"]
+    env:
+      - "PROJECT_ENV=$_PROJECT_ENV"
+    script: |
+      #!/usr/bin/env bash
+
+      ENV_VARS=$(cat cicd/.env.${PROJECT_ENV} | grep "=" | grep -v "^PORT=" | sed '/^$/d' | tr "\n" "@")
+      echo ${ENV_VARS}
+      echo ${ENV_VARS} > /workspace/env_vars.txt
+  # DSP
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-dsp
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA",
+        "services/dsp"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-dsp
+    waitFor:
+      - build-dsp
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-dsp
+    waitFor:
+      - push-dsp
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy dsp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+  # HOME
+  # Build the HTML files with docusaurus
+  - name: "node"
+    id: npm-install-home
+    waitFor: ["-"]
+    entrypoint: "npm"
+    args:
+      [
+        "--prefix",
+        "services/home",
+        "install"
+      ]
+  - name: "node"
+    id: npm-run-build-home
+    waitFor:
+      - npm-install-home
+    entrypoint: "npm"
+    args:
+      [
+        "--prefix",
+        "services/home",
+        "run",
+        "build"
+      ]
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-home
+    waitFor:
+      - npm-run-build-home
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA",
+        "services/home"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-home
+    waitFor:
+      - build-home
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-home
+    waitFor:
+      - push-home
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy home --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+  # NEWS
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-news
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA",
+        "services/news"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-news
+    waitFor:
+      - build-news
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-news
+    waitFor:
+      - push-news
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy news --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # SHOP
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-shop
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA",
+        "services/shop"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-shop
+    waitFor:
+      - build-shop
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-shop
+    waitFor:
+      - push-shop
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy shop --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --session-affinity --set-env-vars "^@^$${ENV_VARS}"
+
+  # SSP
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-ssp
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA",
+        "services/ssp"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-ssp
+    waitFor:
+      - build-ssp
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-ssp
+    waitFor:
+      - push-ssp
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy ssp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # TRAVEL
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-travel
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA",
+        "services/travel"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-travel
+    waitFor:
+      - build-travel
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-travel
+    waitFor:
+      - push-travel
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy travel --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # TOPICS
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-topics
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA",
+        "services/topics"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-topics
+    waitFor:
+      - build-topics
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-topics
+    waitFor:
+      - push-topics
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy topics --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # TOPICS-SERVER
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-topics-server
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA",
+        "services/topics-server"
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-topics-server
+    waitFor:
+      - build-topics-server
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA"
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-topics-server
+    waitFor:
+      - push-topics-server
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy topics-server --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+images:
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA"
+
+options:
+  machineType: "E2_HIGHCPU_8"

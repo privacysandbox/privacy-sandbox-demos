@@ -1,7 +1,3 @@
----
-sidebar_position: 2
----
-
 # Google Cloud Platform project deployment guide
 
 The instructions below allow you to deploy Privacy Sandbox Demos on a new Google Cloud Platform project.
@@ -145,7 +141,7 @@ scripts/firebase_setup.sh
 
 ## Google Cloud Platform Logging and Monitoring
 
-We recommend to Enable Cloud Logging for Firebase Hosting Project.
+We recommend Enable Cloud Logging for the Firebase Hosting Project.
 
 By using Cloud Logging with your Firebase Hosting sites, you allow web request logs to be exported to Cloud Logging.
 
@@ -155,19 +151,17 @@ https://firebase.corp.google.com/project/_privacy-sandbox-demos_/settings/integr
 
 Select all the sites you want to export logs from, click Save and Finish.
 
-## Serve dynamic content and host microservices with Cloud Run
+## Install Google Cloud SDK & Enable the Google Cloud Run API
 
 Next you will deploy containers to Cloud Run to run the content of the demo sites.
 
 For our architecture, we chose to deploy everything container based for portability and flexibility and to use Firebase hosting as a frontend solution for HTTPS request handling, domain name and ssl certificates.
 
-### Install Google Cloud SDK & Enable the Google Cloud Run API
-
 Install Google Cloud SDK : If Google Cloud SDK is not installed on the machine, follow instructions here : https://cloud.google.com/sdk/docs/install#linux
 
 Initialize Google Cloud SDK : https://cloud.google.com/sdk/docs/initializing
 
-```sh
+```shell
 # Run `gcloud init` to setup authentication and project
 gcloud init
 
@@ -177,24 +171,20 @@ gcloud config set project
 
 # Verify your configuration (account and project) with the command :
 gcloud config list
+
+# Enable Cloud Run API
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+
+# Setup the default region for deployment
+gcloud config set run/region us-central1
 ```
 
 Resources : https://firebase.google.com/docs/hosting/cloud-run
 
-### Enable the APIs
-Enable Cloud Run API & Cloud Build API & Artifact Registry
+## Setup Artifact Registry
 
-```sh
-gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
-```
-
-Setup the default region for deployment
-
-```sh
-gcloud config set run/region us-central1
-```
-
-### Setup Artifact Registry
+https://cloud.google.com/artifact-registry/docs/enable-service
+https://cloud.google.com/artifact-registry/docs/transition/setup-repo
 
 ```sh
 # create docker repository in Cloud Artifact Registry
@@ -215,18 +205,36 @@ confirm repository exists with
 gcloud artifacts repositories list
 ```
 
-Resources :
-- https://cloud.google.com/artifact-registry/docs/enable-service
-- https://cloud.google.com/artifact-registry/docs/transition/setup-repo
+[optional] configure authentication for your docker client
+
+```sh
+gcloud auth configure-docker us-central1-docker.pkg.dev
+```
+
+Enable Vulnerability Scanning : navigate to settings and Turn On.
+https://console.cloud.google.com/artifacts/settings
+## Setup Cloud Build
+
+https://cloud.google.com/build/docs/deploying-builds/deploy-cloud-run
+
+Enable Cloud Build Service Account permissions :
+Cloud Run Admin
+Service Account User
+
+From Cloud Build Settings page : https://console.cloud.google.com/cloud-build/settings/service-account
+
+or from IAM page :
+
+https://console.cloud.google.com/iam-admin/iam
 
 ## Deploy all Cloud Run services and Firebase Sites
 
-You are ready to deploy all the services and hosting sites.
+Once you have confirmed you can deploy a sample demo application on Cloud Run and access it from Firebase hosting site, you are ready to deploy all the services and hosting sites.
 
-Edit `services/.env` file to match the `${SERVICE}_HOST` parameter to your firebase hosting domain e.g. : `privacy-sandbox-demos-${SERVICE}.dev`
+Edit `cicd/.env.prod` file to match the `${SERVICE}_HOST` parameter to your firebase hosting domain e.g. : `privacy-sandbox-demos-${SERVICE}.dev`
 
 ```shell
-# services/.env
+# cicd/.env.prod
 
 # External Port (bind by Nginx)
 EXTERNAL_PORT=443
@@ -248,26 +256,11 @@ NEWS_DETAIL="Publisher: News media site"
 ...
 ```
 
-On the same file `services/.env` update the Origin Trial token on dsp and ssp service to match yours
-
-```shell
-# Adtech
-## dsp
-DSP_HOST=privacy-sandbox-demos-dsp.dev
-DSP_TOKEN="xxxxx"
-DSP_DETAIL="Ad-Platform: DSP for advertiser"
-
-## ssp
-SSP_HOST=privacy-sandbox-demos-ssp.dev
-SSP_TOKEN="xxxxx"
-SSP_DETAIL="Ad-Platform: SSP for publisher"
-```
-
 Copy the `.env.deploy.template` to `.env.deploy` file then edit .env.deploy to update the GCP Project Name and the Firebase domain prefix you will use to deploy your services :
 
 ```sh
 GCP_PROJECT_NAME=xxx
-FIREBASE_HOSTING_DOMAIN=privacy-sandbox-demos
+FIREBASE_HOSTING_DOMAIN=**_privacy-sandbox-demos_**
 ```
 
 Execute `./scripts/cloudrun_deploy.sh` to build and deploy services with Cloud Build and deploy to Cloud Run.

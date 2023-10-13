@@ -29,7 +29,6 @@ Single-touch attribution models are easy to understand and implement, and they c
 ### Privacy Sandbox APIs
 
 - [Attribution Reporting API](https://developer.chrome.com/en/docs/privacy-sandbox/attribution-reporting/)
-- [Aggregation Service](https://developer.chrome.com/docs/privacy-sandbox/aggregation-service/)
 
 ### Related parties
 
@@ -109,8 +108,8 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 ### Prerequisites
 
-- Chrome > v107 (Open chrome://version to look up your current version)
-- Enable Privacy Sandbox APIs (Open chrome://settings/privacySandbox to enable this setting)
+- Chrome > v115 (Open chrome://version to look up your current version)
+- Enable Privacy Sandbox APIs (Open chrome://settings/adPrivacy to enable this setting)
 - Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
 - Open chrome://attribution-internals and click “Clear all attribution data”
 
@@ -125,12 +124,12 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 4. Observe the ad served on the news site
 
 - If you previously browsed the “shoe” product on the shop site, you will be shown an ad for the same product.
-- Displaying the ad will also register a view-through conversion **source** event into your browser using the **Attribution Reporting API**.
+- Displaying the ad will also register an attribution **source** of type **event** into your browser using the **Attribution Reporting API** (used for view-through conversion measurement)
 
 5. Click on the ad served on the news site
 
 - your browser will open a new window with the product page
-- Clicking the ad will also register a click-through conversion **source** event into your browser using the **Attribution Reporting API**.
+- Clicking the ad will also register an attribution **source** of type **navigation** into your browser using the **Attribution Reporting API** (used for click-through conversion measurement)
 
 6. Navigate to chrome://attribution-internals/ and click the `Active Sources` tab
 
@@ -140,7 +139,7 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 8. On the cart page, click “Checkout”
 
 - In this scenario the “checkout” event is the conversion event the advertiser wants to measure to evaluate the performance of their ad campaign,
-- The checkout page registers a conversion attribution **trigger** event in the browser. The **Attribution Reporting API** logic will then process the event.
+- The checkout page **triggers** the conversion attribution for the `source` whose eTLD+1 matches the eTLD+1 of the site provided in `destination` (here privacy-sandbox-demos-shop.dev) . The **Attribution Reporting API** logic will then process the event.
 
 9. Navigate to chrome://attribution-internals/ and click the `Trigger Registration` tab
 
@@ -153,34 +152,34 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 ### Implementation details
 
-#### In (5) how do we attribute the conversion to seeing an ad ?
+#### how do we attribute the conversion to seeing an ad ? (see step #5 of User Journey)
 
 First on the Attribution Source registration side.
-Look at the [code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp/src/views/ads.html.ejs) displaying the ad creative
+Look at the [code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/views/ads.html.ejs#L29) displaying the ad creative
 
 ```html
 <a
   width="300"
   height="250"
   target="_blank"
-  attributionsrc=""
-  href="https://privacy-sandbox-demos-ssp.dev/move?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
+  attributionsrc="https://privacy-sandbox-demos-ssp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
+  href="https://privacy-sandbox-demos-ssp.dev/move?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
 >
+  <!-- smaller for avoid scrollbar -->
   <img
     width="294"
     height="245"
     loading="lazy"
-    attributionsrc=""
-    src="https://privacy-sandbox-demos-ssp.dev/creative?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
+    attributionsrc="https://privacy-sandbox-demos-ssp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
+    src="
+         https://privacy-sandbox-demos-ssp.dev/creative?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
   />
 </a>
 ```
 
-The `img` tag also specifies the `attributionsrc` attribute. It means that showing this ad will register a view-through attribution source event in the browser.
-
-Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with the value `event-source, trigger`.
-
-In the HTTP response to the `/creative` request, you will see a new header `Attribution-Reporting-Register-Source:` with a value that contains the attribution source parameters.
+The `img` tag also specifies the `attributionsrc` attribute. It means that showing this ad will register an attribution source of type `event` in the browser.
+Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with the value `event-source, trigger`
+In the HTTP response to the `/register-source` request, you will see a new header `Attribution-Reporting-Register-Source:` with a value that contains the attribution source parameters.
 
 ```json
 {
@@ -191,7 +190,7 @@ In the HTTP response to the `/creative` request, you will see a new header `Attr
 }
 ```
 
-You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/ssp/src/index.js#L177) to see how the response header `Attribution-Reporting-Register-Source` was formed.
+You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/index.js#L113) to see how the response header `Attribution-Reporting-Register-Source` was formed.
 
 Second, on the Attribution Trigger side (=Conversion)
 The checkout page contains a 1 pixel image loaded from the code
@@ -218,12 +217,12 @@ Now using the Developers Tools, look at the HTTP response to the `/register-trig
 }
 ```
 
-You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/ssp/src/index.js#L185) to see how the response header `aggregatable_trigger_data` was formed.
+You can also refer to the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/index.js#L205) to see how the response header `aggregatable_trigger_data` was formed.
 
 ### Related API documentation
 
 - [Attribution Reporting - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/)
-- [Handbook (Experiment with Attribution Reporting)](https://docs.google.com/document/d/1BXchEk-UMgcr2fpjfXrQ3D8VhTR-COGYS1cwK_nyLfg/view)
+- [Attribution Reporting - Developer Guide](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/developer-guide/)
 - [Set up debug reports - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting-debugging/part-2/)
 
 </TabItem>

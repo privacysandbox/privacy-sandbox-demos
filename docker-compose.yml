@@ -7,6 +7,8 @@ volumes:
   travel_node_modules:
   dsp_node_modules:
   ssp_node_modules:
+  topics_node_modules:
+  topics-server_node_modules:
 
 services:
   home:
@@ -89,6 +91,30 @@ services:
     networks:
       - adnetwork
 
+  topics:
+    image: gcr.io/privacy-sandbox-demos/topics:latest
+    build: ./services/topics
+    container_name: "sandcastle_topics"
+    env_file:
+      - .env
+    volumes:
+      - ./services/topics:/workspace
+      - topics_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  topics-server:
+    image: gcr.io/privacy-sandbox-demos/topics-server:latest
+    build: ./services/topics-server
+    container_name: "sandcastle_topics-server"
+    env_file:
+      - .env
+    volumes:
+      - ./services/topics-server:/workspace
+      - topics-server_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
   nginx:
     image: nginx:1.22.1-alpine
     container_name: "proxy"
@@ -114,6 +140,8 @@ services:
       - ssp
       - dsp
       - collector
+      - topics
+      - topics-server
 
 networks:
   adnetwork:

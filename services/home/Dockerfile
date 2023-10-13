@@ -14,7 +14,7 @@
 
 FROM nginx:1.25-alpine3.17
 
-COPY --chown=nginx:nginx ./nginx.conf /etc/nginx/templates/default.conf.template
-COPY --chown=nginx:nginx ./build /usr/share/nginx/html
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/templates/default.conf.template
+COPY --chown=nginx:nginx build /usr/share/nginx/html
 
 CMD [ "nginx", "-g", "daemon off;" ]

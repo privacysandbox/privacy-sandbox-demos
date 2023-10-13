@@ -29,10 +29,11 @@ If you are a developer we recommend you follow the [deployment instructions](doc
 
 The current release supports the following use cases:
 
-| **Use Case**                        | **Description**                                                                                     | **APIs**                             |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| Remarking                           | Show relevant ads to a user who has researched a brand or product online.                           | Protected Audience <br> Fenced Frame |
-| Single-touch conversion Attribution | Measure conversion after seeing ads on a news site and buying a project on an online shopping site. | Attribution Reporting API            |
+|         **Category**          |                                **Use Case**                                |            **Privacy Sandbox APIs**            |        **Relevant for**         |
+| :---------------------------: | :------------------------------------------------------------------------: | :--------------------------------------------: | :-----------------------------: |
+|    Show Relevant Video Ads    |       [VAST Video Protected Audience](vast-video-protected-audience)       |             Protected Audience API             | Publisher, SSP, Advertiser, DSP |
+| Show Relevant Content and Ads |            [Retargeting / Remarketing](retargeting-remarketing)            |             Protected Audience API             | Publisher, SSP, Advertiser, DSP |
+|      Measure Digital Ads      | [Single-touch conversion Attribution](single-touch-conversion-attribution) | Attribution Reporting API, Aggregation Service | Publisher, SSP, Advertiser, DSP |
 
 These use cases are based on a set of demo apps and services that we have developed to simulate the actors in the ad tech ecosystem :
 

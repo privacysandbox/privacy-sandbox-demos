@@ -18,6 +18,7 @@
 import express from "express"
 import url from "url"
 import cbor from "cbor"
+import { decodeDict } from "structured-field-values"
 import {
   debugKey,
   sourceEventId,
@@ -85,33 +86,18 @@ app.set("views", "src/views")
 
 app.get("/", async (req, res) => {
   const title = SSP_DETAIL
-  res.render("index.html.ejs", { title, SSP_HOST, EXTERNAL_PORT, SHOP_HOST })
+  res.render("index.html.ejs", { title, DSP_HOST, SSP_HOST, EXTERNAL_PORT, SHOP_HOST })
 })
 
-app.get("/ads", async (req, res) => {
+app.get("/register-source", async (req, res) => {
   const { advertiser, id } = req.query
-  console.log({ advertiser, id })
-
-  const title = `Your special ads from ${advertiser}`
-
-  const move = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/move`)
-  move.searchParams.append("advertiser", advertiser)
-  move.searchParams.append("id", id)
-
-  const creative = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}/creative`)
-  creative.searchParams.append("advertiser", advertiser)
-  creative.searchParams.append("id", id)
-
-  res.render("ads.html.ejs", { title, move, creative })
-})
-
-app.get("/move", async (req, res) => {
-  const { advertiser, id } = req.query
-  console.log({ advertiser, id })
-  const url = `https://${advertiser}/items/${id}`
+  console.log("Registering source attribution for", { advertiser, id })
   if (req.headers["attribution-reporting-eligible"]) {
-    const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
-    if (are.includes("navigation-source")) {
+    //const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
+    const are = decodeDict(req.headers["attribution-reporting-eligible"])
+
+    // register navigation source
+    if ("navigation-source" in are) {
       const destination = `https://${advertiser}`
       const source_event_id = sourceEventId()
       const debug_key = debugKey()
@@ -137,21 +123,13 @@ app.get("/move", async (req, res) => {
         }
       }
 
-      console.log({ AttributionReportingRegisterSource })
+      console.log("Registering navigation source :", { AttributionReportingRegisterSource })
       res.setHeader("Attribution-Reporting-Register-Source", JSON.stringify(AttributionReportingRegisterSource))
+      res.status(200).send("attribution nevigation (click) source registered")
     }
-  }
 
-  res.redirect(302, url)
-})
-
-app.get("/creative", async (req, res) => {
-  const { advertiser, id } = req.query
-
-  if (req.headers["attribution-reporting-eligible"]) {
-    // TODO: better to add attributionsrc to <a> or other not <img> ?
-    const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
-    if (are.includes("event-source") && are.includes("trigger")) {
+    // register event source
+    else if ("event-source" in are) {
       const destination = `https://${advertiser}`
       const source_event_id = sourceEventId()
       const debug_key = debugKey()
@@ -177,13 +155,15 @@ app.get("/creative", async (req, res) => {
         }
       }
 
-      console.log({ AttributionReportingRegisterSource })
+      console.log("Registering event source :", { AttributionReportingRegisterSource })
       res.setHeader("Attribution-Reporting-Register-Source", JSON.stringify(AttributionReportingRegisterSource))
+      res.status(200).send("attribution event (view) source registered")
+    } else {
+      res.status(400).send("'Attribution-Reporting-Eligible' header is malformed") // just send back response header. no content.
     }
+  } else {
+    res.status(400).send("'Attribution-Reporting-Eligible' header is missing") // just send back response header. no content.
   }
-
-  // redirect to advertisers Ads endpoint
-  res.redirect(`https://${advertiser}/api/ads/${id}`)
 })
 
 app.get("/register-trigger", async (req, res) => {
@@ -225,6 +205,10 @@ app.get("/register-trigger", async (req, res) => {
 
 app.get("/ad-tag.html", async (req, res) => {
   res.render("ad-tag.html.ejs")
+})
+
+app.get("/video-ad-tag.html", async (req, res) => {
+  res.render("video-ad-tag.html.ejs")
 })
 
 app.get("/reports", async (req, res) => {

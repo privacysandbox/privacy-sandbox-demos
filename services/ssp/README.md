@@ -36,22 +36,6 @@ Embedding `/ads` with some parameters in iframe.
 </iframe>
 ```
 
-## /ads
-
-Serving requested Ads.
-It includes ads creative (Image, Video etc).
-Clicking ads will guide user to SPP redirector for measurement CTC.
-
-```html
-<iframe allow="attribution-reporting" src="https://privacy-sandbox-demos-ssp.dev/ad-tag.html">
-  <iframe allow="attribution-reporting" src="/ads?advertiser=foo&id=bar">
-    <a target="_blank" attributionsrc href="/move">
-      <img loading="lazy" attributionsrc src="/creative" />
-    </a>
-  </iframe>
-</iframe>
-```
-
 ## CAUTION !!!
 
 THIS IS ONLY A DEMO SO SOME SECURITY PROBLEM MAY HAPPEN.

@@ -4,12 +4,9 @@
 
 Please describe a summary of the changes.
 
-
-
 ## Related Issue
 
 - Fixes #xxx
-
 
 ## Affected services
 
