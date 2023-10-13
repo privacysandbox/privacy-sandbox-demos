@@ -212,8 +212,7 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 ```
 
 Enable Vulnerability Scanning : navigate to settings and Turn On.
-https://console.cloud.google.com/artifacts/settings?project=gtech-privacy-sandcastle-dev
-
+https://console.cloud.google.com/artifacts/settings
 ## Setup Cloud Build
 
 https://cloud.google.com/build/docs/deploying-builds/deploy-cloud-run
@@ -222,11 +221,11 @@ Enable Cloud Build Service Account permissions :
 Cloud Run Admin
 Service Account User
 
-From Cloud Build Settings page : https://console.cloud.google.com/cloud-build/settings/service-account?project=gtech-privacy-sandcastle-dev
+From Cloud Build Settings page : https://console.cloud.google.com/cloud-build/settings/service-account
 
 or from IAM page :
 
-https://console.cloud.google.com/iam-admin/iam?project=gtech-privacy-sandcastle-dev
+https://console.cloud.google.com/iam-admin/iam
 
 ## Deploy all Cloud Run services and Firebase Sites
 
