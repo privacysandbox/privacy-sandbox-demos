@@ -4,7 +4,7 @@
 
 #### Enhancements
 - DSP Site : serve attestation file version2 on privacy-sandbox-demos-dsp.dev
-- Tools :  [Aggregatable Report Converter](https://github.com/privacysandbox/privacy-sandbox-demos/tree/main/tools/aggregatable_report_converter) has been released. This tool helps developers to create debug aggregatable reports that can be used for Local Testing and AWS Aggregation Service testing.
+- Tools : Add [Aggregatable Report Converter](https://github.com/privacysandbox/privacy-sandbox-demos/tree/main/tools/aggregatable_report_converter) to the tooling codebase. This tool helps developers to create debug aggregatable reports that can be used for Local Testing and AWS Aggregation Service testing.
 - GitHub documentation : Add a changelog
 
 #### Bug Fixes
