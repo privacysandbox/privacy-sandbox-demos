@@ -1,9 +1,48 @@
 {
   "privacy_sandbox_api_attestations": [
     {
+      "attestation_parser_version": "2",
+      "attestation_version": "2",
+      "privacy_policy": [
+        "https://policies.google.com/privacy"
+      ],
+      "ownership_token": "SGYvJieJb5EaxhMAJUh9qmrfZNSQewLYbHWx6NpeRzDLZSF0DwfVfchu5sHCxaFv",
+      "issued_seconds_since_epoch": 1697505143,
+      "enrollment_id": "UNRJE",
+      "enrollment_site": "https://privacy-sandbox-demos-dsp.dev",
+      "platform_attestations": [
+        {
+          "platform": "chrome",
+          "attestations": {
+            "attribution_reporting_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "shared_storage_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "private_aggregation_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "topics_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "protected_audience_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            }
+          }
+        },
+        {
+          "platform": "android",
+          "attestations": {}
+        }
+      ]
+    },
+    {
       "attestation_parser_version": "1",
       "attestation_version": "1",
-      "privacy_policy": ["https://policies.google.com/privacy"],
+      "privacy_policy": [
+        "https://policies.google.com/privacy"
+      ],
       "ownership_token": "yE67UyEyxUmBsz0y0hyeiU44CnbliMjMS93fnBgeb8Jlst1YbwYXAE5ucVige0eX",
       "issued_seconds_since_epoch": 1691175921,
       "expiry_seconds_since_epoch": 1706731521,
