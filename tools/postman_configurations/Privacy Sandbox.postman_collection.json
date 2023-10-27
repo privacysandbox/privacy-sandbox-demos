@@ -28,7 +28,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"job_request_id\": \"<job_request_id>\",\r\n  \"input_data_blob_prefix\": \"<report_folder>/<report_name>.avro\",\r\n  \"input_data_bucket_name\": \"<input_bucket_name>\",\r\n  \"output_data_blob_prefix\": \"<output_folder>/<summary_report_prefix>\",\r\n  \"output_data_bucket_name\": \"<output_bucket_name>\",\r\n  \"job_parameters\": {\r\n    \"output_domain_blob_prefix\": \"<output_domain_folder>/<output_domain>.avro\",\r\n    \"output_domain_bucket_name\": \"<output_domain_bucket_name>\",\r\n    \"attribution_report_to\": \"<reporting origin of report>\",\r\n    \"debug_run\": \"true\"\r\n  }\r\n}",
+					"raw": "{\r\n  \"job_request_id\": \"<job_request_id>\",\r\n  \"input_data_blob_prefix\": \"<report_folder>/<report_name>.avro\",\r\n  \"input_data_bucket_name\": \"<input_bucket_name>\",\r\n  \"output_data_blob_prefix\": \"<output_folder>/<summary_report_prefix>\",\r\n  \"output_data_bucket_name\": \"<output_bucket_name>\",\r\n  \"job_parameters\": {\r\n    \"output_domain_blob_prefix\": \"<output_domain_folder>/<output_domain>.avro\",\r\n    \"output_domain_bucket_name\": \"<output_domain_bucket_name>\",\r\n    \"attribution_report_to\": \"<reporting origin of report>\",\r\n    \"report_error_threshold_percentage\": \"10\",\r\n    \"debug_run\": \"true\"\r\n  }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
