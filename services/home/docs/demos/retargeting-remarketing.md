@@ -102,8 +102,8 @@ note right of Browser:for each candidate ad in the auction
 Browser-)Browser:scoreAd(...)
 
 note right of Browser:Winning ad is displayed in a fenced-frame
-Browser->>SSP:Request ad creative
-SSP-->>Browser:Return ad creative
+Browser->>DSP:Request ad creative
+DSP-->>Browser:Return ad creative
 
 Note right of Browser:Scenario 1 stops here
 
@@ -242,19 +242,31 @@ The result of the auction is displayed within a Fenced Frame by specifying the a
 
 note that Fenced Frame attribute `mode` must be set to “[opaque-ads](https://github.com/WICG/fenced-frame/blob/master/explainer/use_cases.md#opaque-ads)” to make the url opaque to the embedding context.
 Fenced Frame size (width and height) only allow pre-defined values, please refer to the allow-list from the documentation.
-The request to the `src` url[ returns the ad creative](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/ssp/src/index.js#L87) to be displayed
+The request to the `renderURL`from the winning Interest Group [returns the ad creative](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9f8578e6d99da4dd52007843a283c97885c07146/services/dsp/src/index.ts#L57) to be displayed
 
 ```html
 <body>
-  <a width="300" height="250" target="_blank" attributionsrc="" href="https://privacy-sandbox-demos-ssp.dev/move?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45f">
+  <a
+    width="300"
+    height="250"
+    target="_blank"
+    rel="noopener noreferrer"
+    attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+    href="https://privacy-sandbox-demos-shop.dev/items/1fa70"
+  >
     <!-- smaller for avoid scrollbar -->
-    <img width="294" height="245" loading="lazy" attributionsrc="" src="https://privacy-sandbox-demos-ssp.dev/creative?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45f">
+    <img
+      width="294"
+      height="245"
+      loading="lazy"
+      attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+      src="https://privacy-sandbox-demos-shop.dev/ads/1fa70"
+    />
   </a>
-
-</a>
+</body>
 ```
 
-This code contains the `img` tag with `src` attribute specifying the product the user might be interested in. The `advertiser` and `id` are resolved by the SSP which returns the product image and product url to the shopping site.
+This code contains the `img` tag with `src` attribute specifying the product the user might be interested in, and a link “href” pointing to the advertiser page.
 
 ### Related API documentation
 
