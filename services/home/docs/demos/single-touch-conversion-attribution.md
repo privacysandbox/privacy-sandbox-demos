@@ -71,6 +71,7 @@ Below is a general introduction of Single-Touch conversion Attribution using Pri
 -->
 
 ```mermaid
+
 sequenceDiagram
 Title: Single-touch conversion Attribution - User Journey 1
 
@@ -80,25 +81,33 @@ participant SSP
 participant Advertiser
 participant DSP
 
-Browser-)Publisher:visits a publisher site and sees an ad
-Browser->>SSP:Load ad creative
-SSP-->>Browser:Attribution-Reporting-Register-Source:{...} json config
+Browser-)SSP:User visits a publisher site
+SSP-->>Browser: SSP runs auction and load winning bid renderURL into an iframe*
+
+Note right of Browser:* we skip the auction flow<br/> to focus on measurement with ARA
+
+Browser->>DSP:Browser loads ad creative
+DSP-->>Browser:Attribution-Reporting-Register-Source:{...} json config
 
 Browser-->>Browser:Register Attribution Source
 
 
-Browser-)Advertiser:visits the advertiser site and check out
-Browser->>SSP: Load attribution pixel
-SSP-->>Browser:Attribution-Reporting-Register-Trigger:{...} json config
+Browser-)Advertiser:User visits the advertiser site (from click to the ad or from different journey)
+
+Browser-)Advertiser:User navigates to check out page
+Browser->>DSP: Browser loads attribution pixel
+DSP-->>Browser:Attribution-Reporting-Register-Trigger:{...} json config
 
 Browser-->>Browser:Register Attribution Trigger
 
 Browser-->>Browser:Attribution logic & create report
 
-Note right of Browser: debug reports <br/>are sent immediately
-Browser-)SSP:sends aggregatable report (Debug Report)
 
-Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
+Browser-)DSP:Browser sends aggregatable report (Debug Repor are sent immediately)
+Browser-)DSP:Browser sends aggregatable report (Live Report are deferred)
+
+Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
+
 ```
 
 </TabItem>
@@ -133,7 +142,7 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 6. Navigate to chrome://attribution-internals/ and click the `Active Sources` tab
 
-- At the bottom of the page, you will see 2 **sources** with the status `Attributable`, the `source origin` is the **news** site, the `destination` is the **shop** site and the `reporting origin` is the **SSP** service. One of the `source type` is **event** (for view-through) and the other one is **navigation** (for click-through) This reference will be used later to attribute (match) the conversion (here the. purchase of an item on the **shop** site) to a previous event (here. The user saw/clicked an ad on the **news** site)
+- At the bottom of the page, you will see 2 **sources** with the status `Attributable`, the `source origin` is the **news** site, the `destination` is the **shop** site and the `reporting origin` is the **DSP** service. One of the `source type` is **event** (for view-through) and the other one is **navigation** (for click-through) This reference will be used later to attribute (match) the conversion (here the. purchase of an item on the **shop** site) to a previous event (here. The user saw/clicked an ad on the **news** site)
 
 7. On the product page, click “Add to cart”
 8. On the cart page, click “Checkout”
@@ -143,11 +152,11 @@ Note over SSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 9. Navigate to chrome://attribution-internals/ and click the `Trigger Registration` tab
 
-- At the bottom of the page, you will see 1 **trigger** . the `destination` is the **shop** site and the `reporting origin` is the **SSP** service. The `Registration JSON` contains information about the conversion event. In this scenario the advertiser chose to report the gross price and the quantity of the product item purchased. the `Aggregatable Status` indicates **Success: Report stored**, it means Attribution Reporting API has now stored this report in the browser. It will then be scheduled for sending to the `reporting origin` at a later time.
+- At the bottom of the page, you will see 1 **trigger** . the `destination` is the **shop** site and the `reporting origin` is the **DSP** service. The `Registration JSON` contains information about the conversion event. In this scenario the advertiser chose to report the gross price and the quantity of the product item purchased. the `Aggregatable Status` indicates **Success: Report stored**, it means Attribution Reporting API has now stored this report in the browser. It will then be scheduled for sending to the `reporting origin` at a later time.
 
-10. Navigate to [SSP service report visualization page](https://privacy-sandbox-demos-ssp.dev/reports)
+10. Navigate to [DSP service report visualization page](https://privacy-sandbox-demos-dsp.dev/reports)
 
-- on this page you can see the aggregatable report sent by the browser to the SSP. In a production environment, the aggregatable report is encrypted by the browser and sent to the SSP. There, they will be batched and sent to the Aggregation Service where they will be aggregated and noised to preserve privacy. However for development and testing purposes, you can also send an unencrypted version called **debug report**. This is what you are seeing now.
+- on this page you can see the aggregatable report sent by the browser to the DSP. In a production environment, the aggregatable report is encrypted by the browser and sent to the DSP. There, they will be batched and sent to the Aggregation Service where they will be aggregated and noised to preserve privacy. However for development and testing purposes, you can also send an unencrypted version called **debug report**. This is what you are seeing now.
 - The report shows aggregation data on 2 dimensions : gross with a value of 180 and quantity with a value of 1.
 
 ### Implementation details
@@ -158,23 +167,25 @@ First on the Attribution Source registration side.
 Look at the [code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/views/ads.html.ejs#L29) displaying the ad creative
 
 ```html
-<a
-  width="300"
-  height="250"
-  target="_blank"
-  attributionsrc="https://privacy-sandbox-demos-ssp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
-  href="https://privacy-sandbox-demos-ssp.dev/move?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
->
-  <!-- smaller for avoid scrollbar -->
-  <img
-    width="294"
-    height="245"
-    loading="lazy"
-    attributionsrc="https://privacy-sandbox-demos-ssp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
-    src="
-         https://privacy-sandbox-demos-ssp.dev/creative?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f6fc"
-  />
-</a>
+<body>
+  <a
+    width="300"
+    height="250"
+    target="_blank"
+    rel="noopener noreferrer"
+    attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+    href="https://privacy-sandbox-demos-shop.dev/items/1fa70"
+  >
+    <!-- smaller for avoid scrollbar -->
+    <img
+      width="294"
+      height="245"
+      loading="lazy"
+      attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+      src="https://privacy-sandbox-demos-shop.dev/ads/1fa70"
+    />
+  </a>
+</body>
 ```
 
 The `img` tag also specifies the `attributionsrc` attribute. It means that showing this ad will register an attribution source of type `event` in the browser.
@@ -200,7 +211,7 @@ The checkout page contains a 1 pixel image loaded from the code
   alt=""
   width="1"
   height="1"
-  src="https://privacy-sandbox-demos-ssp.dev/register-trigger?id=1f45e&amp;category=1&amp;quantity=2&amp;size=50&amp;gross=180"
+  src="https://privacy-sandbox-demos-dsp.dev/register-trigger?id=1f45e&amp;category=1&amp;quantity=2&amp;size=50&amp;gross=180"
 />
 ```
 
