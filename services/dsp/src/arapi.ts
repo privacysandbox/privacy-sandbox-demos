@@ -137,20 +137,23 @@ export function decodeBucket(buffer: ArrayBuffer) {
   const triggerBuf = u8a.slice(u8a.length / 2, u8a.length)
   const trigger: AggregatableTriggerData = decodeTrigger(triggerBuf.buffer)
 
-  const readableAggregationKey: { [index: string]: string } = {}
-  readableAggregationKey.type = key_from_value(SOURCE_TYPE, source.type)
-  readableAggregationKey.dimension = key_from_value(DIMENSION, source.dimension)
-  readableAggregationKey.id = source.id.toString(16)
-  readableAggregationKey.advertiser = key_from_value(ADVERTISER, source.advertiser)
-  readableAggregationKey.publisher = key_from_value(PUBLISHER, source.publisher)
+  const aggregation_keys: { [index: string]: string } = {}
+  aggregation_keys.type = key_from_value(SOURCE_TYPE, source.type)
+  aggregation_keys.dimension = key_from_value(DIMENSION, source.dimension)
+  aggregation_keys.id = source.id.toString(16)
+  aggregation_keys.advertiser = key_from_value(ADVERTISER, source.advertiser)
+  aggregation_keys.publisher = key_from_value(PUBLISHER, source.publisher)
 
-  const readableAggregatableTriggerData: { [index: string]: string } = {}
-  readableAggregatableTriggerData.type = key_from_value(TRIGGER_TYPE, trigger.type)
-  readableAggregatableTriggerData.id = trigger.id.toString(16)
+  const aggregatable_trigger_data: { [index: string]: string } = {}
+  aggregatable_trigger_data.type = key_from_value(TRIGGER_TYPE, trigger.type)
+  aggregatable_trigger_data.id = trigger.id.toString(16)
+  aggregatable_trigger_data.size = trigger.size.toString()
+  aggregatable_trigger_data.category = trigger.category.toString()
+  aggregatable_trigger_data.option = trigger.option.toString()
 
   return {
-    readableAggregationKey,
-    readableAggregatableTriggerData
+    aggregation_keys,
+    aggregatable_trigger_data
   }
 }
 

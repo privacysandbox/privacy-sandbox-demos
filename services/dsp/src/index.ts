@@ -49,7 +49,18 @@ app.use((req, res, next) => {
 })
 
 app.use(express.urlencoded({ extended: true }))
+
 app.use(express.json()) // To parse the incoming requests with JSON payloads
+
+app.use((req, res, next) => {
+  // enable transitional debugging reports (https://github.com/WICG/attribution-reporting-api/blob/main/EVENT.md#optional-transitional-debugging-reports)
+  res.cookie("ar_debug", "1", {
+    sameSite: "none",
+    secure: true,
+    httpOnly: true
+  })
+  next()
+})
 
 app.use(
   express.static("src/public", {
