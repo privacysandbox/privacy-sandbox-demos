@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json()) // To parse the incoming requests with JSON payloads
 
 app.use(
@@ -143,32 +143,27 @@ app.get("/bidding_signal.json", async (req: Request, res: Response) => {
 // })
 
 app.post("/.well-known/private-aggregation/report-shared-storage", (req, res) => {
+  console.log(`Received Aggregatable Report on live endpoint`)
 
-  console.log( `Received Aggregatable Report on live endpoint`);
+  let aggregationReport = req.body
+  console.log(req.body)
 
-  let aggregationReport = req.body;
-  console.log(req.body);
-
-  res.sendStatus(200);
-
+  res.sendStatus(200)
 })
 
 app.get("/private-aggregation", (req, res) => {
-  res.render('private-aggregation');
+  res.render("private-aggregation")
 })
 
 app.post("/.well-known/private-aggregation/debug/report-shared-storage", (req, res) => {
+  let timeStr = new Date().toISOString()
+  console.log(`Received Aggregatable Report on debug endpoint`)
 
-  let timeStr = new Date().toISOString();
-  console.log( `Received Aggregatable Report on debug endpoint`);
+  let aggregationReport = req.body
 
-  let aggregationReport = req.body;
+  console.log(aggregationReport)
 
-  console.log(aggregationReport);
-
-
-  res.sendStatus(200);
-
+  res.sendStatus(200)
 })
 
 app.get("/", async (req: Request, res: Response) => {
