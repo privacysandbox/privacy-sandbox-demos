@@ -1,12 +1,16 @@
 # Changelog
 
-## v1.x.x (2023/xx/xx)
+## v1.2 (2023/11/16)
 
 #### Enhancements
 - Home Site : upgrade CMS to [Docusaurus v3](https://docusaurus.io/blog/releases/3.0)
 - DSP Site : serve attestation file version2 on privacy-sandbox-demos-dsp.dev
+- SSP Site : serve attestation file version2 on privacy-sandbox-demos-ssp.dev
+- CI/CD : Cloud Build copies the attestation files from cicd/attestations to dsp/ssp services for the target environment
+- Use Case : Single-touch conversion Attribution. Move attribution code from SSP to DSP and update documentation
 - Tools : Add [Aggregatable Report Converter](https://github.com/privacysandbox/privacy-sandbox-demos/tree/main/tools/aggregatable_report_converter) to the tooling codebase. This tool helps developers to create debug aggregatable reports that can be used for Local Testing and AWS Aggregation Service testing.
 - GitHub documentation : Add a changelog
+
 
 #### Bug Fixes
 
