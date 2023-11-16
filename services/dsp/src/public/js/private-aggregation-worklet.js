@@ -1,12 +1,12 @@
 class TestPrivateAggregation {
   async run(data) {
-    console.log("Enabling Private Aggregation Debug Mode")
+    console.log('Enabling Private Aggregation Debug Mode')
     privateAggregation.enableDebugMode({ debugKey: 1234n })
-    let campaignId = await sharedStorage.get("campaignId")
+    let campaignId = await sharedStorage.get('campaignId')
     if (!campaignId) {
-      console.log("No campaign id found for client. Adding campaignId 1234567890.")
-      campaignId = "1234567890"
-      sharedStorage.set("campaignId", campaignId)
+      console.log('No campaign id found for client. Adding campaignId 1234567890.')
+      campaignId = '1234567890'
+      sharedStorage.set('campaignId', campaignId)
     } else {
       console.log(`Campaign ID found: ${campaignId}`)
     }
@@ -19,4 +19,4 @@ class TestPrivateAggregation {
   }
 }
 
-register("test-private-aggregation", TestPrivateAggregation)
+register('test-private-aggregation', TestPrivateAggregation)
