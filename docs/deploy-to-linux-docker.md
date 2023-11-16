@@ -71,6 +71,22 @@ Run the command below _with your current user (not root !)_ to create the develo
 mkcert -install
 ```
 
+### Enrollment & Attestation exception
+
+To access the Privacy Sandbox relevance and measurement APIs on Chrome, developers need to [enroll their site](https://github.com/privacysandbox/attestation/blob/main/how-to-enroll.md) with the Privacy Sandbox, pass the verification process, and upload an attestation file on their site.
+
+However you do not need to enroll if you are only testing with local traffic. For local testing, Chrome provides [a flag and CLI switch](https://github.com/privacysandbox/attestation/blob/main/how-to-enroll.md#5-do-i-need-to-enroll-to-test-against-local-development-environments) to bypass enrollment on your local browser.
+
+Open `chrome://flags/#privacy-sandbox-enrollment-overrides`
+
+Under `Privacy Sandbox Enrollment Overrides` select `Enabled` and enter your site domain names separated by a coma :
+
+Example :
+
+```shell
+https://privacy-sandbox-demos-dsp.dev,https://privacy-sandbox-demos-ssp.dev
+```
+
 ## Build & Run your local development environment
 
 ### Clone the Privacy Sandbox Demos repository
