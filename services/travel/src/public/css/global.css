@@ -15,7 +15,7 @@
  */
 
 body {
-  font-family: "Open Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
 }
 
@@ -72,7 +72,7 @@ footer > p {
 }
 
 header {
-  background-image: url("/img/travel.webp");
+  background-image: url('/img/travel.webp');
   aspect-ratio: 2.06;
 }
 

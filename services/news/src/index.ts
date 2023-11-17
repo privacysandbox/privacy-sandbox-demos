@@ -14,46 +14,54 @@
  limitations under the License.
  */
 
-import express, { Application, Request, Response } from "express"
+import express, {Application, Request, Response} from 'express';
 
-const { EXTERNAL_PORT, PORT, HOME_HOST, SSP_HOST, NEWS_TOKEN, NEWS_DETAIL, DSP_HOST } = process.env
+const {
+  EXTERNAL_PORT,
+  PORT,
+  HOME_HOST,
+  SSP_HOST,
+  NEWS_TOKEN,
+  NEWS_DETAIL,
+  DSP_HOST,
+} = process.env;
 
-const app: Application = express()
+const app: Application = express();
 
-const TITLE = NEWS_DETAIL
+const TITLE = NEWS_DETAIL;
 const LOREM =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
 app.use((req, res, next) => {
-  res.setHeader("Origin-Trial", NEWS_TOKEN as string)
-  next()
-})
-app.use(express.static("src/public"))
-app.set("view engine", "ejs")
-app.set("views", "src/views")
+  res.setHeader('Origin-Trial', NEWS_TOKEN as string);
+  next();
+});
+app.use(express.static('src/public'));
+app.set('view engine', 'ejs');
+app.set('views', 'src/views');
 
-app.get("/", async (req: Request, res: Response) => {
-  res.render("index", {
+app.get('/', async (req: Request, res: Response) => {
+  res.render('index', {
     title: TITLE,
     lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     NEWS_TOKEN,
     SSP_HOST,
-    DSP_HOST
-  })
-})
-app.get("/video-ad", async (req: Request, res: Response) => {
-  res.render("video-ad", {
+    DSP_HOST,
+  });
+});
+app.get('/video-ad', async (req: Request, res: Response) => {
+  res.render('video-ad', {
     title: TITLE,
     lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     NEWS_TOKEN,
-    SSP_HOST
-  })
-})
+    SSP_HOST,
+  });
+});
 
 app.listen(PORT, async () => {
-  console.log(`Listening on port ${PORT}`)
-})
+  console.log(`Listening on port ${PORT}`);
+});
