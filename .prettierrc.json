@@ -9,13 +9,13 @@
   "trailingComma": "all",
   "arrowParens": "always",
   "embeddedLanguageFormatting": "off",
+  "proseWrap": "always",
   "overrides": [
     {
       "files": [
         "**/*.js",
         "**/*.ts",
-        "**/*.css",
-        "**/*.md"
+        "**/*.css"
       ]
     },
     {
@@ -34,6 +34,12 @@
       ],
       "options": {
         "printWidth": 40
+      }
+    },
+    {
+      "files": ["**/*.md"],
+      "options": {
+        "printWidth": 150
       }
     }
   ]

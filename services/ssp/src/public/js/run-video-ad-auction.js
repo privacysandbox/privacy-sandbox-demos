@@ -15,30 +15,30 @@
  */
 
 async function getAuctionConfig() {
-  const url = new URL(location.origin)
-  url.pathname = "/auction-config.json"
-  const res = await fetch(url)
+  const url = new URL(location.origin);
+  url.pathname = '/auction-config.json';
+  const res = await fetch(url);
   if (res.ok) {
-    return res.json()
+    return res.json();
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   if (navigator.runAdAuction === undefined) {
-    return console.log("[DEMO] Protected Audience API is not supported")
+    return console.log('[DEMO] Protected Audience API is not supported');
   }
-  const auctionConfig = await getAuctionConfig()
+  const auctionConfig = await getAuctionConfig();
   // FencedFrameConfing can't be rendered in iframes.
   // This demo requires iframes.
-  auctionConfig.resolveToConfig = false
-  const adAuctionResult = await navigator.runAdAuction(auctionConfig)
-  console.log({ auctionConfig, adAuctionResult })
+  auctionConfig.resolveToConfig = false;
+  const adAuctionResult = await navigator.runAdAuction(auctionConfig);
+  console.log({auctionConfig, adAuctionResult});
   if (adAuctionResult) {
-    const adFrame = document.createElement("iframe")
-    adFrame.id = "video-ad-frame"
-    adFrame.src = adAuctionResult
-    adFrame.width = 0
-    adFrame.height = 0
-    document.body.appendChild(adFrame)
+    const adFrame = document.createElement('iframe');
+    adFrame.id = 'video-ad-frame';
+    adFrame.src = adAuctionResult;
+    adFrame.width = 0;
+    adFrame.height = 0;
+    document.body.appendChild(adFrame);
   }
-})
+});

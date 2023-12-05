@@ -13,34 +13,34 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-"use strict"
-const $ = document.querySelector.bind(document)
-const $$ = document.querySelectorAll.bind(document)
-EventTarget.prototype.on = EventTarget.prototype.addEventListener
+'use strict';
+const $ = document.querySelector.bind(document);
+const $$ = document.querySelectorAll.bind(document);
+EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 
-document.on("DOMContentLoaded", async (e) => {
-  $$(".remove-item").forEach(($button) => {
-    $button.on("click", async (e) => {
-      e.preventDefault()
-      const { name } = e.target.dataset
-      const url = new URL(`/cart/${name}`, location.href)
-      const res = await fetch(url, { method: "delete" })
-      console.log(res.ok)
-      location.reload()
-    })
-  })
+document.on('DOMContentLoaded', async (e) => {
+  $$('.remove-item').forEach(($button) => {
+    $button.on('click', async (e) => {
+      e.preventDefault();
+      const {name} = e.target.dataset;
+      const url = new URL(`/cart/${name}`, location.href);
+      const res = await fetch(url, {method: 'delete'});
+      console.log(res.ok);
+      location.reload();
+    });
+  });
 
-  $$(".update-qty").forEach(($select) => {
-    $select.on("change", async (e) => {
-      const quantity = e.target.value
-      const name = e.target.name
-      const params = new URLSearchParams({ quantity })
-      const url = new URL(`/cart/${name}`, location.href)
+  $$('.update-qty').forEach(($select) => {
+    $select.on('change', async (e) => {
+      const quantity = e.target.value;
+      const name = e.target.name;
+      const params = new URLSearchParams({quantity});
+      const url = new URL(`/cart/${name}`, location.href);
       const res = await fetch(url, {
-        method: "put",
-        body: params
-      })
-      console.log(res.ok)
-    })
-  })
-})
+        method: 'put',
+        body: params,
+      });
+      console.log(res.ok);
+    });
+  });
+});

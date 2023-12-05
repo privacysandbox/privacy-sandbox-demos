@@ -17,6 +17,7 @@ config:
     line_length: 150
     #stern: true
     code_blocks: false
+    tables: false
 
   # these are apparently in conflict with prettier's markdown formatting
   list-marker-space: false
@@ -24,5 +25,11 @@ config:
   ul-indent: false
 
   headings: false
+
+  # we use inline html tags for docusaurus layout
+  no-inline-html: false
+
+  # we use ordered list for demo step by step but with additional information between steps
+  ol-prefix: false
 
 fix: true

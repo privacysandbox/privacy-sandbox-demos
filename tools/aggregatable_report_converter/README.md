@@ -2,7 +2,8 @@
 
 ## Purpose
 
-To provide Aggregation Service testers tools to create debug aggregatable reports that can be used for Local Testing and AWS Aggregation Service testing.
+To provide Aggregation Service testers tools to create debug aggregatable reports that can be used for Local Testing and AWS Aggregation Service
+testing.
 
 ## Guide
 
