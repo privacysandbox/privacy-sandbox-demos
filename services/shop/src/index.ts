@@ -72,7 +72,7 @@ app.locals = {
   displayCategory,
   register_trigger: (order: Order) => {
     const { item, size, quantity } = order
-    const register_trigger = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`)
+    const register_trigger = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`)
     register_trigger.pathname = "/register-trigger"
     register_trigger.searchParams.append("id", item.id)
     register_trigger.searchParams.append("category", `${item.category}`)

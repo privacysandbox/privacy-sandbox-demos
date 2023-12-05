@@ -30,7 +30,7 @@
 #### Bug Fixes
 
 - Use Case : Single-touch conversion Attribution. Fix registering attribution sources ("Attribution-Reporting-Eligible" is a Dictionary Structured Header and thus need to be decoded accordingly)
-- Home site : fix Docusaurus and nginx configuration that prevented direct links to use cases.
+- Home site : fix Docusaurus and nginx configuration that prevented direct links to use cases
 - Home site : fix broken links in documentation
 - GitHub documentation : update deployment guides
 
