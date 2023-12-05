@@ -25,14 +25,16 @@ If you don’t have yet a billing account, follow the documentation to Create a 
    3. Since you enabled Billing Account on this project, it will automatically select the Firebase pay-as-you-go plan
    4. Enable Google Analytics for the project : Select "Default Account for Firebase" unless you have specific analytics requirements
 3. If you don’t have the project owner role , you will need to obtain at least the following IAM role to your account on the target project before you proceed with the next steps.
-   1. Cloud Build Editor
-   2. Cloud Run Admin
-   3. Firebase Hosting Admin
-   4. Service Account User
-   5. Service Usage Consumer
-   6. Storage Admin
-   7. Storage Object Creator
-   8. Project Viewer
+   1. Artifact Registry Administrator
+   2. Cloud Build Editor
+   3. Cloud Run Admin
+   4. Firebase Hosting Admin
+   5. Service Account User
+   6. Service Usage Admin
+   7. Service Usage Consumer
+   8. Storage Admin
+   9. Storage Object Creator
+   10. Project Viewer
 
 ## Prepare your Development Environment for Firebase Hosting
 
@@ -213,6 +215,7 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 Enable Vulnerability Scanning : navigate to settings and Turn On.
 https://console.cloud.google.com/artifacts/settings
+
 ## Setup Cloud Build
 
 https://cloud.google.com/build/docs/deploying-builds/deploy-cloud-run
@@ -229,7 +232,7 @@ https://console.cloud.google.com/iam-admin/iam
 
 ## Deploy all Cloud Run services and Firebase Sites
 
-Once you have confirmed you can deploy a sample demo application on Cloud Run and access it from Firebase hosting site, you are ready to deploy all the services and hosting sites.
+You are ready to deploy all the services and hosting sites.
 
 Edit `cicd/.env.prod` file to match the `${SERVICE}_HOST` parameter to your firebase hosting domain e.g. : `privacy-sandbox-demos-${SERVICE}.dev`
 
@@ -262,6 +265,15 @@ Copy the `.env.deploy.template` to `.env.deploy` file then edit .env.deploy to u
 GCP_PROJECT_NAME=xxx
 FIREBASE_HOSTING_DOMAIN=**_privacy-sandbox-demos_**
 ```
+
+**[optional]** If you have enrolled your site with Privacy Sandbox, copy your attestation files for dsp/ssp services under the folder : `cicd/attestations`
+
+| Environment | Service |           Attestation file name            |
+| :---------: | :-----: | :----------------------------------------: |
+|    prod     |   dsp   | privacy-sandbox-attestations.json.dsp.prod |
+|    prod     |   ssp   | privacy-sandbox-attestations.json.ssp.prod |
+|     dev     |   dsp   | privacy-sandbox-attestations.json.dsp.dev  |
+|     dev     |   ssp   | privacy-sandbox-attestations.json.ssp.dev  |
 
 Execute `./scripts/cloudrun_deploy.sh` to build and deploy services with Cloud Build and deploy to Cloud Run.
 

@@ -1,4 +1,5 @@
 steps:
+  # Read environment variables we will use to deploy to Cloud Run
   - name: "bash"
     id: read-env
     waitFor: ["-"]
@@ -10,17 +11,29 @@ steps:
       ENV_VARS=$(cat cicd/.env.${PROJECT_ENV} | grep "=" | grep -v "^PORT=" | sed '/^$/d' | tr "\n" "@")
       echo ${ENV_VARS}
       echo ${ENV_VARS} > /workspace/env_vars.txt
+  # Copy the Privacy Sandbox Attestation files for the target environment
+  - name: "bash"
+    id: copy-attestations
+    waitFor: ["-"]
+    env:
+      - "PROJECT_ENV=$_PROJECT_ENV"
+    script: |
+      #!/usr/bin/env bash
+
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp.${PROJECT_ENV} services/dsp/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp.${PROJECT_ENV} services/ssp/src/public/.well-known/privacy-sandbox-attestations.json
   # DSP
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
     id: build-dsp
-    waitFor: ["-"]
+    waitFor:
+      - copy-attestations
     args:
       [
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA",
-        "services/dsp"
+        "services/dsp",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -30,7 +43,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -51,24 +64,13 @@ steps:
     id: npm-install-home
     waitFor: ["-"]
     entrypoint: "npm"
-    args:
-      [
-        "--prefix",
-        "services/home",
-        "install"
-      ]
+    args: ["--prefix", "services/home", "install"]
   - name: "node"
     id: npm-run-build-home
     waitFor:
       - npm-install-home
     entrypoint: "npm"
-    args:
-      [
-        "--prefix",
-        "services/home",
-        "run",
-        "build"
-      ]
+    args: ["--prefix", "services/home", "run", "build"]
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
     id: build-home
@@ -79,7 +81,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA",
-        "services/home"
+        "services/home",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -89,7 +91,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -114,7 +116,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA",
-        "services/news"
+        "services/news",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -124,7 +126,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -150,7 +152,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA",
-        "services/shop"
+        "services/shop",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -160,7 +162,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -180,13 +182,14 @@ steps:
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
     id: build-ssp
-    waitFor: ["-"]
+    waitFor:
+      - copy-attestations
     args:
       [
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA",
-        "services/ssp"
+        "services/ssp",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -196,7 +199,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -222,7 +225,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA",
-        "services/travel"
+        "services/travel",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -232,7 +235,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -258,7 +261,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA",
-        "services/topics"
+        "services/topics",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -268,7 +271,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -294,7 +297,7 @@ steps:
         "build",
         "-t",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA",
-        "services/topics-server"
+        "services/topics-server",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
@@ -304,7 +307,7 @@ steps:
     args:
       [
         "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA"
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA",
       ]
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
