@@ -1,27 +1,45 @@
 {
-  "printWidth": 150,
+  "printWidth": 80,
   "tabWidth": 2,
-  "trailingComma": "none",
-  "semi": false,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "preserve",
+  "bracketSpacing": false,
+  "trailingComma": "all",
   "arrowParens": "always",
+  "embeddedLanguageFormatting": "off",
+  "proseWrap": "always",
   "overrides": [
     {
       "files": [
         "**/*.js",
         "**/*.ts",
-        "**/*.html",
-        "**/*.css",
-        "**/*.md"
+        "**/*.css"
       ]
     },
     {
       "files": [
-        "**/*.json",
         "**/*.yaml",
+        "**/*.yml"
+      ],
+      "options": {
+        "singleQuote": false
+      }
+    },
+    {
+      "files": [
+        "**/*.json",
         "**/tailwind.config.js"
       ],
       "options": {
         "printWidth": 40
+      }
+    },
+    {
+      "files": ["**/*.md"],
+      "options": {
+        "printWidth": 150
       }
     }
   ]

@@ -16,35 +16,35 @@
 
 // ssp
 async function getAuctionConfig() {
-  const url = new URL(location.origin)
-  url.pathname = "/auction-config.json"
-  const res = await fetch(url)
-  return res.json()
+  const url = new URL(location.origin);
+  url.pathname = '/auction-config.json';
+  const res = await fetch(url);
+  return res.json();
 }
 
-document.addEventListener("DOMContentLoaded", async (e) => {
+document.addEventListener('DOMContentLoaded', async (e) => {
   if (navigator.runAdAuction === undefined) {
-    return console.log("Protected Audience API is not supported")
+    return console.log('Protected Audience API is not supported');
   }
 
-  const auctionConfig = await getAuctionConfig()
+  const auctionConfig = await getAuctionConfig();
 
-  const adAuctionResult = await navigator.runAdAuction(auctionConfig)
+  const adAuctionResult = await navigator.runAdAuction(auctionConfig);
 
   console.log({
     auctionConfig,
-    adAuctionResult
-  })
+    adAuctionResult,
+  });
 
-  const $fencedframe = document.createElement("fencedframe")
-  $fencedframe.config = adAuctionResult
-  $fencedframe.setAttribute("mode", "opaque-ads")
-  $fencedframe.setAttribute("scrolling", "no")
+  const $fencedframe = document.createElement('fencedframe');
+  $fencedframe.config = adAuctionResult;
+  $fencedframe.setAttribute('mode', 'opaque-ads');
+  $fencedframe.setAttribute('scrolling', 'no');
   // $fencedframe.setAttribute("allow", "attribution-reporting; run-ad-auction")
-  $fencedframe.width = 300
-  $fencedframe.height = 250
+  $fencedframe.width = 300;
+  $fencedframe.height = 250;
 
-  console.log(`display ads in ${$fencedframe}`)
+  console.log(`display ads in ${$fencedframe}`);
 
-  document.body.appendChild($fencedframe)
-})
+  document.body.appendChild($fencedframe);
+});

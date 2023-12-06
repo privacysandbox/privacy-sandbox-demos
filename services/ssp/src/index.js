@@ -15,8 +15,8 @@
  */
 
 // SSP
-import express from "express"
-import url from "url"
+import express from 'express';
+import url from 'url';
 // import cbor from "cbor"
 // import { decodeDict } from "structured-field-values"
 // import {
@@ -32,7 +32,15 @@ import url from "url"
 //   TRIGGER_TYPE
 // } from "./arapi.js"
 
-const { EXTERNAL_PORT, PORT, SSP_HOST, SSP_DETAIL, SSP_TOKEN, DSP_HOST, SHOP_HOST } = process.env
+const {
+  EXTERNAL_PORT,
+  PORT,
+  SSP_HOST,
+  SSP_DETAIL,
+  SSP_TOKEN,
+  DSP_HOST,
+  SHOP_HOST,
+} = process.env;
 
 // // in-memory storage for debug reports
 // const Reports = [];
@@ -41,14 +49,14 @@ const { EXTERNAL_PORT, PORT, SSP_HOST, SSP_DETAIL, SSP_TOKEN, DSP_HOST, SHOP_HOS
 //   Reports.length = 0;
 // }, 1000 * 60 * 10);
 
-const app = express()
+const app = express();
 
 app.use((req, res, next) => {
-  res.setHeader("Origin-Trial", SSP_TOKEN)
-  next()
-})
+  res.setHeader('Origin-Trial', SSP_TOKEN);
+  next();
+});
 
-app.use(express.json())
+app.use(express.json());
 
 // app.use((req, res, next) => {
 //   // enable transitional debugging reports (https://github.com/WICG/attribution-reporting-api/blob/main/EVENT.md#optional-transitional-debugging-reports)
@@ -62,32 +70,38 @@ app.use(express.json())
 
 app.use((req, res, next) => {
   // opt-in fencedframe
-  if (req.get("sec-fetch-dest") === "fencedframe") {
-    res.setHeader("Supports-Loading-Mode", "fenced-frame")
+  if (req.get('sec-fetch-dest') === 'fencedframe') {
+    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
   }
-  next()
-})
+  next();
+});
 
 app.use(
-  express.static("src/public", {
+  express.static('src/public', {
     setHeaders: (res, path, stat) => {
-      if (path.endsWith("/decision-logic.js")) {
-        return res.set("X-Allow-FLEDGE", "true")
+      if (path.endsWith('/decision-logic.js')) {
+        return res.set('X-Allow-FLEDGE', 'true');
       }
-      if (path.endsWith("/run-ad-auction.js")) {
-        res.set("Supports-Loading-Mode", "fenced-frame")
-        res.set("Permissions-Policy", "run-ad-auction=(*)")
+      if (path.endsWith('/run-ad-auction.js')) {
+        res.set('Supports-Loading-Mode', 'fenced-frame');
+        res.set('Permissions-Policy', 'run-ad-auction=(*)');
       }
-    }
-  })
-)
-app.set("view engine", "ejs")
-app.set("views", "src/views")
+    },
+  }),
+);
+app.set('view engine', 'ejs');
+app.set('views', 'src/views');
 
-app.get("/", async (req, res) => {
-  const title = SSP_DETAIL
-  res.render("index.html.ejs", { title, DSP_HOST, SSP_HOST, EXTERNAL_PORT, SHOP_HOST })
-})
+app.get('/', async (req, res) => {
+  const title = SSP_DETAIL;
+  res.render('index.html.ejs', {
+    title,
+    DSP_HOST,
+    SSP_HOST,
+    EXTERNAL_PORT,
+    SHOP_HOST,
+  });
+});
 
 // app.get("/register-source", async (req, res) => {
 //   const { advertiser, id } = req.query
@@ -203,21 +217,21 @@ app.get("/", async (req, res) => {
 //   res.sendStatus(200)
 // })
 
-app.get("/ad-tag.html", async (req, res) => {
-  res.render("ad-tag.html.ejs")
-})
+app.get('/ad-tag.html', async (req, res) => {
+  res.render('ad-tag.html.ejs');
+});
 
-app.get("/video-ad-tag.html", async (req, res) => {
-  res.render("video-ad-tag.html.ejs")
-})
+app.get('/video-ad-tag.html', async (req, res) => {
+  res.render('video-ad-tag.html.ejs');
+});
 
 // app.get("/reports", async (req, res) => {
 //   res.render("reports.html.ejs", { title: "Report", Reports })
 // })
 
-app.get("/auction-config.json", async (req, res) => {
-  const DSP = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`)
-  const SSP = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`)
+app.get('/auction-config.json', async (req, res) => {
+  const DSP = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
+  const SSP = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`);
   const auctionConfig = {
     // should https & same as decisionLogicUrl's origin
     seller: SSP,
@@ -227,32 +241,32 @@ app.get("/auction-config.json", async (req, res) => {
 
     interestGroupBuyers: [
       // * is not supported yet
-      DSP
+      DSP,
     ],
     // public for everyone
     auctionSignals: {
-      auction_signals: "auction_signals"
+      auction_signals: 'auction_signals',
     },
 
     // only for single party
     sellerSignals: {
-      seller_signals: "seller_signals"
+      seller_signals: 'seller_signals',
     },
 
     // only for single party
     perBuyerSignals: {
       // listed on interestGroupByers
       [DSP]: {
-        per_buyer_signals: "per_buyer_signals"
-      }
+        per_buyer_signals: 'per_buyer_signals',
+      },
     },
 
     // use with fencedframe
-    resolveToConfig: true
-  }
-  console.log({ auctionConfig })
-  res.json(auctionConfig)
-})
+    resolveToConfig: true,
+  };
+  console.log({auctionConfig});
+  res.json(auctionConfig);
+});
 
 // app.post("/.well-known/attribution-reporting/debug/report-aggregate-attribution", async (req, res) => {
 //   const debug_report = req.body
@@ -293,5 +307,5 @@ app.get("/auction-config.json", async (req, res) => {
 // })
 
 app.listen(PORT, function () {
-  console.log(`Listening on port ${PORT}`)
-})
+  console.log(`Listening on port ${PORT}`);
+});

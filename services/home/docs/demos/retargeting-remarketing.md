@@ -11,8 +11,7 @@ more_data:
       - DSP
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # Retargeting / Remarketing
 
@@ -23,7 +22,9 @@ import TabItem from '@theme/TabItem';
 
 ### Description
 
-Remarketing is a type of online advertising that allows you to show ads to people who have already visited your website. You can create custom audiences based on different criteria, such as pages visited or products added to the cart. Remarketing can help you increase brand awareness, drive traffic back to your website, and boost sales.
+Remarketing is a type of online advertising that allows you to show ads to people who have already visited your website. You can create custom
+audiences based on different criteria, such as pages visited or products added to the cart. Remarketing can help you increase brand awareness, drive
+traffic back to your website, and boost sales.
 
 ### Privacy Sandbox APIs
 
@@ -43,25 +44,30 @@ Remarketing is a type of online advertising that allows you to show ads to peopl
 
 ### Goals
 
-In this demo, we assume an advertiser would like to drive traffic back to their website. Remarketing can help an advertiser to get people who have already visited their website to come back for more or to complete a purchase. This can be done by showing them ads about the product they have previously looked at, on other websites.
+In this demo, we assume an advertiser would like to drive traffic back to their website. Remarketing can help an advertiser to get people who have
+already visited their website to come back for more or to complete a purchase. This can be done by showing them ads about the product they have
+previously looked at, on other websites.
 
 ### Assumptions
 
-This use case assumes the advertiser (shop site) can bid on the publisher (news site) inventory through an agreement between their respective DSP and SSP platforms.
+This use case assumes the advertiser (shop site) can bid on the publisher (news site) inventory through an agreement between their respective DSP and
+SSP platforms.
 
 ### Key Exclusions
 
-The demo does not integrate existing auction mechanisms (prebid or header bidding…). it is only scoped to on-device auction with Protected Audience API.
-The ad selection is very straightforward (only 1 bidder).
-The bidding logic does not include real-time signals from Key/Value service.
+The demo does not integrate existing auction mechanisms (prebid or header bidding…). it is only scoped to on-device auction with Protected Audience
+API. The ad selection is very straightforward (only 1 bidder). The bidding logic does not include real-time signals from Key/Value service.
 
 ### System Design
 
-Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. There the browser runs an on-device Auction, bidding logic will select the winning interest group, and relevant ads will be dynamically rendered on the publisher page.
+Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. There the
+browser runs an on-device Auction, bidding logic will select the winning interest group, and relevant ads will be dynamically rendered on the
+publisher page.
 
 #### Protected Audience Flow
 
-Below is a general introduction of Remarketing using Privacy Sandbox Protected Audience API. For further information see [Protected Audience API - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/protected-audience/#overview).
+Below is a general introduction of Remarketing using Privacy Sandbox Protected Audience API. For further information see
+[Protected Audience API - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/protected-audience/#overview).
 
 ![Protected Audience Flow](./img/retargeting-remarketing-flow.png)
 
@@ -124,18 +130,22 @@ Note right of Browser:Scenario 1 stops here
 
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on a “shoe” product item on the shop site.
-   - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the browser to join an ad interest group for this product or this specific product category.
+   - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the
+     browser to join an ad interest group for this product or this specific product category.
 3. [Navigate to the news site](https://privacy-sandbox-demos-news.dev/) (publisher)
 4. Observe the ad served on the news site
    - If you previously browsed the “shoe” product on the shop site, you will be shown an ad for the same product.
    - When the page was loaded, Protected Audience API allowed the SSP to run an ad auction on the publisher site.
-   - The winning advertiser of this ad auction gets their ad creative to be displayed on the publisher site. In this case you have cleared the browser history and only browsed 1 advertiser site page so you are only seeing 1 ad creative from the same advertiser.
+   - The winning advertiser of this ad auction gets their ad creative to be displayed on the publisher site. In this case you have cleared the browser
+     history and only browsed 1 advertiser site page so you are only seeing 1 ad creative from the same advertiser.
 
 ### Implementation details
 
 #### How is the user added to an Interest Group based on his browsing behavior ? (see step #2 of User Journey)
 
-The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/shop/src/index.ts#L93) from the DSP service. This is a third-party tag from the DSP service.
+The shop product page
+[includes dsp-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/shop/src/index.ts#L93)
+from the DSP service. This is a third-party tag from the DSP service.
 
 ```html
 <script
@@ -146,7 +156,9 @@ The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/p
 ></script>
 ```
 
-The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/dsp-tag.js#L17) dynamically embeds an iframe
+The
+[dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/dsp-tag.js#L17)
+dynamically embeds an iframe
 
 ```html
 <iframe
@@ -157,7 +169,9 @@ The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9
 ></iframe>
 ```
 
-The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L31) to join interest group using Protected Audience API
+The iframe calls a third-party script
+[join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L31)
+to join interest group using Protected Audience API
 
 ```js title="https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp/src/public/js/join-ad-interest-group.js"
 // Protected Audience API
@@ -185,12 +199,16 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 })
 ```
 
-This code sets up the interest groups options. Those options are fetched dynamically from [interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/index.ts#L50).
-Finally the code requests the browser to [join the interest group](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L38)
+This code sets up the interest groups options. Those options are fetched dynamically from
+[interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/index.ts#L50).
+Finally the code requests the browser to
+[join the interest group](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L38)
 
 #### How do we serve an ad relevant to the user’s interest ? (see step #4 of User Journey)
 
-The news page [includes ad-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/news/src/views/index.ejs#L29)from the SSP service. This is a third-party tag from the SSP service.
+The news page
+[includes ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8a33afb7433ed70e639047316c5bff30d61be58b/services/news/src/views/index.ejs#L29)from
+the SSP service. This is a third-party tag from the SSP service.
 
 ```html
 <script defer="" class="ssp_tag" src="https://privacy-sandbox-demos-ssp.dev/ad-tag.js"></script>
@@ -209,7 +227,9 @@ This [ssp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/
 ></iframe>
 ```
 
-The iframe calls a third-party script [run-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp/src/public/js/run-ad-auction.js) to run an ondevice ad auction using Protected Audience API
+The iframe calls a third-party script
+[run-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp/src/public/js/run-ad-auction.js) to run an ondevice
+ad auction using Protected Audience API
 
 ```js title=”https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp/src/public/js/run-ad-auction.js”
 document.addEventListener("DOMContentLoaded", async (e) => {
@@ -229,8 +249,10 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 })
 ```
 
-The `runAdAuction` code is executed by the browser and will decide which ad will be served to the user.
-The result of the auction is displayed within a Fenced Frame by specifying the adAuctionResult object to the fenced frame configuration. Developers would traditionally use https urls to load creative in an iframe, however Protected Audience API is hiding the creative url from the parent page. This is a privacy protection mechanism to not reveal the user's interest to the parent page.
+The `runAdAuction` code is executed by the browser and will decide which ad will be served to the user. The result of the auction is displayed within
+a Fenced Frame by specifying the adAuctionResult object to the fenced frame configuration. Developers would traditionally use https urls to load
+creative in an iframe, however Protected Audience API is hiding the creative url from the parent page. This is a privacy protection mechanism to not
+reveal the user's interest to the parent page.
 
 ```html
 <fencedframe mode="opaque-ads" scrolling="no" width="300" height="250">
@@ -240,9 +262,12 @@ The result of the auction is displayed within a Fenced Frame by specifying the a
 </fencedframe>
 ```
 
-note that Fenced Frame attribute `mode` must be set to “[opaque-ads](https://github.com/WICG/fenced-frame/blob/master/explainer/use_cases.md#opaque-ads)” to make the url opaque to the embedding context.
-Fenced Frame size (width and height) only allow pre-defined values, please refer to the allow-list from the documentation.
-The request to the `renderURL`from the winning Interest Group [returns the ad creative](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9f8578e6d99da4dd52007843a283c97885c07146/services/dsp/src/index.ts#L57) to be displayed
+note that Fenced Frame attribute `mode` must be set to
+“[opaque-ads](https://github.com/WICG/fenced-frame/blob/master/explainer/use_cases.md#opaque-ads)” to make the url opaque to the embedding context.
+Fenced Frame size (width and height) only allow pre-defined values, please refer to the allow-list from the documentation. The request to the
+`renderURL`from the winning Interest Group
+[returns the ad creative](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9f8578e6d99da4dd52007843a283c97885c07146/services/dsp/src/index.ts#L57)
+to be displayed
 
 ```html
 <body>
@@ -266,7 +291,8 @@ The request to the `renderURL`from the winning Interest Group [returns the ad cr
 </body>
 ```
 
-This code contains the `img` tag with `src` attribute specifying the product the user might be interested in, and a link “href” pointing to the advertiser page.
+This code contains the `img` tag with `src` attribute specifying the product the user might be interested in, and a link “href” pointing to the
+advertiser page.
 
 ### Related API documentation
 

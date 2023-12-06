@@ -6,25 +6,28 @@ The same instructions can be repeated to deploy a dev, staging, prod etc. enviro
 
 Project names and variables in _italic_ must be carefully chosen and updated to suit your project naming convention.
 
-Resources : https://firebase.google.com/docs/hosting/cloud-run
+Resources : <https://firebase.google.com/docs/hosting/cloud-run>
 
 ## Prepare your Google Cloud Platform Billing Account
 
-If you don’t have yet a billing account, follow the documentation to Create a Google Cloud Platform Billing Account : https://cloud.google.com/billing/docs/how-to/manage-billing-account
+If you don’t have yet a billing account, follow the documentation to Create a Google Cloud Platform Billing Account :
+<https://cloud.google.com/billing/docs/how-to/manage-billing-account>
 
 ## Prepare your Google Cloud Platform Project
 
-**Note** : the instructions below assume you are creating a completely new GCP Project. However if the project already exists, instead you’ll need to get permission from the project owner to be able to deploy resources (Firebase hosting & Cloud Run).
+**Note** : the instructions below assume you are creating a completely new GCP Project. However if the project already exists, instead you’ll need to
+get permission from the project owner to be able to deploy resources (Firebase hosting & Cloud Run).
 
-1. Create a Google Cloud Platform Project : https://cloud.google.com/resource-manager/docs/creating-managing-projects
+1. Create a Google Cloud Platform Project : <https://cloud.google.com/resource-manager/docs/creating-managing-projects>
    1. Note the name of the project/id. E.g.: _privacy-sandbox-demos_
    2. Assign the billing account created in step above
-2. Add a Firebase Project linked to your GCP Project : https://console.firebase.google.com/
+2. Add a Firebase Project linked to your GCP Project : <https://console.firebase.google.com/>
    1. Click "Add Project"
    2. Select the GCP project you previously created. E.g. : _privacy-sandbox-demos_
    3. Since you enabled Billing Account on this project, it will automatically select the Firebase pay-as-you-go plan
    4. Enable Google Analytics for the project : Select "Default Account for Firebase" unless you have specific analytics requirements
-3. If you don’t have the project owner role , you will need to obtain at least the following IAM role to your account on the target project before you proceed with the next steps.
+3. If you don’t have the project owner role , you will need to obtain at least the following IAM role to your account on the target project before you
+   proceed with the next steps.
    1. Artifact Registry Administrator
    2. Cloud Build Editor
    3. Cloud Run Admin
@@ -38,15 +41,16 @@ If you don’t have yet a billing account, follow the documentation to Create a 
 
 ## Prepare your Development Environment for Firebase Hosting
 
-In this section you will configure your development environment to get ready to build and deploy resources to Firebase. The Instructions below are based on the Linux environment.
+In this section you will configure your development environment to get ready to build and deploy resources to Firebase. The Instructions below are
+based on the Linux environment.
 
-1. Clone Privacy Sandbox Demos Git Repository : https://github.com/privacysandbox/privacy-sandbox-demos.git
-2. Install the Firebase CLI : https://firebase.google.com/docs/cli#linux
+1. Clone Privacy Sandbox Demos Git Repository : <https://github.com/privacysandbox/privacy-sandbox-demos.git>
+2. Install the Firebase CLI : <https://firebase.google.com/docs/cli#linux>
 3. Open a terminal at the root of the project. Login and test the Firebase CLI :
 
 ```shell-session
-$ firebase login
-$ firebase projects:list
+firebase login
+firebase projects:list
 ```
 
 4. Configure firebase to use your project (e.g. )
@@ -66,19 +70,21 @@ FIREBASE_HOSTING_DOMAIN=privacy-sandbox-demos
 
 Resources :
 
-- https://firebase.google.com/docs/hosting
-- https://firebase.google.com/docs/hosting/multisites?authuser=0&hl=en#set_up_deploy_targets
+- <https://firebase.google.com/docs/hosting>
+- <https://firebase.google.com/docs/hosting/multisites?authuser=0&hl=en#set_up_deploy_targets>
 
 ## Setup Firebase Hosting Multiple Sites
 
-Your firebase project will host 5 different sites to demonstrate the capabilities of Privacy Sandbox across the different actors of the adtech ecosystem :
+Your firebase project will host 5 different sites to demonstrate the capabilities of Privacy Sandbox across the different actors of the adtech
+ecosystem :
 
 - Home : Home page with the links to the different use-cases and scenario
 - DSP : Demand Side Platform
 - Shop & Travel : The advertiser shopping or travel site = Buy side. They are buying ad space from the publisher. Site embeds the DSP tags.
 - SSP : Supply Side Platform
 - News : Publisher site where ads will be displayed = Sell side. They are selling ad space to advertisers. Site embeds SSP tags
-- Collector : Collector service collects, transforms and batches Aggregatable Reports produced by the Attribution Reporting API and Private Aggregation API, then sends them to the Aggregation Service running on TEE.
+- Collector : Collector service collects, transforms and batches Aggregatable Reports produced by the Attribution Reporting API and Private
+  Aggregation API, then sends them to the Aggregation Service running on TEE.
 
 Each site will have a different domain name to simulate a real life adtech scenario
 
@@ -114,7 +120,8 @@ firebase hosting:sites:create privacy-sandbox-demos-news
 firebase hosting:sites:create privacy-sandbox-demos-collector
 ```
 
-Set up deploy targets for your sites (When you have multiple sites and you run Firebase CLI deploy commands, the CLI needs a way to communicate which settings should be deployed to each site).
+Set up deploy targets for your sites (When you have multiple sites and you run Firebase CLI deploy commands, the CLI needs a way to communicate which
+settings should be deployed to each site).
 
 use the following command to setup deploy target for each hosting site :
 
@@ -134,7 +141,8 @@ firebase target:apply hosting travel privacy-sandbox-demos-travel
 firebase target:apply hosting travel privacy-sandbox-demos-collector
 ```
 
-Adding hosting sites and deploy targets can be done using the provided script below (make sure your `.env.deploy` file contains the right domain value for the key `FIREBASE_HOSTING_DOMAIN`)
+Adding hosting sites and deploy targets can be done using the provided script below (make sure your `.env.deploy` file contains the right domain value
+for the key `FIREBASE_HOSTING_DOMAIN`)
 
 ```shell
 # From the root of the project, execute
@@ -149,7 +157,7 @@ By using Cloud Logging with your Firebase Hosting sites, you allow web request l
 
 Access the following URL (replace _privacy-sandbox-demos_ with your project name)
 
-https://firebase.corp.google.com/project/_privacy-sandbox-demos_/settings/integrations/cloudlogging
+<https://firebase.corp.google.com/project/_privacy-sandbox-demos_/settings/integrations/cloudlogging>
 
 Select all the sites you want to export logs from, click Save and Finish.
 
@@ -157,11 +165,13 @@ Select all the sites you want to export logs from, click Save and Finish.
 
 Next you will deploy containers to Cloud Run to run the content of the demo sites.
 
-For our architecture, we chose to deploy everything container based for portability and flexibility and to use Firebase hosting as a frontend solution for HTTPS request handling, domain name and ssl certificates.
+For our architecture, we chose to deploy everything container based for portability and flexibility and to use Firebase hosting as a frontend solution
+for HTTPS request handling, domain name and ssl certificates.
 
-Install Google Cloud SDK : If Google Cloud SDK is not installed on the machine, follow instructions here : https://cloud.google.com/sdk/docs/install#linux
+Install Google Cloud SDK : If Google Cloud SDK is not installed on the machine, follow instructions here :
+<https://cloud.google.com/sdk/docs/install#linux>
 
-Initialize Google Cloud SDK : https://cloud.google.com/sdk/docs/initializing
+Initialize Google Cloud SDK : <https://cloud.google.com/sdk/docs/initializing>
 
 ```shell
 # Run `gcloud init` to setup authentication and project
@@ -181,12 +191,11 @@ gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregi
 gcloud config set run/region us-central1
 ```
 
-Resources : https://firebase.google.com/docs/hosting/cloud-run
+Resources : <https://firebase.google.com/docs/hosting/cloud-run>
 
 ## Setup Artifact Registry
 
-https://cloud.google.com/artifact-registry/docs/enable-service
-https://cloud.google.com/artifact-registry/docs/transition/setup-repo
+<https://cloud.google.com/artifact-registry/docs/enable-service> <https://cloud.google.com/artifact-registry/docs/transition/setup-repo>
 
 ```sh
 # create docker repository in Cloud Artifact Registry
@@ -213,22 +222,19 @@ gcloud artifacts repositories list
 gcloud auth configure-docker us-central1-docker.pkg.dev
 ```
 
-Enable Vulnerability Scanning : navigate to settings and Turn On.
-https://console.cloud.google.com/artifacts/settings
+Enable Vulnerability Scanning : navigate to settings and Turn On. <https://console.cloud.google.com/artifacts/settings>
 
 ## Setup Cloud Build
 
-https://cloud.google.com/build/docs/deploying-builds/deploy-cloud-run
+<https://cloud.google.com/build/docs/deploying-builds/deploy-cloud-run>
 
-Enable Cloud Build Service Account permissions :
-Cloud Run Admin
-Service Account User
+Enable Cloud Build Service Account permissions : Cloud Run Admin Service Account User
 
-From Cloud Build Settings page : https://console.cloud.google.com/cloud-build/settings/service-account
+From Cloud Build Settings page : <https://console.cloud.google.com/cloud-build/settings/service-account>
 
 or from IAM page :
 
-https://console.cloud.google.com/iam-admin/iam
+<https://console.cloud.google.com/iam-admin/iam>
 
 ## Deploy all Cloud Run services and Firebase Sites
 
@@ -259,14 +265,16 @@ NEWS_DETAIL="Publisher: News media site"
 ...
 ```
 
-Copy the `.env.deploy.template` to `.env.deploy` file then edit .env.deploy to update the GCP Project Name and the Firebase domain prefix you will use to deploy your services :
+Copy the `.env.deploy.template` to `.env.deploy` file then edit .env.deploy to update the GCP Project Name and the Firebase domain prefix you will use
+to deploy your services :
 
 ```sh
 GCP_PROJECT_NAME=xxx
 FIREBASE_HOSTING_DOMAIN=**_privacy-sandbox-demos_**
 ```
 
-**[optional]** If you have enrolled your site with Privacy Sandbox, copy your attestation files for dsp/ssp services under the folder : `cicd/attestations`
+**[optional]** If you have enrolled your site with Privacy Sandbox, copy your attestation files for dsp/ssp services under the folder :
+`cicd/attestations`
 
 | Environment | Service |           Attestation file name            |
 | :---------: | :-----: | :----------------------------------------: |

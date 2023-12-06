@@ -26,9 +26,7 @@ Simply embedding `ad-tag.html` into the caller site.
 
 ## ad-tag.html
 
-It's add page by SSP choosing ads to be shown.
-Decision logic, running auction can be here.
-Embedding `/ads` with some parameters in iframe.
+It's add page by SSP choosing ads to be shown. Decision logic, running auction can be here. Embedding `/ads` with some parameters in iframe.
 
 ```html
 <iframe allow="attribution-reporting" src="https://privacy-sandbox-demos-ssp.dev/ad-tag.html">
@@ -38,5 +36,4 @@ Embedding `/ads` with some parameters in iframe.
 
 ## CAUTION !!!
 
-THIS IS ONLY A DEMO SO SOME SECURITY PROBLEM MAY HAPPEN.
-NEVER DEPLOY THIS IN PRODUCTION AS-IS.
+THIS IS ONLY A DEMO SO SOME SECURITY PROBLEM MAY HAPPEN. NEVER DEPLOY THIS IN PRODUCTION AS-IS.
