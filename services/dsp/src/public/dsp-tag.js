@@ -14,24 +14,24 @@
  limitations under the License.
  */
 
-;(async () => {
-  const $script = document.querySelector("script.dsp_tag")
-  const src = new URL($script.src)
-  const advertiser = $script.dataset.advertiser
-  const id = $script.dataset.id
+(async () => {
+  const $script = document.querySelector('script.dsp_tag');
+  const src = new URL($script.src);
+  const advertiser = $script.dataset.advertiser;
+  const id = $script.dataset.id;
 
-  src.pathname = "join-ad-interest-group.html"
-  src.searchParams.append("advertiser", advertiser)
-  src.searchParams.append("id", id)
-  const currentUrl = new URL(location.href)
+  src.pathname = 'join-ad-interest-group.html';
+  src.searchParams.append('advertiser', advertiser);
+  src.searchParams.append('id', id);
+  const currentUrl = new URL(location.href);
   for (const searchParam of currentUrl.searchParams) {
-    src.searchParams.append(searchParam[0], searchParam[1])
+    src.searchParams.append(searchParam[0], searchParam[1]);
   }
 
-  const $iframe = document.createElement("iframe")
-  $iframe.width = 1
-  $iframe.height = 1
-  $iframe.src = src
-  $iframe.allow = "join-ad-interest-group"
-  $script.parentElement.insertBefore($iframe, $script.nextSibling)
-})()
+  const $iframe = document.createElement('iframe');
+  $iframe.width = 1;
+  $iframe.height = 1;
+  $iframe.src = src;
+  $iframe.allow = 'join-ad-interest-group';
+  $script.parentElement.insertBefore($iframe, $script.nextSibling);
+})();

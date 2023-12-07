@@ -11,8 +11,7 @@ more_data:
       - DSP
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # VAST Video Protected Audience
 
@@ -23,7 +22,10 @@ import TabItem from '@theme/TabItem';
 
 ### Description
 
-VAST (Video Ad Serving Template) is a template for structuring ad tags that serve video and audio ads to media players. Using an XML schema, VAST transfers important metadata about an ad from the ad server to a media player. In the context of Protected Audience API the VAST XML response is provided within the iFrame for a winning DSP. The following demo provides details on a temporary solution allowing Top Level embedded video players access to the VAST XML URL.
+VAST (Video Ad Serving Template) is a template for structuring ad tags that serve video and audio ads to media players. Using an XML schema, VAST
+transfers important metadata about an ad from the ad server to a media player. In the context of Protected Audience API the VAST XML response is
+provided within the iFrame for a winning DSP. The following demo provides details on a temporary solution allowing Top Level embedded video players
+access to the VAST XML URL.
 
 ### Privacy Sandbox APIs
 
@@ -41,19 +43,24 @@ VAST (Video Ad Serving Template) is a template for structuring ad tags that serv
 
 ### Goals
 
-In this demo, we assume an advertiser would like to display VAST XML URL’s from the winning auction and provide that back to the Top Level embedded video player resident on the publisher's website. This workaround facilitates this until future fenced frame requirements are enforced.
+In this demo, we assume an advertiser would like to display VAST XML URL’s from the winning auction and provide that back to the Top Level embedded
+video player resident on the publisher's website. This workaround facilitates this until future fenced frame requirements are enforced.
 
 ### Assumptions
 
-This use case assumes the publisher (news site) has one of the many standard VAST XML compliant video players embedded on their site at the top level and also has an SSP supplying advertisements in the VAST XML format back to said player.
+This use case assumes the publisher (news site) has one of the many standard VAST XML compliant video players embedded on their site at the top level
+and also has an SSP supplying advertisements in the VAST XML format back to said player.
 
 ### Key Exclusions
 
-The demo does not integrate existing auction mechanisms (prebid or header bidding…). it is only scoped to on-device auction with Protected Audience API. The ad selection is very straightforward (only 1 bidder).
+The demo does not integrate existing auction mechanisms (prebid or header bidding…). it is only scoped to on-device auction with Protected Audience
+API. The ad selection is very straightforward (only 1 bidder).
 
 ### System Design
 
-Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. There the browser runs an on-device Auction, bidding logic will select the winning interest group, and relevant VAST XML video ads will be dynamically rendered on the publisher page.
+Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. There the
+browser runs an on-device Auction, bidding logic will select the winning interest group, and relevant VAST XML video ads will be dynamically rendered
+on the publisher page.
 
 #### Protected Audience Flow
 
@@ -123,7 +130,8 @@ deactivate iframe
 
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on a “shoe” product item on the shop site. Append ?adType=video to the product page url and refresh the page.
-   - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the browser to join an ad interest group for this product or this specific product category.
+   - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the
+     browser to join an ad interest group for this product or this specific product category.
 3. [Navigate to the news site video page](https://privacy-sandbox-demos-news.dev/video-ad) (publisher)
 4. Scroll to the embedded video player and click ‘Play Content’. Observe the video ad pre-roll served on the news sites embedded player.
    - When the page was loaded, Protected Audience API allowed the SSP to run an ad auction on the publisher site.
@@ -133,7 +141,9 @@ deactivate iframe
 
 #### How is the user added to an Interest Group with video ads based on his browsing behavior? (see step #2 of User Journey)
 
-The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/shop/src/index.ts#L93) from the DSP service. This is a third-party tag from the DSP service.
+The shop product page
+[includes dsp-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/shop/src/index.ts#L93)
+from the DSP service. This is a third-party tag from the DSP service.
 
 ```html
 <script
@@ -145,7 +155,9 @@ The shop product page [includes dsp-tag.js ](https://github.com/privacysandbox/p
 ></script>
 ```
 
-The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/dsp-tag.js#L17) dynamically embeds an iframe
+The
+[dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/dsp-tag.js#L17)
+dynamically embeds an iframe
 
 ```html
 <iframe
@@ -157,7 +169,9 @@ The [dsp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/9
 </iframe>
 ```
 
-The iframe calls a third-party script [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L18) to join interest group using Protected Audience API
+The iframe calls a third-party script
+[join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L18)
+to join interest group using Protected Audience API
 
 ```js title="https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/dsp/src/public/js/join-ad-interest-group.js"
 // Protected Audience API
@@ -185,13 +199,19 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 })
 ```
 
-This code sets up the interest groups options. Those options are fetched dynamically from [interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/index.ts#L50). For the purpose of this demo the previously utilized adType=video query parameter is passed along with the interestGroupUrl to deliver a video specific interest group back to the browser.
+This code sets up the interest groups options. Those options are fetched dynamically from
+[interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/index.ts#L50).
+For the purpose of this demo the previously utilized adType=video query parameter is passed along with the interestGroupUrl to deliver a video
+specific interest group back to the browser.
 
-Finally the code requests the browser to [join the interest group](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L38)
+Finally the code requests the browser to
+[join the interest group](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/dsp/src/public/js/join-ad-interest-group.js#L38)
 
 #### How do we serve a video ad relevant to the user’s interest ? (see step #4 of User Journey)
 
-The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes an embedded video player and related video scripts. It also [includes video-ad-tag.js ](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js) from the SSP service. This is a third-party tag from the SSP service.
+The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes an embedded video player and related video scripts. It also
+[includes video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js)
+from the SSP service. This is a third-party tag from the SSP service.
 
 ```html
 <div id="mainContainer">
@@ -213,7 +233,12 @@ The [news video page](https://privacy-sandbox-demos-news.dev/video-ad) includes 
 </ins>
 ```
 
-[Video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js#L27) will inject an iframe containing [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) and setup an [event listener to receive the adVastUrl](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L31) broadcast.
+[Video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/video-ad-tag.js#L27)
+will inject an iframe containing
+[video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs)
+and setup an
+[event listener to receive the adVastUrl](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L31)
+broadcast.
 
 ```js
 ;(async () => {
@@ -237,7 +262,13 @@ window.addEventListener("message", (event) => {
 })
 ```
 
-The injected [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) iframe contains [run-video-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/run-video-ad-auction.js) which executes the auction and [injects the video ad result as an iframe](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/run-video-ad-auction.js#L37) to the page.
+The injected
+[video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs)
+iframe contains
+[run-video-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/run-video-ad-auction.js)
+which executes the auction and
+[injects the video ad result as an iframe](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/public/js/run-video-ad-auction.js#L37)
+to the page.
 
 ```html
 <!-- Video Ad HTML Returned From Protected Audience Auction --->
@@ -250,7 +281,12 @@ The injected [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandb
 </html>
 ```
 
-The video-ad-creative.js script contains the DSP Video Ad Creative URL and adVastURL. Using post message this will be broadcast back out to the original event listener found in [video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs) provided by the SSP and [setUpIMA(adVastUrl)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L35) is executed.
+The video-ad-creative.js script contains the DSP Video Ad Creative URL and adVastURL. Using post message this will be broadcast back out to the
+original event listener found in
+[video-ad-tag.html](https://github.com/privacysandbox/privacy-sandbox-demos/blob/f0c3f879c5883a2b3e528e08bccfdd65adbf5c04/services/ssp/src/views/video-ad-tag.html.ejs)
+provided by the SSP and
+[setUpIMA(adVastUrl)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L35)
+is executed.
 
 ```javascript
 ;(async () => {
@@ -266,7 +302,11 @@ The video-ad-creative.js script contains the DSP Video Ad Creative URL and adVas
 })()
 ```
 
-The [video-ad-helper.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/news/src/public/js/video-ad-helper.js) and IMA SDK both assist in the local video player environment using the passed in adTagUrl from [video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L35C5-L35C24) resulting in the sample pre-roll video being loaded and shown when the user clicks play.
+The
+[video-ad-helper.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/news/src/public/js/video-ad-helper.js)
+and IMA SDK both assist in the local video player environment using the passed in adTagUrl from
+[video-ad-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/939dd4928ec9cb4628b3f9424081bbd912346bcf/services/ssp/src/public/js/video-ad-tag.js#L35C5-L35C24)
+resulting in the sample pre-roll video being loaded and shown when the user clicks play.
 
 ### Related API documentation
 

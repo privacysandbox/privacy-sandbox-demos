@@ -2,7 +2,9 @@
 
 ## Prerequisites
 
-These instructions are given for Linux environments and assume you have the following packages installed on your system and your user is in the sudoers list (can execute commands with root access using sudo). If you plan to contribute to the code, a GitHub account is also required to commit your change and/or make pull requests.
+These instructions are given for Linux environments and assume you have the following packages installed on your system and your user is in the
+sudoers list (can execute commands with root access using sudo). If you plan to contribute to the code, a GitHub account is also required to commit
+your change and/or make pull requests.
 
 The following packages must be installed
 
@@ -17,12 +19,14 @@ The following packages must be installed
 
 ### Domain Name / URL
 
-Privacy Sandbox APIs use the domain name in the URL (site origin) to allow/block cross-site data sharing, observe topics, etc. As a result developers cannot rely only on the “localhost” domain for development.
+Privacy Sandbox APIs use the domain name in the URL (site origin) to allow/block cross-site data sharing, observe topics, etc. As a result developers
+cannot rely only on the “localhost” domain for development.
 
-You will re-map individual domain names to loopback address (127.0.0.1), so that each service running on your local environment can be accessed via a URL, such as:
+You will re-map individual domain names to loopback address (127.0.0.1), so that each service running on your local environment can be accessed via a
+URL, such as:
 
-- https://privacy-sandbox-demos-home.dev
-- https://privacy-sandbox-demos-shop.dev
+- <https://privacy-sandbox-demos-home.dev>
+- <https://privacy-sandbox-demos-shop.dev>
 - …
 
 There are 2 ways to achieve remapping on your local development environment. You can choose either of the 2 options below :
@@ -31,16 +35,16 @@ There are 2 ways to achieve remapping on your local development environment. You
 
 Edit `/etc/hosts` file
 
-```
+```shell
 # /etc/hosts
-127.0.0.1	privacy-sandbox-demos.dev
-127.0.0.1	privacy-sandbox-demos-home.dev
-127.0.0.1	privacy-sandbox-demos-dsp.dev
-127.0.0.1	privacy-sandbox-demos-shop.dev
-127.0.0.1	privacy-sandbox-demos-travel.dev
-127.0.0.1	privacy-sandbox-demos-ssp.dev
-127.0.0.1	privacy-sandbox-demos-news.dev
-127.0.0.1	privacy-sandbox-demos-collector.dev
+127.0.0.1 privacy-sandbox-demos.dev
+127.0.0.1 privacy-sandbox-demos-home.dev
+127.0.0.1 privacy-sandbox-demos-dsp.dev
+127.0.0.1 privacy-sandbox-demos-shop.dev
+127.0.0.1 privacy-sandbox-demos-travel.dev
+127.0.0.1 privacy-sandbox-demos-ssp.dev
+127.0.0.1 privacy-sandbox-demos-news.dev
+127.0.0.1 privacy-sandbox-demos-collector.dev
 ```
 
 Verifying mapping with :
@@ -63,7 +67,9 @@ google_chrome --host-resolver-rules="MAP privacy-sandbox-demos-* 127.0.0.1"
 
 ### HTTP SSL Certificate
 
-`https://` protocol requires a valid certificate for your browser. To get a valid certificate, use mkcert to create a local certification authority that will be trusted by your local browser. Later you will be creating a certificate for each of the Privacy Sandbox Demos services and configure nginx to serve those certificates.
+`https://` protocol requires a valid certificate for your browser. To get a valid certificate, use mkcert to create a local certification authority
+that will be trusted by your local browser. Later you will be creating a certificate for each of the Privacy Sandbox Demos services and configure
+nginx to serve those certificates.
 
 Run the command below _with your current user (not root !)_ to create the development Certificate Authority:
 
@@ -71,16 +77,37 @@ Run the command below _with your current user (not root !)_ to create the develo
 mkcert -install
 ```
 
+### Enrollment & Attestation exception
+
+To access the Privacy Sandbox relevance and measurement APIs on Chrome, developers need to
+[enroll their site](https://github.com/privacysandbox/attestation/blob/main/how-to-enroll.md) with the Privacy Sandbox, pass the verification process,
+and upload an attestation file on their site.
+
+However you do not need to enroll if you are only testing with local traffic. For local testing, Chrome provides
+[a flag and CLI switch](https://github.com/privacysandbox/attestation/blob/main/how-to-enroll.md#5-do-i-need-to-enroll-to-test-against-local-development-environments)
+to bypass enrollment on your local browser.
+
+Open `chrome://flags/#privacy-sandbox-enrollment-overrides`
+
+Under `Privacy Sandbox Enrollment Overrides` select `Enabled` and enter your site domain names separated by a coma :
+
+Example :
+
+```shell
+https://privacy-sandbox-demos-dsp.dev,https://privacy-sandbox-demos-ssp.dev
+```
+
 ## Build & Run your local development environment
 
 ### Clone the Privacy Sandbox Demos repository
 
-1. Fork the repository https://github.com/privacysandbox/privacy-sandbox-demos using the button near the top-right corner.
+1. Fork the repository <https://github.com/privacysandbox/privacy-sandbox-demos> using the button near the top-right corner.
 2. Clone your fork to your local development environment
 
 ### Setup .env file
 
-Edit `.env` file. For each`${SERVICE}_HOST` key, set a value matching the content of the `/etc/hosts` configuration. (if you are fine with the default site name, you don’t need to edit the file)
+Edit `.env` file. For each`${SERVICE}_HOST` key, set a value matching the content of the `/etc/hosts` configuration. (if you are fine with the default
+site name, you don’t need to edit the file)
 
 Example with the domain `privacy-sandbox-demos-${SERVICE}.dev`
 
@@ -140,7 +167,7 @@ npm run build
 $ sudo npm run start
 ```
 
-Open the home page: https://privacy-sandbox-demos-home.dev
+Open the home page: <https://privacy-sandbox-demos-home.dev>
 
 ## Stop your local development environment
 
@@ -186,7 +213,8 @@ sudo docker container rm sandcastle_shop
 
 ## Clean your docker images & containers
 
-After node dependency updates or major updates, you will need to clean your container images and volumes. There might be some situation where your local image registry is corrupted, inconsistent, or has accumulated too many unused images. You can take a fresh start by cleaning your local images.
+After node dependency updates or major updates, you will need to clean your container images and volumes. There might be some situation where your
+local image registry is corrupted, inconsistent, or has accumulated too many unused images. You can take a fresh start by cleaning your local images.
 
 Execute the following commands from the project root directory :
 

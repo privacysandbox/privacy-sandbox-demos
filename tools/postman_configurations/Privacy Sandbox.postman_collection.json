@@ -1,0 +1,103 @@
+{
+  "info": {
+    "_postman_id": "3358f426-08cb-4b54-92aa-5bd69f15fb93",
+    "name": "Privacy Sandbox",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29150525"
+  },
+  "item": [
+    {
+      "name": "createJob",
+      "request": {
+        "auth": {
+          "type": "awsv4",
+          "awsv4": [
+            {
+              "key": "secretKey",
+              "value": "{{secret_key}}",
+              "type": "string"
+            },
+            {
+              "key": "accessKey",
+              "value": "{{access_key}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"job_request_id\": \"<job_request_id>\",\r\n  \"input_data_blob_prefix\": \"<report_folder>/<report_name>.avro\",\r\n  \"input_data_bucket_name\": \"<input_bucket_name>\",\r\n  \"output_data_blob_prefix\": \"<output_folder>/<summary_report_prefix>\",\r\n  \"output_data_bucket_name\": \"<output_bucket_name>\",\r\n  \"job_parameters\": {\r\n    \"output_domain_blob_prefix\": \"<output_domain_folder>/<output_domain>.avro\",\r\n    \"output_domain_bucket_name\": \"<output_domain_bucket_name>\",\r\n    \"attribution_report_to\": \"<reporting origin of report>\",\r\n    \"report_error_threshold_percentage\": \"10\",\r\n    \"debug_run\": \"true\"\r\n  }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://{{frontend_api_id}}.execute-api.{{region}}.amazonaws.com/stage/v1alpha/createJob",
+          "protocol": "https",
+          "host": [
+            "{{frontend_api_id}}",
+            "execute-api",
+            "{{region}}",
+            "amazonaws",
+            "com"
+          ],
+          "path": [
+            "stage",
+            "v1alpha",
+            "createJob"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getJob",
+      "request": {
+        "auth": {
+          "type": "awsv4",
+          "awsv4": [
+            {
+              "key": "secretKey",
+              "value": "{{secret_key}}",
+              "type": "string"
+            },
+            {
+              "key": "accessKey",
+              "value": "{{access_key}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{frontend_api_id}}.execute-api.{{region}}.amazonaws.com/stage/v1alpha/getJob?job_request_id=<job_request_id>",
+          "protocol": "https",
+          "host": [
+            "{{frontend_api_id}}",
+            "execute-api",
+            "{{region}}",
+            "amazonaws",
+            "com"
+          ],
+          "path": [
+            "stage",
+            "v1alpha",
+            "getJob"
+          ],
+          "query": [
+            {
+              "key": "job_request_id",
+              "value": "<job_request_id>"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

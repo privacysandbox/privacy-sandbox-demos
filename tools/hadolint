@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -o errexit
+
+declare -a DOCKER_RUN_ARGS=(
+  "--rm"
+  "--interactive"
+)
+if [[ -t 0 ]] && [[ -t 1 ]]; then
+  # stdin and stdout are open, assume it's a tty session
+  DOCKER_RUN_ARGS+=("--tty")
+fi
+
+#######################################
+# Return the path to the build workspace, for use with
+# the docker volume or mount argument
+#######################################
+function get_docker_workspace_mount() {
+  if [[ -v WORKSPACE_MOUNT ]]; then
+    printf "%s" "${WORKSPACE_MOUNT}"
+    return
+  fi
+  # when running inside a docker container, expect /.dockerenv to exist
+  if ! [[ -f /.dockerenv ]]; then
+    printf "%s" "${WORKSPACE}"
+    return
+  fi
+
+  # if running inside a docker container, the workspace mount point cannot be
+  # determined by git or bazel or inspecting the filesystem itself. Instead, we
+  # need to use docker to expose its mount info for the /src/workspace path.
+  # determine the current container's ID
+  local -r CONTAINER_ID="$(uname --nodename)"
+  # use docker inspect to extract the current mount path for /src/workspace
+  # this format string is a golang template (https://pkg.go.dev/text/template) processed
+  # by docker's --format flag, per https://docs.docker.com/config/formatting/
+  # shellcheck disable=SC2016
+  declare -r FORMAT_STR='
+    {{- range $v := .HostConfig.Binds -}}
+      {{$pathpair := split $v ":" -}}
+      {{if eq (index $pathpair 1) "/src/workspace" -}}
+        {{print (index $pathpair 0) -}}
+      {{end -}}
+    {{end -}}
+  '
+  local -r MOUNT_PATH="$(docker inspect --format "${FORMAT_STR}" "${CONTAINER_ID}")"
+  if [[ -z ${MOUNT_PATH} ]]; then
+    printf "Error: Unable to determine mount point. Exiting\n" &>/dev/stderr
+    exit 1
+  fi
+  printf "%s" "${MOUNT_PATH}"
+}
+
+WORKSPACE="$(git rev-parse --show-toplevel)"
+readonly WORKSPACE
+WORKSPACE_MOUNT="$(get_docker_workspace_mount)"
+readonly WORKSPACE_MOUNT
+
+docker run \
+  "${DOCKER_RUN_ARGS[@]}" \
+  --user "$(id -u):$(id -g)" \
+  --volume "${WORKSPACE_MOUNT}":/src \
+  --workdir /src \
+  ghcr.io/hadolint/hadolint:v2.12.0 \
+  hadolint "$@"

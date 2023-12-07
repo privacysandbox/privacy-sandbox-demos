@@ -2,9 +2,7 @@
 
 ## /ads
 
-Serving requested Ads.
-It includes ads creative (Image, Video etc).
-Clicking ads will guide user to SSP redirector for measurement CTC.
+Serving requested Ads. It includes ads creative (Image, Video etc). Clicking ads will guide user to SSP redirector for measurement CTC.
 
 ```html
 <fencedframe mode="opaque-ads" scrolling="no" width="300" height="250">
