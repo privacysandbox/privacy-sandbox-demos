@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "57a11868-f3c8-4ccc-b43a-af43e038700f",
+		"name": "GCP Privacy Sandbox",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32120047"
+	},
+	"item": [
+		{
+			"name": "createJob",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"job_request_id\": \"<job_request_id>\",\n  \"input_data_blob_prefix\": \"<report_folder>/<report_name>.avro\",\n  \"input_data_bucket_name\": \"<input_bucket_name>\",\n  \"output_data_blob_prefix\": \"<output_folder>/<summary_report_prefix>\",\n  \"output_data_bucket_name\": \"<output_bucket_name>\",\n  \"job_parameters\": {\n    \"output_domain_blob_prefix\": \"<output_domain_folder>/<output_domain>.avro\",\n    \"output_domain_bucket_name\": \"<output_domain_bucket_name>\",\n    \"attribution_report_to\": \"<reporting origin of report>\",\n    \"report_error_threshold_percentage\": \"10\",\n    \"debug_run\": \"true\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{environment}}-{{region}}-frontend-service-{{cloud-function-id}}-uc.a.run.app/v1alpha/createJob",
+					"protocol": "https",
+					"host": [
+						"{{environment}}-{{region}}-frontend-service-{{cloud-function-id}}-uc",
+						"a",
+						"run",
+						"app"
+					],
+					"path": [
+						"v1alpha",
+						"createJob"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getJob",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{environment}}-{{region}}-frontend-service-{{cloud-function-id}}-uc.a.run.app/v1alpha/getJob?job_request_id={{request-id}}",
+					"protocol": "https",
+					"host": [
+						"{{environment}}-{{region}}-frontend-service-{{cloud-function-id}}-uc",
+						"a",
+						"run",
+						"app"
+					],
+					"path": [
+						"v1alpha",
+						"getJob"
+					],
+					"query": [
+						{
+							"key": "job_request_id",
+							"value": "{{request-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
