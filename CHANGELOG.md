@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.2.1 (2024/1/19)
+
+### Enhancements
+
+- Tools :
+  - Adding Postman configs for Aggregation Service running on GCP
+- CI/CD :
+  - Update pre-commit-config to upgrade revision of mirrors-prettier and markdownlint-cli2
+
+### Bug Fixes
+
+NA
+
 ## v1.2 (2023/12/6)
 
 ### Enhancements
