@@ -3,12 +3,7 @@
     {
       "target": "dsp",
       "public": "services/dsp/src/public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -20,14 +15,37 @@
       ]
     },
     {
+      "target": "dsp-a",
+      "public": "services/dsp-a/src/public",
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "dsp-a",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "dsp-b",
+      "public": "services/dsp-b/src/public",
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "dsp-b",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
       "target": "shop",
       "public": "services/shop/public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -41,12 +59,7 @@
     {
       "target": "travel",
       "public": "services/travel/src/public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -60,12 +73,7 @@
     {
       "target": "ssp",
       "public": "services/ssp/src/public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -77,14 +85,51 @@
       ]
     },
     {
+      "target": "ssp-top",
+      "public": "services/ssp-top/src/public",
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ssp-top",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ssp-a",
+      "public": "services/ssp-a/src/public",
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ssp-a",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ssp-b",
+      "public": "services/ssp-b/src/public",
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ssp-b",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
       "target": "news",
       "public": "services/news/src/public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -97,12 +142,7 @@
     },
     {
       "target": "home",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -115,12 +155,7 @@
     },
     {
       "target": "collector",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -133,12 +168,7 @@
     },
     {
       "target": "topics",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -151,12 +181,7 @@
     },
     {
       "target": "topics-motorcycles",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -169,12 +194,7 @@
     },
     {
       "target": "topics-soccer",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -187,12 +207,7 @@
     },
     {
       "target": "topics-gardening",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -205,17 +220,26 @@
     },
     {
       "target": "topics-server",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
           "run": {
             "serviceId": "topics-server",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ad-server",
+      "public": "services/ad-server/src/public",
+      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ad-server",
             "region": "us-central1"
           }
         }

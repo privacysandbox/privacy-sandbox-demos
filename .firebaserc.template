@@ -17,6 +17,9 @@
         "ssp": [
           "privacy-sandbox-demos-ssp"
         ],
+        "ssp-top": [
+          "privacy-sandbox-demos-ssp-top"
+        ],
         "news": [
           "privacy-sandbox-demos-news"
         ],

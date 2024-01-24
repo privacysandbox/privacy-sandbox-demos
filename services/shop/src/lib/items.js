@@ -14,61 +14,62 @@
  limitations under the License.
  */
 const items = [
-  {id: '1f45e', icon: '👞', price: 180, category: 1, name: "Man's Shoe"},
-  {id: '1f45f', icon: '👟', price: 100, category: 0, name: 'Running Shoe'},
-  {id: '1f460', icon: '👠', price: 200, category: 1, name: 'High-Heeled Shoe'},
-  {id: '1f461', icon: '👡', price: 120, category: 0, name: "Woman's Sandal"},
-  {id: '1f462', icon: '👢', price: 400, category: 1, name: "Woman's Boot"},
-  {id: '1f6fc', icon: '🛼', price: 230, category: 2, name: 'Roller Skate'},
-  {id: '1f97e', icon: '🥾', price: 210, category: 2, name: 'Hiking Boot'},
-  {id: '1f97f', icon: '🥿', price: 140, category: 0, name: 'Flat Shoe'},
-  {id: '1fa70', icon: '🩰', price: 900, category: 2, name: 'Ballet Shoes'},
-  {id: '1fa74', icon: '🩴', price: 12, category: 0, name: 'Thong Sandal'},
-  {id: '1f3bf', icon: '🎿', price: 1120, category: 2, name: 'Ski Boots'},
-  {id: '26f8', icon: '⛸', price: 1200, category: 2, name: 'Ice Skate'},
+    { id: '1f45e', icon: '👞', price: 180, category: 1, name: "Man's Shoe" },
+    { id: '1f45f', icon: '👟', price: 100, category: 0, name: 'Running Shoe' },
+    { id: '1f460', icon: '👠', price: 200, category: 1, name: 'High-Heeled Shoe' },
+    { id: '1f461', icon: '👡', price: 120, category: 0, name: "Woman's Sandal" },
+    { id: '1f462', icon: '👢', price: 400, category: 1, name: "Woman's Boot" },
+    { id: '1f6fc', icon: '🛼', price: 230, category: 2, name: 'Roller Skate' },
+    { id: '1f97e', icon: '🥾', price: 210, category: 2, name: 'Hiking Boot' },
+    { id: '1f97f', icon: '🥿', price: 140, category: 0, name: 'Flat Shoe' },
+    { id: '1fa70', icon: '🩰', price: 900, category: 2, name: 'Ballet Shoes' },
+    { id: '1fa74', icon: '🩴', price: 12, category: 0, name: 'Thong Sandal' },
+    { id: '1f3bf', icon: '🎿', price: 1120, category: 2, name: 'Ski Boots' },
+    { id: '26f8', icon: '⛸', price: 1200, category: 2, name: 'Ice Skate' },
 ];
 export const CATEGORIES = ['sale', 'luxury', 'sports'];
 export async function getItems() {
-  return items;
+    return items;
 }
 export async function getItem(id) {
-  return items.find((item) => {
-    return item.id === id;
-  });
+    return items.find((item) => {
+        return item.id === id;
+    });
 }
 export function displayCategory(id) {
-  return CATEGORIES.at(id) || 'N/A';
+    return CATEGORIES.at(id) || 'N/A';
 }
 export function toSize(num) {
-  return `${num / 10 + 20}`;
+    return `${num / 10 + 20}`;
 }
 export function fromSize(size) {
-  return (Number(size) - 20) * 10;
+    return (Number(size) - 20) * 10;
 }
 export const addOrder = (order, state) => {
-  const index = state.findIndex(({item, size}) => {
-    return order.item.id === item.id && order.size === size;
-  });
-  if (index > -1) {
-    // increase quantity
-    const current = state.at(index);
-    const next = {...order, quantity: order.quantity + current.quantity};
-    return [next, ...state.slice(0, index), ...state.slice(index + 1)];
-  }
-  // append
-  return [order, ...state];
+    const index = state.findIndex(({ item, size }) => {
+        return order.item.id === item.id && order.size === size;
+    });
+    if (index > -1) {
+        // increase quantity
+        const current = state.at(index);
+        const next = { ...order, quantity: order.quantity + current.quantity };
+        return [next, ...state.slice(0, index), ...state.slice(index + 1)];
+    }
+    // append
+    return [order, ...state];
 };
 export const removeOrder = (order, state) => {
-  return state.reduce((acc, o) => {
-    if (o.item.id === order.item.id && o.size === order.size) return acc;
-    return [...acc, o];
-  }, []);
+    return state.reduce((acc, o) => {
+        if (o.item.id === order.item.id && o.size === order.size)
+            return acc;
+        return [...acc, o];
+    }, []);
 };
 export const updateOrder = (order, state) => {
-  return state.reduce((acc, o) => {
-    if (order.item.id === o.item.id && order.size === o.size) {
-      return [...acc, order];
-    }
-    return [...acc, o];
-  }, []);
+    return state.reduce((acc, o) => {
+        if (order.item.id === o.item.id && order.size === o.size) {
+            return [...acc, order];
+        }
+        return [...acc, o];
+    }, []);
 };
