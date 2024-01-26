@@ -85,20 +85,6 @@
       ]
     },
     {
-      "target": "ssp-top",
-      "public": "services/ssp-top/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "run": {
-            "serviceId": "ssp-top",
-            "region": "us-central1"
-          }
-        }
-      ]
-    },
-    {
       "target": "ssp-a",
       "public": "services/ssp-a/src/public",
       "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],

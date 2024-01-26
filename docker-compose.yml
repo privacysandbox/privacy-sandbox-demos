@@ -110,18 +110,6 @@ services:
     networks:
       - adnetwork
 
-  ssp_top:
-    image: gcr.io/privacy-sandbox-demos/ssp-top:latest
-    build: ./services/ssp-top
-    container_name: "sandcastle_ssp_top"
-    env_file:
-      - .env
-    volumes:
-      - ./services/ssp-top:/workspace
-      - ssp_top_node_modules:/workspace/node_modules
-    networks:
-      - adnetwork
-
   ssp_a:
     image: gcr.io/privacy-sandbox-demos/ssp-a:latest
     build: ./services/ssp-a
