@@ -34,9 +34,9 @@ import {
 const {
   EXTERNAL_PORT,
   PORT,
-  DSP_HOST,
-  DSP_TOKEN,
-  DSP_DETAIL,
+  DSP_A_HOST,
+  DSP_A_TOKEN,
+  DSP_A_DETAIL,
   SSP_HOST,
   SHOP_HOST,
 } = process.env;
@@ -55,7 +55,7 @@ setInterval(
 const app: Application = express();
 
 app.use((req, res, next) => {
-  res.setHeader('Origin-Trial', DSP_TOKEN as string);
+  res.setHeader('Origin-Trial', DSP_A_TOKEN as string);
   next();
 });
 
@@ -76,8 +76,8 @@ app.use((req, res, next) => {
 app.use(
   express.static('src/public', {
     setHeaders: (res: Response, path, stat) => {
-      const url = new URL(path, `https://${DSP_HOST}`);
-      if (url.pathname.endsWith('bidding_logic.js')) {
+      const url = new URL(path, `https://${DSP_A_HOST}`);
+      if (url.pathname.endsWith('bidding-logic.js')) {
         return res.set('X-Allow-FLEDGE', 'true');
       }
       if (url.pathname.endsWith('bidding_signal.json')) {
@@ -102,14 +102,14 @@ app.get('/ads', async (req, res) => {
   const {advertiser, id} = req.query;
   console.log('Loading frame content : ', {advertiser, id});
 
-  const title = `Your special ads from ${advertiser}`;
+  const title = `Your special ads from ${advertiser} by ${DSP_A_HOST}`;
 
   const move = new URL(`https://${advertiser}:${EXTERNAL_PORT}/items/${id}`);
 
   const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}/ads/${id}`);
 
   const registerSource = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/register-source`,
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/register-source`,
   );
   registerSource.searchParams.append('advertiser', advertiser as string);
   registerSource.searchParams.append('id', id as string);
@@ -121,8 +121,8 @@ app.get('/join-ad-interest-group.html', async (req: Request, res: Response) => {
   const title = 'Join Ad Interest Group';
   res.render('join-ad-interest-group', {
     title,
-    DSP_TOKEN,
-    DSP_HOST,
+    DSP_A_TOKEN,
+    DSP_A_HOST,
     EXTERNAL_PORT,
   });
 });
@@ -133,24 +133,24 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
     return res.sendStatus(400);
   }
 
-  const imageCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/ads`);
+  const imageCreative = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}/ads`);
   imageCreative.searchParams.append('advertiser', advertiser as string);
   imageCreative.searchParams.append('id', id as string);
   const videoCreative = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html?ssp-vast-url=%%SSP_VAST_URL%%`,
   );
   const renderUrl =
     adType === 'video' ? videoCreative : imageCreative.toString();
 
-  const owner = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
+  const owner = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`);
   const biddingLogicUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`,
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/bidding-logic.js`,
   );
   const trustedBiddingSignalsUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/bidding_signal.json`,
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/bidding_signal.json`,
   );
   const dailyUpdateUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/daily_update_url`,
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/daily_update_url`,
   );
 
   res.json({

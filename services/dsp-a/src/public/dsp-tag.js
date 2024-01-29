@@ -15,7 +15,7 @@
  */
 
 (async () => {
-  const $script = document.querySelector('script.dsp_tag');
+  const $script = document.querySelector('script.dsp_a_tag');
   const src = new URL($script.src);
   const advertiser = $script.dataset.advertiser;
   const id = $script.dataset.id;

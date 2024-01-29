@@ -16,7 +16,7 @@
 
 (async () => {
   const $ins = document.querySelector('ins.ads');
-  const $script = document.querySelector('.ssp_tag');
+  const $script = document.querySelector('.ssp_a_tag');
 
   const src = new URL($script.src);
   src.pathname = '/ad-tag.html';

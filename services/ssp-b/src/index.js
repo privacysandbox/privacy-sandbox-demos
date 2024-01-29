@@ -52,7 +52,7 @@ const {
 const app = express();
 
 app.use((req, res, next) => {
-  res.setHeader('Origin-Trial', SSP_TOKEN);
+  res.setHeader('Origin-Trial', SSP_B_TOKEN);
   next();
 });
 
@@ -93,11 +93,11 @@ app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req, res) => {
-  const title = SSP_DETAIL;
+  const title = SSP_B_DETAIL;
   res.render('index.html.ejs', {
     title,
     DSP_HOST,
-    SSP_HOST,
+    SSP_B_HOST,
     EXTERNAL_PORT,
     SHOP_HOST,
   });

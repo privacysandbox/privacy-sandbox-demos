@@ -14,25 +14,25 @@
   <section>
     <h2>Demand Side Platform</h2>
     <p>DSP provides 3rd party tag which join user into interest group via Protected Audience API</p>
-    <script src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js` %>" class="dsp_tag" data-advertiser="<%= `${SHOP_HOST}` %>" data-id="1f45e" data-script="afterInteractive">
+    <script src="<%= `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js` %>" class="dsp_tag" data-advertiser="<%= `${SHOP_HOST}` %>" data-id="1f45e" data-script="afterInteractive">
     </script>
     <h2>inside iframe</h2>
     <ul>
       <li>
-        <a target="_blank" href="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/join-ad-interest-group.html?advertiser=${SHOP_HOST}&id=1f45e` %>">
-          <%= `https://${DSP_HOST}:${EXTERNAL_PORT}/join-ad-interest-group.html?advertiser=${SHOP_HOST}&id=1f45e` %>
+        <a target="_blank" href="<%= `https://${DSP_A_HOST}:${EXTERNAL_PORT}/join-ad-interest-group.html?advertiser=${SHOP_HOST}&id=1f45e` %>">
+          <%= `https://${DSP_A_HOST}:${EXTERNAL_PORT}/join-ad-interest-group.html?advertiser=${SHOP_HOST}&id=1f45e` %>
         </a>
       </li>
       <li>
-        <a target="_blank" href="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/join-ad-interest-group.js` %>">
-          <%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/join-ad-interest-group.js` %>
+        <a target="_blank" href="<%= `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/join-ad-interest-group.js` %>">
+          <%= `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/join-ad-interest-group.js` %>
         </a>
       </li>
     </ul>
     <h2>embed script</h2>
     <p>3rd party script provided by ssp should embed as below</p>
     <pre>&lt;script
-  src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js` %>"
+  src="<%= `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js` %>"
   class="dsp_tag"
   data-advertiser="<%= SHOP_HOST %>"
   data-id="1f45e"

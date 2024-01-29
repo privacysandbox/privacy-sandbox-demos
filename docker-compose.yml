@@ -204,10 +204,15 @@ services:
       - shop
       - travel
       - ssp
+      - ssp_a
+      - ssp_b
       - dsp
+      - dsp_a
+      - dsp_b
       - collector
       - topics
       - topics-server
+      - ad_server
 
 networks:
   adnetwork:
