@@ -35,12 +35,23 @@ import url from 'url';
 const {
   EXTERNAL_PORT,
   PORT,
-  SSP_HOST,
-  SSP_DETAIL,
-  SSP_TOKEN,
-  DSP_HOST,
+  SSP_A_HOST,
+  SSP_A_DETAIL,
+  SSP_A_TOKEN,
+  DSP_A_HOST,
+  DSP_A_HOST_INTERNAL,
+  DSP_B_HOST,
+  DSP_B_HOST_INTERNAL,
   SHOP_HOST,
+  NEWS_HOST,
 } = process.env;
+
+const DSP_A = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`);
+const DSP_B = new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`);
+const SSP_A = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`);
+
+const DSP_A_INTERNAL = new URL(`http://${DSP_A_HOST_INTERNAL}:${PORT}`);
+const DSP_B_INTERNAL = new URL(`http://${DSP_B_HOST_INTERNAL}:${PORT}`);
 
 // // in-memory storage for debug reports
 // const Reports = [];
@@ -52,7 +63,7 @@ const {
 const app = express();
 
 app.use((req, res, next) => {
-  res.setHeader('Origin-Trial', SSP_TOKEN);
+  res.setHeader('Origin-Trial', SSP_A_TOKEN);
   next();
 });
 
@@ -78,10 +89,17 @@ app.use((req, res, next) => {
 
 app.use(
   express.static('src/public', {
-    setHeaders: (res, path, stat) => {
-      if (path.endsWith('/decision-logic.js')) {
-        return res.set('X-Allow-FLEDGE', 'true');
+    setHeaders: (res, path) => {
+      const shouldAddAuctionHeader = [
+        'decision-logic.js',
+        'trusted.json',
+        'direct.json',
+      ].some((fileName) => path.includes(fileName));
+
+      if (shouldAddAuctionHeader) {
+        return res.set('Ad-Auction-Allowed', 'true');
       }
+
       if (path.endsWith('/run-ad-auction.js')) {
         res.set('Supports-Loading-Mode', 'fenced-frame');
         res.set('Permissions-Policy', 'run-ad-auction=(*)');
@@ -89,15 +107,17 @@ app.use(
     },
   }),
 );
+
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req, res) => {
-  const title = SSP_DETAIL;
+  const title = SSP_A_DETAIL;
   res.render('index.html.ejs', {
     title,
-    DSP_HOST,
-    SSP_HOST,
+    DSP_A_HOST,
+    DSP_B_HOST,
+    SSP_A_HOST,
     EXTERNAL_PORT,
     SHOP_HOST,
   });
@@ -229,43 +249,68 @@ app.get('/video-ad-tag.html', async (req, res) => {
 //   res.render("reports.html.ejs", { title: "Report", Reports })
 // })
 
-app.get('/auction-config.json', async (req, res) => {
-  const DSP = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
-  const SSP = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`);
-  const auctionConfig = {
-    // should https & same as decisionLogicUrl's origin
-    seller: SSP,
-
-    // x-allow-fledge: true
-    decisionLogicUrl: `${SSP}js/decision-logic.js`,
-
-    interestGroupBuyers: [
-      // * is not supported yet
-      DSP,
-    ],
-    // public for everyone
-    auctionSignals: {
-      auction_signals: 'auction_signals',
-    },
-
-    // only for single party
-    sellerSignals: {
-      seller_signals: 'seller_signals',
-    },
-
-    // only for single party
-    perBuyerSignals: {
-      // listed on interestGroupByers
-      [DSP]: {
-        per_buyer_signals: 'per_buyer_signals',
+async function getHeaderBiddingAd() {
+  const headerBids = await Promise.all(
+    [`${DSP_A_INTERNAL}header-bid`, `${DSP_B_INTERNAL}header-bid`].map(
+      async (dspUrl) => {
+        const response = await fetch(dspUrl);
+        const result = await response.json();
+        return result;
       },
-    },
+    ),
+  );
 
-    // use with fencedframe
-    resolveToConfig: true,
+  const [highestBid] = headerBids.sort((a, b) => b.bid - a.bid);
+  return highestBid;
+}
+
+function getComponentAuctionConfig() {
+  return {
+    seller: SSP_A,
+    decisionLogicUrl: `${SSP_A}js/decision-logic.js`,
+    trustedScoringSignalsURL: `${SSP_A}/signals/trusted.json`,
+    directFromSellerSignals: `${SSP_A}/signals/direct.json`,
+    interestGroupBuyers: [DSP_A, DSP_B],
+    perBuyerSignals: {
+      [DSP_A]: {'some-key': 'some-value'},
+      [DSP_B]: {'some-key': 'some-value'},
+    },
+    deprecatedReplaceInURN: {
+      '%%SSP_VAST_URI%%': `${SSP_A}/vast/preroll`,
+    },
   };
-  console.log({auctionConfig});
-  res.json(auctionConfig);
+}
+
+app.get('/header-bid', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', `https://${NEWS_HOST}`);
+
+  res.json({
+    seller: SSP_A,
+    headerBiddingAd: await getHeaderBiddingAd(),
+    componentAuctionConfig: getComponentAuctionConfig(),
+  });
+});
+
+async function getAdServerAd() {
+  const adServerBids = await Promise.all(
+    [`${DSP_A_INTERNAL}ad-server-bid`, `${DSP_B_INTERNAL}ad-server-bid`].map(
+      async (dspUrl) => {
+        const response = await fetch(dspUrl);
+        const result = await response.json();
+        return result;
+      },
+    ),
+  );
+
+  const [highestBid] = adServerBids.sort((a, b) => b.bid - a.bid);
+  return highestBid;
+}
+
+app.get('/ad-server-bid', async (req, res) => {
+  res.json({
+    seller: SSP_A,
+    adServerAd: await getAdServerAd(),
+  });
 });
 
 // app.post("/.well-known/attribution-reporting/debug/report-aggregate-attribution", async (req, res) => {

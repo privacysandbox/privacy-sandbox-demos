@@ -20,6 +20,8 @@ import MemoryStoreFactory from 'memorystore';
 
 import {
   DSP_HOST,
+  DSP_A_HOST,
+  DSP_B_HOST,
   EXTERNAL_PORT,
   PORT,
   SHOP_DETAIL,
@@ -118,11 +120,25 @@ app.get('/ads/:id', async (req: Request, res: Response) => {
 app.get('/items/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   const item = await getItem(id);
-  const dsp_tag = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`);
+  const isMultiSeller = req.query.auctionType === 'multi';
+
+  const DSP_TAG_URL = new URL(
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+  );
+  const DSP_A_TAG_URL = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+  );
+  const DSP_B_TAG_URL = new URL(
+    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+  );
+
   res.render('item', {
     item,
-    dsp_tag,
+    DSP_TAG_URL,
+    DSP_A_TAG_URL,
+    DSP_B_TAG_URL,
     SHOP_HOST,
+    isMultiSeller,
   });
 });
 

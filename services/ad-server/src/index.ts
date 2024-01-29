@@ -16,7 +16,10 @@
 
 import express, {Application, Request, Response} from 'express';
 
-const {PORT} = process.env;
+const {PORT, SSP_A_HOST_INTERNAL, SSP_B_HOST_INTERNAL} = process.env;
+
+const SSP_A_INTERNAL = new URL(`http://${SSP_A_HOST_INTERNAL}:${PORT}`);
+const SSP_B_INTERNAL = new URL(`http://${SSP_B_HOST_INTERNAL}:${PORT}`);
 
 const app: Application = express();
 
@@ -25,13 +28,52 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   next();
 });
-app.use(express.static('src/public'));
+
+app.use(
+  express.static('src/public', {
+    setHeaders: (res, path) => {
+      const shouldAddAuctionHeader = [
+        'decision-logic.js',
+        'trusted.json',
+        'direct.json',
+      ].some((fileName) => path.includes(fileName));
+
+      if (shouldAddAuctionHeader) {
+        return res.set('Ad-Auction-Allowed', 'true');
+      }
+    },
+  }),
+);
+
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
   const browsingTopics = req.get('Sec-Browsing-Topics');
   res.json({topics: browsingTopics});
+});
+
+async function getAdServerAd() {
+  const adServerBids = await Promise.all(
+    [`${SSP_A_INTERNAL}ad-server-bid`, `${SSP_B_INTERNAL}ad-server-bid`].map(
+      async (dspUrl) => {
+        const response = await fetch(dspUrl);
+        const result = await response.json();
+        return result;
+      },
+    ),
+  );
+
+  const [highestBid] = adServerBids.sort(
+    (a, b) => b.adServerAd.bid - a.adServerAd.bid,
+  );
+  return highestBid.adServerAd;
+}
+
+app.get('/ad-server-bid', async (req: Request, res: Response) => {
+  res.json({
+    adServerAd: await getAdServerAd(),
+  });
 });
 
 app.listen(PORT, async () => {

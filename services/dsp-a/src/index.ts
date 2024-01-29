@@ -151,7 +151,7 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
   );
 
   res.json({
-    name: advertiser,
+    name: `dsp-a-${advertiser}`,
     owner,
 
     // x-allow-fledge: true
@@ -195,6 +195,20 @@ app.get('/bidding_signal.json', async (req: Request, res: Response) => {
         },
       },
     },
+  });
+});
+
+app.get('/header-bid', async (req: Request, res: Response) => {
+  res.json({
+    bid: Math.floor(Math.random() * 50),
+    renderUrl: `https://${DSP_A_HOST}/html/header-bidding-ad.html`,
+  });
+});
+
+app.get('/ad-server-bid', async (req, res) => {
+  res.json({
+    bid: Math.floor(Math.random() * 50),
+    renderUrl: `https://${DSP_A_HOST}/html/ad-server-ad.html`,
   });
 });
 
@@ -438,8 +452,8 @@ app.post(
 );
 
 app.get('/', async (req: Request, res: Response) => {
-  const title = DSP_DETAIL;
-  res.render('index', {title, DSP_HOST, SHOP_HOST, EXTERNAL_PORT});
+  const title = DSP_A_DETAIL;
+  res.render('index', {title, DSP_A_HOST, SHOP_HOST, EXTERNAL_PORT});
 });
 
 app.listen(PORT, function () {
