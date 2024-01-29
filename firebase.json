@@ -3,7 +3,12 @@
     {
       "target": "dsp",
       "public": "services/dsp/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -17,7 +22,12 @@
     {
       "target": "dsp-a",
       "public": "services/dsp-a/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -31,7 +41,12 @@
     {
       "target": "dsp-b",
       "public": "services/dsp-b/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -45,7 +60,12 @@
     {
       "target": "shop",
       "public": "services/shop/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -59,7 +79,12 @@
     {
       "target": "travel",
       "public": "services/travel/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -73,7 +98,12 @@
     {
       "target": "ssp",
       "public": "services/ssp/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -87,7 +117,12 @@
     {
       "target": "ssp-a",
       "public": "services/ssp-a/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -101,7 +136,12 @@
     {
       "target": "ssp-b",
       "public": "services/ssp-b/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -115,7 +155,12 @@
     {
       "target": "news",
       "public": "services/news/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -128,7 +173,12 @@
     },
     {
       "target": "home",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -141,7 +191,12 @@
     },
     {
       "target": "collector",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -154,7 +209,12 @@
     },
     {
       "target": "topics",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -167,7 +227,12 @@
     },
     {
       "target": "topics-motorcycles",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -180,7 +245,12 @@
     },
     {
       "target": "topics-soccer",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -193,7 +263,12 @@
     },
     {
       "target": "topics-gardening",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -206,7 +281,12 @@
     },
     {
       "target": "topics-server",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
@@ -220,7 +300,12 @@
     {
       "target": "ad-server",
       "public": "services/ad-server/src/public",
-      "ignore": ["firebase.json", "**/.*", "**/**", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
