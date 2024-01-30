@@ -74,7 +74,7 @@ services:
     networks:
       - adnetwork
 
-  dsp_a:
+  dsp-a:
     image: gcr.io/privacy-sandbox-demos/dsp-a:latest
     build: ./services/dsp-a
     container_name: "sandcastle_dsp_a"
@@ -86,7 +86,7 @@ services:
     networks:
       - adnetwork
 
-  dsp_b:
+  dsp-b:
     image: gcr.io/privacy-sandbox-demos/dsp-b:latest
     build: ./services/dsp-b
     container_name: "sandcastle_dsp_b"
@@ -110,7 +110,7 @@ services:
     networks:
       - adnetwork
 
-  ssp_a:
+  ssp-a:
     image: gcr.io/privacy-sandbox-demos/ssp-a:latest
     build: ./services/ssp-a
     container_name: "sandcastle_ssp_a"
@@ -122,7 +122,7 @@ services:
     networks:
       - adnetwork
 
-  ssp_b:
+  ssp-b:
     image: gcr.io/privacy-sandbox-demos/ssp-b:latest
     build: ./services/ssp-b
     container_name: "sandcastle_ssp_b"
@@ -169,7 +169,7 @@ services:
     networks:
       - adnetwork
 
-  ad_server:
+  ad-server:
     image: gcr.io/privacy-sandbox-demos/ad-server:latest
     build: ./services/ad-server
     container_name: "sandcastle_ad_server"
@@ -204,15 +204,15 @@ services:
       - shop
       - travel
       - ssp
-      - ssp_a
-      - ssp_b
+      - ssp-a
+      - ssp-b
       - dsp
-      - dsp_a
-      - dsp_b
+      - dsp-a
+      - dsp-b
       - collector
       - topics
       - topics-server
-      - ad_server
+      - ad-server
 
 networks:
   adnetwork:

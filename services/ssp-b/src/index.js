@@ -16,21 +16,6 @@
 
 // SSP
 import express from 'express';
-import url from 'url';
-// import cbor from "cbor"
-// import { decodeDict } from "structured-field-values"
-// import {
-//   debugKey,
-//   sourceEventId,
-//   sourceKeyPiece,
-//   triggerKeyPiece,
-//   ADVERTISER,
-//   PUBLISHER,
-//   DIMENSION,
-//   decodeBucket,
-//   SOURCE_TYPE,
-//   TRIGGER_TYPE
-// } from "./arapi.js"
 
 const {
   EXTERNAL_PORT,
@@ -53,13 +38,6 @@ const SSP_B = new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`);
 const DSP_A_INTERNAL = new URL(`http://${DSP_A_HOST_INTERNAL}:${PORT}`);
 const DSP_B_INTERNAL = new URL(`http://${DSP_B_HOST_INTERNAL}:${PORT}`);
 
-// // in-memory storage for debug reports
-// const Reports = [];
-// // clear in-memory storage every 10 min
-// setInterval(() => {
-//   Reports.length = 0;
-// }, 1000 * 60 * 10);
-
 const app = express();
 
 app.use((req, res, next) => {
@@ -68,16 +46,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
-// app.use((req, res, next) => {
-//   // enable transitional debugging reports (https://github.com/WICG/attribution-reporting-api/blob/main/EVENT.md#optional-transitional-debugging-reports)
-//   res.cookie("ar_debug", "1", {
-//     sameSite: "none",
-//     secure: true,
-//     httpOnly: true
-//   });
-//   next();
-// });
 
 app.use((req, res, next) => {
   // opt-in fencedframe
@@ -122,120 +90,6 @@ app.get('/', async (req, res) => {
   });
 });
 
-// app.get("/register-source", async (req, res) => {
-//   const { advertiser, id } = req.query
-//   console.log("Registering source attribution for", { advertiser, id })
-//   if (req.headers["attribution-reporting-eligible"]) {
-//     //const are = req.headers["attribution-reporting-eligible"].split(",").map((e) => e.trim())
-//     const are = decodeDict(req.headers["attribution-reporting-eligible"])
-
-//     // register navigation source
-//     if ("navigation-source" in are) {
-//       const destination = `https://${advertiser}`
-//       const source_event_id = sourceEventId()
-//       const debug_key = debugKey()
-//       const AttributionReportingRegisterSource = {
-//         destination,
-//         source_event_id,
-//         debug_key,
-//         aggregation_keys: {
-//           quantity: sourceKeyPiece({
-//             type: SOURCE_TYPE["click"], // click attribution
-//             advertiser: ADVERTISER[advertiser],
-//             publisher: PUBLISHER["news"],
-//             id: Number(`0x${id}`),
-//             dimension: DIMENSION["quantity"]
-//           }),
-//           gross: sourceKeyPiece({
-//             type: SOURCE_TYPE["click"], // click attribution
-//             advertiser: ADVERTISER[advertiser],
-//             publisher: PUBLISHER["news"],
-//             id: Number(`0x${id}`),
-//             dimension: DIMENSION["gross"]
-//           })
-//         }
-//       }
-
-//       console.log("Registering navigation source :", { AttributionReportingRegisterSource })
-//       res.setHeader("Attribution-Reporting-Register-Source", JSON.stringify(AttributionReportingRegisterSource))
-//       res.status(200).send("attribution nevigation (click) source registered")
-//     }
-
-//     // register event source
-//     else if ("event-source" in are) {
-//       const destination = `https://${advertiser}`
-//       const source_event_id = sourceEventId()
-//       const debug_key = debugKey()
-//       const AttributionReportingRegisterSource = {
-//         destination,
-//         source_event_id,
-//         debug_key,
-//         aggregation_keys: {
-//           quantity: sourceKeyPiece({
-//             type: SOURCE_TYPE["view"], // view attribution
-//             advertiser: ADVERTISER[advertiser],
-//             publisher: PUBLISHER["news"],
-//             id: Number(`0x${id}`),
-//             dimension: DIMENSION["quantity"]
-//           }),
-//           gross: sourceKeyPiece({
-//             type: SOURCE_TYPE["view"], // view attribution
-//             advertiser: ADVERTISER[advertiser],
-//             publisher: PUBLISHER["news"],
-//             id: Number(`0x${id}`),
-//             dimension: DIMENSION["gross"]
-//           })
-//         }
-//       }
-
-//       console.log("Registering event source :", { AttributionReportingRegisterSource })
-//       res.setHeader("Attribution-Reporting-Register-Source", JSON.stringify(AttributionReportingRegisterSource))
-//       res.status(200).send("attribution event (view) source registered")
-//     } else {
-//       res.status(400).send("'Attribution-Reporting-Eligible' header is malformed") // just send back response header. no content.
-//     }
-//   } else {
-//     res.status(400).send("'Attribution-Reporting-Eligible' header is missing") // just send back response header. no content.
-//   }
-// })
-
-// app.get("/register-trigger", async (req, res) => {
-//   const { id, quantity, size, category, gross } = req.query
-
-//   const AttributionReportingRegisterTrigger = {
-//     aggregatable_trigger_data: [
-//       {
-//         key_piece: triggerKeyPiece({
-//           type: TRIGGER_TYPE["quantity"],
-//           id: parseInt(id, 16),
-//           size: Number(size),
-//           category: Number(category),
-//           option: 0
-//         }),
-//         source_keys: ["quantity"]
-//       },
-//       {
-//         key_piece: triggerKeyPiece({
-//           type: TRIGGER_TYPE["gross"],
-//           id: parseInt(id, 16),
-//           size: Number(size),
-//           category: Number(category),
-//           option: 0
-//         }),
-//         source_keys: ["gross"]
-//       }
-//     ],
-//     aggregatable_values: {
-//       // TODO: scaling
-//       quantity: Number(quantity),
-//       gross: Number(gross)
-//     },
-//     debug_key: debugKey()
-//   }
-//   res.setHeader("Attribution-Reporting-Register-Trigger", JSON.stringify(AttributionReportingRegisterTrigger))
-//   res.sendStatus(200)
-// })
-
 app.get('/ad-tag.html', async (req, res) => {
   res.render('ad-tag.html.ejs');
 });
@@ -243,10 +97,6 @@ app.get('/ad-tag.html', async (req, res) => {
 app.get('/video-ad-tag.html', async (req, res) => {
   res.render('video-ad-tag.html.ejs');
 });
-
-// app.get("/reports", async (req, res) => {
-//   res.render("reports.html.ejs", { title: "Report", Reports })
-// })
 
 async function fetchHeaderBids() {
   return Promise.all(
@@ -314,44 +164,6 @@ app.get('/ad-server-bid', async (req, res) => {
     adServerAd: await getAdServerAd(),
   });
 });
-
-// app.post("/.well-known/attribution-reporting/debug/report-aggregate-attribution", async (req, res) => {
-//   const debug_report = req.body
-//   debug_report.shared_info = JSON.parse(debug_report.shared_info)
-
-//   console.log(JSON.stringify(debug_report, " ", " "))
-
-//   debug_report.aggregation_service_payloads = debug_report.aggregation_service_payloads.map((e) => {
-//     const plain = Buffer.from(e.debug_cleartext_payload, "base64")
-//     const debug_cleartext_payload = cbor.decodeAllSync(plain)
-//     e.debug_cleartext_payload = debug_cleartext_payload.map(({ data, operation }) => {
-//       return {
-//         operation,
-//         data: data.map(({ value, bucket }) => {
-//           return {
-//             value: value.readUInt32BE(0),
-//             bucket: decodeBucket(bucket)
-//           }
-//         })
-//       }
-//     })
-//     return e
-//   })
-
-//   console.log(JSON.stringify(debug_report, " ", " "))
-
-//   // save to global storage
-//   Reports.push(debug_report)
-
-//   res.sendStatus(200)
-// })
-
-// app.post("/.well-known/attribution-reporting/report-aggregate-attribution", async (req, res) => {
-//   const report = req.body
-//   report.shared_info = JSON.parse(report.shared_info)
-//   console.log(JSON.stringify(report, " ", " "))
-//   res.sendStatus(200)
-// })
 
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);
