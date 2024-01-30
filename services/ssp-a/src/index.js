@@ -118,7 +118,6 @@ app.get('/auction-config.json', async (req, res) => {
   res.json(auctionConfig);
 });
 
-
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);
 });
