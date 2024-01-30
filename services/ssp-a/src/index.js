@@ -163,7 +163,6 @@ app.get('/ad-server-bid', async (req, res) => {
   });
 });
 
-
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);
 });
