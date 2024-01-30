@@ -438,8 +438,8 @@ app.post(
 );
 
 app.get('/', async (req: Request, res: Response) => {
-  const title = DSP_DETAIL;
-  res.render('index', {title, DSP_HOST, SHOP_HOST, EXTERNAL_PORT});
+  const title = DSP_B_DETAIL;
+  res.render('index', {title, DSP_B_HOST, SHOP_HOST, EXTERNAL_PORT});
 });
 
 app.listen(PORT, function () {
