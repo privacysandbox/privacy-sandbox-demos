@@ -176,6 +176,7 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
         renderUrl,
         metadata: {
           type: advertiser,
+          adType: 'image',
         },
       },
     ],
