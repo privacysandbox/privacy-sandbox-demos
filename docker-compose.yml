@@ -6,9 +6,15 @@ volumes:
   shop_node_modules:
   travel_node_modules:
   dsp_node_modules:
+  dsp_a_node_modules:
+  dsp_b_node_modules:
   ssp_node_modules:
+  ssp_top_node_modules:
+  ssp_a_node_modules:
+  ssp_b_node_modules:
   topics_node_modules:
   topics-server_node_modules:
+  ad_server_node_modules:
 
 services:
   home:
@@ -68,6 +74,30 @@ services:
     networks:
       - adnetwork
 
+  dsp-a:
+    image: gcr.io/privacy-sandbox-demos/dsp-a:latest
+    build: ./services/dsp-a
+    container_name: "sandcastle_dsp_a"
+    env_file:
+      - .env
+    volumes:
+      - ./services/dsp-a:/workspace
+      - dsp_a_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  dsp-b:
+    image: gcr.io/privacy-sandbox-demos/dsp-b:latest
+    build: ./services/dsp-b
+    container_name: "sandcastle_dsp_b"
+    env_file:
+      - .env
+    volumes:
+      - ./services/dsp-b:/workspace
+      - dsp_b_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
   ssp:
     image: gcr.io/privacy-sandbox-demos/ssp:latest
     build: ./services/ssp
@@ -77,6 +107,30 @@ services:
     volumes:
       - ./services/ssp:/workspace
       - ssp_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  ssp-a:
+    image: gcr.io/privacy-sandbox-demos/ssp-a:latest
+    build: ./services/ssp-a
+    container_name: "sandcastle_ssp_a"
+    env_file:
+      - .env
+    volumes:
+      - ./services/ssp-a:/workspace
+      - ssp_a_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  ssp-b:
+    image: gcr.io/privacy-sandbox-demos/ssp-b:latest
+    build: ./services/ssp-b
+    container_name: "sandcastle_ssp_b"
+    env_file:
+      - .env
+    volumes:
+      - ./services/ssp-b:/workspace
+      - ssp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -115,6 +169,18 @@ services:
     networks:
       - adnetwork
 
+  ad-server:
+    image: gcr.io/privacy-sandbox-demos/ad-server:latest
+    build: ./services/ad-server
+    container_name: "sandcastle_ad_server"
+    env_file:
+      - .env
+    volumes:
+      - ./services/ad-server:/workspace
+      - ad_server_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
   nginx:
     image: nginx:1.22.1-alpine
     container_name: "proxy"
@@ -138,10 +204,15 @@ services:
       - shop
       - travel
       - ssp
+      - ssp-a
+      - ssp-b
       - dsp
+      - dsp-a
+      - dsp-b
       - collector
       - topics
       - topics-server
+      - ad-server
 
 networks:
   adnetwork:

@@ -11,11 +11,23 @@
         "dsp": [
           "privacy-sandbox-demos-dsp"
         ],
+        "dsp-a": [
+          "privacy-sandbox-demos-dsp-a"
+        ],
+        "dsp-b": [
+          "privacy-sandbox-demos-dsp-b"
+        ],
         "shop": [
           "privacy-sandbox-demos-shop"
         ],
         "ssp": [
           "privacy-sandbox-demos-ssp"
+        ],
+        "ssp-a": [
+          "privacy-sandbox-demos-ssp-a"
+        ],
+        "ssp-b": [
+          "privacy-sandbox-demos-ssp-b"
         ],
         "news": [
           "privacy-sandbox-demos-news"
@@ -25,6 +37,9 @@
         ],
         "collector": [
           "privacy-sandbox-demos-collector"
+        ],
+        "ad-server": [
+          "privacy-sandbox-demos-ad-server"
         ]
       }
     }
