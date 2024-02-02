@@ -25,7 +25,7 @@
       // messaged from the parent to the iframe
       async function startAuction(message) {
         const frameUrl = new URL(window.location.href)
-        const topLevelOrigin = frameUrl.searchParams.get('top-level-origin')
+        const topLevelOrigin = frameUrl.searchParams.get('topLevelOrigin')
 
         if (message.origin !== topLevelOrigin) {
           return
@@ -54,7 +54,7 @@
           frameEl.src = auctionResult
         }
 
-        if (isVideo && auctionResult) {
+        if (auctionResult && isVideo) {
           frameEl.className = 'video-ad'
         } else {
           frameEl.className = 'ad'

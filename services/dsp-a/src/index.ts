@@ -184,7 +184,7 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
           adType: 'image',
         },
       },
-      // In this demo, we add a render URL for each SSPs, and the SSP VAST XML URI is
+      // In this demo, we add a render URL for each SSP, and the SSP VAST XML URI is
       // specified in the render URL. During the bid generation time,  The name of the
       // component seller becomes available, and the buyer can return the render URL of
       // that component seller.

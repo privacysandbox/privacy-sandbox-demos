@@ -182,7 +182,7 @@ class AdServerLib {
   addContainerFrame({divId, size, type, isFencedFrame}) {
     const containerFrameEl = document.createElement('iframe');
     const topLevelOrigin = encodeURI(window.location.origin);
-    containerFrameEl.src = `${this.adServerOrigin}/ad-frame.html?top-level-origin=${topLevelOrigin}`;
+    containerFrameEl.src = `${this.adServerOrigin}/ad-frame.html?topLevelOrigin=${topLevelOrigin}`;
 
     // Add a label
     const paragraphEl = document.createElement('p');
@@ -193,9 +193,7 @@ class AdServerLib {
     document.getElementById(divId).appendChild(paragraphEl);
 
     if (type === 'image') {
-      const [width, height] = size;
-      containerFrameEl.width = width;
-      containerFrameEl.height = height;
+      [containerFrameEl.width, containerFrameEl.height] = size;
     } else if (type === 'video') {
       containerFrameEl.width = 0;
       containerFrameEl.height = 0;

@@ -52,8 +52,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
-
 const ALLOWED_HOSTNAMES = [
   DSP_A_HOST,
   DSP_B_HOST,
