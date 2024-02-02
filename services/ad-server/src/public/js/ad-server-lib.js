@@ -195,6 +195,8 @@ class AdServerLib {
     if (type === 'image') {
       [containerFrameEl.width, containerFrameEl.height] = size;
     } else if (type === 'video') {
+      // The video creative does not actually render anything, and it only contains
+      // the code that post messages the vAST out of the iframe, so we hide it
       containerFrameEl.width = 0;
       containerFrameEl.height = 0;
     }
