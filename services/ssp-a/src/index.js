@@ -31,9 +31,7 @@ const {
   SSP_A_DETAIL,
   SSP_A_TOKEN,
   DSP_A_HOST,
-  DSP_A_HOST_INTERNAL,
   DSP_B_HOST,
-  DSP_B_HOST_INTERNAL,
   SHOP_HOST,
   NEWS_HOST,
 } = process.env;
@@ -42,8 +40,10 @@ const DSP_A = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`);
 const DSP_B = new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`);
 const SSP_A = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`);
 
-const DSP_A_INTERNAL = new URL(`http://${DSP_A_HOST_INTERNAL}:${PORT}`);
-const DSP_B_INTERNAL = new URL(`http://${DSP_B_HOST_INTERNAL}:${PORT}`);
+// These addresses are used to make a server-to-server call
+// TODO: See if the ports can be aligned so we can remove these
+const DSP_A_INTERNAL = new URL(`http://${DSP_A_HOST}:${PORT}`);
+const DSP_B_INTERNAL = new URL(`http://${DSP_B_HOST}:${PORT}`);
 
 const app = express();
 
@@ -207,6 +207,10 @@ app.get('/vast', async (req, res) => {
 
   res.type('application/xml');
   res.send(wrappedVast);
+});
+
+app.get('/reporting', (req, res) => {
+  res.send(200);
 });
 
 app.listen(PORT, function () {

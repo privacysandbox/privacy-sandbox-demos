@@ -47,6 +47,6 @@ function reportResult(auctionConfig, browserSignals) {
   return {
     success: true,
     signalsForWinner: {signalForWinner: 1},
-    reportUrl: auctionConfig.seller + '/report_seller',
+    reportUrl: auctionConfig.seller + '/reporting',
   };
 }

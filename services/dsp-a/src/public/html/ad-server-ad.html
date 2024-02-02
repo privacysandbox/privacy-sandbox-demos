@@ -12,17 +12,33 @@
         height: 95vh;
         overflow: hidden;
         font-family: sans-serif;
-        background: #ddd;
+        background: #feb;
         flex-direction: column;
+        text-align: center;
+      }
+
+      #ad-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 5px;
+        padding: 5px;
+        background: #3f3f3f;
+        color: white;
       }
 
       p {
         margin: 5px;
+        font-size: 20px;
       }
     </style>
   </head>
+
   <body>
-    <p><b>DSP-A contextual ad</b></p>
-    <p>(Ad server auction winner)</p>
+    <div id="adContainer">
+      <div id="ad-label">DSP-A contextual ad</div>
+      <p>Ad server</p>
+      <p>auction winner</p>
+    </div>
   </body>
 </html>

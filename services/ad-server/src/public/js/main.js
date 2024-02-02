@@ -1,3 +1,4 @@
+'use strict';
 /*
  Copyright 2022 Google LLC
 
@@ -13,24 +14,4 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-function scoreAd(
-  adMetadata,
-  bid,
-  auctionConfig,
-  trustedScoringSignals,
-  browserSignals,
-) {
-  return {
-    desirability: 1,
-    allowComponentAuction: true,
-  };
-}
-
-function reportResult(auctionConfig, browserSignals) {
-  sendReportTo(auctionConfig.seller + '/reporting?report=result');
-  return {
-    success: true,
-    signalsForWinner: {signalForWinner: 1},
-    reportUrl: auctionConfig.seller + '/reporting',
-  };
-}
+console.log('main.js');
