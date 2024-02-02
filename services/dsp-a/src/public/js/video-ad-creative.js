@@ -1,7 +1,7 @@
 (async () => {
   const AUCTION_ID_QUERY_PARAM = 'auctionId';
   const DSP_VAST_URI_QUERY_PARAM = 'dspVastUri';
-  const SSP_VAST_URI_QUERY_PARAM = 'sspVastUrl';
+  const SSP_VAST_URL_QUERY_PARAM = 'sspVastUrl';
 
   const dspVastUri =
     'https://pubads.g.doubleclick.net/gampad/ads?' +
@@ -13,7 +13,7 @@
   // Read the SSP VAST endpoint
   function parseSspVastUrl() {
     const url = new URL(window.location.href);
-    return url.searchParams.get(SSP_VAST_URI_QUERY_PARAM);
+    return url.searchParams.get(SSP_VAST_URL_QUERY_PARAM);
   }
 
   // Fetch the finalized SSP VAST XML

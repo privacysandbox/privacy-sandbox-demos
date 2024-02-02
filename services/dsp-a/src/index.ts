@@ -44,8 +44,6 @@ const {
 
 const SSP_A = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`).toString();
 const SSP_B = new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`).toString();
-
-// The SSP VAST URI is added as query params of render URLs
 const SSP_A_VAST_URL = `${SSP_A}vast`;
 const SSP_B_VAST_URL = `${SSP_B}vast`;
 

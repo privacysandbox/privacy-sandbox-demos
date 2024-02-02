@@ -51,5 +51,5 @@ function reportWin(
   sellerSignals,
   browserSignals,
 ) {
-  sendReportTo(browserSignals.interestGroupOwner + '/reporting?report=win');
+  sendReportTo(browserSignals.interestGroupOwner + `/reporting?report=win`);
 }
