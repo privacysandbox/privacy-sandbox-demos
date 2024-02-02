@@ -16,10 +16,10 @@
 
 import express, {Application, Request, Response} from 'express';
 
-const {PORT, SSP_A_HOST_INTERNAL, SSP_B_HOST_INTERNAL} = process.env;
+const {PORT, SSP_A_HOST, SSP_B_HOST} = process.env;
 
-const SSP_A_INTERNAL = new URL(`http://${SSP_A_HOST_INTERNAL}:${PORT}`);
-const SSP_B_INTERNAL = new URL(`http://${SSP_B_HOST_INTERNAL}:${PORT}`);
+const SSP_A = new URL(`http://${SSP_A_HOST}:${PORT}`);
+const SSP_B = new URL(`http://${SSP_B_HOST}:${PORT}`);
 
 const app: Application = express();
 
@@ -55,13 +55,11 @@ app.get('/', async (req: Request, res: Response) => {
 
 async function getAdServerAd() {
   const adServerBids = await Promise.all(
-    [`${SSP_A_INTERNAL}ad-server-bid`, `${SSP_B_INTERNAL}ad-server-bid`].map(
-      async (dspUrl) => {
-        const response = await fetch(dspUrl);
-        const result = await response.json();
-        return result;
-      },
-    ),
+    [`${SSP_A}ad-server-bid`, `${SSP_B}ad-server-bid`].map(async (dspUrl) => {
+      const response = await fetch(dspUrl);
+      const result = await response.json();
+      return result;
+    }),
   );
 
   const [highestBid] = adServerBids.sort(

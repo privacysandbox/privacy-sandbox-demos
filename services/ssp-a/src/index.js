@@ -35,8 +35,8 @@ const DSP_A = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`);
 const DSP_B = new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`);
 const SSP_A = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`);
 
-const DSP_A_INTERNAL = new URL(`http://${DSP_A_HOST_INTERNAL}:${PORT}`);
-const DSP_B_INTERNAL = new URL(`http://${DSP_B_HOST_INTERNAL}:${PORT}`);
+const DSP_A_INTERNAL = new URL(`http://${DSP_A_HOST}:${PORT}`);
+const DSP_B_INTERNAL = new URL(`http://${DSP_B_HOST}:${PORT}`);
 
 const app = express();
 

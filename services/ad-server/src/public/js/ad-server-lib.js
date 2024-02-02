@@ -161,8 +161,9 @@ class AdServerLib {
   }
 
   addContainerFrame({divId, size, type, isFencedFrame}) {
+    const topLevelOrigin = encodeURI(window.location.origin);
     const containerFrameEl = document.createElement('iframe');
-    containerFrameEl.src = `${this.adServerOrigin}/ad-frame.html`;
+    containerFrameEl.src = `${this.adServerOrigin}/ad-frame.html?topLevelOrigin=${topLevelOrigin}`;
 
     const [width, height] = size;
     containerFrameEl.width = width;
