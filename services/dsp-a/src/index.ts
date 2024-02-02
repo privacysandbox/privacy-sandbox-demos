@@ -37,9 +37,17 @@ const {
   DSP_A_HOST,
   DSP_A_TOKEN,
   DSP_A_DETAIL,
-  SSP_HOST,
+  SSP_A_HOST,
+  SSP_B_HOST,
   SHOP_HOST,
 } = process.env;
+
+const SSP_A = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`).toString();
+const SSP_B = new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`).toString();
+
+// The SSP VAST URI is added as query params of render URLs
+const SSP_A_VAST_URL = `${SSP_A}vast`;
+const SSP_B_VAST_URL = `${SSP_B}vast`;
 
 // in-memory storage for debug reports
 const Reports: any[] = [];
@@ -128,7 +136,7 @@ app.get('/join-ad-interest-group.html', async (req: Request, res: Response) => {
 });
 
 app.get('/interest-group.json', async (req: Request, res: Response) => {
-  const {advertiser, id, adType} = req.query;
+  const {advertiser, id} = req.query;
   if (advertiser === undefined || id === undefined) {
     return res.sendStatus(400);
   }
@@ -136,11 +144,13 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
   const imageCreative = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}/ads`);
   imageCreative.searchParams.append('advertiser', advertiser as string);
   imageCreative.searchParams.append('id', id as string);
-  const videoCreative = new URL(
-    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html?ssp-vast-url=%%SSP_VAST_URL%%`,
+
+  const videoCreativeForSspA = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html?sspVastUrl=${SSP_A_VAST_URL}`,
   );
-  const renderUrl =
-    adType === 'video' ? videoCreative : imageCreative.toString();
+  const videoCreativeForSspB = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html?sspVastUrl=${SSP_B_VAST_URL}`,
+  );
 
   const owner = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`);
   const biddingLogicUrl = new URL(
@@ -166,17 +176,36 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
       'trustedBiddingSignalsKeys-1',
       'trustedBiddingSignalsKeys-2',
     ],
-
-    // dailyUpdateUrl, // not implemented yet
     userBiddingSignals: {
       user_bidding_signals: 'user_bidding_signals',
     },
     ads: [
       {
-        renderUrl,
+        renderUrl: imageCreative,
         metadata: {
-          type: advertiser,
           adType: 'image',
+        },
+      },
+      // In this demo, we add a render URL for each SSPs, and the SSP VAST XML URI is
+      // specified in the render URL. During the bid generation time,  The name of the
+      // component seller becomes available, and the buyer can return the render URL of
+      // that component seller.
+      //
+      // Note that this is a temporary mechanism until deprecateReplaceInURN function becomes
+      // available to component auction participants in M123:
+      // https://github.com/WICG/turtledove/issues/286#issuecomment-1910551260
+      {
+        renderUrl: videoCreativeForSspA,
+        metadata: {
+          adType: 'video',
+          seller: SSP_A,
+        },
+      },
+      {
+        renderUrl: videoCreativeForSspB,
+        metadata: {
+          adType: 'video',
+          seller: SSP_B,
         },
       },
     ],

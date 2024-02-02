@@ -21,10 +21,23 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
-  const {bidFloor} = auctionConfig.sellerSignals;
+  let desirability;
+
+  // If it's a video ad, there is no contextual video auction in this demo to compare
+  // the bid against, so we just return the desirability score as the bid itself,
+  // and the highest bid will win the auction
+  if (auctionConfig.sellerSignals.adType === 'video') {
+    desirability = bid;
+  } else {
+    // For an image ad, we compare the PA auction bid against the bid floor set by the
+    // winner of the contextual auction (header bidding + ad server auctions)
+    // If the contexual auction bid is higher, then we return 0 to filter out this ad
+    const {bidFloor} = auctionConfig.sellerSignals;
+    desirability = bid > bidFloor ? bid : 0;
+  }
 
   return {
-    desirability: bid > bidFloor ? 1 : 0,
+    desirability,
     allowComponentAuction: true,
   };
 }

@@ -21,11 +21,28 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  return {
+  const {ads} = interestGroup;
+  const {adType} = auctionSignals;
+  const {seller, topLevelSeller} = browserSignals;
+
+  let render;
+
+  if (adType === 'image') {
+    render = ads.find((ad) => ad.metadata.adType === 'image')?.renderUrl;
+  } else if (adType === 'video') {
+    render = ads.find(
+      (ad) =>
+        ad.metadata.adType === 'video' && ad.metadata.seller.includes(seller),
+    ).renderUrl;
+  }
+
+  const response = {
     bid: Math.floor(Math.random() * 100, 10),
-    render: interestGroup.ads[0].renderUrl,
-    allowComponentAuction: true,
+    render,
+    allowComponentAuction: !!topLevelSeller,
   };
+
+  return response;
 }
 
 function reportWin(
@@ -34,5 +51,5 @@ function reportWin(
   sellerSignals,
   browserSignals,
 ) {
-  sendReportTo(browserSignals.interestGroupOwner + `/reporting?report=win`);
+  sendReportTo(browserSignals.interestGroupOwner + '/reporting?report=win');
 }
