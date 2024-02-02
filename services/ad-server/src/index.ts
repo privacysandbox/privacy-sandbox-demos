@@ -74,6 +74,10 @@ app.get('/ad-server-bid', async (req: Request, res: Response) => {
   });
 });
 
+app.get('/reporting', (req, res) => {
+  res.send(200);
+});
+
 app.listen(PORT, async () => {
   console.log(`Listening on port ${PORT}`);
 });
