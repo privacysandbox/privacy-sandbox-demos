@@ -83,7 +83,7 @@ app.get('/', async (req, res) => {
   const title = SSP_B_DETAIL;
   res.render('index.html.ejs', {
     title,
-    DSP_HOST,
+    DSP_B_HOST,
     SSP_B_HOST,
     EXTERNAL_PORT,
     SHOP_HOST,
