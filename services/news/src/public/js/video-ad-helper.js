@@ -94,6 +94,9 @@ function createAdDisplayContainer() {
  * Loads the video content and initializes IMA ad playback.
  */
 function playAds() {
+  if (!adsManager) {
+    return;
+  }
   // Initialize the container. Must be done through a user action on mobile
   // devices.
   videoContent.load();
@@ -147,6 +150,8 @@ function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager.addEventListener(google.ima.AdEvent.Type.STARTED, onAdEvent);
   adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, onAdEvent);
   console.log('Ads Manager loaded.');
+
+  playButton.innerHTML = 'Play video';
 }
 
 /**

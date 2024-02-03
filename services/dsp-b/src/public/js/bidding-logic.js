@@ -30,6 +30,8 @@ function generateBid(
   if (adType === 'image') {
     render = ads.find((ad) => ad.metadata.adType === 'image')?.renderUrl;
   } else if (adType === 'video') {
+    // We look through the video ads passed in from the interest group and
+    // select the ad that matches the component seller's origin
     render = ads.find(
       (ad) =>
         ad.metadata.adType === 'video' && ad.metadata.seller.includes(seller),
@@ -37,6 +39,7 @@ function generateBid(
   }
 
   const response = {
+    // We return a random bid of 0 to 100
     bid: Math.floor(Math.random() * 100, 10),
     render,
     allowComponentAuction: !!topLevelSeller,

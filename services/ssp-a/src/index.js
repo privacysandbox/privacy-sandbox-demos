@@ -209,7 +209,7 @@ app.get('/vast', async (req, res) => {
   res.send(wrappedVast);
 });
 
-app.get('/reporting', (req, res) => {
+app.get('/reporting/:reportType', (req, res) => {
   res.send(200);
 });
 
