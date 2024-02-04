@@ -153,8 +153,12 @@ app.post("/.well-known/private-aggregation/report-shared-storage", (req, res) =>
 
 })
 
-app.get("/private-aggregation", (req, res) => {
-  res.render('private-aggregation');
+app.get("/private-aggregation-aws", (req, res) => {
+  res.render('private-aggregation-aws');
+})
+
+app.get("/private-aggregation-gcp", (req, res) => {
+  res.render('private-aggregation-gcp');
 })
 
 app.post("/.well-known/private-aggregation/debug/report-shared-storage", (req, res) => {
