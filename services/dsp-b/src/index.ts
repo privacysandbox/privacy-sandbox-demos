@@ -55,6 +55,7 @@ setInterval(
 const app: Application = express();
 
 app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Origin-Trial', DSP_B_TOKEN as string);
   next();
 });
