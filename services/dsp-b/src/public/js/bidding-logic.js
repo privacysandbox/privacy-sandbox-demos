@@ -22,6 +22,7 @@ function generateBid(
   browserSignals,
 ) {
   return {
+    // For the demo, bid value is randomly generated
     bid: Math.floor(Math.random() * 100, 10),
     render: interestGroup.ads[0].renderUrl,
     allowComponentAuction: true,

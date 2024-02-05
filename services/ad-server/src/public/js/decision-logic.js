@@ -21,10 +21,14 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
+  // For an image ad, we compare the PA auction bid against the bid floor set by the
+  // winner of the contextual auction (header bidding + ad server auctions)
+  // If the contexual auction bid is higher, then we return 0 to filter out this ad
   const {bidFloor} = auctionConfig.sellerSignals;
+  const desirability = bid > bidFloor ? bid : 0;
 
   return {
-    desirability: bid > bidFloor ? 1 : 0,
+    desirability,
     allowComponentAuction: true,
   };
 }
@@ -34,6 +38,6 @@ function reportResult(auctionConfig, browserSignals) {
   return {
     success: true,
     signalsForWinner: {signalForWinner: 1},
-    reportUrl: auctionConfig.seller + '/report_seller',
+    reportUrl: auctionConfig.seller + '/reporting',
   };
 }

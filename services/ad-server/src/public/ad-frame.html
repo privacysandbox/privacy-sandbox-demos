@@ -24,6 +24,13 @@
       // the Protected Audience auction is executed. The auction config is
       // messaged from the parent to the iframe
       async function startAuction(message) {
+        const frameUrl = new URL(window.location.href)
+        const topLevelOrigin = frameUrl.searchParams.get('topLevelOrigin')
+
+        if (message.origin !== topLevelOrigin) {
+          return
+        }
+
         const { auctionId, auctionConfig, contextualAd } = JSON.parse(message.data)
         const auctionResult = await navigator.runAdAuction(auctionConfig)
 

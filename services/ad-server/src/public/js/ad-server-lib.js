@@ -39,11 +39,7 @@ class AdServerLib {
     const {headerBiddingAd} = highestHeaderBid;
     const {adServerAd} = adServerAuctionResult;
 
-    if (headerBiddingAd.bid > adServerAd.bid) {
-      return headerBiddingAd;
-    }
-
-    return adServerAd;
+    return headerBiddingAd.bid > adServerAd.bid ? headerBiddingAd : adServerAd;
   }
 
   // Protected Audience auction is executed after both the header bidding auction
@@ -55,7 +51,7 @@ class AdServerLib {
     // The contextual auction ad's bid acts as the bid floor
     const {bid: bidFloor} = contextualAd;
 
-    const componentAuctions = this.decorateComponentAuctionConfigs({
+    const componentAuctions = this.addComponentAuctionConfigs({
       componentAuctionConfigs,
       auctionSignals: {adType, auctionId},
       sellerSignals: {'seller-key': 'seller-value'},
@@ -87,21 +83,15 @@ class AdServerLib {
     });
   }
 
-  decorateComponentAuctionConfigs({
+  addComponentAuctionConfigs({
     componentAuctionConfigs,
     auctionSignals,
     sellerSignals,
     perBuyerSignals,
   }) {
-    this.decorateComponentAuctionSignals(
-      componentAuctionConfigs,
-      auctionSignals,
-    );
-    this.decorateComponentSellerSignals(componentAuctionConfigs, sellerSignals);
-    this.decorateComponentPerBuyerSignals(
-      componentAuctionConfigs,
-      perBuyerSignals,
-    );
+    this.addComponentAuctionSignals(componentAuctionConfigs, auctionSignals);
+    this.addComponentSellerSignals(componentAuctionConfigs, sellerSignals);
+    this.addComponentPerBuyerSignals(componentAuctionConfigs, perBuyerSignals);
 
     return componentAuctionConfigs;
   }
@@ -109,7 +99,7 @@ class AdServerLib {
   // Data from the publisher and the top-level seller are added as
   // auction signals of the component auctions to pass signals to the
   // component buyers and sellers
-  decorateComponentAuctionSignals(componentAuctionConfigs, signals) {
+  addComponentAuctionSignals(componentAuctionConfigs, signals) {
     componentAuctionConfigs = componentAuctionConfigs.map(
       (componentAuctionConfig) => {
         componentAuctionConfig.auctionSignals = {
@@ -125,7 +115,7 @@ class AdServerLib {
   // Data from the publisher and the top-level seller are added as
   // seller signals of the component auctions to pass signals to the
   // component sellers
-  decorateComponentSellerSignals(componentAuctionConfigs, signals) {
+  addComponentSellerSignals(componentAuctionConfigs, signals) {
     componentAuctionConfigs = componentAuctionConfigs.map(
       (componentAuctionConfig) => {
         componentAuctionConfig.sellerSignals = {
@@ -141,7 +131,7 @@ class AdServerLib {
   // Data from the publisher and the top-level seller are added as
   // seller signals of the component auctions to pass signals to the
   // component buyers
-  decorateComponentPerBuyerSignals(componentAuctionConfigs, signals) {
+  addComponentPerBuyerSignals(componentAuctionConfigs, signals) {
     componentAuctionConfigs = componentAuctionConfigs.map(
       (componentAuctionConfig) => {
         componentAuctionConfig.perBuyerSignals = Object.keys(
@@ -161,8 +151,9 @@ class AdServerLib {
   }
 
   addContainerFrame({divId, size, type, isFencedFrame}) {
+    const topLevelOrigin = encodeURI(window.location.origin);
     const containerFrameEl = document.createElement('iframe');
-    containerFrameEl.src = `${this.adServerOrigin}/ad-frame.html`;
+    containerFrameEl.src = `${this.adServerOrigin}/ad-frame.html?topLevelOrigin=${topLevelOrigin}`;
 
     const [width, height] = size;
     containerFrameEl.width = width;
