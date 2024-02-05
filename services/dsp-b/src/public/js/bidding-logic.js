@@ -13,24 +13,27 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-function scoreAd(
-  adMetadata,
-  bid,
-  auctionConfig,
-  trustedScoringSignals,
+
+function generateBid(
+  interestGroup,
+  auctionSignals,
+  perBuyerSignals,
+  trustedBiddingSignals,
   browserSignals,
 ) {
   return {
-    desirability: 1,
+    // For the demo, bid value is randomly generated
+    bid: Math.floor(Math.random() * 100, 10),
+    render: interestGroup.ads[0].renderUrl,
     allowComponentAuction: true,
   };
 }
 
-function reportResult(auctionConfig, browserSignals) {
-  sendReportTo(auctionConfig.seller + '/reporting?report=result');
-  return {
-    success: true,
-    signalsForWinner: {signalForWinner: 1},
-    reportUrl: auctionConfig.seller + '/reporting',
-  };
+function reportWin(
+  auctionSignals,
+  perBuyerSignals,
+  sellerSignals,
+  browserSignals,
+) {
+  sendReportTo(browserSignals.interestGroupOwner + `/reporting?report=win`);
 }

@@ -13,6 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+
 function scoreAd(
   adMetadata,
   bid,
@@ -20,8 +21,14 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
+  // For an image ad, we compare the PA auction bid against the bid floor set by the
+  // winner of the contextual auction (header bidding + ad server auctions)
+  // If the contexual auction bid is higher, then we return 0 to filter out this ad
+  const {bidFloor} = auctionConfig.sellerSignals;
+  const desirability = bid > bidFloor ? bid : 0;
+
   return {
-    desirability: 1,
+    desirability,
     allowComponentAuction: true,
   };
 }

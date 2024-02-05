@@ -154,7 +154,7 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
   );
 
   res.json({
-    name: advertiser,
+    name: `${advertiser}`,
     owner,
 
     // x-allow-fledge: true
@@ -176,6 +176,7 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
         renderUrl,
         metadata: {
           type: advertiser,
+          adType: 'image',
         },
       },
     ],
@@ -198,6 +199,25 @@ app.get('/bidding_signal.json', async (req: Request, res: Response) => {
         },
       },
     },
+  });
+});
+
+// For contextual auction bids (header bidding + ad server auctions),
+// a bid from 0 to 70 which is lower than 0 to 100 for Protected Audience
+// auction bids. This is to lower the chance that a contextual ad is
+// rendered so that the testers have easier time testing a Protected
+// Audience ad
+app.get('/header-bid', async (req: Request, res: Response) => {
+  res.json({
+    bid: Math.floor(Math.random() * 70),
+    renderUrl: `https://${DSP_A_HOST}/html/header-bidding-ad.html`,
+  });
+});
+
+app.get('/ad-server-bid', async (req: Request, res: Response) => {
+  res.json({
+    bid: Math.floor(Math.random() * 70),
+    renderUrl: `https://${DSP_A_HOST}/html/ad-server-ad.html`,
   });
 });
 

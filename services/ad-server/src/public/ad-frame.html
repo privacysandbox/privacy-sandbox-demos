@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Container frame</title>
+    <style>
+      body {
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+
+      .ad {
+        border: none;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: white;
+      }
+    </style>
+    <script>
+      // This iframe is added to the page by the ad server lib and this is where
+      // the Protected Audience auction is executed. The auction config is
+      // messaged from the parent to the iframe
+      async function startAuction(message) {
+        const frameUrl = new URL(window.location.href)
+        const topLevelOrigin = frameUrl.searchParams.get('topLevelOrigin')
+
+        if (message.origin !== topLevelOrigin) {
+          return
+        }
+
+        const { auctionId, auctionConfig, contextualAd } = JSON.parse(message.data)
+        const auctionResult = await navigator.runAdAuction(auctionConfig)
+
+        let frameEl
+
+        // If there is no Protected Audience auction
+        // winner, render the contextual ad
+        if (!auctionResult) {
+          frameEl = document.createElement('iframe')
+          frameEl.src = contextualAd.renderUrl
+
+        // Render the ad in a fenced frame
+        } else if (auctionResult instanceof FencedFrameConfig) {
+          frameEl = document.createElement('fencedframe')
+          frameEl.config = auctionResult
+
+        // Render the ad in an iframe
+        } else {
+          frameEl = document.createElement('iframe')
+          frameEl.src = auctionResult
+        }
+
+        frameEl.className = 'ad'
+        document.body.appendChild(frameEl)
+      }
+
+      // The data needed for the auction is post-messaged from parent
+      window.addEventListener('message', startAuction)
+    </script>
+  </head>
+  <body></body>
+</html>

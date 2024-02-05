@@ -1,3 +1,4 @@
 **/*.js
 **/*.css
 !**/*.tailwind.css
+!src/public/**/*.js

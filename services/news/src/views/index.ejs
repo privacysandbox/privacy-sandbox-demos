@@ -7,9 +7,13 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/global.css" />
   <link rel="icon" href="/img/spy.svg" />
-  <script src="/js/main.js"></script>
   <meta http-equiv="origin-trial" content="<%= NEWS_TOKEN %>">
   <script src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp.js` %>" dsp="<%= `${DSP_HOST}:${EXTERNAL_PORT}` %>"></script>
+  <style>
+    .ad-slot {
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-3/5 bg-slate-50 pt-8">
@@ -18,21 +22,23 @@
     <h2 class="text-2xl">This is a news demo site.</h2>
     <hr class="w-full">
   </header>
-
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
       <p><%= lorem %></p>
-      <p><%= lorem %></p>
-
       <div class="w-full flex flex-col items-center">
-        <span class="font-mono text-sm">ADS BY Protected Audience API</span>
-        <ins class="ads">
-          <script defer class="ssp_tag" src="<%= `https://${SSP_HOST}:${EXTERNAL_PORT}/ad-tag.js` %>"></script>
-        </ins>
+        <ins class="ads"></ins>
       </div>
-
+      <div class="w-full flex flex-col items-center">
+        <ins id="image-ad--fenced-frame" class="ad-slot"></ins>
+      </div>
       <p><%= lorem %></p>
+      <div class="w-full flex flex-col items-center">
+        <ins id="image-ad--iframe" class="ad-slot"></ins>
+      </div>
       <p><%= lorem %></p>
+      <div class="w-full flex flex-col items-center">
+        <ins id="video-ad--iframe" class="ad-slot"></ins>
+      </div>
       <p><%= lorem %></p>
       <p><%= lorem %></p>
       <p><%= lorem %></p>
@@ -60,6 +66,118 @@
     <hr>
     <p><a href=<%= `https://${HOME_HOST}:${EXTERNAL_PORT}` %>>back to top</a>
   </footer>
+  <script>
+    function addScriptEl(src, className, resolve) {
+      const scriptEl = document.createElement('script')
+      scriptEl.src = src
+      scriptEl.className = className
+
+      if (resolve) {
+        scriptEl.addEventListener('load', resolve)
+      }
+
+      document.body.appendChild(scriptEl)
+      return scriptEl
+    }
+
+    // A sequential auction setup is where contextual auctions are executed before a
+    // Protected Audience auction starts. 
+    //
+    // In this demo, a header bidding auction is executed first on the page.  In the
+    // header bidding response, the buyers and sellers have the opportunity to send
+    // component auction configs and per-buyer signals to be used in the subsequent
+    // Protected Audience auction. Then header bidding response is passed into the ad server auction to determine
+    // the winner of the contextual auction.
+    //
+    // After the contextual auctions have ended, the winning contextual ad bid is
+    // passed into the Protected Audience auction as a bid floor, and the top-level
+    // seller can use this information during ad scoring to decide if a contextual
+    // auction ad should be rendered or a Protected Audience auction should be rendered
+    //
+    // To learn more about the sequential auction setup, see the following resources:
+    // Article: https://developers.google.com/privacy-sandbox/relevance/protected-audience-api/sequential-auction-setup
+    // Webinar recording: goo.gle/ps-protected-audience-webinar-2-recording-emea
+    // Slide deck: goo.gle/ps-protected-audience-webinar-2-deck
+
+    async function startSequentialAuction(adUnit, sellers) {
+      // We generate a unique ID that is propagated throughout the contextual auctions
+      // and the Protected Audience auction. 
+      //
+      // This unique ID becomes available in all worklets of all buyers and sellers 
+      // and the auction participants are free to report this value using one of the
+      // event-level reporting mechanisms or Private Aggregation.
+      //
+      // To learn more about reporting, see the following resources: 
+      // Article: https://developers.google.com/privacy-sandbox/relevance/protected-audience-api/reporting
+      // Webinar recording: https://goo.gle/ps-protected-audience-webinar-3-recording-emea
+      // Slide deck: https://goo.gle/ps-protected-audience-webinar-3-deck
+
+      const auctionId = Math.floor(Math.random() * 10000000, 10);
+
+      // A header bidding auction is executed first on the page
+      const headerBiddingAuctionResult = await headerBiddingLib.startAuction({ auctionId, adUnit, sellers })
+
+      // An ad server auction is executed and is compared against the header bidding auction
+      // winner to determine the final contextual auction winner
+      const contextualAuctionResult = await adServerLib.startAdServerAuction({ auctionId, headerBiddingAuctionResult })
+
+      // After the contextual auctions, the Protected Audience auction starts. 
+      // THe contextual auction result contains the winning contextual ad bid price
+      // and the commponent auction configs with per-buyer signals to be used for
+      // the Protected Audience. 
+      adServerLib.startProtectedAudienceAuction({ auctionId, adUnit, contextualAuctionResult })
+    }
+
+    function renderDemoAds() {
+      // Define the sellers participating in the ad auctions
+      const sellers = ['<%= SSP_A_HOST %>', '<%= SSP_B_HOST %>']
+
+      // Define the ads to be displayed on the page
+      const imageIframeAdUnit = {
+        divId: 'image-ad--iframe',
+        type: 'image',
+        size: [300, 250],
+        isFencedFrame: false
+      }
+
+      const imageFencedFrameAdUnit = {
+        divId: 'image-ad--fenced-frame',
+        type: 'image',
+        size: [300, 250],
+        isFencedFrame: true
+      }
+      const videoIframeAdUnit = {
+        divId: 'video-ad--iframe',
+        type: 'video',
+        size: [300, 250],
+        isFencedFrame: false
+      }
+
+      // Start the auction for each ad unit
+      startSequentialAuction(imageIframeAdUnit, sellers)
+      startSequentialAuction(imageFencedFrameAdUnit, sellers)
+    }
+
+    async function setupDemo () {
+      if ('<%= isMultiSeller %>' !== 'true') {
+        addScriptEl('<%= SSP_TAG_URL %>', 'ssp_tag')
+        return
+      }
+
+      const adServerLibPromise = new Promise(resolve => 
+        addScriptEl('<%= AD_SERVER_LIB_URL %>', 'ad_server_tag', resolve))
+
+      const headerBiddingLibPromise = new Promise(resolve => 
+        addScriptEl('<%= HEADER_BIDDING_LIB_URL %>', 'header_bidding_tag', resolve))
+      
+      await Promise.all([adServerLibPromise, headerBiddingLibPromise])      
+
+      adServerLib = new AdServerLib('<%= AD_SERVER_HOST %>')
+      renderDemoAds()
+    }
+
+    setupDemo()
+  </script>
 </body>
 
 </html>
