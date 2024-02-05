@@ -38,6 +38,7 @@ const SSP_B = new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`);
 const app = express();
 
 app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Origin-Trial', SSP_B_TOKEN);
   next();
 });
