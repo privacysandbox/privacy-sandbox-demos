@@ -24,7 +24,9 @@ const {
   SSP_B_DETAIL,
   SSP_B_TOKEN,
   DSP_A_HOST,
+  DSP_A_URI,
   DSP_B_HOST,
+  DSP_B_URI,
   SHOP_HOST,
   NEWS_HOST,
 } = process.env;
@@ -32,11 +34,6 @@ const {
 const DSP_A = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`);
 const DSP_B = new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`);
 const SSP_B = new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`);
-
-// These addresses are used to make a server-to-server call
-// TODO: See if the ports can be aligned so we can remove these
-const DSP_A_INTERNAL = new URL(`http://${DSP_A_HOST}:${PORT}`);
-const DSP_B_INTERNAL = new URL(`http://${DSP_B_HOST}:${PORT}`);
 
 const app = express();
 
@@ -100,7 +97,7 @@ app.get('/video-ad-tag.html', async (req, res) => {
 
 async function fetchHeaderBids() {
   return Promise.all(
-    [`${DSP_A_INTERNAL}header-bid`, `${DSP_B_INTERNAL}header-bid`].map(
+    [`${DSP_A_URI}/header-bid`, `${DSP_B_URI}/header-bid`].map(
       async (dspUrl) => {
         const response = await fetch(dspUrl);
         const result = await response.json();
@@ -145,7 +142,7 @@ app.get('/header-bid', async (req, res) => {
 
 async function getAdServerAd() {
   const adServerBids = await Promise.all(
-    [`${DSP_A_INTERNAL}ad-server-bid`, `${DSP_B_INTERNAL}ad-server-bid`].map(
+    [`${DSP_A_URI}/ad-server-bid`, `${DSP_B_URI}/ad-server-bid`].map(
       async (dspUrl) => {
         const response = await fetch(dspUrl);
         const result = await response.json();
