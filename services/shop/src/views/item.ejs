@@ -91,11 +91,14 @@
         return scriptEl
       }
 
+      const DSP_A_TAG_URL = '<%= DSP_A_TAG_URL %>'
+      const DSP_B_TAG_URL = '<%= DSP_B_TAG_URL %>'
+
       if ('<%= isMultiSeller %>' === 'true') {
-        const dspAScript = buildDspScriptTag('<%= DSP_A_TAG_URL %>', 'dsp_a_tag')
+        const dspAScript = buildDspScriptTag(`${DSP_A_TAG_URL}`, 'dsp_a_tag')
         document.body.appendChild(dspAScript);
 
-        const dspBScript = buildDspScriptTag('<%= DSP_B_TAG_URL %>', 'dsp_b_tag')
+        const dspBScript = buildDspScriptTag(`${DSP_B_TAG_URL}`, 'dsp_b_tag')
         document.body.appendChild(dspBScript);
       } else {
         const dspScript = buildDspScriptTag('<%= DSP_TAG_URL %>', 'dsp_tag')

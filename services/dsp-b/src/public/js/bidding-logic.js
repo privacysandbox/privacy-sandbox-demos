@@ -21,12 +21,31 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  return {
-    // For the demo, bid value is randomly generated
+  const {ads} = interestGroup;
+  const {adType} = auctionSignals;
+  const {seller, topLevelSeller} = browserSignals;
+
+  let render;
+
+  if (adType === 'image') {
+    render = ads.find((ad) => ad.metadata.adType === 'image')?.renderUrl;
+  } else if (adType === 'video') {
+    // We look through the video ads passed in from the interest group and
+    // select the ad that matches the component seller's origin
+    render = ads.find(
+      (ad) =>
+        ad.metadata.adType === 'video' && ad.metadata.seller.includes(seller),
+    ).renderUrl;
+  }
+
+  const response = {
+    // We return a random bid of 0 to 100
     bid: Math.floor(Math.random() * 100, 10),
-    render: interestGroup.ads[0].renderUrl,
-    allowComponentAuction: true,
+    render,
+    allowComponentAuction: !!topLevelSeller,
   };
+
+  return response;
 }
 
 function reportWin(

@@ -51,7 +51,9 @@ class AdServerLib {
     // The contextual auction ad's bid acts as the bid floor
     const {bid: bidFloor} = contextualAd;
 
-    const componentAuctions = this.addComponentAuctionConfigs({
+    // For the publisher and seller to pass data to component auction sellers
+    // and buyers, we add the data to the component auction configs
+    const componentAuctions = this.addSignalsToComponentAuctionConfigs({
       componentAuctionConfigs,
       auctionSignals: {adType, auctionId},
       sellerSignals: {'seller-key': 'seller-value'},
@@ -66,6 +68,7 @@ class AdServerLib {
       directFromSellerSignalsURL: `${this.adServerOrigin}/signals/direct.json`,
       sellerSignals: {
         bidFloor,
+        adType,
       },
       resolveToConfig,
       componentAuctions,
@@ -74,16 +77,42 @@ class AdServerLib {
     // Adds an iframe that matches the top-level seller origin.
     const containerFrameEl = this.addContainerFrame(adUnit);
 
+    // Setup a message listener for VAST XML
+    if (adType === 'video') {
+      const buyers = this.getBuyers(componentAuctions);
+      this.setupVideoAd(buyers);
+    }
+
     // The data needed to run a Protected Audience auction is post-messaged to the iframe
     containerFrameEl.addEventListener('load', () => {
       containerFrameEl.contentWindow.postMessage(
-        JSON.stringify({auctionId, adType, auctionConfig, contextualAd}),
+        JSON.stringify({auctionId, adUnit, auctionConfig, contextualAd}),
         '*',
       );
     });
   }
 
-  addComponentAuctionConfigs({
+  getBuyers(componentAuctions) {
+    return Array.from(
+      new Set(
+        ...componentAuctions.map(
+          ({interestGroupBuyers}) => interestGroupBuyers,
+        ),
+      ),
+    );
+  }
+
+  setupVideoAd(buyers) {
+    // Listens to the VAST XML from the creative iframe
+    window.addEventListener('message', ({origin, data}) => {
+      if (buyers.some((buyer) => buyer.includes(origin))) {
+        // Pass the VAST XML to the video ad helper that renders the ad
+        setUpIMA(data, 'multi');
+      }
+    });
+  }
+
+  addSignalsToComponentAuctionConfigs({
     componentAuctionConfigs,
     auctionSignals,
     sellerSignals,
@@ -155,18 +184,24 @@ class AdServerLib {
     const containerFrameEl = document.createElement('iframe');
     containerFrameEl.src = `${this.adServerOrigin}/ad-frame.html?topLevelOrigin=${topLevelOrigin}`;
 
-    const [width, height] = size;
-    containerFrameEl.width = width;
-    containerFrameEl.height = height;
-
+    // Add a label
     const paragraphEl = document.createElement('p');
     paragraphEl.innerText = `${type} ad in ${
       isFencedFrame ? 'fenced frame' : 'iframe'
     }`.toUpperCase();
     paragraphEl.className = 'font-mono text-sm';
+    document.getElementById(divId).appendChild(paragraphEl);
+
+    if (type === 'image') {
+      [containerFrameEl.width, containerFrameEl.height] = size;
+    } else if (type === 'video') {
+      // The video creative does not actually render anything, and it only contains
+      // the code that post messages the vAST out of the iframe, so we hide it
+      containerFrameEl.width = 0;
+      containerFrameEl.height = 0;
+    }
 
     document.getElementById(divId).appendChild(containerFrameEl);
-    document.getElementById(divId).appendChild(paragraphEl);
     return containerFrameEl;
   }
 }

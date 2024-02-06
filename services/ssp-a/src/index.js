@@ -16,11 +16,18 @@
 
 // SSP_A
 import express from 'express';
+import path from 'path';
+import {readFile} from 'fs/promises';
+import url from 'url';
+
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const {
   EXTERNAL_PORT,
   PORT,
   SSP_A_HOST,
+  SSP_B_HOST,
   SSP_A_DETAIL,
   SSP_A_TOKEN,
   DSP_A_HOST,
@@ -43,12 +50,21 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
+const ALLOWED_HOSTNAMES = [
+  DSP_A_HOST,
+  DSP_B_HOST,
+  SSP_A_HOST,
+  SSP_B_HOST,
+  NEWS_HOST,
+];
 
 app.use((req, res, next) => {
   // opt-in fencedframe
   if (req.get('sec-fetch-dest') === 'fencedframe') {
     res.setHeader('Supports-Loading-Mode', 'fenced-frame');
+  }
+  if (ALLOWED_HOSTNAMES.includes(req.hostname)) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
   }
   next();
 });
@@ -123,15 +139,17 @@ function getComponentAuctionConfig() {
       [DSP_A]: {'some-key': 'some-value'},
       [DSP_B]: {'some-key': 'some-value'},
     },
-    deprecatedReplaceInURN: {
-      '%%SSP_VAST_URI%%': `${SSP_A}/vast/preroll`,
-    },
+    // After M123, you will be able to pass in data from the winning SSP to the
+    // ad creative using deprecatedReplaceInURN for component sellers:
+    // https://github.com/WICG/turtledove/issues/286#issuecomment-1910551260
+    //
+    // deprecatedReplaceInURN: {
+    //   '%%SSP_VAST_URI%%': `${SSP_A}/vast/preroll.xml`,
+    // }
   };
 }
 
 app.get('/header-bid', async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', `https://${NEWS_HOST}`);
-
   res.json({
     seller: SSP_A,
     headerBiddingAd: await getHeaderBiddingAd(),
@@ -161,7 +179,35 @@ app.get('/ad-server-bid', async (req, res) => {
   });
 });
 
-app.get('/reporting', (req, res) => {
+// The macros are replaced with the DSP VAST URI and the auction ID
+function transformVast(sspVast, dspVastUri, auctionId) {
+  const vastWithDspUri = sspVast.replace(
+    '%%DSP_VAST_URI%%',
+    decodeURIComponent(dspVastUri),
+  );
+  const vastWithAuctionId = vastWithDspUri.replaceAll(
+    '%%AUCTION_ID%%',
+    auctionId,
+  );
+
+  return vastWithAuctionId;
+}
+
+// Responds with the finalized VAST XML that wraps the SSP VAST XML around the DSP VAST URI
+app.get('/vast', async (req, res) => {
+  const {dspVastUri, auctionId} = req.query;
+
+  const sspVast = await readFile(
+    path.resolve(__dirname + '/public/vast/preroll.xml'),
+    'utf8',
+  );
+  const wrappedVast = transformVast(sspVast, dspVastUri, auctionId);
+
+  res.type('application/xml');
+  res.send(wrappedVast);
+});
+
+app.get('/reporting/:reportType', (req, res) => {
   res.send(200);
 });
 

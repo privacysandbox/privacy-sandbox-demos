@@ -31,14 +31,15 @@
           return
         }
 
-        const { auctionId, auctionConfig, contextualAd } = JSON.parse(message.data)
+        const { auctionId, adUnit: { type, divId }, auctionConfig, contextualAd } = JSON.parse(message.data)
         const auctionResult = await navigator.runAdAuction(auctionConfig)
+        const isVideo = type === 'video'
 
         let frameEl
 
         // If there is no Protected Audience auction
         // winner, render the contextual ad
-        if (!auctionResult) {
+        if (!auctionResult && !isVideo) {
           frameEl = document.createElement('iframe')
           frameEl.src = contextualAd.renderUrl
 
@@ -53,7 +54,15 @@
           frameEl.src = auctionResult
         }
 
-        frameEl.className = 'ad'
+        if (auctionResult && isVideo) {
+          frameEl.className = 'video-ad'
+        } else {
+          frameEl.className = 'ad'
+        }
+
+        // A unique ID is passed into the creative iframe
+        frameEl.onload = () => frameEl.contentWindow.postMessage(auctionId, '*')
+
         document.body.appendChild(frameEl)
       }
 

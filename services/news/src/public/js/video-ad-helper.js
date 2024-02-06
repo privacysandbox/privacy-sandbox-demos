@@ -25,9 +25,9 @@ function init() {
 /**
  * Sets up IMA ad display container, ads loader, and makes an ad request.
  */
-function setUpIMA(adTagUrl) {
-  if (!adTagUrl) {
-    return console.log('[DEMO] No VAST XML URL provided.');
+function setUpIMA(vast, auctionType) {
+  if (!vast) {
+    return console.log('[DEMO] No VAST XML or URI provided.');
   }
   // Create the ad display container.
   createAdDisplayContainer();
@@ -58,7 +58,14 @@ function setUpIMA(adTagUrl) {
 
   // Request video ads.
   const adsRequest = new google.ima.AdsRequest();
-  adsRequest.adTagUrl = adTagUrl;
+
+  if (auctionType === 'multi') {
+    // In a multi-seller setup, we pass in the XML string
+    adsRequest.adsResponse = vast;
+  } else {
+    // In a single-seller setup, we pass in the VAST URI
+    adsRequest.adTagUrl = vast;
+  }
 
   // Specify the linear and nonlinear slot sizes. This helps the SDK to
   // select the correct creative if multiple are returned.
@@ -87,6 +94,9 @@ function createAdDisplayContainer() {
  * Loads the video content and initializes IMA ad playback.
  */
 function playAds() {
+  if (!adsManager) {
+    return;
+  }
   // Initialize the container. Must be done through a user action on mobile
   // devices.
   videoContent.load();
@@ -140,6 +150,8 @@ function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager.addEventListener(google.ima.AdEvent.Type.STARTED, onAdEvent);
   adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, onAdEvent);
   console.log('Ads Manager loaded.');
+
+  playButton.innerHTML = 'Play video';
 }
 
 /**
@@ -218,4 +230,4 @@ function onContentResumeRequested() {
   // setupUIForContent();
 }
 
-init();
+document.addEventListener('DOMContentLoaded', init);
