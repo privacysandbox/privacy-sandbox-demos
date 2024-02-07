@@ -1,6 +1,6 @@
 ---
 title: VAST Video Protected Audience
-sidebar_position: 1
+sidebar_position: 2
 more_data:
   - apis:
       - Protected Audience API
