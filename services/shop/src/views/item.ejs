@@ -80,11 +80,30 @@
       </main>
       <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
     </div>
-    <script
-      src="<%= dsp_tag %>"
-      class="dsp_tag"
-      data-advertiser="<%= SHOP_HOST %>"
-      data-id="<%= item.id %>"
-    ></script>
+    <script>
+      function buildDspScriptTag(tagUrl, tagClass) {
+        const scriptEl = document.createElement('script')
+        scriptEl.className = tagClass
+        scriptEl.src = tagUrl
+        scriptEl.dataset.advertiser = '<%= SHOP_HOST %>'
+        scriptEl.dataset.id = '<%= item.id %>'
+
+        return scriptEl
+      }
+
+      const DSP_A_TAG_URL = '<%= DSP_A_TAG_URL %>'
+      const DSP_B_TAG_URL = '<%= DSP_B_TAG_URL %>'
+
+      if ('<%= isMultiSeller %>' === 'true') {
+        const dspAScript = buildDspScriptTag(`${DSP_A_TAG_URL}`, 'dsp_a_tag')
+        document.body.appendChild(dspAScript);
+
+        const dspBScript = buildDspScriptTag(`${DSP_B_TAG_URL}`, 'dsp_b_tag')
+        document.body.appendChild(dspBScript);
+      } else {
+        const dspScript = buildDspScriptTag('<%= DSP_TAG_URL %>', 'dsp_tag')
+        document.body.appendChild(dspScript);
+      }
+    </script>
   </body>
 </html>

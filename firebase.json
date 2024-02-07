@@ -20,6 +20,44 @@
       ]
     },
     {
+      "target": "dsp-a",
+      "public": "services/dsp-a/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "dsp-a",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "dsp-b",
+      "public": "services/dsp-b/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "dsp-b",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
       "target": "shop",
       "public": "services/shop/public",
       "ignore": [
@@ -71,6 +109,44 @@
           "source": "**",
           "run": {
             "serviceId": "ssp",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ssp-a",
+      "public": "services/ssp-a/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ssp-a",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ssp-b",
+      "public": "services/ssp-b/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ssp-b",
             "region": "us-central1"
           }
         }
@@ -216,6 +292,25 @@
           "source": "**",
           "run": {
             "serviceId": "topics-server",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ad-server",
+      "public": "services/ad-server/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ad-server",
             "region": "us-central1"
           }
         }

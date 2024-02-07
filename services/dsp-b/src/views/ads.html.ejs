@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= title
+        %>
+  </title>
+  <link rel="icon"
+        href="" />
+  <style>
+    body {
+      width: 100vw;
+      height: 100vh;
+
+      margin: 0;
+      padding: 0;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-family: sans-serif;
+      overflow: hidden;
+      border: 1px solid black;
+      box-sizing: border-box;
+
+      position: relative;
+    }
+
+    #ad-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 5px;
+      padding: 5px;
+      background: #555;
+      color: white;
+    }
+
+    #ad-container {
+      position: absolute;
+      top: -30px;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <section>
+    <p id="ad-label">DSP-B Protected Audience ad</p>
+    <a 
+      id="ad-container"
+      target="_blank"
+      rel="noopener noreferrer"
+      attributionsrc="<%= registerSource %>"
+      href="<%= move %>">
+      <!-- smaller for avoid scrollbar -->
+      <img width="294"
+          height="245"
+          id="ad-image"
+          loading="lazy"
+          attributionsrc="<%= registerSource %>"
+          src="
+          <%=creative
+          %>">
+    </a>
+  </section>
+</body>
+
+</html>

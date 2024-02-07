@@ -15,11 +15,12 @@
 # limitations under the License.
 
 # evaluate .env file
-source .env
+source cicd/.env.dev
 source .env.deploy
 
 # Deploy to Firebase Hosting all sites
 for service in $SERVICES; do
+  echo "deploying ${service}"
   firebase deploy --only hosting:${service}
 done
 

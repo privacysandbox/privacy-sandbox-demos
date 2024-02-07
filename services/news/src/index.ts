@@ -21,6 +21,10 @@ const {
   PORT,
   HOME_HOST,
   SSP_HOST,
+  SSP_A_HOST,
+  SSP_B_HOST,
+  AD_SERVER_HOST,
+  NEWS_HOST,
   NEWS_TOKEN,
   NEWS_DETAIL,
   DSP_HOST,
@@ -41,16 +45,25 @@ app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
+  const {auctionType} = req.query;
+
   res.render('index', {
     title: TITLE,
     lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     NEWS_TOKEN,
-    SSP_HOST,
     DSP_HOST,
+    SSP_A_HOST,
+    SSP_B_HOST,
+    AD_SERVER_HOST,
+    SSP_TAG_URL: `https://${SSP_HOST}/ad-tag.js`,
+    AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
+    HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
+    isMultiSeller: auctionType === 'multi',
   });
 });
+
 app.get('/video-ad', async (req: Request, res: Response) => {
   res.render('video-ad', {
     title: TITLE,
