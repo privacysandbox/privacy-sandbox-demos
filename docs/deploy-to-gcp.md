@@ -96,9 +96,14 @@ Click on "Add another site" and enter site-id following your naming standards. R
 
 - _privacy-sandbox-demos_-home
 - _privacy-sandbox-demos_-dsp
+- _privacy-sandbox-demos_-dsp-a
+- _privacy-sandbox-demos_-dsp-b
 - _privacy-sandbox-demos_-shop
 - _privacy-sandbox-demos_-travel
 - _privacy-sandbox-demos_-ssp
+- _privacy-sandbox-demos_-ssp-a
+- _privacy-sandbox-demos_-ssp-b
+- _privacy-sandbox-demos_-ad-server
 - _privacy-sandbox-demos_-news
 - _privacy-sandbox-demos_-collector
 
@@ -113,9 +118,14 @@ E.g.
 ```shell
 firebase hosting:sites:create privacy-sandbox-demos-home
 firebase hosting:sites:create privacy-sandbox-demos-dsp
+firebase hosting:sites:create privacy-sandbox-demos-dsp-a
+firebase hosting:sites:create privacy-sandbox-demos-dsp-b
 firebase hosting:sites:create privacy-sandbox-demos-shop
 firebase hosting:sites:create privacy-sandbox-demos-travel
 firebase hosting:sites:create privacy-sandbox-demos-ssp
+firebase hosting:sites:create privacy-sandbox-demos-ssp-a
+firebase hosting:sites:create privacy-sandbox-demos-ssp-b
+firebase hosting:sites:create privacy-sandbox-demos-ad-server
 firebase hosting:sites:create privacy-sandbox-demos-news
 firebase hosting:sites:create privacy-sandbox-demos-collector
 ```
@@ -134,8 +144,13 @@ E.g. :
 ```shell
 firebase target:apply hosting home privacy-sandbox-demos-home
 firebase target:apply hosting dsp privacy-sandbox-demos-dsp
+firebase target:apply hosting dsp privacy-sandbox-demos-dsp-a
+firebase target:apply hosting dsp privacy-sandbox-demos-dsp-b
 firebase target:apply hosting shop privacy-sandbox-demos-shop
 firebase target:apply hosting ssp privacy-sandbox-demos-ssp
+firebase target:apply hosting ssp privacy-sandbox-demos-ssp-a
+firebase target:apply hosting ssp privacy-sandbox-demos-ssp-b
+firebase target:apply hosting ssp privacy-sandbox-demos-ad-server
 firebase target:apply hosting news privacy-sandbox-demos-news
 firebase target:apply hosting travel privacy-sandbox-demos-travel
 firebase target:apply hosting travel privacy-sandbox-demos-collector
@@ -276,12 +291,22 @@ FIREBASE_HOSTING_DOMAIN=**_privacy-sandbox-demos_**
 **[optional]** If you have enrolled your site with Privacy Sandbox, copy your attestation files for dsp/ssp services under the folder :
 `cicd/attestations`
 
-| Environment | Service |           Attestation file name            |
-| :---------: | :-----: | :----------------------------------------: |
-|    prod     |   dsp   | privacy-sandbox-attestations.json.dsp.prod |
-|    prod     |   ssp   | privacy-sandbox-attestations.json.ssp.prod |
-|     dev     |   dsp   | privacy-sandbox-attestations.json.dsp.dev  |
-|     dev     |   ssp   | privacy-sandbox-attestations.json.ssp.dev  |
+| Environment |  Service  |              Attestation file name               |
+| :---------: | :-------: | :----------------------------------------------: |
+|    prod     |    dsp    |    privacy-sandbox-attestations.json.dsp.prod    |
+|    prod     |   dsp-a   |   privacy-sandbox-attestations.json.dsp-a.prod   |
+|    prod     |   dsp-b   |   privacy-sandbox-attestations.json.dsp-b.prod   |
+|    prod     |    ssp    |    privacy-sandbox-attestations.json.ssp.prod    |
+|    prod     |   ssp-a   |   privacy-sandbox-attestations.json.ssp-a.prod   |
+|    prod     |   ssp-b   |   privacy-sandbox-attestations.json.ssp-b.prod   |
+|    prod     | ad-server | privacy-sandbox-attestations.json.ad-server.prod |
+|     dev     |    dsp    |    privacy-sandbox-attestations.json.dsp.dev     |
+|     dev     |   dsp-a   |   privacy-sandbox-attestations.json.dsp-a.dev    |
+|     dev     |   dsp-b   |   privacy-sandbox-attestations.json.dsp-b.dev    |
+|     dev     |    ssp    |    privacy-sandbox-attestations.json.ssp.dev     |
+|     dev     |   ssp-a   |   privacy-sandbox-attestations.json.ssp-a.dev    |
+|     dev     |   ssp-b   |   privacy-sandbox-attestations.json.ssp-b.dev    |
+|     dev     | ad-server | privacy-sandbox-attestations.json.ad-server.dev  |
 
 Execute `./scripts/cloudrun_deploy.sh` to build and deploy services with Cloud Build and deploy to Cloud Run.
 
@@ -294,8 +319,13 @@ E.g. :
 - https://_privacy-sandbox-demos_.web.app/
 - https://_privacy-sandbox-demos_-home.web.app/
 - https://_privacy-sandbox-demos_-dsp.web.app/
+- https://_privacy-sandbox-demos_-dsp-a.web.app/
+- https://_privacy-sandbox-demos_-dsp-b.web.app/
 - https://_privacy-sandbox-demos_-shop.web.app/
 - https://_privacy-sandbox-demos_-travel.web.app/
 - https://_privacy-sandbox-demos_-ssp.web.app/
+- https://_privacy-sandbox-demos_-ssp-a.web.app/
+- https://_privacy-sandbox-demos_-ssp-b.web.app/
+- https://_privacy-sandbox-demos_-ad-server.web.app/
 - https://_privacy-sandbox-demos_-news.web.app/
 - https://_privacy-sandbox-demos_-collector.web.app/
