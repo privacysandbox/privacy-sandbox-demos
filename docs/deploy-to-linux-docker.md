@@ -40,9 +40,14 @@ Edit `/etc/hosts` file
 127.0.0.1 privacy-sandbox-demos.dev
 127.0.0.1 privacy-sandbox-demos-home.dev
 127.0.0.1 privacy-sandbox-demos-dsp.dev
+127.0.0.1 privacy-sandbox-demos-dsp-a.dev
+127.0.0.1 privacy-sandbox-demos-dsp-b.dev
 127.0.0.1 privacy-sandbox-demos-shop.dev
 127.0.0.1 privacy-sandbox-demos-travel.dev
 127.0.0.1 privacy-sandbox-demos-ssp.dev
+127.0.0.1 privacy-sandbox-demos-ssp-a.dev
+127.0.0.1 privacy-sandbox-demos-ssp-b.dev
+127.0.0.1 privacy-sandbox-demos-ad-server.dev
 127.0.0.1 privacy-sandbox-demos-news.dev
 127.0.0.1 privacy-sandbox-demos-collector.dev
 ```
@@ -94,7 +99,7 @@ Under `Privacy Sandbox Enrollment Overrides` select `Enabled` and enter your sit
 Example :
 
 ```shell
-https://privacy-sandbox-demos-dsp.dev,https://privacy-sandbox-demos-ssp.dev
+https://privacy-sandbox-demos-dsp.dev,https://privacy-sandbox-demos-dsp-a.dev,https://privacy-sandbox-demos-dsp-b.dev,https://privacy-sandbox-demos-ssp.dev,https://privacy-sandbox-demos-ssp-a.dev,https://privacy-sandbox-demos-ssp-b.dev,https://privacy-sandbox-demos-ad-server.dev
 ```
 
 ## Build & Run your local development environment
@@ -185,11 +190,16 @@ If for some reason it's not working, you can stop each container manually
 # stop containers
 sudo docker container stop sandcastle_travel
 sudo docker container stop sandcastle_dsp
+sudo docker container stop sandcastle_dsp-a
+sudo docker container stop sandcastle_dsp-b
 sudo docker container stop sandcastle_home
-sudo docker container stop sandcastle_ssp
+sudo docker container stop sandcastle_ssp-a
+sudo docker container stop sandcastle_ssp-b
+sudo docker container stop sandcastle_ad-server
 sudo docker container stop sandcastle_news
 sudo docker container stop sandcastle_proxy
 sudo docker container stop sandcastle_shop
+sudo docker container stop sandcastle_collector
 ```
 
 If you want to clean (remove) the container image in your local registry you can do so by running the command :
@@ -204,11 +214,17 @@ If for some reason it's not working, you can remove each container image manuall
 # stop containers
 sudo docker container rm sandcastle_travel
 sudo docker container rm sandcastle_dsp
+sudo docker container rm sandcastle_dsp-a
+sudo docker container rm sandcastle_dsp-b
 sudo docker container rm sandcastle_home
 sudo docker container rm sandcastle_ssp
+sudo docker container rm sandcastle_ssp-a
+sudo docker container rm sandcastle_ssp-b
+sudo docker container rm sandcastle_ad-server
 sudo docker container rm sandcastle_news
 sudo docker container rm sandcastle_proxy
 sudo docker container rm sandcastle_shop
+sudo docker container rm sandcastle_collector
 ```
 
 ## Clean your docker images & containers
