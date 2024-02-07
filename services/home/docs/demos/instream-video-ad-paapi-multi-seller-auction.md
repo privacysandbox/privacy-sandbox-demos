@@ -1,6 +1,6 @@
 ---
 title: Instream video ad in a Protected Audience multi-seller auction
-sidebar_position: 1
+sidebar_position: 2
 more_data:
   - apis:
       - Protected Audience API
