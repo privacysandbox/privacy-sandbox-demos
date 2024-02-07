@@ -65,7 +65,9 @@ _placeholder_
 
 _placeholder_
 
+<!--
 ![Protected Audience multi-seller Flow](./img/instream-video-ad-paapi-multi-seller-auction-flow.png)
+-->
 
 #### User Journey #1
 
