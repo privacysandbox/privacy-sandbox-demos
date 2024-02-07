@@ -1,23 +1,5 @@
 # Changelog
 
-## v1.3.0 (2024/2/6)
-
-### Enhancements
-
-- Multi-seller auction demo has been added
-  - Contextual auctions (header bidding and ad server auctions) are executed before the Protected Audience auction is executed.
-  - The winning bid price of the contextual auction acts as the bid floor of the Protected Audience auction
-  - Ad server / DSP-A / DSP-B / SSP-A / SSP-B participants have been added
-  - The ad server acts as the top-level seller and DSPs/SSPs are component participants
-- Instream video ad demo has been added
-  - SSP VAST XML wraps around the DSP VAST URI
-  - A unique ID is added to each reporting URL in the VAST
-  - The finalized VAST is post-messaged out of the iframe to the IMA SDK
-
-### Bug Fixes
-
-NA
-
 ## v1.2.1 (2024/1/19)
 
 ### Enhancements
