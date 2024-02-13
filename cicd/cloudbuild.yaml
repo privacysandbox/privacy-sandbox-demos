@@ -21,7 +21,12 @@ steps:
       #!/usr/bin/env bash
 
       cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp.${PROJECT_ENV} services/dsp/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp-a.${PROJECT_ENV} services/dsp-a/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp-b.${PROJECT_ENV} services/dsp-b/src/public/.well-known/privacy-sandbox-attestations.json
       cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp.${PROJECT_ENV} services/ssp/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp-a.${PROJECT_ENV} services/ssp-a/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp-b.${PROJECT_ENV} services/ssp-b/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.ad-server.${PROJECT_ENV} services/ad-server/src/public/.well-known/privacy-sandbox-attestations.json
   # DSP
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
