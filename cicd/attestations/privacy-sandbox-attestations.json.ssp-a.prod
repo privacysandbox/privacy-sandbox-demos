@@ -1,0 +1,41 @@
+{
+  "privacy_sandbox_api_attestations": [
+    {
+      "attestation_parser_version": "2",
+      "attestation_version": "1",
+      "privacy_policy": [
+        "https://policies.google.com/privacy"
+      ],
+      "ownership_token": "0T5Ztp7nFqzQuT1XuUDH6vMjfciohhzImBKXE4eEobxOJ005T2YEKAyTxpVIYCYJ",
+      "issued_seconds_since_epoch": 1707752431,
+      "enrollment_id": "JZCDE",
+      "enrollment_site": "https://privacy-sandbox-demos-ssp-a.dev/",
+      "platform_attestations": [
+        {
+          "platform": "chrome",
+          "attestations": {
+            "attribution_reporting_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "shared_storage_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "private_aggregation_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "topics_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "protected_audience_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            }
+          }
+        },
+        {
+          "platform": "android",
+          "attestations": {}
+        }
+      ]
+    }
+  ]
+}
