@@ -421,8 +421,12 @@ app.post(
   },
 );
 
-app.get('/private-aggregation', (req, res) => {
-  res.render('private-aggregation');
+app.get('/private-aggregation-aws', (req, res) => {
+  res.render('private-aggregation-aws');
+});
+
+app.get('/private-aggregation-gcp', (req, res) => {
+  res.render('private-aggregation-gcp');
 });
 
 app.post(

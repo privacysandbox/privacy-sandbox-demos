@@ -1,6 +1,6 @@
 class TestPrivateAggregation {
   async run(data) {
-    console.log('Enabling Private Aggregation Debug Mode');
+    console.log('Enabling AWS Private Aggregation Debug Mode');
     privateAggregation.enableDebugMode({debugKey: 1234n});
     let campaignId = await sharedStorage.get('campaignId');
     if (!campaignId) {
