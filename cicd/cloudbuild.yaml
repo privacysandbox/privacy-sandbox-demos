@@ -481,7 +481,8 @@ steps:
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
     id: build-ad-server
-    waitFor: ["-"]
+    waitFor:
+      - copy-attestations
     args:
       [
         "build",
