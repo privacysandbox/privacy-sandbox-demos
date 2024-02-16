@@ -25,14 +25,14 @@
         color: white;
       }
 
-      #ad-components--fenced-frame {
+      #components-container--fenced-frame {
         margin-top: 50px;
         width: 100%;
         padding: 5px;
         border: 1px solid blue;
       }
 
-      #ad-components--iframe {
+      #components-container--iframe {
         margin-top: 20px;
         width: 100%;
         padding: 5px;
@@ -49,10 +49,10 @@
   <body>
     <div id="adContainer">
       <div id="ad-label">DSP-B multi-piece ad</div>
-      <div id="ad-components--fenced-frame">
+      <div id="components-container--fenced-frame">
         <p>Fenced frame components</p>
       </div>
-      <div id="ad-components--iframe">
+      <div id="components-container--iframe">
         <p>Iframe components</p>
       </div>
     </div>
@@ -60,6 +60,7 @@
       // For the DSP-B multi-piece ad, we display the components in random order
 
       function renderFencedFrameAds(count) {
+        const containerEl = document.getElementById('components-container--fenced-frame')
         const componentAdConfigs = window.fence.getNestedConfigs().slice(0, count).sort((a, b) => 0.5 - Math.random());
 
         for (const componentAdConfig of componentAdConfigs) {
@@ -67,19 +68,20 @@
           frame.config = componentAdConfig
           frame.style.height = '20px'
           frame.style.width = '20px'
-          document.getElementById('ad-components--fenced-frame').appendChild(frame)
+          containerEl.appendChild(frame)
         }
       }
 
       function renderIframeAds(count) {
-        const componentAdConfigs = navigator.adAuctionComponents(count).sort((a, b) => 0.5 - Math.random())
+        const containerEl = document.getElementById('components-container--iframe')
+        const componentAdUrns = navigator.adAuctionComponents(count).sort((a, b) => 0.5 - Math.random())
 
-        for (const componentAdConfig of componentAdConfigs) {
+        for (const componentAdUrn of componentAdUrns) {
           const frame = document.createElement('iframe')
-          frame.src = componentAdConfig
+          frame.src = componentAdUrn
           frame.style.height = '20px'
           frame.style.width = '20px'
-          document.getElementById('ad-components--iframe').appendChild(frame)
+          containerEl.appendChild(frame)
         }
       }
 

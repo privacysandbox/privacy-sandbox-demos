@@ -25,14 +25,14 @@
         color: white;
       }
 
-      #ad-components--fenced-frame {
+      #components-container--fenced-frame {
         margin-top: 50px;
         width: 100%;
         padding: 5px;
         border: 1px solid blue;
       }
 
-      #ad-components--iframe {
+      #components-container--iframe {
         margin-top: 20px;
         width: 100%;
         padding: 5px;
@@ -49,30 +49,36 @@
   <body>
     <div id="adContainer">
       <div id="ad-label">DSP-A multi-piece ad</div>
-      <div id="ad-components--fenced-frame"><p>Fenced frame components</p></div>
-      <div id="ad-components--iframe"><p>Iframe components</p></div>
+      <div id="components-container--fenced-frame">
+        <p>Fenced frame components</p>
+      </div>
+      <div id="components-container--iframe"><p>Iframe components</p></div>
     </div>
     <script>
       // For the DSP-B multi-piece, we display the components in sequential order
 
       function renderFencedFrameAds(count) {
+        const containerEl = document.getElementById('components-container--fenced-frame')
         const componentAdConfigs = window.fence.getNestedConfigs().slice(0, count);
+
         for (const componentAdConfig of componentAdConfigs) {
           const frame = document.createElement('fencedframe')
           frame.config = componentAdConfig
           frame.style.height = '20px'
           frame.style.width = '20px'
-          document.getElementById('ad-components--fenced-frame').appendChild(frame)
+          containerEl.appendChild(frame)
         }
       }
 
       function renderIframeAds(count) {
+        const containerEl = document.getElementById('components-container--iframe')
+
         for (const componentAd of navigator.adAuctionComponents(count)) {
           const frame = document.createElement('iframe')
           frame.src = componentAd
           frame.style.height = '20px'
           frame.style.width = '20px'
-          document.getElementById('ad-components--iframe').appendChild(frame)
+          containerEl.appendChild(frame)
         }
       }
 
