@@ -52,8 +52,8 @@ Audience allows iframe usage
 - Chrome > v120 (Open chrome://version to look up your current version)
 - Enable Privacy Sandbox APIs (Open `chrome://settings/privacySandbox` to enable this setting)
 
-We are in the process of enrolling the new endpoints, and we expect them to be enrolled by Fri Feb 9th 2024. Until then, visit
-`chrome://flags/#privacy-sandbox-enrollment-overrides` and add the following origins to the
+We are in the process of enrolling the new endpoints. Until then, visit `chrome://flags/#privacy-sandbox-enrollment-overrides` and add the following
+origins to the
 [Privacy Sandbox Overrides textbox](https://github.com/privacysandbox/attestation/blob/main/how-to-enroll.md#5-do-i-need-to-enroll-to-test-against-local-development-environments).
 
 Origins for the enrollment override:
