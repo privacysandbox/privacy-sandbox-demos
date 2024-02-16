@@ -192,7 +192,7 @@ class AdServerLib {
     paragraphEl.className = 'font-mono text-sm';
     document.getElementById(divId).appendChild(paragraphEl);
 
-    if (type === 'image') {
+    if (type === 'image' || type === 'multi-piece') {
       [containerFrameEl.width, containerFrameEl.height] = size;
     } else if (type === 'video') {
       // The video creative does not actually render anything, and it only contains

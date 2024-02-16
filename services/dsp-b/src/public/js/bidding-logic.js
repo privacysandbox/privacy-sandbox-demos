@@ -14,6 +14,10 @@
  limitations under the License.
  */
 
+const IMAGE_AD_TYPE = 'image';
+const VIDEO_AD_TYPE = 'video';
+const MULTI_PIECE_AD_TYPE = 'multi-piece';
+
 function generateBid(
   interestGroup,
   auctionSignals,
@@ -21,31 +25,40 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  const {ads} = interestGroup;
+  const {ads, adComponents} = interestGroup;
   const {adType} = auctionSignals;
   const {seller, topLevelSeller} = browserSignals;
 
   let render;
 
-  if (adType === 'image') {
-    render = ads.find((ad) => ad.metadata.adType === 'image')?.renderUrl;
-  } else if (adType === 'video') {
-    // We look through the video ads passed in from the interest group and
-    // select the ad that matches the component seller's origin
-    render = ads.find(
-      (ad) =>
-        ad.metadata.adType === 'video' && ad.metadata.seller.includes(seller),
-    ).renderUrl;
+  switch (adType) {
+    case IMAGE_AD_TYPE:
+      render = ads.find(
+        ({metadata}) => metadata.adType === IMAGE_AD_TYPE,
+      )?.renderUrl;
+      break;
+    case VIDEO_AD_TYPE:
+      // We look through the video ads passed in from the interest group and
+      // select the ad that matches the component seller's origin
+      render = ads.find(
+        ({metadata}) =>
+          metadata.adType === VIDEO_AD_TYPE && metadata.seller.includes(seller),
+      ).renderUrl;
+      break;
+    case MULTI_PIECE_AD_TYPE:
+      render = ads.find(
+        ({metadata}) => metadata.adType === MULTI_PIECE_AD_TYPE,
+      ).renderUrl;
+      break;
   }
 
-  const response = {
+  return {
     // We return a random bid of 0 to 100
     bid: Math.floor(Math.random() * 100, 10),
     render,
+    adComponents: adComponents.map(({renderUrl}) => ({url: renderUrl})),
     allowComponentAuction: !!topLevelSeller,
   };
-
-  return response;
 }
 
 function reportWin(

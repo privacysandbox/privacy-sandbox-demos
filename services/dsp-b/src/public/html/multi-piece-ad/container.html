@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DSP-B ad container</title>
+    <style>
+      body {
+        height: 300px;
+        width: 250px;
+        overflow: hidden;
+        font-family: sans-serif;
+        background: #feb;
+        text-align: center;
+        margin: 0 auto;
+      }
+
+      #ad-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 5px;
+        padding: 5px;
+        background: #3f3f3f;
+        color: white;
+      }
+
+      #ad-components--fenced-frame {
+        margin-top: 50px;
+        width: 100%;
+        padding: 5px;
+        border: 1px solid blue;
+      }
+
+      #ad-components--iframe {
+        margin-top: 20px;
+        width: 100%;
+        padding: 5px;
+        border: 1px solid red;
+      }
+
+      p {
+        margin: 3px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="adContainer">
+      <div id="ad-label">DSP-B multi-piece ad</div>
+      <div id="ad-components--fenced-frame">
+        <p>Fenced frame components</p>
+      </div>
+      <div id="ad-components--iframe">
+        <p>Iframe components</p>
+      </div>
+    </div>
+    <script>
+      // For the DSP-B multi-piece ad, we display the components in random order
+
+      function renderFencedFrameAds(count) {
+        const componentAdConfigs = window.fence.getNestedConfigs().slice(0, count).sort((a, b) => 0.5 - Math.random());
+
+        for (const componentAdConfig of componentAdConfigs) {
+          const frame = document.createElement('fencedframe')
+          frame.config = componentAdConfig
+          frame.style.height = '20px'
+          frame.style.width = '20px'
+          document.getElementById('ad-components--fenced-frame').appendChild(frame)
+        }
+      }
+
+      function renderIframeAds(count) {
+        const componentAdConfigs = navigator.adAuctionComponents(count).sort((a, b) => 0.5 - Math.random())
+
+        for (const componentAdConfig of componentAdConfigs) {
+          const frame = document.createElement('iframe')
+          frame.src = componentAdConfig
+          frame.style.height = '20px'
+          frame.style.width = '20px'
+          document.getElementById('ad-components--iframe').appendChild(frame)
+        }
+      }
+
+      renderFencedFrameAds(3)
+      renderIframeAds(3)
+    </script>
+  </body>
+</html>

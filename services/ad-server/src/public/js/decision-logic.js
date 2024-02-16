@@ -26,7 +26,10 @@ function scoreAd(
   // If it's a video ad, there is no contextual video auction in this demo to compare
   // the bid against, so we just return the desirability score as the bid itself,
   // and the highest bid will win the auction
-  if (auctionConfig.sellerSignals.adType === 'video') {
+  if (
+    auctionConfig.sellerSignals.adType === 'video' ||
+    auctionConfig.sellerSignals.adType === 'multi-piece'
+  ) {
     desirability = bid;
   } else {
     // For an image ad, we compare the PA auction bid against the bid floor set by the

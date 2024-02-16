@@ -56,6 +56,10 @@
         <div id="image-ad--iframe" class="ad-slot"></div>
       </div>
       <p><%= lorem %></p>
+      <div class="w-full flex flex-row justify-center ad-row">
+        <div id="image-ad__multi-piece--iframe" class="ad-slot"></div>
+        <div id="image-ad__multi-piece--fenced-frame" class="ad-slot"></div>
+      </div>
       <div class="w-full flex flex-col items-center">
       </div>
       <p><%= lorem %></p>
@@ -165,6 +169,7 @@
         size: [300, 250],
         isFencedFrame: true
       }
+
       const videoIframeAdUnit = {
         divId: 'video-ad--iframe',
         type: 'video',
@@ -172,10 +177,25 @@
         isFencedFrame: false
       }
 
+      // const multiPieceIframeAdUnit = {
+      //   divId: 'image-ad__multi-piece--iframe',
+      //   type: 'multi-piece',
+      //   size: [300, 250],
+      //   isFencedFrame: false
+      // }
+
+      const multiPieceFencedFrameAdUnit = {
+        divId: 'image-ad__multi-piece--fenced-frame',
+        type: 'multi-piece',
+        size: [300, 250],
+        isFencedFrame: true
+      }
       // Start the auction for each ad unit
       startSequentialAuction(imageIframeAdUnit, sellers)
       startSequentialAuction(imageFencedFrameAdUnit, sellers)
       startSequentialAuction(videoIframeAdUnit, sellers)
+      // startSequentialAuction(multiPieceIframeAdUnit, sellers)
+      startSequentialAuction(multiPieceFencedFrameAdUnit, sellers)
     }
 
     async function setupDemo () {
