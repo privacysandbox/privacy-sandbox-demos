@@ -22,6 +22,8 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="overview" label="Overview" default>
 
+☝️ Use the tabs to navigate to other sections in this document
+
 If you have any questions and comments for this instream video ad demo, use
 [the instream video ad demo post](https://github.com/privacysandbox/privacy-sandbox-demos/discussions/254) in the Discussions tab.
 
@@ -185,6 +187,8 @@ DSPA ->> Browser: Add user to Interest Group<br>Set a render URL with SSP VAST m
 DSPB ->> Browser: Add user to Interest Group<br>Set a render URL with SSP VAST macro (%%SSP_VAST_URL%%)
 ```
 
+[Full-sized diagram](./img/instream-video-ad-ig-time.png)
+
 #### Header bidding time
 
 This is the time period when the seller defines the macro substitution in the component auction config
@@ -216,6 +220,8 @@ SSPB ->> DSPB: Request header bid and per-buyer signals
 SSPB ->> HB: Respond with the header bid and component auction config
 HB ->> AS: Pass the header bidding auction result to the ad server client-side library
 ```
+
+[Full-sized diagram](./img/instream-video-ad-hb-time.png)
 
 ### Ad rendering time
 
@@ -255,32 +261,42 @@ AS ->> VP: The VAST is passed to the video player
 VP ->> Publisher: The instream video ad is rendered
 ```
 
-## Alternate mechanism
+[Full-sized diagram](.//img/instream-video-ad-render-time.png)
+
+## Alternative approach
 
 In another approach, the SSP can provide the render URL. The DSP sets the following render URL in the IG:
 
 ```js
 const interestGroup = {
   // ...
-  ads: [{
-    renderUrl: 'https://privacy-sandbox-demos-ssp-a.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
-  }]
+  ads: [
+    {
+      renderUrl: 'https://privacy-sandbox-demos-ssp-a.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
+      metadata: {
+        seller: 'ssp-a'
+      }
+    },
+    {
+      renderUrl: 'https://privacy-sandbox-demos-ssp-b.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
+      metadata: {
+        seller: 'ssp-b'
+      }
+    },
+  ]
 }
 ```
 
 - The render URL points to the SSP’s video ad serving endpoint, and the DSP’s VAST URI is added as query params.
   - The SSP is now responsible for serving the actual ad that is rendered inside the iframe, and it contains the SSP VAST XML that wraps the DSP VAST
     URI.
+  - To support multiple SSPs, the buyer adds a render URL for each SSP. During the bid generation time, the buyer can filter the ads object and return
+    a render URL for the matching seller.
 - When that ad wins the auction, the browser makes a request to the render URL which is the SSP's ad serving endpoint `/video-ad.html` with the DSP's
   VAST URI set in the query params
 - SSP’s HTML document is rendered in the ad iframe and parses the DSP's VAST URI from the query params
 - The code inside SSP's video-ad.html wraps the DSP's VAST URI with its own VAST
 - The finalized VAST XML is post-messaged out of the creative frame to the video player
-
-To support multiple SSPs, the SSP's video ad serving endpoint can be substituted with a macro:
-`https://%%SSP_VIDEO_AD%%?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml` .
-
-We will add a demo for this alternate approach in the future.
 
 </TabItem>
 <TabItem value="implementation" label="Implementation">
