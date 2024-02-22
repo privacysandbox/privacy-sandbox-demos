@@ -1,7 +1,10 @@
 let dsp = document.currentScript.getAttribute('dsp');
 window.addEventListener('load', (event) => {
-  let iframe = document.createElement('iframe');
+  let iframeAws = document.createElement('iframe');
+  let iframeGcp = document.createElement('iframe');
   // let dsp = document.currentScript.getAttribute('dsp');
-  iframe.src = `https://${dsp}/private-aggregation`;
-  document.body.appendChild(iframe);
+  iframeAws.src = `https://${dsp}/private-aggregation-aws`;
+  iframeGcp.src = `https://${dsp}/private-aggregation-gcp`;
+  document.body.appendChild(iframeAws);
+  document.body.appendChild(iframeGcp);
 });
