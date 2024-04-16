@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ToDo : add code from https://github.com/privacysandbox/aggregation-service/blob/main/docs/collecting.md
+
 package main
 
 import (
