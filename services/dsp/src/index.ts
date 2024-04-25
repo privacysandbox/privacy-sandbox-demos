@@ -16,7 +16,7 @@
 
 // DSP
 import express, {Application, Request, Response} from 'express';
-import { appendFile } from 'fs';
+import { appendFile, readFileSync, existsSync, writeFile } from 'fs';
 import cbor from 'cbor';
 import {decodeDict} from 'structured-field-values';
 import {
@@ -424,7 +424,7 @@ app.post(
     let reportName = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`;
     console.log(`---------------------------------------`);
     let reportEnv = aggregationReport.aggregation_coordinator_origin;
-    aggregationReport = JSON.stringify(aggregationReport)
+    // aggregationReport = JSON.stringify(aggregationReport)
     if(reportEnv == 'https://publickeyservice.msmt.aws.privacysandboxservices.com'){
       reportName = `aws-${reportName}.json`;
     }
@@ -432,12 +432,20 @@ app.post(
       reportName = `gcp-${reportName}.json`;
     }
 
-    appendFile(reportName, `${aggregationReport},\n`, function(e){
+    let fileContent = []
+    if(existsSync(reportName)){
+      let file = readFileSync(reportName).toString();
+      fileContent = JSON.parse(file);
+    }
+
+    fileContent.push(aggregationReport)
+
+    writeFile(reportName, `${JSON.stringify(fileContent)}`, function(e){
       if(e){
         console.log(e);
       }
     });
-
+    
     res.sendStatus(200);
   },
 );
@@ -466,14 +474,23 @@ app.post(
     let reportName = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`;
     console.log(`---------------------------------------`);
     let reportEnv = aggregationReport.aggregation_coordinator_origin;
-    aggregationReport = JSON.stringify(aggregationReport);
+    // aggregationReport = JSON.stringify(aggregationReport);
     if(reportEnv == 'https://publickeyservice.msmt.aws.privacysandboxservices.com'){
       reportName = `debug-aws-${reportName}.json`;
     }
     if(reportEnv == 'https://publickeyservice.msmt.gcp.privacysandboxservices.com'){
       reportName = `debug-gcp-${reportName}.json`;
     }
-    appendFile(reportName, `${aggregationReport},\n`, function(e){
+
+    let fileContent = []
+    if(existsSync(reportName)){
+      let file = readFileSync(reportName).toString();
+      fileContent = JSON.parse(file);
+    }
+
+    fileContent.push(aggregationReport)
+
+    writeFile(reportName, `${JSON.stringify(fileContent)}`, function(e){
       if(e){
         console.log(e);
       }
