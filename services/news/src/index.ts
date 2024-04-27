@@ -46,7 +46,8 @@ app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
   const {auctionType} = req.query;
-
+  const bucket = req.query.key;
+  const cloudEnv = req.query.env;
   res.render('index', {
     title: TITLE,
     lorem: LOREM,
@@ -61,6 +62,8 @@ app.get('/', async (req: Request, res: Response) => {
     AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
     HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
     isMultiSeller: auctionType === 'multi',
+    bucket: bucket,
+    cloudEnv: cloudEnv,
   });
 });
 

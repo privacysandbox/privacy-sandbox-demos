@@ -454,6 +454,15 @@ app.get('/private-aggregation-aws', (req, res) => {
   res.render('private-aggregation-aws');
 });
 
+app.get('/private-aggregation', (req, res) => {
+  const bucket = req.query.bucket;
+  const cloudEnv = req.query.cloudEnv;
+  res.render('private-aggregation', {
+    bucket: bucket,
+    cloudEnv: cloudEnv,
+  });
+});
+
 app.get('/private-aggregation-gcp', (req, res) => {
   res.render('private-aggregation-gcp');
 });
