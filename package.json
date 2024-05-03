@@ -13,7 +13,7 @@
     "fmt": "prettier --write ."
   },
   "devDependencies": {
-    "firebase-tools": "^11.23.0",
+    "firebase-tools": "^13.6.0",
     "prettier": "^2.8.4"
   }
 }
