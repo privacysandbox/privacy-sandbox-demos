@@ -14,23 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# evaluate .env file
-source cicd/.env.prod
+# load env vars
 source .env.deploy
-
-# CloudRun doesn't support .env file, so grab values here and merge into single variable
-ENV_VARS=$(cat cicd/.env.prod | grep "=" | grep -v "^PORT=" | sed '/^$/d' | tr "\n" "@")
-echo ${ENV_VARS}
 
 # setup Google Cloud SDK project
 gcloud config set project $GCP_PROJECT_NAME
 gcloud config get-value project
 
-# make the default region us-central1
-gcloud config set run/region us-central1
-
 # Containerize all services with Cloud Build : build containers, upload to Container Registry, and deploy to Cloud Run
-gcloud builds submit --config=cicd/cloudbuild.yaml --region="us-central1" --substitutions=_LOCATION="us-central1",_REPOSITORY="docker-repo",_PROJECT_ENV="prod",COMMIT_SHA="latest" .
+gcloud builds submit --config=cicd/cloudbuild.yaml --region="us-central1" --substitutions=_LOCATION="us-central1",_REPOSITORY="docker-repo",_PROJECT_ENV="dev",COMMIT_SHA="latest" .
 
 # Cloud Build
 for service in $SERVICES; do
