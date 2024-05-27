@@ -19,6 +19,13 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # Instream video ad in a Protected Audience sequential auction setup
 
+:::info
+
+This demo is a proof of concept created for illustrative purposes only, and should not be taken as a recommendation or standardized implementation of
+this use case.
+
+:::
+
 <Tabs>
 <TabItem value="overview" label="Overview" default>
 
