@@ -48,7 +48,7 @@ app.get('/', async (req: Request, res: Response) => {
   const {auctionType} = req.query;
   const bucket = req.query.key;
   const cloudEnv = req.query.env;
-  
+
   res.render('index', {
     title: TITLE,
     lorem: LOREM,

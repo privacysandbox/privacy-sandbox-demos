@@ -3,7 +3,9 @@ let cloudEnv = document.currentScript.getAttribute('cloudenv');
 
 sharedStorage.set('bucket', `${bucket}`);
 sharedStorage.set('cloudenv', `${cloudEnv}`);
-console.log(`https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`);
+console.log(
+  `https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`,
+);
 
 async function runPrivateAggregation() {
   const privateAggCloud = {
