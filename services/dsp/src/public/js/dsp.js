@@ -1,10 +1,10 @@
 let dsp = document.currentScript.getAttribute('dsp');
+let bucket = document.currentScript.getAttribute('bucket');
+let cloudEnv = document.currentScript.getAttribute('cloudenv');
 window.addEventListener('load', (event) => {
-  let iframeAws = document.createElement('iframe');
-  let iframeGcp = document.createElement('iframe');
-  // let dsp = document.currentScript.getAttribute('dsp');
-  iframeAws.src = `https://${dsp}/private-aggregation-aws`;
-  iframeGcp.src = `https://${dsp}/private-aggregation-gcp`;
-  document.body.appendChild(iframeAws);
-  document.body.appendChild(iframeGcp);
+  if ((cloudEnv == 'aws' || cloudEnv == 'gcp') && bucket != 'undefined') {
+    let iframe = document.createElement('iframe');
+    iframe.src = `https://${dsp}/private-aggregation?bucket=${bucket}&cloudEnv=${cloudEnv}`;
+    document.body.appendChild(iframe);
+  }
 });
