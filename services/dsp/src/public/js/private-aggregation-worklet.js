@@ -4,7 +4,7 @@ class TestPrivateAggregation {
     console.log(`Enabling ${cloudEnv} Private Aggregation Debug Mode`);
     privateAggregation.enableDebugMode({debugKey: 1234n});
     let bucketKey = await sharedStorage.get('bucket');
-    if (!bucketKey) {
+    if (bucketKey === 'undefined') {
       console.log(
         'No bucket key found for client. Adding default bucketKey 1234567890.',
       );
