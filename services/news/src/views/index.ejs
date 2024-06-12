@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/css/video-ad-style.css">
   <link rel="icon" href="/img/spy.svg" />
   <meta http-equiv="origin-trial" content="<%= NEWS_TOKEN %>">
-  <script src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp.js` %>" dsp="<%= `${DSP_HOST}:${EXTERNAL_PORT}` %>"></script>
+  <script src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp.js` %>" dsp="<%= `${DSP_HOST}:${EXTERNAL_PORT}` %>" bucket="<%= `${bucket}` %>" cloudenv="<%= `${cloudEnv}` %>"></script>
   <script defer src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
   <script defer src="/js/video-ad-helper.js"></script>
   <style>
