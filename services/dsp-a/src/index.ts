@@ -80,6 +80,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  // opt-in fencedframe
+  if (req.get('sec-fetch-dest') === 'fencedframe') {
+    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
+  }
+  next();
+});
+
 app.use(
   express.static('src/public', {
     setHeaders: (res: Response, path, stat) => {
@@ -93,14 +101,6 @@ app.use(
     },
   }),
 );
-
-app.use((req, res, next) => {
-  // opt-in fencedframe
-  if (req.get('sec-fetch-dest') === 'fencedframe') {
-    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
-  }
-  next();
-});
 
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
@@ -143,6 +143,25 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
   const imageCreative = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}/ads`);
   imageCreative.searchParams.append('advertiser', advertiser as string);
   imageCreative.searchParams.append('id', id as string);
+
+  const multiPieceCreativeContainer = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/multi-piece-ad/container.html`,
+  );
+  const multiPieceCreativeComponentA = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/multi-piece-ad/component-a.html`,
+  );
+  const multiPieceCreativeComponentB = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/multi-piece-ad/component-b.html`,
+  );
+  const multiPieceCreativeComponentC = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/multi-piece-ad/component-c.html`,
+  );
+  const multiPieceCreativeComponentD = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/multi-piece-ad/component-d.html`,
+  );
+  const multiPieceCreativeComponentE = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/multi-piece-ad/component-e.html`,
+  );
 
   const videoCreativeForSspA = new URL(
     `https://${DSP_A_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html?sspVastUrl=${SSP_A_VAST_URL}`,
@@ -207,6 +226,19 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
           seller: SSP_B,
         },
       },
+      {
+        renderUrl: multiPieceCreativeContainer,
+        metadata: {
+          adType: 'multi-piece',
+        },
+      },
+    ],
+    adComponents: [
+      {renderUrl: multiPieceCreativeComponentA},
+      {renderUrl: multiPieceCreativeComponentB},
+      {renderUrl: multiPieceCreativeComponentC},
+      {renderUrl: multiPieceCreativeComponentD},
+      {renderUrl: multiPieceCreativeComponentE},
     ],
   });
 });
