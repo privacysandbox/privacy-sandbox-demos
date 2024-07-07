@@ -195,20 +195,28 @@ app.get('/bidding_signal.json', async (req: Request, res: Response) => {
 const handleEventLevelReport = (req: Request, res: Response, report: any) => {
   console.log('Event-level report received: ', req.originalUrl, report);
   Reports.push(report);
-  if (registerAttributionSourceIfApplicable(req, res)) {
-    if ('redirect' in req.query) {
-      const query = Object.entries(req.query)
-          .filter(([key, _]) => key !== 'redirect')
-          .map(([key, value]) => `${key}=${value}`)
-          .join('&');
-      const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
-      res.redirect(redirectUrl);
-    } else {
-      res.status(200).send(
-        `Event-level report received and attribution source registered: ${JSON.stringify(req.query)}`);
-    }
-  } else {
+  // Request isn't eligible for ARA.
+  if (!('attribution-reporting-eligible' in req.headers)) {
     res.status(200).send(`Event-level report received: ${JSON.stringify(req.query)}`);
+    return;
+  }
+  // Try registering attribution sources.
+  if (registerNavigationAttributionSourceIfApplicable(req, res)) {
+    console.log('[ARA] Navigation source registered');
+  } else if (registerEventAttributionSourceIfApplicable(req, res)) {
+    console.log('[ARA] Event source registered');   
+  }
+  // Check if redirect is needed.
+  if ('redirect' in req.query) {
+    const query = Object.entries(req.query)
+      .filter(([key, _]) => key !== 'redirect')
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+    const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
+    res.redirect(redirectUrl);
+  } else {
+    res.status(200).send(
+      `Event-level report received and attribution source registered: ${JSON.stringify(req.query)}`);
   }
 };
 
@@ -226,20 +234,6 @@ app.post('/reporting', async (req: Request, res: Response) => {
 // ************************************************************************
 // [START] Section for Attribution Reporting API Code
 // ************************************************************************
-const registerAttributionSourceIfApplicable = (req: Request, res: Response ) => {
-  if (!('attribution-reporting-eligible' in req.headers)) {
-    return false;
-  }
-  if (registerNavigationAttributionSourceIfApplicable(req, res)) {
-    console.log('[ARA] Navigation source registered');
-    return true;
-  } else if (registerEventAttributionSourceIfApplicable(req, res)) {
-    console.log('[ARA] Event source registered');
-    return true;
-  }
-  return false;
-};
-
 const registerNavigationAttributionSourceIfApplicable = (req: Request, res: Response) => {
   if (!('attribution-reporting-eligible' in req.headers) ||
     !('navigation-source' in decodeDict(req.headers['attribution-reporting-eligible'] as string))) {
@@ -438,7 +432,6 @@ app.post(
 app.get('/reports', async (req, res) => {
   res.render('reports.html.ejs', {title: 'Report', Reports});
 });
-
 // ************************************************************************
 // [END] Section for Attribution Reporting API Code ***
 // ************************************************************************
