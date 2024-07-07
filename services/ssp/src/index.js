@@ -42,12 +42,12 @@ const {
   SHOP_HOST,
 } = process.env;
 
-// // in-memory storage for debug reports
-// const Reports = [];
-// // clear in-memory storage every 10 min
-// setInterval(() => {
-//   Reports.length = 0;
-// }, 1000 * 60 * 10);
+// In-memory storage for debug reports
+const Reports = [];
+// Clear in-memory storage every 10 min
+setInterval(() => {
+  Reports.length = 0;
+}, 1000 * 60 * 10);
 
 const app = express();
 
@@ -267,6 +267,25 @@ app.get('/auction-config.json', async (req, res) => {
   console.log({auctionConfig});
   res.json(auctionConfig);
 });
+
+app.get('/reporting', async (req, res) => {
+  console.log(`Event-level report received: ${req.originalUrl}`);
+  res.status(200).send(`Event-level report received: ${JSON.stringify(req.query)}`);
+  Reports.push(req.query);
+});
+
+app.post('/reporting', async (req, res) => {
+  console.log(`Event-level report received: ${req.originalUrl}`);
+  const report = {
+    ...req.query,
+    ...req.body,
+  };
+  Reports.push(report);
+});
+
+app.get("/reports", async (req, res) => {
+  res.render("reports.html.ejs", { title: "Report", Reports })
+})
 
 // app.post("/.well-known/attribution-reporting/debug/report-aggregate-attribution", async (req, res) => {
 //   const debug_report = req.body
