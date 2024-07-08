@@ -43,7 +43,6 @@ const {
 
 // In-memory storage for all reports
 const Reports: any[] = [];
-
 // Clear in-memory storage every 10 min
 setInterval(() => {
   Reports.length = 0;
@@ -73,11 +72,10 @@ app.use((req, res, next) => {
 app.use(
   express.static('src/public', {
     setHeaders: (res: Response, path, stat) => {
-      const url = new URL(path, `https://${DSP_HOST}`);
-      if (url.pathname.endsWith('bidding_logic.js')) {
+      if (path.endsWith('bidding_logic.js')) {
         return res.set('X-Allow-FLEDGE', 'true');
       }
-      if (url.pathname.endsWith('bidding_signal.json')) {
+      if (path.endsWith('bidding_signal.json')) {
         return res.set('X-Allow-FLEDGE', 'true');
       }
     },
@@ -195,7 +193,7 @@ app.get('/bidding_signal.json', async (req: Request, res: Response) => {
 const handleEventLevelReport = (req: Request, res: Response, report: any) => {
   console.log('Event-level report received: ', req.originalUrl, report);
   Reports.push(report);
-  // Request isn't eligible for ARA.
+  // Check if request is eligible for ARA.
   if (!('attribution-reporting-eligible' in req.headers)) {
     res.status(200).send(`Event-level report received: ${JSON.stringify(req.query)}`);
     return;
@@ -221,13 +219,21 @@ const handleEventLevelReport = (req: Request, res: Response, report: any) => {
 };
 
 app.get('/reporting', async (req: Request, res: Response) => {
-  handleEventLevelReport(req, res, req.query);
+  handleEventLevelReport(req, res, /* report= */{
+    category: 'Event log',
+    ts: Date.now().toString(),
+    data: req.query,
+  });
 });
 
 app.post('/reporting', async (req: Request, res: Response) => {
-  handleEventLevelReport(req, res, {
-    ...req.query,
-    ...req.body,
+  handleEventLevelReport(req, res, /* report= */{
+    category: 'Event log',
+    ts: Date.now().toString(),
+    data: {
+      ...req.query,
+      ...req.body,
+    },
   });
 });
 
@@ -385,15 +391,39 @@ app.get('/register-trigger', async (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
+app.post('/.well-known/attribution-reporting/report-event-attribution',
+  async (req: Request, res: Response) => {
+    console.log('[ARA] Received event-level report on live endpoint: ',
+      req.body);
+    Reports.push({
+      category: 'ARA event-level',
+      ts: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
+app.post('/.well-known/attribution-reporting/debug/report-event-attribution',
+  async (req: Request, res: Response) => {
+    console.log('[ARA] Received event-level report on debug endpoint: ',
+      req.body);
+    Reports.push({
+      category: 'ARA event-level debug',
+      ts: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
 app.post(
   '/.well-known/attribution-reporting/debug/report-aggregate-attribution',
   async (req: Request, res: Response) => {
-    console.log('[ARA] Received aggregatable report on debug endpoint');
-    const debug_report = req.body;
-    debug_report.shared_info = JSON.parse(debug_report.shared_info);
-    console.log(JSON.stringify(debug_report, null, '\t'));
-    debug_report.aggregation_service_payloads =
-      debug_report.aggregation_service_payloads.map((e: any) => {
+    const debugReport = req.body;
+    debugReport.shared_info = JSON.parse(debugReport.shared_info);
+    debugReport.aggregation_service_payloads =
+      debugReport.aggregation_service_payloads.map((e: any) => {
         const plain = Buffer.from(e.debug_cleartext_payload, 'base64');
         const debug_cleartext_payload = cbor.decodeAllSync(plain);
         e.debug_cleartext_payload = debug_cleartext_payload.map(
@@ -411,27 +441,32 @@ app.post(
         );
         return e;
       });
-    console.log(JSON.stringify(debug_report, null, '\t'));
+    console.log('[ARA] Received aggregatable report on debug endpoint: ',
+      JSON.stringify(debugReport));
     // Save to global storage
-    Reports.push(debug_report);
+    Reports.push({
+      category: 'ARA aggregate debug',
+      ts: Date.now().toString(),
+      data: debugReport,
+    });
     res.sendStatus(200);
   },
 );
 
-app.post(
-  '/.well-known/attribution-reporting/report-aggregate-attribution',
+app.post('/.well-known/attribution-reporting/report-aggregate-attribution',
   async (req: Request, res: Response) => {
-    console.log('[ARA] Received Aggregatable Report on live endpoint');
     const report = req.body;
     report.shared_info = JSON.parse(report.shared_info);
-    console.log(JSON.stringify(report, null, '\t'));
+    console.log('[ARA] Received aggregatable report on live endpoint: ',
+      JSON.stringify(report));
+    Reports.push({
+      category: 'ARA aggregate',
+      ts: Date.now().toString(),
+      data: report,
+    });
     res.sendStatus(200);
   },
 );
-
-app.get('/reports', async (req, res) => {
-  res.render('reports.html.ejs', {title: 'Report', Reports});
-});
 // ************************************************************************
 // [END] Section for Attribution Reporting API Code ***
 // ************************************************************************
@@ -440,6 +475,24 @@ app.post('/.well-known/private-aggregation/report-shared-storage',
   (req, res) => {
     console.log('[pAgg+SS] Received aggregatable report on live endpoint: ',
       req.body);
+    Reports.push({
+      category: 'pAgg with SS',
+      ts: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
+app.post('/.well-known/private-aggregation/debug/report-shared-storage',
+  (req, res) => {
+    console.log('[pAgg+SS] Received aggregatable report on debug endpoint: ',
+      req.body);
+    Reports.push({
+      category: 'pAgg with SS',
+      ts: Date.now().toString(),
+      data: req.body,
+    });
     res.sendStatus(200);
   },
 );
@@ -454,18 +507,13 @@ app.get('/private-aggregation', (req, res) => {
   });
 });
 
-app.post('/.well-known/private-aggregation/debug/report-shared-storage',
-  (req, res) => {
-    let timeStr = new Date().toISOString();
-    console.log('[pAgg+SS] Received aggregatable report on debug endpoint: ',
-      req.body);
-    res.sendStatus(200);
-  },
-);
-
 app.get('/', async (req: Request, res: Response) => {
   const title = DSP_DETAIL;
   res.render('index', {title, DSP_HOST, SHOP_HOST, EXTERNAL_PORT});
+});
+
+app.get('/reports', async (req, res) => {
+  res.render('reports.html.ejs', {title: 'Report', Reports});
 });
 
 app.listen(PORT, function () {
