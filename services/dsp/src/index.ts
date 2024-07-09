@@ -49,15 +49,13 @@ setInterval(() => {
 }, 1000 * 60 * 10);
 
 const app: Application = express();
+app.use(express.urlencoded({extended: true}));
+app.use(express.json()); // To parse the incoming requests with JSON payloads
 
 app.use((req, res, next) => {
   res.setHeader('Origin-Trial', DSP_TOKEN as string);
   next();
 });
-
-app.use(express.urlencoded({extended: true}));
-
-app.use(express.json()); // To parse the incoming requests with JSON payloads
 
 app.use((req, res, next) => {
   // Enable transitional debugging reports (https://github.com/WICG/attribution-reporting-api/blob/main/EVENT.md#optional-transitional-debugging-reports)
@@ -93,6 +91,15 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
+app.get('/', async (req: Request, res: Response) => {
+  const title = DSP_DETAIL;
+  res.render('index', {title, DSP_HOST, SHOP_HOST, EXTERNAL_PORT});
+});
+
+app.get('/reports', async (req, res) => {
+  res.render('reports', {title: 'Report', Reports});
+});
+
 app.get('/ads', async (req, res) => {
   const {advertiser, id} = req.query;
   console.log('Loading frame content : ', {advertiser, id});
@@ -100,11 +107,10 @@ app.get('/ads', async (req, res) => {
   const move = new URL(`https://${advertiser}:${EXTERNAL_PORT}/items/${id}`);
   const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}/ads/${id}`);
   const registerSource = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/register-source`,
-  );
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/register-source`);
   registerSource.searchParams.append('advertiser', advertiser as string);
   registerSource.searchParams.append('id', id as string);
-  res.render('ads.html.ejs', {title, move, creative, registerSource});
+  res.render('ads', {title, move, creative, registerSource});
 });
 
 app.get('/join-ad-interest-group.html', async (req: Request, res: Response) => {
@@ -119,27 +125,23 @@ app.get('/join-ad-interest-group.html', async (req: Request, res: Response) => {
 
 app.get('/interest-group.json', async (req: Request, res: Response) => {
   const {advertiser, id, adType} = req.query;
-  if (advertiser === undefined || id === undefined) {
+  if (!advertiser || !id) {
     return res.sendStatus(400);
   }
   const imageCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/ads`);
   imageCreative.searchParams.append('advertiser', advertiser as string);
   imageCreative.searchParams.append('id', id as string);
   const videoCreative = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
-  );
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`);
   const renderUrl =
     adType === 'video' ? videoCreative : imageCreative.toString();
   const owner = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
   const biddingLogicUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`,
-  );
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`);
   const trustedBiddingSignalsUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/bidding_signal.json`,
-  );
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/bidding_signal.json`);
   const dailyUpdateUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/daily_update_url`,
-  );
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/daily_update_url`);
   res.json({
     name: advertiser,
     owner,
@@ -252,7 +254,7 @@ const registerNavigationAttributionSourceIfApplicable = (req: Request, res: Resp
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
   const AttributionReportingRegisterSource = {
-    demo_host: 'dsp',
+    demo_host: 'dsp',  // Included for debugging, not an actual field.
     destination,
     source_event_id,
     debug_key,
@@ -296,7 +298,7 @@ const registerEventAttributionSourceIfApplicable = (req: Request, res: Response)
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
   const AttributionReportingRegisterSource = {
-    demo_host: 'dsp',
+    demo_host: 'dsp',  // Included for debugging, not an actual field.
     destination,
     source_event_id,
     debug_key,
@@ -505,15 +507,6 @@ app.get('/private-aggregation', (req, res) => {
     bucket: bucket,
     cloudEnv: cloudEnv,
   });
-});
-
-app.get('/', async (req: Request, res: Response) => {
-  const title = DSP_DETAIL;
-  res.render('index', {title, DSP_HOST, SHOP_HOST, EXTERNAL_PORT});
-});
-
-app.get('/reports', async (req, res) => {
-  res.render('reports.html.ejs', {title: 'Report', Reports});
 });
 
 app.listen(PORT, function () {

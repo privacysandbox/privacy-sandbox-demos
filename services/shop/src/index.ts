@@ -88,16 +88,20 @@ app.set('views', 'src/views');
 app.locals = {
   title: SHOP_DETAIL,
   displayCategory,
-  register_trigger: (order: Order) => {
+  getTriggerUrls: (order: Order) => {
     const {item, size, quantity} = order;
-    const register_trigger = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
-    register_trigger.pathname = '/register-trigger';
-    register_trigger.searchParams.append('id', item.id);
-    register_trigger.searchParams.append('category', `${item.category}`);
-    register_trigger.searchParams.append('quantity', `${quantity}`);
-    register_trigger.searchParams.append('size', `${fromSize(size)}`);
-    register_trigger.searchParams.append('gross', `${item.price * quantity}`);
-    return register_trigger.toString();
+    return [
+      new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
+    ].map(triggerUrl => {
+      triggerUrl.pathname = '/register-trigger';
+      triggerUrl.searchParams.append('id', item.id);
+      triggerUrl.searchParams.append('category', `${item.category}`);
+      triggerUrl.searchParams.append('quantity', `${quantity}`);
+      triggerUrl.searchParams.append('size', `${fromSize(size)}`);
+      triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
+      return triggerUrl.toString();
+    });
   },
 };
 

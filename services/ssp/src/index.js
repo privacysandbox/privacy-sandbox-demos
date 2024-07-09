@@ -53,6 +53,11 @@ const app = express();
 
 app.use((req, res, next) => {
   res.setHeader('Origin-Trial', SSP_TOKEN);
+  if ('origin' in req.headers &&
+    req.headers['origin'].startsWith('https://privacy-sandbox-demos-')) {
+      res.setHeader('Access-Control-Allow-Origin', req.headers['origin']);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
   next();
 });
 
@@ -94,7 +99,7 @@ app.set('views', 'src/views');
 
 app.get('/', async (req, res) => {
   const title = SSP_DETAIL;
-  res.render('index.html.ejs', {
+  res.render('index', {
     title,
     DSP_HOST,
     SSP_HOST,
@@ -104,15 +109,15 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/ad-tag.html', async (req, res) => {
-  res.render('ad-tag.html.ejs');
+  res.render('ad-tag');
 });
 
 app.get('/video-ad-tag.html', async (req, res) => {
-  res.render('video-ad-tag.html.ejs');
+  res.render('video-ad-tag');
 });
 
 app.get("/reports", async (req, res) => {
-  res.render("reports.html.ejs", { title: "Report", Reports })
+  res.render("reports", { title: "Report", Reports })
 });
 
 app.get('/auction-config.json', async (req, res) => {
@@ -208,7 +213,7 @@ const registerNavigationAttributionSourceIfApplicable = (req, res) => {
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
   const AttributionReportingRegisterSource = {
-    demo_host: 'dsp',
+    demo_host: 'ssp',  // Included for debugging, not an actual field.
     destination,
     source_event_id,
     debug_key,
@@ -240,6 +245,50 @@ const registerNavigationAttributionSourceIfApplicable = (req, res) => {
   return true;
 };
 
+const registerEventAttributionSourceIfApplicable = (req, res) => {
+  if (!('attribution-reporting-eligible' in req.headers) ||
+    !('event-source' in decodeDict(req.headers['attribution-reporting-eligible']))) {
+    return false;
+  }
+  const advertiser = req.query.advertiser;
+  const id = req.query.id;
+  console.log('[ARA] Registering event source attribution for', {advertiser, id});
+  const destination = `https://${advertiser}`;
+  const source_event_id = sourceEventId();
+  const debug_key = debugKey();
+  const AttributionReportingRegisterSource = {
+    demo_host: 'ssp',  // Included for debugging, not an actual field.
+    destination,
+    source_event_id,
+    debug_key,
+    debug_reporting: true,  // Enable verbose debug reports.
+    aggregation_keys: {
+      quantity: sourceKeyPiece({
+        type: SOURCE_TYPE['view'], // view attribution
+        advertiser: ADVERTISER[advertiser],
+        publisher: PUBLISHER['news'],
+        id: Number(`0x${id}`),
+        dimension: DIMENSION['quantity'],
+      }),
+      gross: sourceKeyPiece({
+        type: SOURCE_TYPE['view'], // view attribution
+        advertiser: ADVERTISER[advertiser],
+        publisher: PUBLISHER['news'],
+        id: Number(`0x${id}`),
+        dimension: DIMENSION['gross'],
+      }),
+    },
+  };
+  console.log('[ARA] Registering event source :', {
+    AttributionReportingRegisterSource,
+  });
+  res.setHeader(
+    'Attribution-Reporting-Register-Source',
+    JSON.stringify(AttributionReportingRegisterSource),
+  );
+  return true;
+};
+
 app.get("/register-source", async (req, res) => {
   if (!req.headers['attribution-reporting-eligible']) {
     res.status(400).send('"Attribution-Reporting-Eligible" header is missing');
@@ -253,7 +302,7 @@ app.get("/register-source", async (req, res) => {
     res.status(400)
       .send('"Attribution-Reporting-Eligible" header is malformed');
   }
-})
+});
 
 app.get("/register-trigger", async (req, res) => {
   const { id, quantity, size, category, gross } = req.query
@@ -322,9 +371,12 @@ app.post('/.well-known/attribution-reporting/debug/report-event-attribution',
     res.sendStatus(200);
   },
 );
+
 app.post(
   '/.well-known/attribution-reporting/debug/report-aggregate-attribution',
   async (req, res) => {
+    console.log('[ARA] Received aggregatable report on debug endpoint: ',
+      req.body);
     const debugReport = req.body;
     debugReport.shared_info = JSON.parse(debugReport.shared_info);
     debugReport.aggregation_service_payloads =

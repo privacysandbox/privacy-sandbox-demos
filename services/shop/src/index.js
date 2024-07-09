@@ -16,7 +16,7 @@
 import express from 'express';
 import session from 'express-session';
 import MemoryStoreFactory from 'memorystore';
-import { DSP_HOST, DSP_A_HOST, DSP_B_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, } from './env.js';
+import { DSP_HOST, DSP_A_HOST, DSP_B_HOST, EXTERNAL_PORT, PORT, SHOP_DETAIL, SHOP_HOST, SSP_HOST, } from './env.js';
 import { addOrder, displayCategory, fromSize, getItem, getItems, removeOrder, updateOrder, } from './lib/items.js';
 const app = express();
 app.set('trust proxy', 1); // required for Set-Cookie with Secure
@@ -54,16 +54,20 @@ app.set('views', 'src/views');
 app.locals = {
     title: SHOP_DETAIL,
     displayCategory,
-    register_trigger: (order) => {
+    getTriggerUrls: (order) => {
         const { item, size, quantity } = order;
-        const register_trigger = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
-        register_trigger.pathname = '/register-trigger';
-        register_trigger.searchParams.append('id', item.id);
-        register_trigger.searchParams.append('category', `${item.category}`);
-        register_trigger.searchParams.append('quantity', `${quantity}`);
-        register_trigger.searchParams.append('size', `${fromSize(size)}`);
-        register_trigger.searchParams.append('gross', `${item.price * quantity}`);
-        return register_trigger.toString();
+        return [
+            new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+            new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
+        ].map(triggerUrl => {
+            triggerUrl.pathname = '/register-trigger';
+            triggerUrl.searchParams.append('id', item.id);
+            triggerUrl.searchParams.append('category', `${item.category}`);
+            triggerUrl.searchParams.append('quantity', `${quantity}`);
+            triggerUrl.searchParams.append('size', `${fromSize(size)}`);
+            triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
+            return triggerUrl.toString();
+        });
     },
 };
 app.get('/', async (req, res) => {

@@ -51,10 +51,10 @@ function reportWin(
     sellerSignals,
     browserSignals,
   });
+  // Add query parameters from renderURL to beacon URL.
   const additionalQueryParams = browserSignals.renderURL.substring(
-    browserSignals.renderURL.indexOf('?') + 1);
-    // TODO: Enable the following when SSP service implements ARA
-    //.concat(`&redirect=${browserSignals.seller}`);
+    browserSignals.renderURL.indexOf('?') + 1)
+      .concat(`&redirect=${browserSignals.seller}`);
   registerAdBeacon({
     'impression':
       `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
