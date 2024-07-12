@@ -15,5 +15,5 @@ sidebar_position: 1
 |      Measure Digital Ads      |                [Single-touch conversion Attribution](demos/single-touch-conversion-attribution.md)                 | Attribution Reporting API, Aggregation Service |      Publisher, SSP, Advertiser, DSP       |
 
 :::info Looking for a use case not listed here ? Help us growing this repository by
-[contributing](https://github.com/privacysandbox/privacy-sandbox-demos/tree/main/docs/contribute) or
+[contributing](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/CONTRIBUTING.md) or
 [sharing feedback](https://github.com/privacysandbox/privacy-sandbox-demos/issues). :::
