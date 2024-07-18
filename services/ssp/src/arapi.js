@@ -152,9 +152,7 @@ export function debugKey() {
 }
 
 function key_from_value(object, value) {
-  const key = Object.keys(object).find(
-    (key) => object[key] === value,
-  );
+  const key = Object.keys(object).find((key) => object[key] === value);
 
   return key;
 }

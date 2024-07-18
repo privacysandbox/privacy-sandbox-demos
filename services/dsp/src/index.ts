@@ -44,9 +44,12 @@ const {
 // In-memory storage for all reports
 const Reports: any[] = [];
 // Clear in-memory storage every 10 min
-setInterval(() => {
-  Reports.length = 0;
-}, 1000 * 60 * 10);
+setInterval(
+  () => {
+    Reports.length = 0;
+  },
+  1000 * 60 * 10,
+);
 
 const app: Application = express();
 app.use(express.urlencoded({extended: true}));
@@ -107,7 +110,8 @@ app.get('/ads', async (req, res) => {
   const move = new URL(`https://${advertiser}:${EXTERNAL_PORT}/items/${id}`);
   const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}/ads/${id}`);
   const registerSource = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/register-source`);
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/register-source`,
+  );
   registerSource.searchParams.append('advertiser', advertiser as string);
   registerSource.searchParams.append('id', id as string);
   res.render('ads', {title, move, creative, registerSource});
@@ -132,16 +136,20 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
   imageCreative.searchParams.append('advertiser', advertiser as string);
   imageCreative.searchParams.append('id', id as string);
   const videoCreative = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`);
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
+  );
   const renderUrl =
     adType === 'video' ? videoCreative : imageCreative.toString();
   const owner = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
   const biddingLogicUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`);
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`,
+  );
   const trustedBiddingSignalsUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/bidding_signal.json`);
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/bidding_signal.json`,
+  );
   const dailyUpdateUrl = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/daily_update_url`);
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/daily_update_url`,
+  );
   res.json({
     name: advertiser,
     owner,
@@ -197,14 +205,16 @@ const handleEventLevelReport = (req: Request, res: Response, report: any) => {
   Reports.push(report);
   // Check if request is eligible for ARA.
   if (!('attribution-reporting-eligible' in req.headers)) {
-    res.status(200).send(`Event-level report received: ${JSON.stringify(req.query)}`);
+    res
+      .status(200)
+      .send(`Event-level report received: ${JSON.stringify(req.query)}`);
     return;
   }
   // Try registering attribution sources.
   if (registerNavigationAttributionSourceIfApplicable(req, res)) {
     console.log('[ARA] Navigation source registered');
   } else if (registerEventAttributionSourceIfApplicable(req, res)) {
-    console.log('[ARA] Event source registered');   
+    console.log('[ARA] Event source registered');
   }
   // Check if redirect is needed.
   if ('redirect' in req.query) {
@@ -215,50 +225,74 @@ const handleEventLevelReport = (req: Request, res: Response, report: any) => {
     const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
     res.redirect(redirectUrl);
   } else {
-    res.status(200).send(
-      `Event-level report received and attribution source registered: ${JSON.stringify(req.query)}`);
+    res
+      .status(200)
+      .send(
+        `Event-level report received and attribution source registered: ${JSON.stringify(
+          req.query,
+        )}`,
+      );
   }
 };
 
 app.get('/reporting', async (req: Request, res: Response) => {
-  handleEventLevelReport(req, res, /* report= */{
-    category: 'Event log',
-    ts: Date.now().toString(),
-    data: req.query,
-  });
+  handleEventLevelReport(
+    req,
+    res,
+    /* report= */ {
+      category: 'Event log',
+      ts: Date.now().toString(),
+      data: req.query,
+    },
+  );
 });
 
 app.post('/reporting', async (req: Request, res: Response) => {
-  handleEventLevelReport(req, res, /* report= */{
-    category: 'Event log',
-    ts: Date.now().toString(),
-    data: {
-      ...req.query,
-      ...req.body,
+  handleEventLevelReport(
+    req,
+    res,
+    /* report= */ {
+      category: 'Event log',
+      ts: Date.now().toString(),
+      data: {
+        ...req.query,
+        ...req.body,
+      },
     },
-  });
+  );
 });
 
 // ************************************************************************
 // [START] Section for Attribution Reporting API Code
 // ************************************************************************
-const registerNavigationAttributionSourceIfApplicable = (req: Request, res: Response) => {
-  if (!('attribution-reporting-eligible' in req.headers) ||
-    !('navigation-source' in decodeDict(req.headers['attribution-reporting-eligible'] as string))) {
+const registerNavigationAttributionSourceIfApplicable = (
+  req: Request,
+  res: Response,
+) => {
+  if (
+    !('attribution-reporting-eligible' in req.headers) ||
+    !(
+      'navigation-source' in
+      decodeDict(req.headers['attribution-reporting-eligible'] as string)
+    )
+  ) {
     return false;
   }
   const advertiser = req.query.advertiser as string;
   const id = req.query.id as string;
-  console.log('[ARA] Registering navigation source attribution for', {advertiser, id});
+  console.log('[ARA] Registering navigation source attribution for', {
+    advertiser,
+    id,
+  });
   const destination = `https://${advertiser}`;
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
   const AttributionReportingRegisterSource = {
-    demo_host: 'dsp',  // Included for debugging, not an actual field.
+    demo_host: 'dsp', // Included for debugging, not an actual field.
     destination,
     source_event_id,
     debug_key,
-    debug_reporting: true,  // Enable verbose debug reports.
+    debug_reporting: true, // Enable verbose debug reports.
     aggregation_keys: {
       quantity: sourceKeyPiece({
         type: SOURCE_TYPE['click'], // click attribution
@@ -286,23 +320,34 @@ const registerNavigationAttributionSourceIfApplicable = (req: Request, res: Resp
   return true;
 };
 
-const registerEventAttributionSourceIfApplicable = (req: Request, res: Response) => {
-  if (!('attribution-reporting-eligible' in req.headers) ||
-    !('event-source' in decodeDict(req.headers['attribution-reporting-eligible'] as string))) {
+const registerEventAttributionSourceIfApplicable = (
+  req: Request,
+  res: Response,
+) => {
+  if (
+    !('attribution-reporting-eligible' in req.headers) ||
+    !(
+      'event-source' in
+      decodeDict(req.headers['attribution-reporting-eligible'] as string)
+    )
+  ) {
     return false;
   }
   const advertiser: string = req.query.advertiser as string;
   const id: string = req.query.id as string;
-  console.log('[ARA] Registering event source attribution for', {advertiser, id});
+  console.log('[ARA] Registering event source attribution for', {
+    advertiser,
+    id,
+  });
   const destination = `https://${advertiser}`;
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
   const AttributionReportingRegisterSource = {
-    demo_host: 'dsp',  // Included for debugging, not an actual field.
+    demo_host: 'dsp', // Included for debugging, not an actual field.
     destination,
     source_event_id,
     debug_key,
-    debug_reporting: true,  // Enable verbose debug reports.
+    debug_reporting: true, // Enable verbose debug reports.
     aggregation_keys: {
       quantity: sourceKeyPiece({
         type: SOURCE_TYPE['view'], // view attribution
@@ -340,7 +385,8 @@ app.get('/register-source', async (req: Request, res: Response) => {
   } else if (registerEventAttributionSourceIfApplicable(req, res)) {
     res.status(200).send('Attribution event (view) source registered');
   } else {
-    res.status(400)
+    res
+      .status(400)
       .send('"Attribution-Reporting-Eligible" header is malformed');
   }
 });
@@ -352,11 +398,13 @@ app.get('/register-trigger', async (req: Request, res: Response) => {
   const category: string = req.query.category as string;
   const gross: string = req.query.gross as string;
   const AttributionReportingRegisterTrigger = {
-    event_trigger_data: [{
-      trigger_data: '1',
-      priority: '100',
-      // deduplication_key: '1234',
-    }],
+    event_trigger_data: [
+      {
+        trigger_data: '1',
+        priority: '100',
+        // deduplication_key: '1234',
+      },
+    ],
     aggregatable_trigger_data: [
       {
         key_piece: triggerKeyPiece({
@@ -393,10 +441,13 @@ app.get('/register-trigger', async (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
-app.post('/.well-known/attribution-reporting/report-event-attribution',
+app.post(
+  '/.well-known/attribution-reporting/report-event-attribution',
   async (req: Request, res: Response) => {
-    console.log('[ARA] Received event-level report on live endpoint: ',
-      req.body);
+    console.log(
+      '[ARA] Received event-level report on live endpoint: ',
+      req.body,
+    );
     Reports.push({
       category: 'ARA event-level',
       ts: Date.now().toString(),
@@ -406,10 +457,13 @@ app.post('/.well-known/attribution-reporting/report-event-attribution',
   },
 );
 
-app.post('/.well-known/attribution-reporting/debug/report-event-attribution',
+app.post(
+  '/.well-known/attribution-reporting/debug/report-event-attribution',
   async (req: Request, res: Response) => {
-    console.log('[ARA] Received event-level report on debug endpoint: ',
-      req.body);
+    console.log(
+      '[ARA] Received event-level report on debug endpoint: ',
+      req.body,
+    );
     Reports.push({
       category: 'ARA event-level debug',
       ts: Date.now().toString(),
@@ -443,8 +497,10 @@ app.post(
         );
         return e;
       });
-    console.log('[ARA] Received aggregatable report on debug endpoint: ',
-      JSON.stringify(debugReport));
+    console.log(
+      '[ARA] Received aggregatable report on debug endpoint: ',
+      JSON.stringify(debugReport),
+    );
     // Save to global storage
     Reports.push({
       category: 'ARA aggregate debug',
@@ -455,12 +511,15 @@ app.post(
   },
 );
 
-app.post('/.well-known/attribution-reporting/report-aggregate-attribution',
+app.post(
+  '/.well-known/attribution-reporting/report-aggregate-attribution',
   async (req: Request, res: Response) => {
     const report = req.body;
     report.shared_info = JSON.parse(report.shared_info);
-    console.log('[ARA] Received aggregatable report on live endpoint: ',
-      JSON.stringify(report));
+    console.log(
+      '[ARA] Received aggregatable report on live endpoint: ',
+      JSON.stringify(report),
+    );
     Reports.push({
       category: 'ARA aggregate',
       ts: Date.now().toString(),
@@ -473,10 +532,13 @@ app.post('/.well-known/attribution-reporting/report-aggregate-attribution',
 // [END] Section for Attribution Reporting API Code ***
 // ************************************************************************
 
-app.post('/.well-known/private-aggregation/report-shared-storage',
+app.post(
+  '/.well-known/private-aggregation/report-shared-storage',
   (req, res) => {
-    console.log('[pAgg+SS] Received aggregatable report on live endpoint: ',
-      req.body);
+    console.log(
+      '[pAgg+SS] Received aggregatable report on live endpoint: ',
+      req.body,
+    );
     Reports.push({
       category: 'pAgg with SS',
       ts: Date.now().toString(),
@@ -486,10 +548,13 @@ app.post('/.well-known/private-aggregation/report-shared-storage',
   },
 );
 
-app.post('/.well-known/private-aggregation/debug/report-shared-storage',
+app.post(
+  '/.well-known/private-aggregation/debug/report-shared-storage',
   (req, res) => {
-    console.log('[pAgg+SS] Received aggregatable report on debug endpoint: ',
-      req.body);
+    console.log(
+      '[pAgg+SS] Received aggregatable report on debug endpoint: ',
+      req.body,
+    );
     Reports.push({
       category: 'pAgg with SS',
       ts: Date.now().toString(),
