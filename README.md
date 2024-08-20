@@ -25,6 +25,7 @@ This repository contains :
 - Deployment scripts
 - [Instructions for deploying and running the demos in your local environment with Docker](docs/deploy-to-linux-docker.md)
 - [Instructions for deploying and running the demos on Google Cloud Platform](docs/deploy-to-gcp.md)
+- [A list of codebase dependencies to prepare for development](docs/dependencies.md)
 - Development framework to contribute to the project
 
 If you are a developer we recommend you follow the [deployment instructions](docs/deploy-to-linux-docker.md). If you are simply curious, we recommend
