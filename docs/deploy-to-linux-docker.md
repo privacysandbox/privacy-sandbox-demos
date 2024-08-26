@@ -2,11 +2,9 @@
 
 ## Prerequisites
 
-These instructions are given for Linux environments and assume you have the following packages installed on your system and your user is in the
-sudoers list (can execute commands with root access using sudo). If you plan to contribute to the code, a GitHub account is also required to commit
-your change and/or make pull requests.
+These instructions are given for Linux environments, assuming you have the following packages installed on your system and your user is in the sudoers list (can execute commands with root access using sudo). If you plan to contribute to the code, a GitHub account must also commit your change and/or make pull requests.
 
-The following packages must be installed
+The following packages must be installed:
 
 - [docker](https://docs.docker.com/engine/install/)
 - [docker-compose](https://docs.docker.com/compose/install/)
@@ -19,21 +17,19 @@ The following packages must be installed
 
 ### Domain Name / URL
 
-Privacy Sandbox APIs use the domain name in the URL (site origin) to allow/block cross-site data sharing, observe topics, etc. As a result developers
-cannot rely only on the “localhost” domain for development.
+Privacy Sandbox APIs use the domain name in the URL (site origin) to allow/block cross-site data sharing, observe topics, etc. As a result, developers cannot rely only on the “localhost” domain for development.
 
-You will re-map individual domain names to loopback address (127.0.0.1), so that each service running on your local environment can be accessed via a
-URL, such as:
+You will re-map individual domain names to the loopback address (127.0.0.1), so that each service running on your local environment can be accessed via a URL, such as:
 
 - <https://privacy-sandbox-demos-home.dev>
 - <https://privacy-sandbox-demos-shop.dev>
 - …
 
-There are 2 ways to achieve remapping on your local development environment. You can choose either of the 2 options below :
+There are two ways to achieve remapping on your local development environment. You can choose either of the two options below :
 
 1. **Remap hosts to loopback address by editing /etc/hosts on your local machine**
 
-Edit `/etc/hosts` file
+Edit `/etc/hosts` file:
 
 ```shell
 # /etc/hosts
@@ -52,19 +48,19 @@ Edit `/etc/hosts` file
 127.0.0.1 privacy-sandbox-demos-collector.dev
 ```
 
-Verifying mapping with :
+Verifying mapping with:
 
 ```shell
 nslookup privacy-sandbox-demos-news.dev
 ```
 
-If the mapping isn’t reflected in Chrome, try clearing your DNS cache
+If the mapping isn’t reflected in Chrome, try clearing your DNS cache:
 
 `chrome://net-internals/#dns`
 
 2. **If you use Google Chrome, --host-resolver-rules flag can be used instead.**
 
-Start Google chrome with the following argument
+Start Google Chrome with the following argument:
 
 ```shell
 google_chrome --host-resolver-rules="MAP privacy-sandbox-demos-* 127.0.0.1"
@@ -72,9 +68,7 @@ google_chrome --host-resolver-rules="MAP privacy-sandbox-demos-* 127.0.0.1"
 
 ### HTTP SSL Certificate
 
-`https://` protocol requires a valid certificate for your browser. To get a valid certificate, use mkcert to create a local certification authority
-that will be trusted by your local browser. Later you will be creating a certificate for each of the Privacy Sandbox Demos services and configure
-nginx to serve those certificates.
+`https://` protocol requires a valid certificate for your browser. To get a valid certificate, use `mkcert` to create a local certification authority that will be trusted by your local browser. Later, you will create a certificate for each Privacy Sandbox Demos service and configure nginx to serve those certificates.
 
 Run the command below _with your current user (not root !)_ to create the development Certificate Authority:
 
@@ -94,7 +88,7 @@ to bypass enrollment on your local browser.
 
 Open `chrome://flags/#privacy-sandbox-enrollment-overrides`
 
-Under `Privacy Sandbox Enrollment Overrides` select `Enabled` and enter your site domain names separated by a coma :
+Under `Privacy Sandbox Enrollment Overrides` select `Enabled` and enter your site domain names separated by a coma:
 
 Example :
 
@@ -111,8 +105,7 @@ https://privacy-sandbox-demos-dsp.dev,https://privacy-sandbox-demos-dsp-a.dev,ht
 
 ### Setup .env file
 
-Edit `.env` file. For each`${SERVICE}_HOST` key, set a value matching the content of the `/etc/hosts` configuration. (if you are fine with the default
-site name, you don’t need to edit the file)
+Edit `.env` file. For each`${SERVICE}_HOST` key, set a value matching the content of the `/etc/hosts` configuration. (if you are fine with the default site name, you don’t need to edit the file)
 
 Example with the domain `privacy-sandbox-demos-${SERVICE}.dev`
 
@@ -151,9 +144,9 @@ $ npm install
 $ npm run cert
 ```
 
-### Build html documentation
+### Build HTML documentation
 
-Build the html static files that will be served by the home web server. The build process uses `docusaurus`.
+Build the html static files served by the home web server. The build process uses `docusaurus`.
 
 From the project root folder, **navigate to `services/home`** folder and run :
 
@@ -184,7 +177,7 @@ Docker-compose can do that in 1 command. In a new terminal run :
 sudo docker-compose stop
 ```
 
-If for some reason it's not working, you can stop each container manually
+If for some reason it's not working, you can stop each container manually:
 
 ```sh
 # stop containers
@@ -202,13 +195,13 @@ sudo docker container stop sandcastle_shop
 sudo docker container stop sandcastle_collector
 ```
 
-If you want to clean (remove) the container image in your local registry you can do so by running the command :
+If you want to clean (remove) the container image in your local registry, you can do so by running the command :
 
 ```sh
 sudo docker-compose rm
 ```
 
-If for some reason it's not working, you can remove each container image manually
+If for some reason it's not working, you can remove each container image manually:
 
 ```sh
 # stop containers
@@ -229,17 +222,16 @@ sudo docker container rm sandcastle_collector
 
 ## Clean your docker images & containers
 
-After node dependency updates or major updates, you will need to clean your container images and volumes. There might be some situation where your
-local image registry is corrupted, inconsistent, or has accumulated too many unused images. You can take a fresh start by cleaning your local images.
+After node dependency updates or major updates, you must clean your container images and volumes. In some situations, your local image registry might be corrupted, inconsistent, or have accumulated too many unused images. Cleaning your local images can give you a fresh start.
 
-Execute the following commands from the project root directory :
+Execute the following commands from the project root directory:
 
 ```sh
 # prune docker images and volumes
 sudo npm run clean
 ```
 
-if it does not work, you can troubleshoot by running the following commands one at a time.
+If it does not work, you can troubleshoot by running the following commands one at a time.
 
 Remove any stopped containers and all unused images (not just dangling images) :
 
@@ -248,7 +240,7 @@ Remove any stopped containers and all unused images (not just dangling images) :
 sudo docker system prune -a
 ```
 
-Stop running containers
+Stop running containers:
 
 ```sh
 # show running containers
@@ -258,7 +250,7 @@ sudo docker ps -a
 sudo docker stop $(sudo docker ps -a -q)
 ```
 
-Remove one or more specific containers
+Remove one or more specific containers:
 
 ```sh
 # Use the docker ps command with the -a flag to locate
@@ -272,7 +264,7 @@ sudo docker container ID_or_Name
 sudo docker rm $(sudo docker ps -a -f status=exited -q)
 ```
 
-Remove one or more specific images
+Remove one or more specific images:
 
 ```sh
 # to locate the ID of the images you want to remove.
