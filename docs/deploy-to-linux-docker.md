@@ -46,6 +46,8 @@ Edit `/etc/hosts` file:
 127.0.0.1 privacy-sandbox-demos-ad-server.dev
 127.0.0.1 privacy-sandbox-demos-news.dev
 127.0.0.1 privacy-sandbox-demos-collector.dev
+127.0.0.1 privacy-sandbox-demos-idp.dev
+127.0.0.1 topics-server.privacy-sandbox-demos-news.dev
 ```
 
 Verifying mapping with:
