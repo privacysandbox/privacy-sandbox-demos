@@ -43,6 +43,7 @@ const {
 
 // in-memory storage for debug reports
 const Reports: any[] = [];
+const EventLevelReports: any[] = [];
 
 // clear in-memory storage every 10 min
 setInterval(
@@ -403,6 +404,17 @@ app.get('/reports', async (req, res) => {
   res.render('reports.html.ejs', {title: 'Report', Reports});
 });
 
+app.post('/reset-reports', async (req, res) => {
+  EventLevelReports.length = 0;
+  res.redirect('/event-level-reports');
+});
+
+app.get('/event-level-reports', async (req, res) => {
+  res.render('event-level-reports.html.ejs', {
+    title: 'Event Level Report',
+    EventLevelReports,
+  });
+});
 // ************************************************************************
 // [END] Section for Attribution Reporting API Code ***
 // ************************************************************************

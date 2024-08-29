@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/index.css" />
+  <link rel="icon" href="/img/spy.svg" />
+</head>
+
+<body>
+  <h1><%= title %></h1>
+  <button onclick="resetReport()">Reset Report</button>
+  <pre id="testing"><%= JSON.stringify(EventLevelReports, " ", " ") %></pre>
+</body>
+<script>
+  function resetReport() {
+    console.log('reset report');
+    fetch("https://privacy-sandbox-demos-dsp.dev/reset-reports", {
+      method: "POST",
+    }).then(res => {
+      if(res.ok && res.redirected) {
+        window.location.href = res.url;
+      } else {
+        const errorMsg = 'server returned not ok' ;
+        throw new Error(errorMsg);
+        console.log(errorMsg);
+      }
+    });
+  }
+</script>
+</html>
