@@ -68,14 +68,14 @@
   </footer>
   <script>
     function navigateToShop() {
-      console.log('navigateToShop');
-      var url = '<%= `https://${SHOP_HOST}` %>';
+      console.log('navigate to the shop without ad click');
+      const url = '<%= `https://${SHOP_HOST}` %>';
       window.open(url);
     }
-    function adClick() { //TODO
-      console.log('adClick running');
-      var url = '<%= `https://${SHOP_HOST}` %>';
-      
+    //TODO: if there's no pre-process for adClick, merge this with navigateToShop()
+    function adClick() {
+      console.log('adClick navigate to the specific item: static');
+      const url = '<%= `https://${SHOP_HOST}/items/1f97e` %>';
       window.open(url)
     }
   </script>
