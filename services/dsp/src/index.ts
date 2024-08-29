@@ -406,7 +406,7 @@ app.get('/reports', async (req, res) => {
 
 app.post('/reset-reports', async (req, res) => {
   EventLevelReports.length = 0;
-  res.redirect('/event-level-reports');
+  res.redirect(303, '/event-level-reports');
 });
 
 app.get('/event-level-reports', async (req, res) => {
