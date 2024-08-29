@@ -28,6 +28,7 @@ const {
   NEWS_TOKEN,
   NEWS_DETAIL,
   DSP_HOST,
+  SHOP_HOST,
 } = process.env;
 
 const app: Application = express();
@@ -76,6 +77,18 @@ app.get('/video-ad', async (req: Request, res: Response) => {
     HOME_HOST,
     NEWS_TOKEN,
     SSP_HOST,
+  });
+});
+
+app.get('/event-level', async (req: Request, res: Response) => {
+  res.render('event-level', {
+    title: TITLE,
+    lorem: LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    NEWS_TOKEN,
+    SHOP_HOST,
+    DSP_HOST,
   });
 });
 
