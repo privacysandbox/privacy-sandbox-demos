@@ -303,6 +303,41 @@ app.get('/register-source', async (req: Request, res: Response) => {
   }
 });
 
+function getTriggerData(cvType: string) {
+  console.log('conversion type: %s', cvType);
+  switch (cvType) {
+    case 'see-cart':
+      return 5;
+    case 'add-to-cart':
+      return 6;
+    default:
+      return 0;
+  }
+}
+app.get('/trigger-attribution', async (req: Request, res: Response) => {
+  console.log(`Event trigger attribution - Received Event Level trigger`);
+  const cvType: string = req.query['conversion-type'] as string;
+  const triggerData = getTriggerData(cvType);
+  // TODO: reort's 'trigger_data': 0 or 1 which doesn't match
+  const eventTriggerData = [
+    {
+      trigger_data: `${triggerData}`,
+    },
+  ];
+  const AttributionReportingRegisterTrigger = {
+    event_trigger_data: eventTriggerData,
+    debug_key: debugKey(),
+    debug_reporting: true,
+  };
+
+  res.set(
+    'Attribution-Reporting-Register-Trigger',
+    JSON.stringify(AttributionReportingRegisterTrigger),
+  );
+
+  res.sendStatus(200);
+});
+
 app.get('/register-trigger', async (req: Request, res: Response) => {
   const id: string = req.query.id as string;
   const quantity: string = req.query.quantity as string;
@@ -346,6 +381,42 @@ app.get('/register-trigger', async (req: Request, res: Response) => {
   );
   res.sendStatus(200);
 });
+
+app.post(
+  '/.well-known/attribution-reporting/report-event-attribution',
+  async (req, res) => {
+    console.log(
+      '\x1b[1;31m%s\x1b[0m',
+      `🚀 Adtech has received an event-level report from the browser`,
+    );
+    console.log(
+      'REGULAR REPORT RECEIVED (event-level):\n=== \n',
+      req.body,
+      '\n=== \n',
+    );
+    const debug_report = req.body;
+
+    EventLevelReports.push(debug_report);
+
+    res.sendStatus(200);
+  },
+);
+
+app.post(
+  '/.well-known/attribution-reporting/debug/report-event-attribution',
+  async (req: Request, res: Response) => {
+    console.log(
+      `Event Attribution Reporting - Received Event Level Report on debug endpoint`,
+    );
+    const debug_report = req.body;
+    console.log(debug_report);
+
+    // save to global storage
+    EventLevelReports.push(debug_report);
+
+    res.sendStatus(200);
+  },
+);
 
 app.post(
   '/.well-known/attribution-reporting/debug/report-aggregate-attribution',

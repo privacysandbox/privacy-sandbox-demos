@@ -73,7 +73,7 @@
               </p>
             </section>
             <section class="flex justify-center">
-              <button type="submit" class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white">ADD TO CART</button>
+              <button onclick="addToCart()"class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white">ADD TO CART</button>
             </section>
           </form>
         </section>
@@ -81,6 +81,16 @@
       <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
     </div>
     <script>
+      function addToCart() {
+        const attributionReporting = {
+          eventSourceEligible: false,
+          triggerEligible: true,
+        };
+        const url = '<%= trigger_attribution("add-to-cart") %>'
+        window.fetch(url, {
+          mode: "no-cors",  keepalive: true, attributionReporting
+        });
+      }
       function buildDspScriptTag(tagUrl, tagClass) {
         const scriptEl = document.createElement('script')
         scriptEl.className = tagClass

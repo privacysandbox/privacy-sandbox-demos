@@ -18,6 +18,13 @@
         <a class="text-4xl px-2" href="/cart">🛒</a>
       </nav>
     </header>
+    <img
+      alt=""
+      style="display: none"
+      width="1"
+      height="1"
+      src="<%= trigger_attribution('see-cart') %>"
+    />
     <div class="flex flex-col gap-6">
       <form class="flex flex-col gap-6" action="/checkout" method="POST">
         <ul class="flex flex-col gap-6">

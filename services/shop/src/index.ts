@@ -26,7 +26,6 @@ import {
   PORT,
   SHOP_DETAIL,
   SHOP_HOST,
-  SSP_HOST,
 } from './env.js';
 import {
   Order,
@@ -71,7 +70,7 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: () => void) => {
   // res.setHeader("Origin-Trial", NEWS_TOKEN as string)
   res.setHeader('Cache-Control', 'private');
   if (!req.session.cart) {
@@ -98,6 +97,12 @@ app.locals = {
     register_trigger.searchParams.append('size', `${fromSize(size)}`);
     register_trigger.searchParams.append('gross', `${item.price * quantity}`);
     return register_trigger.toString();
+  },
+  trigger_attribution: (cvType: string) => {
+    const trigger_attribution = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
+    trigger_attribution.pathname = 'trigger-attribution';
+    trigger_attribution.searchParams.append('conversion-type', cvType);
+    return trigger_attribution.toString();
   },
 };
 
@@ -134,11 +139,13 @@ app.get('/items/:id', async (req: Request, res: Response) => {
 
   res.render('item', {
     item,
+    DSP_HOST,
     DSP_TAG_URL,
     DSP_A_TAG_URL,
     DSP_B_TAG_URL,
     SHOP_HOST,
     isMultiSeller,
+    EXTERNAL_PORT,
   });
 });
 
