@@ -42,13 +42,15 @@
       </div>
     </dl>
     <% if (checkout) { %>
-      <img
-        alt=""
-        style="display: none"
-        width="1"
-        height="1"
-        src="<%= register_trigger({item, size, quantity}) %>"
-      />
+      <% getTriggerUrls({item, size, quantity}).forEach((triggerUrl) => { %>
+        <img
+          alt=""
+          style="display: none"
+          width="1"
+          height="1"
+          src="<%= triggerUrl %>"
+        />
+      <% }) %>
     <% } else { %>
     <div class="absolute top-0 right-0">
       <button

@@ -14,167 +14,195 @@
  limitations under the License.
  */
 
-// // type: 2bit
-// export const SOURCE_TYPE = {
-//   click: 0b10,
-//   view: 0b11
-// }
+// type: 2bit
+const SOURCE_TYPE = {
+  click: 0b10,
+  view: 0b11,
+};
 
-// // advertiser: 16bit
-// export const ADVERTISER = {
-//   [process.env.SHOP_HOST]: 0b0,
-//   [process.env.TRAVEL_HOST]: 0b1
-// }
+// advertiser: 16bit
+const ADVERTISER = {};
+ADVERTISER[process.env.SHOP_HOST] = 0b0;
+ADVERTISER[process.env.TRAVEL_HOST] = 0b1;
 
-// // publisher:  16bit
-// export const PUBLISHER = {
-//   [process.env.NEWS_HOST]: 0b0
-// }
+// publisher:  16bit
+const PUBLISHER = {};
+PUBLISHER[process.env.NEWS_HOST] = 0b0;
 
-// // dimension: 8bit
-// export const DIMENSION = {
-//   quantity: 0b0,
-//   gross: 0b1
-// }
+// dimension: 8bit
+const DIMENSION = {
+  quantity: 0b0,
+  gross: 0b1,
+};
 
-// // type 8bit
-// export const TRIGGER_TYPE = {
-//   quantity: 0b1000_0000,
-//   gross: 0b1100_0000
-// }
+// type 8bit
+const TRIGGER_TYPE = {
+  quantity: 0b1000_0000,
+  gross: 0b1100_0000,
+};
 
-// export function sourceKeyPiece({ type, dimension, id, advertiser, publisher }) {
-//   console.log({ type, dimension, id, advertiser, publisher })
-//   const source = encodeSource({ type, dimension, id, advertiser, publisher })
-//   const uint64 = new DataView(source).getBigUint64()
-//   return `0x${(uint64 << 64n).toString(16)}`
-// }
+export {SOURCE_TYPE, ADVERTISER, PUBLISHER, DIMENSION, TRIGGER_TYPE};
 
-// export function triggerKeyPiece({ type, id, size, category, option }) {
-//   console.log({ type, id, size, category, option })
-//   const trigger = encodeTrigger({ type, id, size, category, option })
-//   const uint64 = new DataView(trigger).getBigUint64()
-//   return `0x${"0".repeat(16)}${uint64.toString(16)}`
-// }
+export function sourceKeyPiece(ako) {
+  console.log(ako);
+  const source = encodeSource(ako);
+  const uint64 = new DataView(source).getBigUint64(0, false);
+  return `0x${(uint64 << 64n).toString(16)}`;
+}
 
-// // type:        2bit
-// // dimension:   6bit
-// // id:         24bit
-// // advertiser: 16bit
-// // publisher:  16bit
-// // -----------------
-// //             64bit
-// function encodeSource({ type, dimension, id, advertiser, publisher }) {
-//   const buffer = new ArrayBuffer(8)
-//   const view = new DataView(buffer)
-//   const first32 = (((type << 6) + dimension) << 24) + id
-//   view.setUint32(0, first32)
-//   view.setUint16(4, advertiser)
-//   view.setUint16(6, publisher)
-//   return buffer
-// }
+export function triggerKeyPiece(atd) {
+  console.log(atd);
+  const trigger = encodeTrigger(atd);
+  const uint64 = new DataView(trigger).getBigUint64(0, false);
+  return `0x${'0'.repeat(16)}${uint64.toString(16)}`;
+}
 
-// function decodeSource(buffer) {
-//   const view = new DataView(buffer)
-//   const first32 = view.getUint32(0)
-//   const id = first32 & (2 ** 24 - 1)
-//   const first8 = first32 >>> 24
-//   const dimension = first8 & 0b111111
-//   const type = first8 >>> 6
-//   const advertiser = view.getUint16(4)
-//   const publisher = view.getUint16(6)
-//   return { type, dimension, id, advertiser, publisher }
-// }
+// type:        2bit
+// dimension:   6bit
+// id:         24bit
+// advertiser: 16bit
+// publisher:  16bit
+// -----------------
+//             64bit
+function encodeSource(ako) {
+  const buffer = new ArrayBuffer(8);
+  const view = new DataView(buffer);
+  const first32 = (((ako.type << 6) + ako.dimension) << 24) + ako.id;
+  view.setUint32(0, first32);
+  view.setUint16(4, ako.advertiser);
+  view.setUint16(6, ako.publisher);
+  return buffer;
+}
 
-// // type:      8bit
-// // id:       24bit
-// // size:      8bit
-// // category:  8bit
-// // option:   16bit
-// // -----------------
-// //             64bit
-// function encodeTrigger({ type, id, size, category, option }) {
-//   const buffer = new ArrayBuffer(8)
-//   const view = new DataView(buffer)
-//   view.setUint32(0, (type << 24) + id)
-//   view.setUint8(4, size)
-//   view.setUint8(5, category)
-//   view.setUint16(6, option)
-//   return buffer
-// }
+function decodeSource(buffer) {
+  const view = new DataView(buffer);
+  const first32 = view.getUint32(0);
+  const id = first32 & (2 ** 24 - 1);
+  const first8 = first32 >>> 24;
+  const dimension = first8 & 0b111111;
+  const type = first8 >>> 6;
+  const advertiser = view.getUint16(4);
+  const publisher = view.getUint16(6);
+  return {type, dimension, id, advertiser, publisher};
+}
 
-// function decodeTrigger(buffer) {
-//   const view = new DataView(buffer)
-//   const first32 = view.getUint32(0)
-//   const type = first32 >>> 24
-//   const id = first32 & 0xffffff
-//   const size = view.getUint8(4)
-//   const category = view.getUint8(5)
-//   const option = view.getUint16(6)
-//   return { type, id, size, category, option }
-// }
+// type:      8bit
+// id:       24bit
+// size:      8bit
+// category:  8bit
+// option:   16bit
+// -----------------
+//             64bit
+function encodeTrigger(atd) {
+  const buffer = new ArrayBuffer(8);
+  const view = new DataView(buffer);
+  view.setUint32(0, (atd.type << 24) + atd.id);
+  view.setUint8(4, atd.size);
+  view.setUint8(5, atd.category);
+  view.setUint16(6, atd.option);
+  return buffer;
+}
 
-// export function decodeBucket(buffer) {
-//   const u8a = new Uint8Array(buffer)
-//   const sourceBuf = u8a.slice(0, u8a.length / 2)
-//   const source = decodeSource(sourceBuf.buffer)
-//   const triggerBuf = u8a.slice(u8a.length / 2, u8a.length)
-//   const trigger = decodeTrigger(triggerBuf.buffer)
+function decodeTrigger(buffer) {
+  const view = new DataView(buffer);
+  const first32 = view.getUint32(0);
+  const type = first32 >>> 24;
+  const id = first32 & 0xffffff;
+  const size = view.getUint8(4);
+  const category = view.getUint8(5);
+  const option = view.getUint16(6);
+  return {type, id, size, category, option};
+}
 
-//   source.type = key_from_value(SOURCE_TYPE, source.type)
-//   source.dimension = key_from_value(DIMENSION, source.dimension)
-//   source.id = source.id.toString(16)
-//   source.advertiser = key_from_value(ADVERTISER, source.advertiser)
-//   source.publisher = key_from_value(PUBLISHER, source.publisher)
+export function decodeBucket(buffer) {
+  const u8a = new Uint8Array(buffer);
+  const sourceBuf = u8a.slice(0, u8a.length / 2);
+  const source = decodeSource(sourceBuf.buffer);
+  const triggerBuf = u8a.slice(u8a.length / 2, u8a.length);
+  const trigger = decodeTrigger(triggerBuf.buffer);
 
-//   trigger.type = key_from_value(TRIGGER_TYPE, trigger.type)
-//   trigger.id = trigger.id.toString(16)
+  const aggregation_keys = {};
+  aggregation_keys.type = key_from_value(SOURCE_TYPE, source.type);
+  aggregation_keys.dimension = key_from_value(DIMENSION, source.dimension);
+  aggregation_keys.id = source.id.toString(16);
+  aggregation_keys.advertiser = key_from_value(ADVERTISER, source.advertiser);
+  aggregation_keys.publisher = key_from_value(PUBLISHER, source.publisher);
 
-//   return {
-//     source,
-//     trigger
-//   }
-// }
+  const aggregatable_trigger_data = {};
+  aggregatable_trigger_data.type = key_from_value(TRIGGER_TYPE, trigger.type);
+  aggregatable_trigger_data.id = trigger.id.toString(16);
+  aggregatable_trigger_data.size = trigger.size.toString();
+  aggregatable_trigger_data.category = trigger.category.toString();
+  aggregatable_trigger_data.option = trigger.option.toString();
 
-// export function sourceEventId() {
-//   // 64bit dummy value
-//   return ((1n << 64n) - 1n).toString()
-// }
+  return {
+    aggregation_keys,
+    aggregatable_trigger_data,
+  };
+}
 
-// export function debugKey() {
-//   // 64bit dummy value
-//   return ((1n << 64n) - 2n).toString()
-// }
+export function sourceEventId() {
+  // 64bit dummy value
+  return Math.random().toString().substring(2).replace(/^0/, '');
+}
 
-// function key_from_value(obj, value) {
-//   return Object.entries(obj)
-//     .filter(([k, v]) => v === value)
-//     .at(0)
-//     .at(0)
-// }
+export function debugKey() {
+  // 64bit dummy value
+  return Math.random().toString().substring(2).replace(/^0/, '');
+}
 
-// function test() {
-//   const advertiser = ADVERTISER["shop"]
-//   const publisher = PUBLISHER["news"]
-//   const id = 0xff
-//   const dimension = DIMENSION["gross"]
-//   const size = (26.5 - 20) * 10
-//   const category = 1
-//   const source_type = SOURCE_TYPE.click
-//   const trigger_type = TRIGGER_TYPE.gross
-//   const option = 2
+function key_from_value(object, value) {
+  const key = Object.keys(object).find((key) => object[key] === value);
 
-//   const source_key = sourceKeyPiece({ type: source_type, dimension, id, advertiser, publisher })
-//   console.log({ source_key })
+  return key;
+}
 
-//   const trigger_key = triggerKeyPiece({ type: trigger_type, id, size, category, option })
-//   console.log({ trigger_key })
+function test() {
+  const advertiser = ADVERTISER['shop'];
+  const publisher = PUBLISHER['news'];
+  const id = 0xff;
+  const dimension = DIMENSION['gross'];
+  const size = (26.5 - 20) * 10;
+  const category = 1;
+  const source_type = SOURCE_TYPE.click;
+  const trigger_type = TRIGGER_TYPE.gross;
+  const option = 2;
 
-//   const source = encodeSource({ type: source_type, dimension, id, advertiser, publisher })
-//   console.log(decodeSource(source))
+  const source_key = sourceKeyPiece({
+    type: source_type,
+    dimension,
+    id,
+    advertiser,
+    publisher,
+  });
+  console.log({source_key});
 
-//   const trigger = encodeTrigger({ type: trigger_type, id, size, category, option })
-//   console.log(decodeTrigger(trigger))
-// }
+  const trigger_key = triggerKeyPiece({
+    type: trigger_type,
+    id,
+    size,
+    category,
+    option,
+  });
+  console.log({trigger_key});
 
-// test()
+  const source = encodeSource({
+    type: source_type,
+    dimension,
+    id,
+    advertiser,
+    publisher,
+  });
+  console.log(decodeSource(source));
+
+  const trigger = encodeTrigger({
+    type: trigger_type,
+    id,
+    size,
+    category,
+    option,
+  });
+  console.log(decodeTrigger(trigger));
+}
+
+test();
