@@ -132,9 +132,7 @@ app.get('/auction-config.json', async (req, res) => {
     seller: sspOrigin,
     // x-allow-fledge: true
     decisionLogicUrl: `${sspOrigin}js/decision-logic.js`,
-    interestGroupBuyers: [
-      dspOrigin,
-    ],
+    interestGroupBuyers: [dspOrigin],
     auctionSignals: {
       auction_signals: 'auction_signals',
     },
