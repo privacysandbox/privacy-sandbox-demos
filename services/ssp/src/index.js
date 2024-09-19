@@ -69,7 +69,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use((req, res, next) => {
-  // Enable transitional debug reports
+  // Enable transitional debug reports for ARA.
   res.cookie('ar_debug', '1', {
     sameSite: 'none',
     secure: true,
