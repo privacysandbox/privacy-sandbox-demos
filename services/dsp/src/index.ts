@@ -423,7 +423,11 @@ app.post(
 // Miscellaneous helper functions
 // ************************************************************************
 /** Constructs render URL to use in Interest Groups. */
-const getRenderUrl = (advertiser: string, productId: string, adType: string) => {
+const getRenderUrl = (
+  advertiser: string,
+  productId: string,
+  adType: string,
+) => {
   const imageCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/ads`);
   imageCreative.searchParams.append('advertiser', advertiser);
   imageCreative.searchParams.append('id', productId);
