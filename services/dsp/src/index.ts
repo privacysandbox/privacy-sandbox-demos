@@ -154,7 +154,7 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
     },
     ads: [
       {
-        renderURL: getRenderUrl(advertiser, id, adType),
+        renderURL: getRenderUrl(advertiser as string, id as string, adType as string),
         metadata: {
           type: advertiser,
           adType: 'image',
@@ -423,7 +423,11 @@ app.post(
 // Miscellaneous helper functions
 // ************************************************************************
 /** Constructs render URL to use in Interest Groups. */
-const getRenderUrl = (advertiser: string, productId: string, adType: string) => {
+const getRenderUrl = (
+  advertiser: string,
+  productId: string,
+  adType: string,
+): string => {
   const imageCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/ads`);
   imageCreative.searchParams.append('advertiser', advertiser);
   imageCreative.searchParams.append('id', productId);
@@ -432,6 +436,7 @@ const getRenderUrl = (advertiser: string, productId: string, adType: string) => 
   );
   const renderUrl =
     adType === 'video' ? videoCreative : imageCreative.toString();
+  return renderUrl.toString();
 };
 
 /** Consumes event-level reports and integrates with ARA if applicable */
