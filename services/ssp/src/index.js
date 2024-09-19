@@ -69,7 +69,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use((req, res, next) => {
-  // Enable transitional debugging reports (https://github.com/WICG/attribution-reporting-api/blob/main/EVENT.md#optional-transitional-debugging-reports)
+  // Enable transitional debug reports
   res.cookie('ar_debug', '1', {
     sameSite: 'none',
     secure: true,
@@ -129,70 +129,29 @@ app.get('/auction-config.json', async (req, res) => {
   const dspOrigin = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
   const sspOrigin = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`);
   const auctionConfig = {
-    // should https & same as decisionLogicUrl's origin
     seller: sspOrigin,
     // x-allow-fledge: true
     decisionLogicUrl: `${sspOrigin}js/decision-logic.js`,
     interestGroupBuyers: [
-      // * is not supported yet
       dspOrigin,
     ],
-    // public for everyone
     auctionSignals: {
       auction_signals: 'auction_signals',
     },
-    // only for single party
     sellerSignals: {
       seller_signals: 'seller_signals',
     },
-    // only for single party
     perBuyerSignals: {
-      // listed on interestGroupByers
       [dspOrigin.toString()]: {
         per_buyer_signals: 'per_buyer_signals',
       },
     },
-    // use with fencedframe
+    // If set to true, runAdAuction returns a FencedFrameConfig.
     resolveToConfig: true,
   };
   console.log({auctionConfig});
   res.json(auctionConfig);
 });
-
-const handleEventLevelReport = (req, res, report) => {
-  console.log('Event-level report received: ', req.originalUrl, report);
-  Reports.push(report);
-  // Check if request is eligible for ARA.
-  if (!('attribution-reporting-eligible' in req.headers)) {
-    res
-      .status(200)
-      .send(`Event-level report received: ${JSON.stringify(req.query)}`);
-    return;
-  }
-  // Try registering attribution sources.
-  if (registerNavigationAttributionSourceIfApplicable(req, res)) {
-    console.log('[ARA] Navigation source registered');
-  } else if (registerEventAttributionSourceIfApplicable(req, res)) {
-    console.log('[ARA] Event source registered');
-  }
-  // Check if redirect is needed.
-  if ('redirect' in req.query) {
-    const query = Object.entries(req.query)
-      .filter(([key, _]) => key !== 'redirect')
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
-    const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
-    res.redirect(redirectUrl);
-  } else {
-    res
-      .status(200)
-      .send(
-        `Event-level report received and attribution source registered: ${JSON.stringify(
-          req.query,
-        )}`,
-      );
-  }
-};
 
 app.get('/reporting', async (req, res) => {
   handleEventLevelReport(
@@ -221,110 +180,9 @@ app.post('/reporting', async (req, res) => {
   );
 });
 
-const registerNavigationAttributionSourceIfApplicable = (req, res) => {
-  if (
-    !('attribution-reporting-eligible' in req.headers) ||
-    !(
-      'navigation-source' in
-      decodeDict(req.headers['attribution-reporting-eligible'])
-    )
-  ) {
-    return false;
-  }
-  const advertiser = req.query.advertiser;
-  const id = req.query.id;
-  console.log('[ARA] Registering navigation source attribution for', {
-    advertiser,
-    id,
-  });
-  const destination = `https://${advertiser}`;
-  const source_event_id = sourceEventId();
-  const debug_key = debugKey();
-  const AttributionReportingRegisterSource = {
-    demo_host: 'ssp', // Included for debugging, not an actual field.
-    destination,
-    source_event_id,
-    debug_key,
-    debug_reporting: true, // Enable verbose debug reports.
-    aggregation_keys: {
-      quantity: sourceKeyPiece({
-        type: SOURCE_TYPE['click'], // click attribution
-        advertiser: ADVERTISER[advertiser],
-        publisher: PUBLISHER['news'],
-        id: Number(`0x${id}`),
-        dimension: DIMENSION['quantity'],
-      }),
-      gross: sourceKeyPiece({
-        type: SOURCE_TYPE['click'], // click attribution
-        advertiser: ADVERTISER[advertiser],
-        publisher: PUBLISHER['news'],
-        id: Number(`0x${id}`),
-        dimension: DIMENSION['gross'],
-      }),
-    },
-  };
-  console.log('[ARA] Registering navigation source :', {
-    AttributionReportingRegisterSource,
-  });
-  res.setHeader(
-    'Attribution-Reporting-Register-Source',
-    JSON.stringify(AttributionReportingRegisterSource),
-  );
-  return true;
-};
-
-const registerEventAttributionSourceIfApplicable = (req, res) => {
-  if (
-    !('attribution-reporting-eligible' in req.headers) ||
-    !(
-      'event-source' in
-      decodeDict(req.headers['attribution-reporting-eligible'])
-    )
-  ) {
-    return false;
-  }
-  const advertiser = req.query.advertiser;
-  const id = req.query.id;
-  console.log('[ARA] Registering event source attribution for', {
-    advertiser,
-    id,
-  });
-  const destination = `https://${advertiser}`;
-  const source_event_id = sourceEventId();
-  const debug_key = debugKey();
-  const AttributionReportingRegisterSource = {
-    demo_host: 'ssp', // Included for debugging, not an actual field.
-    destination,
-    source_event_id,
-    debug_key,
-    debug_reporting: true, // Enable verbose debug reports.
-    aggregation_keys: {
-      quantity: sourceKeyPiece({
-        type: SOURCE_TYPE['view'], // view attribution
-        advertiser: ADVERTISER[advertiser],
-        publisher: PUBLISHER['news'],
-        id: Number(`0x${id}`),
-        dimension: DIMENSION['quantity'],
-      }),
-      gross: sourceKeyPiece({
-        type: SOURCE_TYPE['view'], // view attribution
-        advertiser: ADVERTISER[advertiser],
-        publisher: PUBLISHER['news'],
-        id: Number(`0x${id}`),
-        dimension: DIMENSION['gross'],
-      }),
-    },
-  };
-  console.log('[ARA] Registering event source :', {
-    AttributionReportingRegisterSource,
-  });
-  res.setHeader(
-    'Attribution-Reporting-Register-Source',
-    JSON.stringify(AttributionReportingRegisterSource),
-  );
-  return true;
-};
-
+// ************************************************************************
+// Attribution Reporting HTTP handlers
+// ************************************************************************
 app.get('/register-source', async (req, res) => {
   if (!req.headers['attribution-reporting-eligible']) {
     res.status(400).send('"Attribution-Reporting-Eligible" header is missing');
@@ -478,6 +336,151 @@ app.post(
     res.sendStatus(200);
   },
 );
+
+// ************************************************************************
+// Attribution Reporting helper functions
+// ************************************************************************
+const registerNavigationAttributionSourceIfApplicable = (req, res) => {
+  if (
+    !('attribution-reporting-eligible' in req.headers) ||
+    !(
+      'navigation-source' in
+      decodeDict(req.headers['attribution-reporting-eligible'])
+    )
+  ) {
+    return false;
+  }
+  const advertiser = req.query.advertiser;
+  const id = req.query.id;
+  console.log('[ARA] Registering navigation source attribution for', {
+    advertiser,
+    id,
+  });
+  const destination = `https://${advertiser}`;
+  const source_event_id = sourceEventId();
+  const debug_key = debugKey();
+  const AttributionReportingRegisterSource = {
+    demo_host: 'ssp', // Included for debugging, not an actual field.
+    destination,
+    source_event_id,
+    debug_key,
+    debug_reporting: true, // Enable verbose debug reports.
+    aggregation_keys: {
+      quantity: sourceKeyPiece({
+        type: SOURCE_TYPE['click'], // click attribution
+        advertiser: ADVERTISER[advertiser],
+        publisher: PUBLISHER['news'],
+        id: Number(`0x${id}`),
+        dimension: DIMENSION['quantity'],
+      }),
+      gross: sourceKeyPiece({
+        type: SOURCE_TYPE['click'], // click attribution
+        advertiser: ADVERTISER[advertiser],
+        publisher: PUBLISHER['news'],
+        id: Number(`0x${id}`),
+        dimension: DIMENSION['gross'],
+      }),
+    },
+  };
+  console.log('[ARA] Registering navigation source :', {
+    AttributionReportingRegisterSource,
+  });
+  res.setHeader(
+    'Attribution-Reporting-Register-Source',
+    JSON.stringify(AttributionReportingRegisterSource),
+  );
+  return true;
+};
+
+const registerEventAttributionSourceIfApplicable = (req, res) => {
+  if (
+    !('attribution-reporting-eligible' in req.headers) ||
+    !(
+      'event-source' in
+      decodeDict(req.headers['attribution-reporting-eligible'])
+    )
+  ) {
+    return false;
+  }
+  const advertiser = req.query.advertiser;
+  const id = req.query.id;
+  console.log('[ARA] Registering event source attribution for', {
+    advertiser,
+    id,
+  });
+  const destination = `https://${advertiser}`;
+  const source_event_id = sourceEventId();
+  const debug_key = debugKey();
+  const AttributionReportingRegisterSource = {
+    demo_host: 'ssp', // Included for debugging, not an actual field.
+    destination,
+    source_event_id,
+    debug_key,
+    debug_reporting: true, // Enable verbose debug reports.
+    aggregation_keys: {
+      quantity: sourceKeyPiece({
+        type: SOURCE_TYPE['view'], // view attribution
+        advertiser: ADVERTISER[advertiser],
+        publisher: PUBLISHER['news'],
+        id: Number(`0x${id}`),
+        dimension: DIMENSION['quantity'],
+      }),
+      gross: sourceKeyPiece({
+        type: SOURCE_TYPE['view'], // view attribution
+        advertiser: ADVERTISER[advertiser],
+        publisher: PUBLISHER['news'],
+        id: Number(`0x${id}`),
+        dimension: DIMENSION['gross'],
+      }),
+    },
+  };
+  console.log('[ARA] Registering event source :', {
+    AttributionReportingRegisterSource,
+  });
+  res.setHeader(
+    'Attribution-Reporting-Register-Source',
+    JSON.stringify(AttributionReportingRegisterSource),
+  );
+  return true;
+};
+
+// ************************************************************************
+// Miscellaneous helper functions
+// ************************************************************************
+const handleEventLevelReport = (req, res, report) => {
+  console.log('Event-level report received: ', req.originalUrl, report);
+  Reports.push(report);
+  // Check if request is eligible for ARA.
+  if (!('attribution-reporting-eligible' in req.headers)) {
+    res
+      .status(200)
+      .send(`Event-level report received: ${JSON.stringify(req.query)}`);
+    return;
+  }
+  // Try registering attribution sources.
+  if (registerNavigationAttributionSourceIfApplicable(req, res)) {
+    console.log('[ARA] Navigation source registered');
+  } else if (registerEventAttributionSourceIfApplicable(req, res)) {
+    console.log('[ARA] Event source registered');
+  }
+  // Check if redirect is needed.
+  if ('redirect' in req.query) {
+    const query = Object.entries(req.query)
+      .filter(([key, _]) => key !== 'redirect')
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+    const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
+    res.redirect(redirectUrl);
+  } else {
+    res
+      .status(200)
+      .send(
+        `Event-level report received and attribution source registered: ${JSON.stringify(
+          req.query,
+        )}`,
+      );
+  }
+};
 
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);
