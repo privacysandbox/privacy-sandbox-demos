@@ -154,7 +154,11 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
     },
     ads: [
       {
-        renderURL: getRenderUrl(advertiser as string, id as string, adType as string),
+        renderURL: getRenderUrl(
+          advertiser as string,
+          id as string,
+          adType as string,
+        ),
         metadata: {
           type: advertiser,
           adType: 'image',
