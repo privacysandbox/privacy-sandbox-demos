@@ -161,7 +161,6 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
     'ads': [
       {
         'renderURL': getRenderUrl(
-          
           advertiser as string,
           id as string,
           adType as string,
@@ -437,7 +436,10 @@ app.post(
 // ************************************************************************
 /** Constructs render URL to use in Interest Groups. */
 const getRenderUrl = (
-  advertiser: string, productId: string, adType: string): string => {
+  advertiser: string,
+  productId: string,
+  adType: string,
+): string => {
   if (adType === 'video') {
     return new URL(
       `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`,

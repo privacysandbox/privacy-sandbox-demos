@@ -15,7 +15,7 @@
  */
 
 function log(label, o) {
-  console.log(label, JSON.stringify(o, " ", " "))
+  console.log(label, JSON.stringify(o, ' ', ' '));
 }
 
 function generateBid(
@@ -60,12 +60,9 @@ function reportWin(
     .substring(browserSignals.renderURL.indexOf('?') + 1)
     .concat(`&redirect=${browserSignals.seller}`);
   registerAdBeacon({
-    'impression':
-      `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
-    'reserved.top_navigation_start':
-      `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
-    'reserved.top_navigation_commit':
-      `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
+    'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
+    'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
+    'reserved.top_navigation_commit': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
   });
   sendReportTo(browserSignals.interestGroupOwner + '/reporting?report=win');
 }
