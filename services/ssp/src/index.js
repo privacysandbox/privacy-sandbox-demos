@@ -126,26 +126,28 @@ app.get('/reports', async (req, res) => {
 });
 
 app.get('/auction-config.json', async (req, res) => {
-  const dspOrigin = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
-  const sspOrigin = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`);
+  const dspOrigin = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`).toString();
+  const sspOrigin = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`).toString();
   const auctionConfig = {
-    seller: sspOrigin,
+    'seller': sspOrigin,
     // x-allow-fledge: true
-    decisionLogicUrl: `${sspOrigin}js/decision-logic.js`,
-    interestGroupBuyers: [dspOrigin],
-    auctionSignals: {
-      auction_signals: 'auction_signals',
+    'decisionLogicURL': `${sspOrigin}js/decision-logic.js`,
+    'interestGroupBuyers': [dspOrigin],
+    'auctionSignals': {
+      'auction_signals': 'auction_signals',
     },
-    sellerSignals: {
-      seller_signals: 'seller_signals',
+    'sellerSignals': {
+      'seller_signals': 'seller_signals',
     },
-    perBuyerSignals: {
-      [dspOrigin.toString()]: {
-        per_buyer_signals: 'per_buyer_signals',
+    'perBuyerSignals': {
+      [dspOrigin]: {
+        'per_buyer_signals': 'per_buyer_signals',
       },
     },
+    // Needed for size macro replacements.
+    'requestedSize': {'width': '300px', 'height': '250px'},
     // If set to true, runAdAuction returns a FencedFrameConfig.
-    resolveToConfig: true,
+    'resolveToConfig': true,
   };
   console.log({auctionConfig});
   res.json(auctionConfig);
@@ -156,9 +158,9 @@ app.get('/reporting', async (req, res) => {
     req,
     res,
     /* report= */ {
-      category: 'Event log',
-      ts: Date.now().toString(),
-      data: req.query,
+      'category': 'Event log',
+      'ts': Date.now().toString(),
+      'data': req.query,
     },
   );
 });
@@ -168,9 +170,9 @@ app.post('/reporting', async (req, res) => {
     req,
     res,
     /* report= */ {
-      category: 'Event log',
-      ts: Date.now().toString(),
-      data: {
+      'category': 'Event log',
+      'ts': Date.now().toString(),
+      'data': {
         ...req.query,
         ...req.body,
       },

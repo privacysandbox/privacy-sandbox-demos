@@ -132,32 +132,41 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
     return res.sendStatus(400);
   }
   res.json({
-    name: advertiser,
-    owner: new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+    'name': advertiser,
+    'owner': new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
     // x-allow-fledge: true
-    biddingLogicURL: new URL(
+    'biddingLogicURL': new URL(
       `https://${DSP_HOST}:${EXTERNAL_PORT}/js/bidding_logic.js`,
     ),
-    trustedBiddingSignalsURL: new URL(
+    'trustedBiddingSignalsURL': new URL(
       `https://${DSP_HOST}:${EXTERNAL_PORT}/bidding_signal.json`,
     ),
-    trustedBiddingSignalsKeys: [
+    'trustedBiddingSignalsKeys': [
       'trustedBiddingSignalsKeys-1',
       'trustedBiddingSignalsKeys-2',
     ],
     // Daily update is not implemented yet.
-    // updateURL: new URL(
+    // 'updateURL': new URL(
     //  `https://${DSP_HOST}:${EXTERNAL_PORT}/daily_update_url`,
     // ),
-    userBiddingSignals: {
-      user_bidding_signals: 'user_bidding_signals',
+    'userBiddingSignals': {
+      'user_bidding_signals': 'user_bidding_signals',
     },
-    ads: [
+    'adSizes': {
+      'medium-rectangle-default': {'width': '300px', 'height': '250px'},
+    },
+    'sizeGroups': {
+      'medium-rectangle': ['medium-rectangle-default'],
+    },
+    'ads': [
       {
-        renderURL: getRenderUrl(advertiser as string, id as string, adType as string),
-        metadata: {
-          type: advertiser,
-          adType: 'image',
+        'renderURL': getRenderUrl(
+          advertiser as string, id as string, adType as string),
+        'sizeGroup': 'medium-rectangle',
+        'metadata': {
+          'type': advertiser,
+          'adType': 'image',
+          'adSizes': [{'width': '300px', 'height': '250px'}],
         },
       },
     ],
@@ -424,19 +433,19 @@ app.post(
 // ************************************************************************
 /** Constructs render URL to use in Interest Groups. */
 const getRenderUrl = (
-  advertiser: string,
-  productId: string,
-  adType: string,
-): string => {
-  const imageCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/ads`);
-  imageCreative.searchParams.append('advertiser', advertiser);
-  imageCreative.searchParams.append('id', productId);
-  const videoCreative = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
-  );
-  const renderUrl =
-    adType === 'video' ? videoCreative : imageCreative.toString();
-  return renderUrl.toString();
+  advertiser: string, productId: string, adType: string): string => {
+  if (adType === 'video') {
+    return new URL(
+      `https://${DSP_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
+    ).toString();
+  } else {
+    const imageCreative = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/ads`);
+    imageCreative.searchParams.append('advertiser', advertiser);
+    imageCreative.searchParams.append('id', productId);
+    const sizeMacro1 = 'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}';
+    const sizeMacro2 = 'adSize2=${AD_WIDTH}x${AD_HEIGHT}';
+    return `${imageCreative.toString()}&${sizeMacro1}&${sizeMacro2}`;
+  }
 };
 
 /** Consumes event-level reports and integrates with ARA if applicable */
