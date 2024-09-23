@@ -15,7 +15,7 @@
  */
 
 function log(label, o) {
-  // console.log(label, JSON.stringify(o, " ", " "))
+  console.log(label, JSON.stringify(o, ' ', ' '));
 }
 
 function generateBid(
@@ -33,9 +33,13 @@ function generateBid(
     browserSignals,
   });
   return {
-    ad: 'ad-metadata',
-    bid: Math.floor(Math.random() * 100, 10),
-    render: interestGroup.ads[0].renderUrl,
+    'ad': interestGroup.ads[0].metadata,
+    'bid': Math.floor(Math.random() * 100, 10),
+    'render': {
+      'url': interestGroup.ads[0].renderURL,
+      'width': interestGroup.ads[0].metadata.adSizes[0].width,
+      'height': interestGroup.ads[0].metadata.adSizes[0].height,
+    },
   };
 }
 
