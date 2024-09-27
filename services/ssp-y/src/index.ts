@@ -1,0 +1,97 @@
+/*
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+// SSP-X
+import express from 'express';
+
+const {
+  EXTERNAL_PORT,
+  PORT,
+  SSP_A_HOST,
+  SSP_B_HOST,
+  SSP_X_HOST,
+  SSP_Y_HOST,
+  SSP_Y_DETAIL,
+  SSP_Y_TOKEN,
+  DSP_A_HOST,
+  DSP_B_HOST,
+  DSP_X_HOST,
+  DSP_Y_HOST,
+  SHOP_HOST,
+  NEWS_HOST,
+} = process.env;
+
+const ALLOWED_HOSTNAMES = [
+  DSP_A_HOST,
+  DSP_B_HOST,
+  DSP_X_HOST,
+  DSP_Y_HOST,
+  SSP_A_HOST,
+  SSP_B_HOST,
+  SSP_X_HOST,
+  SSP_Y_HOST,
+  NEWS_HOST,
+  SHOP_HOST,
+];
+
+const app = express();
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Origin-Trial', SSP_Y_TOKEN);
+  next();
+});
+
+app.use((req, res, next) => {
+  if (req.get('sec-fetch-dest') === 'fencedframe') {
+    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
+  }
+  if (ALLOWED_HOSTNAMES.includes(req.hostname)) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  next();
+});
+
+app.use(
+  express.static('src/public', {
+    setHeaders: (res, path) => {
+      const shouldAddAuctionHeader = ['decision-logic.js'].some((fileName) =>
+        path.includes(fileName),
+      );
+
+      if (shouldAddAuctionHeader) {
+        return res.set('Ad-Auction-Allowed', 'true');
+      }
+
+      if (path.endsWith('/run-ad-auction.js')) {
+        res.set('Supports-Loading-Mode', 'fenced-frame');
+        res.set('Permissions-Policy', 'run-ad-auction=(*)');
+      }
+    },
+  }),
+);
+
+app.set('view engine', 'ejs');
+app.set('views', 'src/views');
+
+app.get('/', async (req, res) => {
+  const title = SSP_Y_DETAIL;
+  res.render('index.html.ejs', {title, EXTERNAL_PORT});
+});
+
+app.listen(PORT, function () {
+  console.log(`Listening on port ${PORT}`);
+});

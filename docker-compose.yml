@@ -8,10 +8,14 @@ volumes:
   dsp_node_modules:
   dsp_a_node_modules:
   dsp_b_node_modules:
+  dsp_x_node_modules:
+  dsp_y_node_modules:
   ssp_node_modules:
   ssp_top_node_modules:
   ssp_a_node_modules:
   ssp_b_node_modules:
+  ssp_x_node_modules:
+  ssp_y_node_modules:
   topics_node_modules:
   topics-server_node_modules:
   ad_server_node_modules:
@@ -105,6 +109,32 @@ services:
     networks:
       - adnetwork
 
+  dsp-x:
+    image: gcr.io/privacy-sandbox-demos/dsp-x:latest
+    build: ./services/dsp-x
+    container_name: "sandcastle_dsp_x"
+    hostname: ${DSP_X_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/dsp-x:/workspace
+      - dsp_x_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  dsp-y:
+    image: gcr.io/privacy-sandbox-demos/dsp-y:latest
+    build: ./services/dsp-y
+    container_name: "sandcastle_dsp_y"
+    hostname: ${DSP_Y_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/dsp-y:/workspace
+      - dsp_y_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
   ssp:
     image: gcr.io/privacy-sandbox-demos/ssp:latest
     build: ./services/ssp
@@ -141,6 +171,32 @@ services:
     volumes:
       - ./services/ssp-b:/workspace
       - ssp_b_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  ssp-x:
+    image: gcr.io/privacy-sandbox-demos/ssp-x:latest
+    build: ./services/ssp-x
+    container_name: "sandcastle_ssp_x"
+    hostname: ${SSP_X_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/ssp-x:/workspace
+      - ssp_x_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  ssp-y:
+    image: gcr.io/privacy-sandbox-demos/ssp-y:latest
+    build: ./services/ssp-y
+    container_name: "sandcastle_ssp_y"
+    hostname: ${SSP_Y_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/ssp-y:/workspace
+      - ssp_y_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -219,9 +275,13 @@ services:
       - ssp
       - ssp-a
       - ssp-b
+      - ssp-x
+      - ssp-y
       - dsp
       - dsp-a
       - dsp-b
+      - dsp-x
+      - dsp-y
       - ad-server
       - collector
       - topics

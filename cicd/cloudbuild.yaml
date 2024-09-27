@@ -23,9 +23,13 @@ steps:
       cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp.${PROJECT_ENV} services/dsp/src/public/.well-known/privacy-sandbox-attestations.json
       cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp-a.${PROJECT_ENV} services/dsp-a/src/public/.well-known/privacy-sandbox-attestations.json
       cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp-b.${PROJECT_ENV} services/dsp-b/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp-x.${PROJECT_ENV} services/dsp-x/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.dsp-y.${PROJECT_ENV} services/dsp-y/src/public/.well-known/privacy-sandbox-attestations.json
       cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp.${PROJECT_ENV} services/ssp/src/public/.well-known/privacy-sandbox-attestations.json
       cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp-a.${PROJECT_ENV} services/ssp-a/src/public/.well-known/privacy-sandbox-attestations.json
       cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp-b.${PROJECT_ENV} services/ssp-b/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp-x.${PROJECT_ENV} services/ssp-x/src/public/.well-known/privacy-sandbox-attestations.json
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.ssp-y.${PROJECT_ENV} services/ssp-y/src/public/.well-known/privacy-sandbox-attestations.json
       cp -f cicd/attestations/privacy-sandbox-attestations.json.ad-server.${PROJECT_ENV} services/ad-server/src/public/.well-known/privacy-sandbox-attestations.json
   # DSP
   # Build the container image
@@ -137,6 +141,80 @@ steps:
         ENV_VARS=$(cat /workspace/env_vars.txt)
         echo $${ENV_VARS}
         gcloud run deploy dsp-b --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-b:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # DSP-X
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-dsp-x
+    waitFor:
+      - copy-attestations
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-x:$COMMIT_SHA",
+        "services/dsp-x",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-dsp-x
+    waitFor:
+      - build-dsp-x
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-x:$COMMIT_SHA",
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-dsp-x
+    waitFor:
+      - push-dsp-x
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy dsp-x --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-x:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # DSP-Y
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-dsp-y
+    waitFor:
+      - copy-attestations
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-y:$COMMIT_SHA",
+        "services/dsp-y",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-dsp-y
+    waitFor:
+      - build-dsp-y
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-y:$COMMIT_SHA",
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-dsp-y
+    waitFor:
+      - push-dsp-y
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy dsp-y --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-y:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
 
   # HOME
   # Build the HTML files with docusaurus
@@ -369,6 +447,80 @@ steps:
         echo $${ENV_VARS}
         gcloud run deploy ssp-b --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-b:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
 
+  # SSP-X
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-ssp-x
+    waitFor:
+      - copy-attestations
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-x:$COMMIT_SHA",
+        "services/ssp-x",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-ssp-x
+    waitFor:
+      - build-ssp-x
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-x:$COMMIT_SHA",
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-ssp-x
+    waitFor:
+      - push-ssp-x
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy ssp-x --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-x:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # SSP-Y
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-ssp-y
+    waitFor:
+      - copy-attestations
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-y:$COMMIT_SHA",
+        "services/ssp-y",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-ssp-y
+    waitFor:
+      - build-ssp-y
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-y:$COMMIT_SHA",
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-ssp-y
+    waitFor:
+      - push-ssp-y
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        echo $${ENV_VARS}
+        gcloud run deploy ssp-y --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-y:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
   # TRAVEL
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
@@ -518,12 +670,16 @@ images:
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-a:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-b:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-x:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/dsp-y:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-a:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-b:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-x:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ssp-y:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/topics-server:$COMMIT_SHA"
