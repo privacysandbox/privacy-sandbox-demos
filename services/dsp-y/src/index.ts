@@ -16,12 +16,14 @@
 
 // DSP
 import express, {Application, Request, Response} from 'express';
+import {buildInterestGroup} from './server/helper/build-interest-group.js';
+
 const {EXTERNAL_PORT, PORT, DSP_Y_HOST, DSP_Y_TOKEN, DSP_Y_DETAIL, SHOP_HOST} =
   process.env;
 
 const app: Application = express();
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Origin-Trial', DSP_Y_TOKEN as string);
   next();
@@ -32,8 +34,8 @@ app.use(express.json());
 
 app.use(
   express.static('src/public', {
-    setHeaders: (res: Response, path, stat) => {
-      const url = new URL(path, `https://${DSP_Y_HOST}`);
+    setHeaders: (res: Response, path) => {
+      const url: URL = new URL(path, `https://${DSP_Y_HOST}`);
       if (url.pathname.endsWith('bidding-logic.js')) {
         return res.set('X-Allow-FLEDGE', 'true');
       }
@@ -41,7 +43,7 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next) => {
   if (req.get('sec-fetch-dest') === 'fencedframe') {
     res.setHeader('Supports-Loading-Mode', 'fenced-frame');
   }
@@ -55,6 +57,36 @@ app.get('/', async (req: Request, res: Response) => {
   const title = DSP_Y_DETAIL;
   res.render('index', {title, DSP_Y_HOST, SHOP_HOST, EXTERNAL_PORT});
 });
+
+app.get(
+  '/uc-:useCaseName/join-ad-interest-group.html',
+  async (req: Request, res: Response) => {
+    const {useCaseName} = req.params;
+    const title = 'DSP Y - Join Ad Interest Group';
+    res.render(`uc-${useCaseName}/join-ad-interest-group`, {
+      title,
+      DSP_Y_HOST,
+      EXTERNAL_PORT,
+    });
+  },
+);
+
+app.get(
+  '/uc-:useCaseName/interest-group.json',
+  async (req: Request, res: Response) => {
+    const {useCaseName} = req.params;
+    const {advertiser, id} = req.query;
+    if (
+      advertiser === undefined ||
+      id === undefined ||
+      typeof advertiser !== 'string'
+    ) {
+      return res.sendStatus(400);
+    }
+
+    res.json(buildInterestGroup(useCaseName, advertiser));
+  },
+);
 
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);

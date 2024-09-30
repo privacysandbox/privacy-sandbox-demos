@@ -91,18 +91,27 @@
         return scriptEl
       }
 
-      const DSP_A_TAG_URL = '<%= DSP_A_TAG_URL %>'
-      const DSP_B_TAG_URL = '<%= DSP_B_TAG_URL %>'
+      const dspScript = buildDspScriptTag('<%= DSP_TAG_URL %>', 'dsp_tag')
+      const dspAScript = buildDspScriptTag('<%= DSP_A_TAG_URL %>', 'dsp_a_tag')
+      const dspBScript = buildDspScriptTag('<%= DSP_B_TAG_URL %>', 'dsp_b_tag')
+      const dspXScript = buildDspScriptTag('<%= DSP_X_TAG_URL %>', 'dsp_x_tag')
+      const dspYScript = buildDspScriptTag('<%= DSP_Y_TAG_URL %>', 'dsp_y_tag')
 
-      if ('<%= isMultiSeller %>' === 'true') {
-        const dspAScript = buildDspScriptTag(`${DSP_A_TAG_URL}`, 'dsp_a_tag')
-        document.body.appendChild(dspAScript);
+      switch ('<%= auctionType %>') {
+        case 'multi':
+          document.body.appendChild(dspAScript);
+          document.body.appendChild(dspBScript);
+          break;
 
-        const dspBScript = buildDspScriptTag(`${DSP_B_TAG_URL}`, 'dsp_b_tag')
-        document.body.appendChild(dspBScript);
-      } else {
-        const dspScript = buildDspScriptTag('<%= DSP_TAG_URL %>', 'dsp_tag')
-        document.body.appendChild(dspScript);
+        case 'ba':
+          document.body.appendChild(dspAScript);
+          document.body.appendChild(dspBScript);
+          document.body.appendChild(dspXScript);
+          document.body.appendChild(dspYScript);
+          break;
+
+        default: 
+          document.body.appendChild(dspScript);
       }
     </script>
   </body>

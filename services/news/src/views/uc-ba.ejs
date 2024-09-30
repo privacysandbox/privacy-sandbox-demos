@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="icon" href="/img/spy.svg" />
+  <style>
+    .ad-row {
+      justify-content: center;
+    }
+
+    .ad-slot {
+      text-align: center;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+
+<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
+  <header class="flex flex-col items-center gap-4">
+    <h1 class="text-6xl">Daily Privacy News</h1>
+    <h2 class="text-2xl">This is a news demo site.</h2>
+    <hr class="w-full">
+  </header>
+  <main class="flex flex-col lg:flex-row justify-between gap-6">
+    <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
+      <p><%= lorem %></p>
+      <p><%= lorem %></p>
+      <div class="w-full flex flex-col items-center">
+        <ins class="ads"></ins>
+      </div>
+      <div class="w-full flex flex-row justify-center ad-row">
+        <div id="image-ad--fenced-frame" class="ad-slot"></div>
+        <div id="image-ad--iframe" class="ad-slot"></div>
+      </div>
+      <p><%= lorem %></p>
+      <div class="w-full flex flex-col items-center">
+      </div>
+      <p><%= lorem %></p>
+      <p><%= lorem %></p>
+      <p><%= lorem %></p>
+    </article>
+  </main>
+  <script>
+    function addScriptEl(src, className, resolve) {
+      const scriptEl = document.createElement('script')
+      scriptEl.src = src
+      scriptEl.className = className
+
+      if (resolve) {
+        scriptEl.addEventListener('load', resolve)
+      }
+
+      document.body.appendChild(scriptEl)
+      return scriptEl
+    }
+
+    async function setupDemo () {
+      // TODO
+    }
+
+    setupDemo()
+  </script>
+</body>
+
+</html>

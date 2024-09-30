@@ -79,6 +79,19 @@ app.get('/video-ad', async (req: Request, res: Response) => {
   });
 });
 
+app.get('/uc-:useCaseName', async (req: Request, res: Response) => {
+  const {useCaseName} = req.params;
+
+  res.render(`uc-${useCaseName}`, {
+    title: TITLE,
+    lorem: LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    NEWS_TOKEN,
+    SSP_HOST,
+  });
+});
+
 app.listen(PORT, async () => {
   console.log(`Listening on port ${PORT}`);
 });
