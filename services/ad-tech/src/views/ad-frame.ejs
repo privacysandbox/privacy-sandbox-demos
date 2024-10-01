@@ -1,0 +1,42 @@
+<%/* This is used in fenced-frames to deliver ads. */%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="icon"
+        href="" />
+  <style>
+    body {
+      width: 100vw;
+      height: 100vh;
+
+      margin: 0;
+      padding: 0;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <script src="/js/ad-frame.js"></script>
+</head>
+
+<body>
+  <a width="300"
+     height="250"
+     target="_blank"
+     rel="noopener noreferrer"
+     href="<%= destination %>">
+    <!-- smaller for avoid scrollbar -->
+    <img width="294"
+         height="245"
+         loading="lazy"
+         src="<%= creative %>">
+  </a>
+</body>
+
+</html>

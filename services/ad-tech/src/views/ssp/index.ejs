@@ -1,0 +1,64 @@
+<%/* This is the seller's index page, not typically used in tests. */%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet"
+        href="/css/index.css" />
+  <link rel="icon"
+        href="/img/spy.svg" />
+</head>
+
+<body>
+  <h1><%= title %></h1>
+  <section>
+    <h2>Supply Side Platform</h2>
+    <p>
+      SSP provides 3rd party tag which running auction via Protected Audience
+      API and decide which Ads to display.
+    </p>
+    <p>Ads will embed inside &lt;fencedframe&gt; like below.</p>
+    <ins class="ads">
+      <script class="ssp_tag"
+              src="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`) %>">
+      </script>
+    </ins>
+
+    <h2>Inside iframe</h2>
+    <ul>
+      <li>
+        <a target="_blank"
+           href="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ssp/run-ad-auction.html`) %>">
+          <%= new
+              URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ssp/run-ad-auction.html`)
+              %>
+        </a>
+      </li>
+      <li>
+        <a target="_blank"
+           href="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&id=1f45e`) %>">
+          <%= new
+              URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&id=1f45e`)
+              %>
+        </a>
+      </li>
+    </ul>
+
+    <h2>Embed script</h2>
+    <p>3rd party script provided by ssp should embed as below.</p>
+    <pre>
+      &lt;ins class="ads"&gt;
+        &lt;script
+          class="ssp_tag"
+          src="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ad-tag.js`) %>"&gt;
+        &lt;/script&gt;
+      &lt;/ins&gt;
+    </pre>
+  </section>
+</body>
+
+</html>
