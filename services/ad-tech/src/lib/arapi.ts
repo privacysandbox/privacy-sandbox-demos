@@ -1,3 +1,4 @@
+// FIXME: This file needs to be rationalized with attribution-reporting-helper.ts
 /*
  Copyright 2022 Google LLC
 
