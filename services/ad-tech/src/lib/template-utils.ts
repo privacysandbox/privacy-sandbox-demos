@@ -12,7 +12,7 @@
  */
 
 import {PORT, EXTERNAL_PORT} from '../lib/constants.js';
-import {CURRENT_HOST, SHOP_HOST} from '../lib/constants.js';
+import {HOSTNAME, SHOP_HOST} from '../lib/constants.js';
 import {DSP_HOST, DSP_A_HOST, DSP_B_HOST} from '../lib/constants.js';
 import {SSP_HOST, SSP_A_HOST, SSP_B_HOST} from '../lib/constants.js';
 import {DSP_DETAIL, DSP_A_DETAIL, DSP_B_DETAIL} from '../lib/constants.js';
@@ -21,7 +21,7 @@ import {SSP_DETAIL, SSP_A_DETAIL, SSP_B_DETAIL} from '../lib/constants.js';
 /** Returns variables for use in the ad template. */
 export const getAdTemplateVariables = (requestQuery: any) => {
   // Initialize template variables.
-  const advertiser = requestQuery.advertiser || CURRENT_HOST;
+  const advertiser = requestQuery.advertiser || HOSTNAME;
   let destination = new URL(
     `https://${advertiser}:${EXTERNAL_PORT}`,
   ).toString();
@@ -29,7 +29,7 @@ export const getAdTemplateVariables = (requestQuery: any) => {
     `https://${advertiser}:${EXTERNAL_PORT}/ads`,
   ).toString();
   const registerSourceUrl = new URL(
-    `https://${CURRENT_HOST}:${EXTERNAL_PORT}/register-source`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/register-source`,
   );
   registerSourceUrl.searchParams.append('advertiser', advertiser);
   // Load specific ad for SHOP advertiser.
@@ -42,10 +42,10 @@ export const getAdTemplateVariables = (requestQuery: any) => {
     ).toString();
     registerSourceUrl.searchParams.append('itemId', requestQuery.itemId);
   }
-  // If advertiser is ad-tech itself, show static ad.
-  if (CURRENT_HOST === advertiser) {
+  // If advertiser is current ad-tech itself, show static ad.
+  if (HOSTNAME === advertiser) {
     creative = new URL(
-      `https://${CURRENT_HOST}:${EXTERNAL_PORT}/img/emoji_u1f4b0.svg`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/img/emoji_u1f4b0.svg`,
     ).toString();
   }
   return {
@@ -59,11 +59,11 @@ export const getAdTemplateVariables = (requestQuery: any) => {
 /** Returns EJS template variables for current host. */
 export const getTemplateVariables = (titleMessage: string = '') => {
   const hostDetails = {
-    CURRENT_HOST,
+    HOSTNAME,
     EXTERNAL_PORT,
     PORT,
     SHOP_HOST,
-    title: [getAdTechDetail(CURRENT_HOST), titleMessage].join(' - '),
+    title: [getAdTechDetail(HOSTNAME), titleMessage].join(' - '),
   };
   console.log('Built template context: ', hostDetails);
   return hostDetails;

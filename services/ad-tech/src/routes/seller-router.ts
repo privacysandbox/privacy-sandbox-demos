@@ -13,7 +13,7 @@
 
 import express, {Request, Response} from 'express';
 
-import {CURRENT_HOST, EXTERNAL_PORT} from '../lib/constants.js';
+import {HOSTNAME, EXTERNAL_PORT} from '../lib/constants.js';
 import {DSP_HOST, DSP_A_HOST, DSP_B_HOST} from '../lib/constants.js';
 
 export const SellerRouter = express.Router();
@@ -50,9 +50,9 @@ SellerRouter.get(
      */
     const resolveToConfig = adType !== 'video';
     const auctionConfig = {
-      seller: new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}`).toString(),
+      seller: new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`).toString(),
       decisionLogicURL: new URL(
-        `https://${CURRENT_HOST}:${EXTERNAL_PORT}/js/ssp/${usecase}/auction-decision-logic.js`,
+        `https://${HOSTNAME}:${EXTERNAL_PORT}/js/ssp/${usecase}/auction-decision-logic.js`,
       ).toString(),
       interestGroupBuyers: [DSP_ORIGIN, DSP_A_ORIGIN, DSP_B_ORIGIN],
       auctionSignals: {

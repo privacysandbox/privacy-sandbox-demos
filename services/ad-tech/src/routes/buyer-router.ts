@@ -13,7 +13,7 @@
 
 import express, {Request, Response} from 'express';
 
-import {CURRENT_HOST, EXTERNAL_PORT} from '../lib/constants.js';
+import {HOSTNAME, EXTERNAL_PORT} from '../lib/constants.js';
 import {getTemplateVariables} from '../lib/template-utils.js';
 
 export const BuyerRouter = express.Router();
@@ -34,17 +34,17 @@ BuyerRouter.get(
 
 /** Returns the interest group to join on advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
-  const advertiser = req.query.advertiser || CURRENT_HOST;
+  const advertiser = req.query.advertiser || HOSTNAME;
   const usecase = req.query.usecase || 'default';
   console.log('Returning IG JSON: ', req.query);
   res.json({
     name: advertiser,
-    owner: new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}`).toString(),
+    owner: new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`).toString(),
     biddingLogicURL: new URL(
-      `https://${CURRENT_HOST}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsURL: new URL(
-      `https://${CURRENT_HOST}:${EXTERNAL_PORT}/dsp/bidding-signal.json`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/bidding-signal.json`,
     ).toString(),
     trustedBiddingSignalsKeys: [
       'trustedBiddingSignalsKeys-1',
@@ -52,7 +52,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
     ],
     // Daily update is not implemented yet.
     // updateURL: new URL(
-    //  `https://${CURRENT_HOST}:${EXTERNAL_PORT}/dsp/daily-update-url`,
+    //  `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/daily-update-url`,
     // ),
     userBiddingSignals: {
       'user_bidding_signals': 'user_bidding_signals',
@@ -127,12 +127,12 @@ BuyerRouter.get('/private-aggregation', async (req: Request, res: Response) => {
 const getRenderUrl = (requestQuery: any): string => {
   if ('video' === requestQuery.adType) {
     return new URL(
-      `https://${CURRENT_HOST}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
     ).toString();
   } else {
-    const advertiser = requestQuery.advertiser || CURRENT_HOST;
+    const advertiser = requestQuery.advertiser || HOSTNAME;
     const imageCreative = new URL(
-      `https://${CURRENT_HOST}:${EXTERNAL_PORT}/ads`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/ads`,
     );
     imageCreative.searchParams.append('advertiser', advertiser);
     if (requestQuery.id) {

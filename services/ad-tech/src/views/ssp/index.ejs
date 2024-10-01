@@ -24,7 +24,7 @@
     <p>Ads will embed inside &lt;fencedframe&gt; like below.</p>
     <ins class="ads">
       <script class="ssp_tag"
-              src="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`) %>">
+              src="<%= new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`) %>">
       </script>
     </ins>
 
@@ -32,17 +32,17 @@
     <ul>
       <li>
         <a target="_blank"
-           href="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ssp/run-ad-auction.html`) %>">
+           href="<%= new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/run-ad-auction.html`) %>">
           <%= new
-              URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ssp/run-ad-auction.html`)
+              URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/run-ad-auction.html`)
               %>
         </a>
       </li>
       <li>
         <a target="_blank"
-           href="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&id=1f45e`) %>">
+           href="<%= new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&id=1f45e`) %>">
           <%= new
-              URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&id=1f45e`)
+              URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&id=1f45e`)
               %>
         </a>
       </li>
@@ -54,7 +54,7 @@
       &lt;ins class="ads"&gt;
         &lt;script
           class="ssp_tag"
-          src="<%= new URL(`https://${CURRENT_HOST}:${EXTERNAL_PORT}/ad-tag.js`) %>"&gt;
+          src="<%= new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ad-tag.js`) %>"&gt;
         &lt;/script&gt;
       &lt;/ins&gt;
     </pre>

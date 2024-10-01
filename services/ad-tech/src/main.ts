@@ -13,7 +13,7 @@
 
 import express, {Application} from 'express';
 
-import {CURRENT_HOST, PORT} from './lib/constants.js';
+import {HOSTNAME, PORT} from './lib/constants.js';
 import {WellKnownRouter} from './routes/well-known-router.js';
 import {BuyerRouter} from './routes/buyer-router.js';
 import {CommonRouter} from './routes/common-router.js';
@@ -31,5 +31,5 @@ app.use('/dsp', BuyerRouter);
 app.use('/ssp', SellerRouter);
 
 app.listen(PORT, function () {
-  console.log(CURRENT_HOST, ' listening on port ', PORT);
+  console.log(HOSTNAME, ' listening on port ', PORT);
 });
