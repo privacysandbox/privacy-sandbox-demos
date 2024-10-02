@@ -11,14 +11,27 @@
  limitations under the License.
  */
 
-import express, { Request, Response } from 'express';
+import express, {Request, Response} from 'express';
 
 import {KeyValueStore} from '../controllers/key-value-store.js';
 import {HOSTNAME, EXTERNAL_PORT} from '../lib/constants.js';
 import {getTemplateVariables} from '../lib/template-utils.js';
-import { decodeAll } from 'cbor/types/lib/decoder.js';
 
 export const BuyerRouter = express.Router();
+
+/** Both types of ad size macros supported in render URLs. */
+export const RENDER_URL_SIZE_MACRO =
+  'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
+
+/** BYOS implementaion of Key Value store. */
+const trustedBiddingSignalStore = new KeyValueStore(
+  /* defaultValues= */ [
+    ['isActive', 'true'],
+    ['minBid', '1.5'],
+    ['maxBid', '2.5'],
+    ['multiplier', '1.1'],
+  ],
+);
 
 // ************************************************************************
 // HTTP handlers
@@ -47,18 +60,13 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   })(req.query.usecase);
   // Add to keys if query includes tbsKey=<key>.
   const trustedBiddingSignalsKeys = ((keys) => {
-    const defaultKeys = [
-      'isActive',
-      'minBid',
-      'maxBid',
-      'multiplier',
-    ];
+    const defaultKeys = ['isActive', 'minBid', 'maxBid', 'multiplier'];
     if (!keys) {
       return defaultKeys;
     } else if (Array.isArray(keys)) {
       return [...defaultKeys, ...keys];
     } else {
-      return [...defaultKeys, keys]
+      return [...defaultKeys, keys];
     }
   })(req.query.tbsKey);
   console.log('Returning IG JSON: ', req.query);
@@ -81,7 +89,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
       ...req.query, // Copy query from request URL.
     },
     adSizes: {
-      'medium-rectangle-default': { 'width': '300px', 'height': '250px' },
+      'medium-rectangle-default': {'width': '300px', 'height': '250px'},
     },
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
@@ -98,7 +106,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
         metadata: {
           advertiser,
           adType: 'image',
-          adSizes: [{ 'width': '300px', 'height': '250px' }],
+          adSizes: [{'width': '300px', 'height': '250px'}],
         },
       },
     ],
@@ -109,7 +117,9 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
 BuyerRouter.get('/bidding-signal.json', async (req: Request, res: Response) => {
   const publisher = req.query.hostname;
   const queryKeys = req.query.keys?.toString().split(',');
-  const signalsFromKeyValueStore = KeyValueStore.getMultiple(queryKeys!);
+  const signalsFromKeyValueStore = trustedBiddingSignalStore.getMultiple(
+    queryKeys!,
+  );
   console.log('KV BYOS', publisher, queryKeys);
   res.setHeader('X-Allow-FLEDGE', 'true');
   res.setHeader('X-fledge-bidding-signals-format-version', '2');
@@ -133,13 +143,25 @@ BuyerRouter.get('/bidding-signal.json', async (req: Request, res: Response) => {
 });
 
 /** Adds values in query parameters to Key Value Store. */
-BuyerRouter.get('/set-bidding-signal.json', async (req: Request, res: Response) => {
-  console.log('Setting bidding signals', {...req.query});
-  for (const key of Object.keys(req.query)) {
-    KeyValueStore.set(key, req.query[key]?.toString());
-  }
-  res.sendStatus(200);
-});
+BuyerRouter.get(
+  '/set-bidding-signal.json',
+  async (req: Request, res: Response) => {
+    console.log('Setting bidding signals', {...req.query});
+    for (const key of Object.keys(req.query)) {
+      trustedBiddingSignalStore.set(key, req.query[key]?.toString());
+    }
+    res.sendStatus(200);
+  },
+);
+
+/** Rewrites the default values in the key value store. */
+BuyerRouter.get(
+  '/reset-scoring-signal.json',
+  async (req: Request, res: Response) => {
+    trustedBiddingSignalStore.rewriteDefaults();
+    res.status(200).send(`Rewrote default real-time signals: ${HOSTNAME}`);
+  },
+);
 
 // TODO: Implement
 // BuyerRouter.get('/daily-update-url', async (req: Request, res: Response) => {
@@ -167,17 +189,11 @@ const getRenderUrl = (requestQuery: any): string => {
     ).toString();
   } else {
     const advertiser = requestQuery.advertiser || HOSTNAME;
-    const imageCreative = new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/ads`,
-    );
+    const imageCreative = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
     imageCreative.searchParams.append('advertiser', advertiser);
     if (requestQuery.id) {
       imageCreative.searchParams.append('itemId', requestQuery.id);
     }
-    const sizeMacro1 = 'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}';
-    const sizeMacro2 = 'adSize2=${AD_WIDTH}x${AD_HEIGHT}';
-    return `${imageCreative.toString()}&${sizeMacro1}&${sizeMacro2}`;
+    return `${imageCreative.toString()}&${RENDER_URL_SIZE_MACRO}`;
   }
 };
-
-

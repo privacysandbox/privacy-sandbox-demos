@@ -32,15 +32,28 @@ function scoreAd(
     trustedScoringSignals,
     browserSignals,
   });
-  const {
-    buyerAndSellerReportingId,
-    selectedBuyerAndSellerReportingId,
-  } = browserSignals;
+  const parsedScoringSignals = JSON.parse(
+    trustedScoringSignals?.renderURL[browserSignals.renderURL],
+  );
+  if (parsedScoringSignals?.label.toUpperCase() === 'BLOCKED') {
+    // Reject bid if creative is blocked.
+    return {
+      desirability: 0,
+      allowComponentAuction: true,
+      rejectReason: 'blocked-by-publisher',
+    };
+  }
+  const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
+    browserSignals;
   log('Reporting IDs', {
     buyerAndSellerReportingId,
     selectedBuyerAndSellerReportingId,
   });
-  return bid;
+  return {
+    desirability: bid,
+    allowComponentAuction: true,
+    // incomingBidInSellerCurrency: optional
+  };
 }
 
 function reportResult(auctionConfig, browserSignals) {

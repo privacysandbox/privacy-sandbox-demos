@@ -11,49 +11,52 @@
  limitations under the License.
  */
 
-/** BYOS Implementation of K/V Server */
-export const KeyValueStore = (() => {
-  const keyValueStore = new Map<string, string>([
-    ['isActive','true'],
-    ['minBid','1.5'],
-    ['maxBid', '2.5'],
-    ['multiplier', '1.1'],
-  ]);
+/** BYOS Implementation of K/V Server. */
+export class KeyValueStore {
+  private readonly keyValueStore = new Map<string, string>();
+  private readonly defaultData;
 
-  // Reset values every 30 mins.
-  setInterval(() => {
-    keyValueStore.set('isActive', 'true');
-    keyValueStore.set('minBid', '1.5');
-    keyValueStore.set('maxBid', '2.5');
-    keyValueStore.set('multiplier', '1.1');
-  }, 1000 * 60 * 30);
-
-  /** Set wrapper with value checking. */
-  const set = (key: string, value?: string) => {
-    if (value) {
-      keyValueStore.set(key, value);
-    }
+  /**
+   * @param defaultValues The default values to insert into the store.
+   * @param resetIntervalInMins Interval to reset the store to default values.
+   */
+  constructor(defaultValues: string[][], resetIntervalInMins: number = 30) {
+    console.log('Initializing in-memory key value store.');
+    this.defaultData = defaultValues;
+    this.rewriteDefaults();
+    setInterval(this.rewriteDefaults, 1000 * 60 * resetIntervalInMins);
   }
 
+  /** Rewrites the default data in the store. */
+  rewriteDefaults = () => {
+    console.log('Resetting real-time signals.');
+    for (const pair of this.defaultData) {
+      this.keyValueStore.set(pair[0], pair[1]);
+    }
+  };
+
+  /** Set wrapper with value checking. */
+  set = (key: string, value?: string) => {
+    if (value) {
+      console.log('Adding new real-time signal.', {key, value});
+      this.keyValueStore.set(key, value);
+    }
+  };
+
   /** Returns multiple keys queried from Protected Audience. */
-  const getMultiple = (keys: string[]): {[index: string]: string} => {
+  getMultiple = (keys: string[]): {[index: string]: string} => {
     if (!keys) {
       return {};
     }
     const signals: {[index: string]: string} = {};
     for (const key of keys) {
-      if (key && keyValueStore.has(key)) {
-        signals[key] = keyValueStore.get(key)!;
+      if (key && this.keyValueStore.has(key)) {
+        const value = this.keyValueStore.get(key);
+        if (value) {
+          signals[key] = value;
+        }
       }
     }
     return signals;
   };
-
-  return {
-      set,
-      getMultiple,
-      get: keyValueStore.get,
-      keys: keyValueStore.keys,
-      entries: keyValueStore.entries,
-  };
-})();
+}

@@ -31,24 +31,25 @@ app.get('/', async (req: Request, res: Response) => {
   if (req.query.tag) {
     if (Array.isArray(req.query.tag)) {
       // Multiple tags were specified as: tag=dsp&tag=dsp-a.
-      tags.push(...req.query.tag)
+      tags.push(...req.query.tag);
     } else {
       // Just a single tag was specified.
       tags.push(req.query.tag);
     }
   }
   // Set URL to blank if query doesn't include DSP name.
-  const DSP_A_TAG_URL = tags.includes('dsp-a') ? new URL(
-    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
-  ) : '';
-  const DSP_B_TAG_URL = tags.includes('dsp-b') ? new URL(
-    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
-  ) : '';
+  const DSP_A_TAG_URL = tags.includes('dsp-a')
+    ? new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js`)
+    : '';
+  const DSP_B_TAG_URL = tags.includes('dsp-b')
+    ? new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`)
+    : '';
   // Set to blank only when some tags are specified but not this one.
   // When no tags are specified, fallback to only activating this tag.
-  const DSP_TAG_URL = tags.length == 0 || tags.includes('dsp') ? new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
-  ) : '';
+  const DSP_TAG_URL =
+    tags.length == 0 || tags.includes('dsp')
+      ? new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`)
+      : '';
   const params = {
     title: TRAVEL_DETAIL,
     DSP_TAG_URL,

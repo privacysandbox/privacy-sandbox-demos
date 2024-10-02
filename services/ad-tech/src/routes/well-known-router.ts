@@ -13,7 +13,10 @@
 
 import cbor from 'cbor';
 import express, {Request, Response} from 'express';
-import {EventReportStore, EventReportCategory} from '../controllers/event-report-store.js';
+import {
+  EventReportStore,
+  EventReportCategory,
+} from '../controllers/event-report-store.js';
 import {decodeBucket} from '../lib/arapi.js';
 
 export const WellKnownRouter = express.Router();
