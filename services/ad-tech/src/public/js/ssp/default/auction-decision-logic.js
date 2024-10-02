@@ -32,6 +32,14 @@ function scoreAd(
     trustedScoringSignals,
     browserSignals,
   });
+  const {
+    buyerAndSellerReportingId,
+    selectedBuyerAndSellerReportingId,
+  } = browserSignals;
+  log('Reporting IDs', {
+    buyerAndSellerReportingId,
+    selectedBuyerAndSellerReportingId,
+  });
   return bid;
 }
 

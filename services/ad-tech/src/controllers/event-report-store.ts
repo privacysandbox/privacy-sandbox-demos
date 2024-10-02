@@ -34,19 +34,26 @@ export interface EventReport {
   data: any;
 }
 
-// In-memory storage for reports.
-const Reports: EventReport[] = [];
-// Clear in-memory storage every 10 min
-setInterval(() => {
-  Reports.length = 0;
-}, 1000 * 60 * 10);
+export const EventReportStore = (() => {
+  // In-memory storage for reports.
+  const Reports: EventReport[] = [];
+  // Clear in-memory storage every 10 min
+  setInterval(() => {
+    Reports.length = 0;
+  }, 1000 * 60 * 10);
 
-/** Add a new report to the in-memory storage. */
-export const addReport = (report: EventReport) => {
-  Reports.push(report);
-};
+  /** Add a new report to the in-memory storage. */
+  const addReport = (report: EventReport) => {
+    Reports.push(report);
+  };
 
-/** Returns all reports from in-memory storage. */
-export const getAllReports = (): EventReport[] => {
-  return [...Reports];
-};
+  /** Returns all reports from in-memory storage. */
+  const getAllReports = (): EventReport[] => {
+    return [...Reports];
+  };
+
+  return {
+    addReport,
+    getAllReports,
+  };
+})();

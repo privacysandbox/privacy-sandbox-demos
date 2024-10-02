@@ -36,6 +36,13 @@
     <ul>
       <li><a href=<%= `https://${NEWS_HOST}:${EXTERNAL_PORT}` %>>>news</a></p>
     </ul>
+    <p>TIP: To modify the active DSP tags on this page use the `<strong>tag</strong>` query parameter.</p>
+    <ul>
+      <li>`?tag=dsp` is the default behavior.</li>
+      <li>`?tag=dsp-a` will only load dsp-a tag.</li>
+      <li>`?tag=dsp-a&tag=dsp-b` will load dsp-a and dsp-b tags.</li>
+      <li>`?tag=dsp&tag=dsp-a&tag=dsp-b` will load all three tags.</li>
+    </ul>
   </footer>
   <script>
     function buildDspScriptTag(tagUrl) {
@@ -45,9 +52,15 @@
       scriptEl.dataset.advertiser = '<%= TRAVEL_HOST %>'
       return scriptEl
     }
-    document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
-    document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
-    document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+    if ('<%= DSP_TAG_URL %>' !== '') {
+      document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
+    }
+    if ('<%= DSP_A_TAG_URL %>' !== '') {
+      document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
+    }
+    if ('<%= DSP_B_TAG_URL %>' !== '') {
+      document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+    }
   </script>
 </body>
 

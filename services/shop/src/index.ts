@@ -124,7 +124,6 @@ app.get('/ads/:id', async (req: Request, res: Response) => {
 app.get('/items/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   const item = await getItem(id);
-  const isMultiSeller = req.query.auctionType === 'multi';
 
   const DSP_TAG_URL = new URL(
     `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
@@ -142,7 +141,6 @@ app.get('/items/:id', async (req: Request, res: Response) => {
     DSP_A_TAG_URL,
     DSP_B_TAG_URL,
     SHOP_HOST,
-    isMultiSeller,
   });
 });
 

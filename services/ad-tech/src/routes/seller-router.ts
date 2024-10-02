@@ -42,7 +42,7 @@ SellerRouter.get(
   '/auction-config.json',
   async (req: Request, res: Response) => {
     const {adType} = req.query || 'display';
-    const usecase = req.query.usecase || 'default';
+    const {usecase} = req.query || 'default';
     /* If `adType` is `video`, set `resolveToConfig` to `false`. This is because
      * video ads are only supported with iframes. If `resolveToConfig` is set to
      * `true`, `runAdAuction()` returns a `FencedFrameConfig`, which can only be
@@ -70,6 +70,7 @@ SellerRouter.get(
       },
       // Needed for size macro replacements.
       requestedSize: {'width': '300px', 'height': '250px'},
+      sellerCurrency: 'USD',
       resolveToConfig,
     };
     console.log('Returning auction config: ', {auctionConfig});

@@ -11,10 +11,12 @@
  limitations under the License.
  */
 
-import express, {Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 
+import {KeyValueStore} from '../controllers/key-value-store.js';
 import {HOSTNAME, EXTERNAL_PORT} from '../lib/constants.js';
 import {getTemplateVariables} from '../lib/template-utils.js';
+import { decodeAll } from 'cbor/types/lib/decoder.js';
 
 export const BuyerRouter = express.Router();
 
@@ -34,11 +36,34 @@ BuyerRouter.get(
 
 /** Returns the interest group to join on advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
+  // Set advertiser from query or fallback to current host.
   const advertiser = req.query.advertiser || HOSTNAME;
-  const usecase = req.query.usecase || 'default';
+  // Set usecase if included in query, else 'default'.
+  const usecase = ((usecase) => {
+    if (!usecase) {
+      return 'default';
+    }
+    return Array.isArray(usecase) ? usecase[0] : usecase;
+  })(req.query.usecase);
+  // Add to keys if query includes tbsKey=<key>.
+  const trustedBiddingSignalsKeys = ((keys) => {
+    const defaultKeys = [
+      'isActive',
+      'minBid',
+      'maxBid',
+      'multiplier',
+    ];
+    if (!keys) {
+      return defaultKeys;
+    } else if (Array.isArray(keys)) {
+      return [...defaultKeys, ...keys];
+    } else {
+      return [...defaultKeys, keys]
+    }
+  })(req.query.tbsKey);
   console.log('Returning IG JSON: ', req.query);
   res.json({
-    name: advertiser,
+    name: `${advertiser}-${usecase}`,
     owner: new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`).toString(),
     biddingLogicURL: new URL(
       `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
@@ -46,10 +71,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
     trustedBiddingSignalsURL: new URL(
       `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/bidding-signal.json`,
     ).toString(),
-    trustedBiddingSignalsKeys: [
-      'trustedBiddingSignalsKeys-1',
-      'trustedBiddingSignalsKeys-2',
-    ],
+    trustedBiddingSignalsKeys,
     // Daily update is not implemented yet.
     // updateURL: new URL(
     //  `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/daily-update-url`,
@@ -59,7 +81,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
       ...req.query, // Copy query from request URL.
     },
     adSizes: {
-      'medium-rectangle-default': {'width': '300px', 'height': '250px'},
+      'medium-rectangle-default': { 'width': '300px', 'height': '250px' },
     },
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
@@ -68,11 +90,15 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
       {
         renderURL: getRenderUrl(req.query),
         sizeGroup: 'medium-rectangle',
+        // Reporting IDs
+        selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
+        buyerReportingId: 'buyerSpecificInfo1',
+        buyerAndSellerReportingId: 'seatid-1234',
+        // Custom ad metadata defined by ad-tech.
         metadata: {
-          // Custom ad metadata defined by ad-tech.
           advertiser,
           adType: 'image',
-          adSizes: [{'width': '300px', 'height': '250px'}],
+          adSizes: [{ 'width': '300px', 'height': '250px' }],
         },
       },
     ],
@@ -81,13 +107,14 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
 
 /** Simplified BYOS implementation for Key-Value Service. */
 BuyerRouter.get('/bidding-signal.json', async (req: Request, res: Response) => {
+  const publisher = req.query.hostname;
+  const queryKeys = req.query.keys?.toString().split(',');
+  const signalsFromKeyValueStore = KeyValueStore.getMultiple(queryKeys!);
+  console.log('KV BYOS', publisher, queryKeys);
   res.setHeader('X-Allow-FLEDGE', 'true');
   res.setHeader('X-fledge-bidding-signals-format-version', '2');
   const biddingSignals = {
-    keys: {
-      'key1': 'xxxxxxxx',
-      'key2': 'yyyyyyyy',
-    },
+    keys: {...signalsFromKeyValueStore},
     perInterestGroupData: {
       'name1': {
         'priorityVector': {
@@ -105,8 +132,17 @@ BuyerRouter.get('/bidding-signal.json', async (req: Request, res: Response) => {
   res.json(biddingSignals);
 });
 
+/** Adds values in query parameters to Key Value Store. */
+BuyerRouter.get('/set-bidding-signal.json', async (req: Request, res: Response) => {
+  console.log('Setting bidding signals', {...req.query});
+  for (const key of Object.keys(req.query)) {
+    KeyValueStore.set(key, req.query[key]?.toString());
+  }
+  res.sendStatus(200);
+});
+
 // TODO: Implement
-// DspRouter.get("/daily-update-url", async (req: Request, res: Response) => {
+// BuyerRouter.get('/daily-update-url', async (req: Request, res: Response) => {
 // })
 
 /** Simple E2E Private Aggregation Demo */
@@ -143,3 +179,5 @@ const getRenderUrl = (requestQuery: any): string => {
     return `${imageCreative.toString()}&${sizeMacro1}&${sizeMacro2}`;
   }
 };
+
+

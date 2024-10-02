@@ -20,9 +20,8 @@ import {
 import {
   EventReport,
   EventReportCategory,
-  addReport,
-} from '../lib/event-report-store.js';
-import {getAllReports} from '../lib/event-report-store.js';
+  EventReportStore,
+} from '../controllers/event-report-store.js';
 import {
   getAdTemplateVariables,
   getTemplateVariables,
@@ -93,7 +92,7 @@ CommonRouter.get('/ads', async (req: Request, res: Response) => {
 CommonRouter.get('/reports', async (req: Request, res: Response) => {
   const hostDetails = getTemplateVariables('Reports');
   res.render('reports', {
-    reports: getAllReports(),
+    reports: EventReportStore.getAllReports(),
     ...hostDetails,
   });
 });
@@ -106,7 +105,7 @@ CommonRouter.get('/reporting', async (req: Request, res: Response) => {
     data: req.query,
   };
   console.log('Event-level report received: ', req.baseUrl, report);
-  addReport(report);
+  EventReportStore.addReport(report);
   handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
 });
 
@@ -121,7 +120,7 @@ CommonRouter.post('/reporting', async (req: Request, res: Response) => {
     },
   };
   console.log('Event-level report received: ', req.baseUrl, report);
-  addReport(report);
+  EventReportStore.addReport(report);
   handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
 });
 
