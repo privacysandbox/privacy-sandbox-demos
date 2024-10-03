@@ -14,10 +14,24 @@
  limitations under the License.
  */
 
+/**
+ * This is the 'default' auction decision logic for an SSP.
+ * 
+ * This script is referenced in auction configurations to choose among bids in
+ * a Protected Audience auction.
+ */
+
+// ********************************************************
+// Helper Functions
+// ********************************************************
+/** Logs to console. */
 function log(label, o) {
   console.log('[PSDemo]', label, JSON.stringify(o, ' ', ' '));
 }
 
+// ********************************************************
+// Top-level decision logic functions
+// ********************************************************
 function scoreAd(
   adMetadata,
   bid,

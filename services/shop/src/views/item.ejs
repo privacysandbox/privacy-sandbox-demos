@@ -86,7 +86,7 @@
         scriptEl.className = 'dsp_tag'
         scriptEl.src = tagUrl
         scriptEl.dataset.advertiser = '<%= SHOP_HOST %>'
-        scriptEl.dataset.id = '<%= item.id %>'
+        scriptEl.dataset.itemId = '<%= item.id %>'
         return scriptEl
       }
       document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));

@@ -194,8 +194,8 @@ const getRenderUrl = (requestQuery: any): string => {
     const advertiser = requestQuery.advertiser || HOSTNAME;
     const imageCreative = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
     imageCreative.searchParams.append('advertiser', advertiser);
-    if (requestQuery.id) {
-      imageCreative.searchParams.append('itemId', requestQuery.id);
+    if (requestQuery.itemdId) {
+      imageCreative.searchParams.append('itemId', requestQuery.itemId);
     }
     return `${imageCreative.toString()}&${RENDER_URL_SIZE_MACRO}`;
   }

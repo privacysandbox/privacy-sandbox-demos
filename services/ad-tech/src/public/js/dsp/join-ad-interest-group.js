@@ -14,7 +14,18 @@
  limitations under the License.
  */
 
-// Protected Audience API
+/**
+ * This script is loaded in the join-ad-interest-group.html iframe.
+ *
+ * This script starts by querying the ad-tech server (same origin to current
+ * script) to retrieve interest group metadata to use with the Protected
+ * Audience API on the client-side. First-party context is also included in
+ * this request to the ad-tech server which includes URL query parameters
+ * from the top-level page as well as any script dataset context directly
+ * attached to the DSP tag.
+ */
+
+/** Sends first-party context to server to retrieve interest group metadata. */
 async function getInterestGroupFromServer() {
   const currentUrl = new URL(location.href);
   const interestGroupUrl = new URL(location.origin);
@@ -23,21 +34,24 @@ async function getInterestGroupFromServer() {
   for (const searchParam of currentUrl.searchParams) {
     interestGroupUrl.searchParams.append(searchParam[0], searchParam[1]);
   }
-  const res = await fetch(interestGroupUrl);
+  // TODO: consider using Topics API for choosing Ads
+  // const topics = await document.browsingTopics?
+  // console.log({ topics })
+  // interestGroupUrl.searchParams.append('topics', topics);
+  const res = await fetch(interestGroupUrl, {browsingTopics: true});
   if (res.ok) {
     return res.json();
   }
 }
 
+/** Main function that joins the interest group. */
 document.addEventListener('DOMContentLoaded', async (e) => {
   if (navigator.joinAdInterestGroup === undefined) {
-    return console.log('[PSDemo] Protected Audience API is not supported.');
+    console.log('[PSDemo] Protected Audience API is not supported.');
+    return;
   }
   const interestGroup = await getInterestGroupFromServer();
   console.log('[PSDemo] Joining interest group: ', {interestGroup});
   const kSecsPerDay = 3600 * 24 * 30;
   console.log(await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay));
-  // TODO: consider using Topics API for choosing Ads
-  // const topics = await document.browsingTopics?.()
-  // console.log({ topics })
 });

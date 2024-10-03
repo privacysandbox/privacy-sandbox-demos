@@ -14,6 +14,17 @@
  limitations under the License.
  */
 
+/**
+ * This is the 'default' auction bidding logic for a DSP.
+ * 
+ * This script is used by interest groups to generate bids and report on
+ * participation in Protected Audience auctions.
+ */
+
+// ********************************************************
+// Helper Functions
+// ********************************************************
+/** Logs to console. */
 function log(label, o) {
   console.log('[PSDemo] ', label, JSON.stringify(o, ' ', ' '));
 }
@@ -47,6 +58,9 @@ function selectDealId(selectedAd) {
   return selectedId;
 }
 
+// ********************************************************
+// Top-level Bidding Logic Functions
+// ********************************************************
 function generateBid(
   interestGroup,
   auctionSignals,
