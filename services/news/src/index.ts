@@ -28,6 +28,7 @@ const {
   NEWS_TOKEN,
   NEWS_DETAIL,
   DSP_HOST,
+  TOPICS_SERVER_HOST,
 } = process.env;
 
 const app: Application = express();
@@ -59,13 +60,23 @@ app.get('/', async (req: Request, res: Response) => {
     SSP_A_HOST,
     SSP_B_HOST,
     AD_SERVER_HOST,
-    SSP_TAG_URL: `https://${SSP_HOST}/ad-tag.js`,
+    SSP_TAG_URL: `https://${SSP_HOST}/js/ssp/ssp-tag.js`,
     AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
     HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
     isMultiSeller: auctionType === 'multi',
-    bucket: bucket,
-    cloudEnv: cloudEnv,
+    bucket,
+    cloudEnv,
   });
+});
+
+app.get('/fetch-topics', async (req: Request, res: Response) => {
+  const hostname = req.hostname;
+  const title = hostname.substring(0, hostname.indexOf('.')) || 'news';
+  const params = {
+    title,
+    TOPICS_SERVER_HOST,
+  };
+  res.render('fetch-topics', params);
 });
 
 app.get('/video-ad', async (req: Request, res: Response) => {

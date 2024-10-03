@@ -27,7 +27,9 @@ import {
   SHOP_DETAIL,
   SHOP_HOST,
   SSP_HOST,
-} from './env.js';
+  SSP_A_HOST,
+  SSP_B_HOST,
+} from './lib/constants.js';
 import {
   Order,
   addOrder,
@@ -92,7 +94,11 @@ app.locals = {
     const {item, size, quantity} = order;
     return [
       new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
     ].map((triggerUrl) => {
       triggerUrl.pathname = '/register-trigger';
       triggerUrl.searchParams.append('id', item.id);

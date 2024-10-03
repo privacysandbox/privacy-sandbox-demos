@@ -4,7 +4,6 @@ volumes:
   shop_node_modules:
   travel_node_modules:
   ad-tech_node_modules:
-  topics_node_modules:
   topics-server_node_modules:
   ad_server_node_modules:
 
@@ -161,18 +160,6 @@ services:
     networks:
       - adnetwork
 
-  topics:
-    image: gcr.io/privacy-sandbox-demos/topics:latest
-    build: ./services/topics
-    container_name: "sandcastle_topics"
-    env_file:
-      - .env
-    volumes:
-      - ./services/topics:/workspace
-      - topics_node_modules:/workspace/node_modules
-    networks:
-      - adnetwork
-
   topics-server:
     image: gcr.io/privacy-sandbox-demos/topics-server:latest
     build: ./services/topics-server
@@ -216,7 +203,6 @@ services:
       - dsp-b
       - ad-server
       - collector
-      - topics
       - topics-server
 
 networks:

@@ -48,6 +48,8 @@ CommonRouter.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', req.headers['origin']);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
+  // Observe browsing topics.
+  res.setHeader('Observe-Browsing-Topics', '?1');
   next();
 });
 
@@ -123,6 +125,14 @@ CommonRouter.post('/reporting', async (req: Request, res: Response) => {
   EventReportStore.addReport(report);
   handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
 });
+
+CommonRouter.get(
+  '/observe-browsing-topics',
+  async (req: Request, res: Response) => {
+    const browsingTopics = req.get('Sec-Browsing-Topics');
+    res.json({topics: browsingTopics});
+  },
+);
 
 // HTTP Handlers for Attribution Reporting.
 /** Registers a click or view attribution source. */

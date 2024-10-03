@@ -167,16 +167,19 @@ BuyerRouter.get(
 // BuyerRouter.get('/daily-update-url', async (req: Request, res: Response) => {
 // })
 
-/** Simple E2E Private Aggregation Demo */
-BuyerRouter.get('/private-aggregation', async (req: Request, res: Response) => {
-  const bucket = req.query.bucket;
-  const cloudEnv = req.query.cloudEnv;
-  console.log(`${bucket}, ${cloudEnv}`);
-  res.render('dsp/private-aggregation', {
-    bucket: bucket,
-    cloudEnv: cloudEnv,
-  });
-});
+/** Iframe document used as context to test Private Aggregation. */
+BuyerRouter.get(
+  '/test-private-aggregation.html',
+  async (req: Request, res: Response) => {
+    const bucket = req.query.bucket;
+    const cloudEnv = req.query.cloudEnv;
+    console.log(`${bucket}, ${cloudEnv}`);
+    res.render('dsp/test-private-aggregation', {
+      bucket: bucket,
+      cloudEnv: cloudEnv,
+    });
+  },
+);
 
 // ************************************************************************
 // DSP helper functions

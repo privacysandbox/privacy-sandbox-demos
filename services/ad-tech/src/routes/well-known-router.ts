@@ -117,7 +117,7 @@ WellKnownRouter.post(
 );
 
 // ************************************************************************
-// Private Aggregation
+// Private Aggregation with Shared Storage
 // ************************************************************************
 WellKnownRouter.post(
   '/private-aggregation/report-shared-storage',
@@ -144,6 +144,41 @@ WellKnownRouter.post(
     );
     EventReportStore.addReport({
       category: EventReportCategory.PAGG_VIA_SS_DEBUG,
+      timestamp: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
+// ************************************************************************
+// Private Aggregation with Protected Audience
+// ************************************************************************
+WellKnownRouter.post(
+  '/private-aggregation/report-protected-audience',
+  async (req: Request, res: Response) => {
+    console.log(
+      '[pAgg+SS] Received aggregatable report on live endpoint: ',
+      req.body,
+    );
+    EventReportStore.addReport({
+      category: EventReportCategory.PAGG_VIA_PAAPI,
+      timestamp: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
+WellKnownRouter.post(
+  '/private-aggregation/debug/report-protected-audience',
+  async (req: Request, res: Response) => {
+    console.log(
+      '[pAgg+SS] Received aggregatable report on debug endpoint: ',
+      req.body,
+    );
+    EventReportStore.addReport({
+      category: EventReportCategory.PAGG_VIA_PAAPI_DEBUG,
       timestamp: Date.now().toString(),
       data: req.body,
     });
