@@ -18,10 +18,10 @@ import {
   handleAttributionTriggerRegistration,
 } from '../lib/attribution-reporting-helper.js';
 import {
-  EventReport,
-  EventReportCategory,
-  EventReportStore,
-} from '../controllers/event-report-store.js';
+  Report,
+  ReportCategory,
+  ReportStore,
+} from '../controllers/report-store.js';
 import {
   getAdTemplateVariables,
   getTemplateVariables,
@@ -45,8 +45,9 @@ CommonRouter.use((req: Request, res: Response, next: NextFunction) => {
   });
   // Enable CORS.
   if (req.headers.origin?.startsWith('https://privacy-sandbox-demos-')) {
-    res.setHeader('Access-Control-Allow-Origin', req.headers['origin']);
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin!);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Private-Network', 'true');
   }
   // Observe browsing topics.
   res.setHeader('Observe-Browsing-Topics', '?1');
@@ -74,6 +75,15 @@ CommonRouter.use(
 // ************************************************************************
 // HTTP handlers
 // ************************************************************************
+/** Handler for pre-flight OPTIONS requests. */
+CommonRouter.options('*', (req: Request, res: Response) => {
+  if (req.headers.origin?.startsWith('https://privacy-sandbox-demos-')) {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin!);
+    res.setHeader('Access-Control-Private-Network', 'true');
+    res.sendStatus(200);
+  }
+});
+
 /** Index page, not commonly used in tests. */
 CommonRouter.get('/', async (req: Request, res: Response) => {
   if (req.hostname.includes('ssp')) {
@@ -83,6 +93,15 @@ CommonRouter.get('/', async (req: Request, res: Response) => {
   }
 });
 
+/** Shows all reports from in-memory storage. */
+CommonRouter.get('/reports', async (req: Request, res: Response) => {
+  const hostDetails = getTemplateVariables('Reports');
+  res.render('reports', {
+    reports: ReportStore.getAllReports(),
+    ...hostDetails,
+  });
+});
+
 /** Used as render URL in interest groups. */
 CommonRouter.get('/ads', async (req: Request, res: Response) => {
   const templateVariables = getAdTemplateVariables(req.query);
@@ -90,31 +109,23 @@ CommonRouter.get('/ads', async (req: Request, res: Response) => {
   res.render('ad-frame', templateVariables);
 });
 
-/** Shows all reports from in-memory storage. */
-CommonRouter.get('/reports', async (req: Request, res: Response) => {
-  const hostDetails = getTemplateVariables('Reports');
-  res.render('reports', {
-    reports: EventReportStore.getAllReports(),
-    ...hostDetails,
-  });
-});
-
+// HTTP handlers for event-level reporting and logging.
 /** Receives event logs and registers attribution source if eligible. */
 CommonRouter.get('/reporting', async (req: Request, res: Response) => {
-  const report: EventReport = {
-    category: EventReportCategory.EVENT_LEVEL_LOG,
+  const report: Report = {
+    category: ReportCategory.EVENT_LEVEL_LOG,
     timestamp: Date.now().toString(),
     data: req.query,
   };
   console.log('Event-level report received: ', req.baseUrl, report);
-  EventReportStore.addReport(report);
+  ReportStore.addReport(report);
   handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
 });
 
 /** Receives event logs and registers attribution source if eligible. */
 CommonRouter.post('/reporting', async (req: Request, res: Response) => {
-  const report: EventReport = {
-    category: EventReportCategory.EVENT_LEVEL_LOG,
+  const report: Report = {
+    category: ReportCategory.EVENT_LEVEL_LOG,
     timestamp: Date.now().toString(),
     data: {
       ...req.query,
@@ -122,10 +133,12 @@ CommonRouter.post('/reporting', async (req: Request, res: Response) => {
     },
   };
   console.log('Event-level report received: ', req.baseUrl, report);
-  EventReportStore.addReport(report);
+  ReportStore.addReport(report);
   handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
 });
 
+// HTTP Handler for Topics.
+/** TODO: Verify this use-case */
 CommonRouter.get(
   '/observe-browsing-topics',
   async (req: Request, res: Response) => {

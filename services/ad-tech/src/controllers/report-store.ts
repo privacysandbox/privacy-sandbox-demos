@@ -14,8 +14,8 @@
  limitations under the License.
  */
 
-/** Basic categories of event-level reports. */
-export enum EventReportCategory {
+/** Basic categories of reports. */
+export enum ReportCategory {
   EVENT_LEVEL_LOG,
   ARA_EVENT_LEVEL,
   ARA_EVENT_LEVEL_DEBUG,
@@ -27,28 +27,28 @@ export enum EventReportCategory {
   PAGG_VIA_PAAPI_DEBUG,
 }
 
-/** High-level abstraction of an event-level report. */
-export interface EventReport {
-  category: EventReportCategory;
+/** High-level abstraction of a report. */
+export interface Report {
+  category: ReportCategory;
   timestamp: string;
   data: any;
 }
 
-export const EventReportStore = (() => {
+export const ReportStore = (() => {
   // In-memory storage for reports.
-  const Reports: EventReport[] = [];
+  const Reports: Report[] = [];
   // Clear in-memory storage every 10 min
   setInterval(() => {
     Reports.length = 0;
   }, 1000 * 60 * 10);
 
   /** Add a new report to the in-memory storage. */
-  const addReport = (report: EventReport) => {
+  const addReport = (report: Report) => {
     Reports.push(report);
   };
 
   /** Returns all reports from in-memory storage. */
-  const getAllReports = (): EventReport[] => {
+  const getAllReports = (): Report[] => {
     return [...Reports];
   };
 

@@ -15,10 +15,12 @@
  */
 
 /**
- * This is the 'default' auction decision logic for an SSP.
- * 
- * This script is referenced in auction configurations to choose among bids in
- * a Protected Audience auction.
+ * Where is this script used:
+ *   This is the 'default' auction decision logic for an SSP.
+ *
+ * What does this script do:
+ *   This script is referenced in auction configurations to choose among bids
+ *   in a Protected Audience auction.
  */
 
 // ********************************************************

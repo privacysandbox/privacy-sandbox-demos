@@ -15,6 +15,14 @@
  limitations under the License.
  */
 
+/**
+ * This script needs to be refactored into a specific use-case.
+ *
+ * This is a simple script to test aggregate reporting with Shared Storage and
+ * Private Aggregation. This script is executed inside a Shared Storage
+ * worklet.
+ */
+
 class TestPrivateAggregation {
   async run(data) {
     let cloudEnv = await sharedStorage.get('cloudenv');

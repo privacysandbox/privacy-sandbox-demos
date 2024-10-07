@@ -14,53 +14,57 @@
  limitations under the License.
  */
 
-const getAuctionConfig = async () => {
-  const currentUrl = new URL(location.href);
-  const auctionConfigUrl = new URL(location.origin);
-  auctionConfigUrl.pathname = '/ssp/auction-config.json';
-  // Copy query params from current context.
-  for (const searchParam of currentUrl.searchParams) {
-    auctionConfigUrl.searchParams.append(searchParam[0], searchParam[1]);
-  }
-  const res = await fetch(auctionConfigUrl);
-  if (res.ok) {
-    return res.json();
-  }
-};
+(() => {
+  /** Makes a request to the server to retrieve an auction config. */
+  const getAuctionConfig = async () => {
+    const currentUrl = new URL(location.href);
+    const auctionConfigUrl = new URL(location.origin);
+    auctionConfigUrl.pathname = '/ssp/auction-config.json';
+    // Copy query params from current context.
+    for (const searchParam of currentUrl.searchParams) {
+      auctionConfigUrl.searchParams.append(searchParam[0], searchParam[1]);
+    }
+    const res = await fetch(auctionConfigUrl);
+    if (res.ok) {
+      return res.json();
+    }
+  };
 
-document.addEventListener('DOMContentLoaded', async () => {
-  if (navigator.runAdAuction === undefined) {
-    console.log('[PSDemo] Protected Audience API is not supported.');
-    return;
-  }
-  const auctionConfig = await getAuctionConfig();
-  const adAuctionResult = await navigator.runAdAuction(auctionConfig);
-  console.log('[PSDemo] Protected Audience config, result: ', {
-    auctionConfig,
-    adAuctionResult,
+  /** Main function that starts the single-seller auction. */
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (navigator.runAdAuction === undefined) {
+      console.log('[PSDemo] Protected Audience API is not supported.');
+      return;
+    }
+    const auctionConfig = await getAuctionConfig();
+    const adAuctionResult = await navigator.runAdAuction(auctionConfig);
+    console.log('[PSDemo] Protected Audience config, result: ', {
+      auctionConfig,
+      adAuctionResult,
+    });
+    if (!adAuctionResult) {
+      console.log('[PSDemo] Protected Audience did not return a result.');
+      return;
+    }
+    if (new URL(location.href).searchParams.get('adType') === 'video') {
+      // Video ads are only supported with iframes.
+      const adFrame = document.createElement('iframe');
+      adFrame.id = 'video-ad-frame';
+      adFrame.src = adAuctionResult;
+      adFrame.width = 0;
+      adFrame.height = 0;
+      document.body.appendChild(adFrame);
+    } else {
+      // Default to display ads with fencedframes.
+      const fencedframe = document.createElement('fencedframe');
+      fencedframe.config = adAuctionResult;
+      fencedframe.setAttribute('mode', 'opaque-ads');
+      fencedframe.setAttribute('scrolling', 'no');
+      // fencedframe.setAttribute('allow', 'attribution-reporting');
+      fencedframe.width = 300;
+      fencedframe.height = 250;
+      console.log('[PSDemo] Display ads in ', fencedframe);
+      document.body.appendChild(fencedframe);
+    }
   });
-  if (!adAuctionResult) {
-    console.log('[PSDemo] Protected Audience did not return a result.');
-    return;
-  }
-  if (new URL(location.href).searchParams.get('adType') === 'video') {
-    // Video ads are only supported with iframes.
-    const adFrame = document.createElement('iframe');
-    adFrame.id = 'video-ad-frame';
-    adFrame.src = adAuctionResult;
-    adFrame.width = 0;
-    adFrame.height = 0;
-    document.body.appendChild(adFrame);
-  } else {
-    // Default to display ads with fencedframes.
-    const fencedframe = document.createElement('fencedframe');
-    fencedframe.config = adAuctionResult;
-    fencedframe.setAttribute('mode', 'opaque-ads');
-    fencedframe.setAttribute('scrolling', 'no');
-    // $fencedframe.setAttribute("allow", "attribution-reporting; run-ad-auction")
-    fencedframe.width = 300;
-    fencedframe.height = 250;
-    console.log('[PSDemo] Display ads in ', fencedframe);
-    document.body.appendChild(fencedframe);
-  }
-});
+})();

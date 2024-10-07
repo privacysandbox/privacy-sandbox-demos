@@ -13,14 +13,20 @@
 
 /** BYOS Implementation of K/V Server. */
 export class KeyValueStore {
+  /** In-memory key value store. */
   private readonly keyValueStore = new Map<string, string>();
-  private readonly defaultData;
+
+  /** Initial data to rewrite periodically. */
+  private readonly defaultData: string[][];
 
   /**
    * @param defaultValues The default values to insert into the store.
    * @param resetIntervalInMins Interval to reset the store to default values.
    */
-  constructor(defaultValues: string[][], resetIntervalInMins: number = 30) {
+  constructor(
+    defaultValues: string[][] = [],
+    resetIntervalInMins: number = 30,
+  ) {
     console.log('Initializing in-memory key value store.');
     this.defaultData = defaultValues;
     this.rewriteDefaults();
@@ -30,8 +36,10 @@ export class KeyValueStore {
   /** Rewrites the default data in the store. */
   rewriteDefaults = () => {
     console.log('Resetting real-time signals.');
-    for (const pair of this.defaultData) {
-      this.keyValueStore.set(pair[0], pair[1]);
+    for (const [key, value] of this.defaultData) {
+      if (key) {
+        this.keyValueStore.set(key, value || '');
+      }
     }
   };
 

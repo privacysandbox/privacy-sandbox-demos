@@ -44,8 +44,12 @@ export const getAdTemplateVariables = (requestQuery: any) => {
   }
   // If advertiser is current ad-tech itself, show static ad.
   if (HOSTNAME === advertiser) {
-    creative = new URL(
+    creative = new URL( // Bag of cash image.
       `https://${HOSTNAME}:${EXTERNAL_PORT}/img/emoji_u1f4b0.svg`,
+    ).toString();
+  } else if ('contextual' === advertiser) {
+    creative = new URL( // Doughnut image.
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/img/emoji_u1f369.svg`,
     ).toString();
   }
   return {

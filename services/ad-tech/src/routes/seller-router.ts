@@ -14,25 +14,27 @@
 import express, {Request, Response} from 'express';
 
 import {KeyValueStore} from '../controllers/key-value-store.js';
-import {
-  HOSTNAME,
-  EXTERNAL_PORT,
-  TRAVEL_HOST,
-  SHOP_HOST,
-} from '../lib/constants.js';
+import {CURRENT_ORIGIN, HOSTNAME} from '../lib/constants.js';
+import {EXTERNAL_PORT, SHOP_HOST, TRAVEL_HOST} from '../lib/constants.js';
 import {DSP_HOST, DSP_A_HOST, DSP_B_HOST} from '../lib/constants.js';
-import {DSP_ORIGIN, DSP_A_ORIGIN, DSP_B_ORIGIN} from '../lib/constants.js';
 import {KNOWN_SHOP_ITEM_LABELS_BY_ID} from '../lib/constants.js';
 import {RENDER_URL_SIZE_MACRO} from './buyer-router.js';
+import {ContextualAuctionRunner} from '../controllers/contextual-auction-runner.js';
 
 export const SellerRouter = express.Router();
+const DSP_HOSTS = [DSP_HOST!, DSP_A_HOST!, DSP_B_HOST!];
+const DSP_ORIGINS = DSP_HOSTS.map((dspHost) => {
+  return new URL(`https://${dspHost}:${EXTERNAL_PORT}`).toString();
+});
 
+// ********************************************************
+// BYOS Key - Value Store
+// ********************************************************
 /** Intializes scoring signals for key value store. */
 const getDefaultScoringSignals = (): string[][] => {
   const knownAds: string[][] = [];
-  const dspHosts = [DSP_HOST, DSP_A_HOST, DSP_B_HOST];
   // Ads from Travel advertiser
-  for (const dspHost of dspHosts) {
+  for (const dspHost of DSP_HOSTS) {
     knownAds.push([
       new URL(
         `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${TRAVEL_HOST}&${RENDER_URL_SIZE_MACRO}`,
@@ -44,7 +46,7 @@ const getDefaultScoringSignals = (): string[][] => {
   }
   // Ads from Shop advertiser
   for (const [key, value] of Object.entries(KNOWN_SHOP_ITEM_LABELS_BY_ID)) {
-    for (const dspHost of dspHosts) {
+    for (const dspHost of DSP_HOSTS) {
       knownAds.push([
         new URL(
           `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&itemId=${key}&${RENDER_URL_SIZE_MACRO}`,
@@ -63,6 +65,81 @@ const trustedScoringSignalsStore = new KeyValueStore(
   getDefaultScoringSignals(),
 );
 
+// ********************************************************
+// Auction config helper functions
+// ********************************************************
+const getPerBuyerSignals = (
+  buyerSignals: {[key: string]: {[key: string]: string}} = {},
+) => {
+  const perBuyerSignals: {[key: string]: {[key: string]: string}} = {};
+  for (const dspOrigin of DSP_ORIGINS) {
+    if (buyerSignals[dspOrigin]) {
+      perBuyerSignals[dspOrigin] = buyerSignals[dspOrigin];
+    } else {
+      perBuyerSignals[dspOrigin] = {
+        'per_buyer_signals': 'per_buyer_signals',
+      };
+    }
+  }
+};
+
+/** Assembles and returns an auction configuration. */
+const constructAuctionConfig = (context: {
+  useCase?: string;
+  adType?: string;
+  auctionSignals?: {[key: string]: string};
+  buyerSignals?: {[key: string]: {[key: string]: string}};
+}) => {
+  const useCase = context.useCase || 'default';
+  const adType = context.adType || 'display';
+  const {auctionSignals, buyerSignals} = context;
+  /* If `adType` is `video`, set `resolveToConfig` to `false`. This is because
+   * video ads are only supported with iframes. If `resolveToConfig` is set to
+   * `true`, `runAdAuction()` returns a `FencedFrameConfig`, which can only be
+   * rendered in FencedFrames and not iframes.
+   */
+  const resolveToConfig = adType !== 'video';
+  console.log('Constructing auction config', {
+    useCase,
+    adType,
+    auctionSignals,
+    resolveToConfig,
+  });
+  const auctionConfig = {
+    seller: CURRENT_ORIGIN,
+    decisionLogicURL: new URL(
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/ssp/${useCase}/auction-decision-logic.js`,
+    ).toString(),
+    trustedScoringSignalsURL: new URL(
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/scoring-signal.json`,
+    ).toString(),
+    /*
+    TODO: Consider implementing direct from seller signals.
+    directFromSellerSignals: new URL(
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/direct-signal.json`,
+    ),
+    */
+    interestGroupBuyers: DSP_ORIGINS,
+    auctionSignals: {
+      'auction_signals': 'auction_signals',
+      adType,
+      ...auctionSignals, // Copy signals from request query.
+    },
+    sellerSignals: {
+      'seller_signals': 'seller_signals',
+    },
+    perBuyerSignals: getPerBuyerSignals(buyerSignals),
+    // Needed for size macro replacements.
+    requestedSize: {'width': '300px', 'height': '250px'},
+    sellerCurrency: 'USD',
+    resolveToConfig,
+    // deprecatedReplaceInURN: {
+    //   '%%SSP_VAST_URI%%': `https://${HOSTNAME}:${EXTERNAL_PORT}/vast/preroll.xml`,
+    // }
+  };
+  return auctionConfig;
+};
+
 // ************************************************************************
 // HTTP handlers
 // ************************************************************************
@@ -74,45 +151,60 @@ SellerRouter.get(
   },
 );
 
+/** Returns the winning contextual ad and auction config for PAAPI. */
+SellerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
+  // Collect signals from request context.
+  const signals: {[key: string]: string} = {};
+  for (const key of Object.keys(req.query)) {
+    signals[key] = req.query[key]?.toString() || '';
+  }
+  if (!signals['auctionId']) {
+    // Add an auction ID if missing in request.
+    // E.g. of auction ID: 'SSP-32e7f33f-a7da-4ea9-af01-63e17da48ff8'
+    signals['auctionId'] = `SSP-${crypto.randomUUID()}`;
+  }
+  // Run server-side contextual auction.
+  const contextualBids = await ContextualAuctionRunner.getContextualBids(
+    /* bidderHosts= */ DSP_HOSTS,
+    /* signals= */ signals,
+  );
+  const [winningContextualBid] = contextualBids.sort((a, b) => b.bid - a.bid);
+  // Collect buyer signals from contextual bids.
+  const buyerSignals: {[key: string]: any} = {};
+  for (const contextualBid of contextualBids) {
+    if (contextualBid.buyerSignals) {
+      buyerSignals[contextualBid.bidder] = contextualBid.buyerSignals;
+    }
+  }
+  const response = {
+    bidder: CURRENT_ORIGIN,
+    auctionId: signals['auctionId'],
+    bid: winningContextualBid.bid,
+    renderURL: winningContextualBid.renderURL,
+    componentAuctionConfig: constructAuctionConfig({
+      useCase: req.query.useCase?.toString(),
+      adType: req.query.adType?.toString(),
+      auctionSignals: signals,
+      buyerSignals,
+    }),
+  };
+  console.log('Responding to contextual bid request', response);
+  res.json(response);
+});
+
 /** Returns the PAAPI auction config. */
 SellerRouter.get(
   '/auction-config.json',
   async (req: Request, res: Response) => {
-    const adType = req.query.adType || 'display';
-    const usecase = req.query.usecase || 'default';
-    /* If `adType` is `video`, set `resolveToConfig` to `false`. This is because
-     * video ads are only supported with iframes. If `resolveToConfig` is set to
-     * `true`, `runAdAuction()` returns a `FencedFrameConfig`, which can only be
-     * rendered in FencedFrames and not iframes.
-     */
-    const resolveToConfig = adType !== 'video';
-    const auctionConfig = {
-      seller: new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`).toString(),
-      decisionLogicURL: new URL(
-        `https://${HOSTNAME}:${EXTERNAL_PORT}/js/ssp/${usecase}/auction-decision-logic.js`,
-      ).toString(),
-      trustedScoringSignalsURL: new URL(
-        `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/scoring-signal.json`,
-      ).toString(),
-      interestGroupBuyers: [DSP_ORIGIN, DSP_A_ORIGIN, DSP_B_ORIGIN],
-      auctionSignals: {
-        'auction_signals': 'auction_signals',
-        adType,
-        ...req.query, // Copy signals from request query.
-      },
-      sellerSignals: {
-        'seller_signals': 'seller_signals',
-      },
-      perBuyerSignals: {
-        [DSP_ORIGIN]: {'per_buyer_signals': 'per_buyer_signals'},
-        [DSP_A_ORIGIN]: {'per_buyer_signals': 'per_buyer_signals'},
-        [DSP_B_ORIGIN]: {'per_buyer_signals': 'per_buyer_signals'},
-      },
-      // Needed for size macro replacements.
-      requestedSize: {'width': '300px', 'height': '250px'},
-      sellerCurrency: 'USD',
-      resolveToConfig,
-    };
+    const signals: {[key: string]: string} = {};
+    for (const key of Object.keys(req.query)) {
+      signals[key] = req.query[key]?.toString() || '';
+    }
+    const auctionConfig = constructAuctionConfig({
+      useCase: req.query.useCase?.toString(),
+      adType: req.query.adType?.toString(),
+      auctionSignals: signals,
+    });
     console.log('Returning auction config: ', {auctionConfig});
     res.json(auctionConfig);
   },

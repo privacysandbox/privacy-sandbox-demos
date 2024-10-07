@@ -13,10 +13,7 @@
 
 import cbor from 'cbor';
 import express, {Request, Response} from 'express';
-import {
-  EventReportStore,
-  EventReportCategory,
-} from '../controllers/event-report-store.js';
+import {ReportStore, ReportCategory} from '../controllers/report-store.js';
 import {decodeBucket} from '../lib/arapi.js';
 
 export const WellKnownRouter = express.Router();
@@ -32,8 +29,8 @@ WellKnownRouter.post(
       '[ARA] Received event-level report on live endpoint: ',
       req.body,
     );
-    EventReportStore.addReport({
-      category: EventReportCategory.ARA_EVENT_LEVEL,
+    ReportStore.addReport({
+      category: ReportCategory.ARA_EVENT_LEVEL,
       timestamp: Date.now().toString(),
       data: req.body,
     });
@@ -49,8 +46,8 @@ WellKnownRouter.post(
       '[ARA] Received event-level report on debug endpoint: ',
       req.body,
     );
-    EventReportStore.addReport({
-      category: EventReportCategory.ARA_EVENT_LEVEL_DEBUG,
+    ReportStore.addReport({
+      category: ReportCategory.ARA_EVENT_LEVEL_DEBUG,
       timestamp: Date.now().toString(),
       data: req.body,
     });
@@ -68,8 +65,8 @@ WellKnownRouter.post(
       '[ARA] Received aggregatable report on live endpoint: ',
       JSON.stringify(report),
     );
-    EventReportStore.addReport({
-      category: EventReportCategory.ARA_AGGREGATE,
+    ReportStore.addReport({
+      category: ReportCategory.ARA_AGGREGATE,
       timestamp: Date.now().toString(),
       data: report,
     });
@@ -107,8 +104,8 @@ WellKnownRouter.post(
       JSON.stringify(debugReport),
     );
     // Save to global storage
-    EventReportStore.addReport({
-      category: EventReportCategory.ARA_AGGREGATE_DEBUG,
+    ReportStore.addReport({
+      category: ReportCategory.ARA_AGGREGATE_DEBUG,
       timestamp: Date.now().toString(),
       data: debugReport,
     });
@@ -126,8 +123,8 @@ WellKnownRouter.post(
       '[pAgg+SS] Received aggregatable report on live endpoint: ',
       req.body,
     );
-    EventReportStore.addReport({
-      category: EventReportCategory.PAGG_VIA_SS,
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_SS,
       timestamp: Date.now().toString(),
       data: req.body,
     });
@@ -142,8 +139,8 @@ WellKnownRouter.post(
       '[pAgg+SS] Received aggregatable report on debug endpoint: ',
       req.body,
     );
-    EventReportStore.addReport({
-      category: EventReportCategory.PAGG_VIA_SS_DEBUG,
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_SS_DEBUG,
       timestamp: Date.now().toString(),
       data: req.body,
     });
@@ -161,8 +158,8 @@ WellKnownRouter.post(
       '[pAgg+SS] Received aggregatable report on live endpoint: ',
       req.body,
     );
-    EventReportStore.addReport({
-      category: EventReportCategory.PAGG_VIA_PAAPI,
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_PAAPI,
       timestamp: Date.now().toString(),
       data: req.body,
     });
@@ -177,8 +174,8 @@ WellKnownRouter.post(
       '[pAgg+SS] Received aggregatable report on debug endpoint: ',
       req.body,
     );
-    EventReportStore.addReport({
-      category: EventReportCategory.PAGG_VIA_PAAPI_DEBUG,
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_PAAPI_DEBUG,
       timestamp: Date.now().toString(),
       data: req.body,
     });

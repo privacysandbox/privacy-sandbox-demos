@@ -12,6 +12,7 @@
  */
 
 import express, {Application} from 'express';
+import cors from 'cors';
 
 import {HOSTNAME, PORT} from './lib/constants.js';
 import {WellKnownRouter} from './routes/well-known-router.js';
@@ -22,6 +23,7 @@ import {SellerRouter} from './routes/seller-router.js';
 const app: Application = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+app.use(cors());
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 

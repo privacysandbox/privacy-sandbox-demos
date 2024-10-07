@@ -15,10 +15,10 @@
  */
 
 (async () => {
-  const $script = document.currentScript;
+  const $script = document.querySelector('script.dsp_tag');
   const src = new URL($script.src);
   const advertiser = $script.dataset.advertiser;
-  const id = $script.dataset.id;
+  const id = $script.dataset.itemId;
 
   src.pathname = 'join-ad-interest-group.html';
   src.searchParams.append('advertiser', advertiser);

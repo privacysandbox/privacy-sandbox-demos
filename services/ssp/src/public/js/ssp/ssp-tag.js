@@ -15,23 +15,18 @@
  */
 
 (async () => {
-  const $script = document.currentScript;
-  const src = new URL($script.src);
-  const advertiser = $script.dataset.advertiser;
-  const id = $script.dataset.id;
+  const $ins = document.querySelector('ins.ads');
+  const $script = document.querySelector('.ssp_tag');
 
-  src.pathname = 'join-ad-interest-group.html';
-  src.searchParams.append('advertiser', advertiser);
-  src.searchParams.append('id', id);
-  const currentUrl = new URL(location.href);
-  for (const searchParam of currentUrl.searchParams) {
-    src.searchParams.append(searchParam[0], searchParam[1]);
-  }
+  const src = new URL($script.src);
+  src.pathname = '/ad-tag.html';
 
   const $iframe = document.createElement('iframe');
-  $iframe.width = 1;
-  $iframe.height = 1;
+  $iframe.width = 300;
+  $iframe.height = 250;
   $iframe.src = src;
-  $iframe.allow = 'join-ad-interest-group';
-  $script.parentElement.insertBefore($iframe, $script.nextSibling);
+  $iframe.setAttribute('scrolling', 'no');
+  $iframe.setAttribute('style', 'border: none');
+  $iframe.setAttribute('allow', 'attribution-reporting; run-ad-auction');
+  $ins.appendChild($iframe);
 })();

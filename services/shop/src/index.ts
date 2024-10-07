@@ -119,8 +119,8 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 // serves the static ads creative from shop site (redirected from ssp)
-app.get('/ads/:id', async (req: Request, res: Response) => {
-  const id = req.params.id;
+app.get('/ads/:id?', async (req: Request, res: Response) => {
+  const id = req.params.id ? req.params.id : '1f6d2';
   const imgPath = `/image/svg/emoji_u${id}.svg`;
   //res.set("Content-Type", "image/svg+xml")
   console.log(`redirecting to /image/svg/emoji_u${id}.svg`);

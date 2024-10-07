@@ -14,7 +14,7 @@
 import express, {Request, Response} from 'express';
 
 import {KeyValueStore} from '../controllers/key-value-store.js';
-import {HOSTNAME, EXTERNAL_PORT} from '../lib/constants.js';
+import {HOSTNAME, EXTERNAL_PORT, CURRENT_ORIGIN} from '../lib/constants.js';
 import {getTemplateVariables} from '../lib/template-utils.js';
 
 export const BuyerRouter = express.Router();
@@ -22,13 +22,19 @@ export const BuyerRouter = express.Router();
 /** Both types of ad size macros supported in render URLs. */
 export const RENDER_URL_SIZE_MACRO =
   'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
+/** Max bid CPM for contextual auctions. */
+export const MAX_CONTEXTUAL_BID = 1.5;
+/** Min bid CPM for contextual auctions. */
+export const MIN_CONTEXTUAL_BID = 0.5;
+/** Name of the contextual advertiser. */
+export const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
 
 /** BYOS implementaion of Key Value store. */
 const trustedBiddingSignalStore = new KeyValueStore(
   /* defaultValues= */ [
     ['isActive', 'true'],
-    ['minBid', '1.5'],
-    ['maxBid', '2.5'],
+    ['minBid', '3.5'],
+    ['maxBid', '4.5'],
     ['multiplier', '1.1'],
   ],
 );
@@ -38,14 +44,39 @@ const trustedBiddingSignalStore = new KeyValueStore(
 // ************************************************************************
 /** Iframe document used as context to join interest group. */
 BuyerRouter.get(
-  '/join-ad-interest-group.html',
+  '/dsp-advertiser-iframe.html',
   async (req: Request, res: Response) => {
     res.render(
-      'dsp/join-ad-interest-group',
+      'dsp/dsp-advertiser-iframe',
       getTemplateVariables('Join Ad Interest Group'),
     );
   },
 );
+
+/** Places a bid for the contextual auction. */
+BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
+  const bid = getBidPrice();
+  // Generate a new auction ID if missing in request.
+  const auctionId = req.query.auctionId || `DSP-${crypto.randomUUID()}`;
+  // Assemble render URL query parameters.
+  const renderUrlQuery = `advertiser=${ADVERTISER_CONTEXTUAL}&auctionId=${auctionId}`;
+  const renderURL = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads?${renderUrlQuery}`,
+  ).toString();
+  /** Return contextual bid with buyer signals. */
+  res.json({
+    bidder: CURRENT_ORIGIN,
+    auctionId,
+    bid,
+    renderURL,
+    buyerSignals: {
+      contextualBid: bid,
+      contextualRenderURL: renderURL,
+      contextualAdvertiser: ADVERTISER_CONTEXTUAL,
+      ...req.query,
+    },
+  });
+});
 
 /** Returns the interest group to join on advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
@@ -72,7 +103,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   console.log('Returning IG JSON: ', req.query);
   res.json({
     name: `${advertiser}-${usecase}`,
-    owner: new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`).toString(),
+    owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
       `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
     ).toString(),
@@ -120,7 +151,7 @@ BuyerRouter.get('/bidding-signal.json', async (req: Request, res: Response) => {
   const signalsFromKeyValueStore = trustedBiddingSignalStore.getMultiple(
     queryKeys!,
   );
-  console.log('KV BYOS', publisher, queryKeys);
+  console.log('KV BYOS', {publisher, queryKeys});
   res.setHeader('X-Allow-FLEDGE', 'true');
   res.setHeader('X-fledge-bidding-signals-format-version', '2');
   const biddingSignals = {
@@ -134,11 +165,10 @@ BuyerRouter.get('/bidding-signal.json', async (req: Request, res: Response) => {
       },
     },
   };
-  console.log(
-    'Returning trusted bidding signals: ',
-    req.baseUrl,
+  console.log('Returning trusted bidding signals: ', {
+    url: `${req.baseUrl}${req.path}`,
     biddingSignals,
-  );
+  });
   res.json(biddingSignals);
 });
 
@@ -194,9 +224,17 @@ const getRenderUrl = (requestQuery: any): string => {
     const advertiser = requestQuery.advertiser || HOSTNAME;
     const imageCreative = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
     imageCreative.searchParams.append('advertiser', advertiser);
-    if (requestQuery.itemdId) {
+    if (requestQuery.itemId) {
       imageCreative.searchParams.append('itemId', requestQuery.itemId);
     }
     return `${imageCreative.toString()}&${RENDER_URL_SIZE_MACRO}`;
   }
+};
+
+/** Returns a random bid price with 2 decimal digits. */
+const getBidPrice = (): string => {
+  const minBid = MIN_CONTEXTUAL_BID;
+  const maxBid = MAX_CONTEXTUAL_BID;
+  const bid = (Math.random() * (maxBid - minBid) + minBid).toFixed(2);
+  return bid;
 };

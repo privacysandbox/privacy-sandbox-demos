@@ -15,10 +15,12 @@
  */
 
 /**
- * This is the 'default' auction bidding logic for a DSP.
- * 
- * This script is used by interest groups to generate bids and report on
- * participation in Protected Audience auctions.
+ * Where is this script used:
+ *   This is the 'default' auction bidding logic for a DSP.
+ *
+ * What does this script do?
+ *   This script is used by interest groups to generate bids and report on
+ *   participation in Protected Audience auctions.
  */
 
 // ********************************************************
@@ -59,7 +61,7 @@ function selectDealId(selectedAd) {
 }
 
 // ********************************************************
-// Top-level Bidding Logic Functions
+// Top-level Protected Audience functions
 // ********************************************************
 function generateBid(
   interestGroup,

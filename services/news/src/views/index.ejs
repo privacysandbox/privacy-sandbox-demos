@@ -12,13 +12,6 @@
         href="/css/video-ad-style.css">
   <link rel="icon"
         href="/img/spy.svg" />
-  <meta http-equiv="origin-trial"
-        content="<%= NEWS_TOKEN %>">
-  <script src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp.js` %>"
-          dsp="<%= `${DSP_HOST}:${EXTERNAL_PORT}` %>"
-          bucket="<%= `${bucket}` %>"
-          cloudenv="<%= `${cloudEnv}` %>">
-  </script>
   <script defer src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
   <script defer src="/js/video-ad-helper.js"></script>
   <style>
@@ -187,13 +180,12 @@
       startSequentialAuction(videoIframeAdUnit, sellers)
     }
 
-    async function setupDemo () {
+    (async () => {
       if ('<%= isMultiSeller %>' !== 'true') {
         document.getElementById('video-ad-container').style.display = 'none'
         addScriptEl('<%= SSP_TAG_URL %>', 'ssp_tag')
         return
       }
-
       const adServerLibPromise = new Promise(resolve => 
         addScriptEl('<%= AD_SERVER_LIB_URL %>', 'ad_server_tag', resolve))
 
@@ -204,9 +196,7 @@
 
       adServerLib = new AdServerLib('<%= AD_SERVER_HOST %>')
       renderDemoAds()
-    }
-
-    setupDemo()
+    })();
   </script>
 </body>
 
