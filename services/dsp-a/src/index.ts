@@ -51,9 +51,12 @@ const SSP_B_VAST_URL = `${SSP_B}vast`;
 const Reports: any[] = [];
 
 // clear in-memory storage every 10 min
-setInterval(() => {
-  Reports.length = 0;
-}, 1000 * 60 * 10);
+setInterval(
+  () => {
+    Reports.length = 0;
+  },
+  1000 * 60 * 10,
+);
 
 const app: Application = express();
 
