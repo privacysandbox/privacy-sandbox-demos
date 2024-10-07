@@ -28,7 +28,7 @@ const DSP_ORIGINS = DSP_HOSTS.map((dspHost) => {
 });
 
 // ********************************************************
-// BYOS Key - Value Store
+// BYOS implementation of Key - Value store
 // ********************************************************
 /** Intializes scoring signals for key value store. */
 const getDefaultScoringSignals = (): string[][] => {
@@ -66,7 +66,7 @@ const trustedScoringSignalsStore = new KeyValueStore(
 );
 
 // ********************************************************
-// Auction config helper functions
+// SSP helper functions
 // ********************************************************
 const getPerBuyerSignals = (
   buyerSignals: {[key: string]: {[key: string]: string}} = {},

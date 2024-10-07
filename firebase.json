@@ -2,7 +2,7 @@
   "hosting": [
     {
       "target": "dsp",
-      "public": "services/ad-tech/src/public",
+      "public": "services/dsp/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -21,7 +21,7 @@
     },
     {
       "target": "dsp-a",
-      "public": "services/ad-tech/src/public",
+      "public": "services/dsp-a/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -40,7 +40,7 @@
     },
     {
       "target": "dsp-b",
-      "public": "services/ad-tech/src/public",
+      "public": "services/dsp-b/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -97,7 +97,7 @@
     },
     {
       "target": "ssp",
-      "public": "services/ad-tech/src/public",
+      "public": "services/ssp/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -116,7 +116,7 @@
     },
     {
       "target": "ssp-a",
-      "public": "services/ad-tech/src/public",
+      "public": "services/ssp-a/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -135,7 +135,7 @@
     },
     {
       "target": "ssp-b",
-      "public": "services/ad-tech/src/public",
+      "public": "services/ssp-b/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",

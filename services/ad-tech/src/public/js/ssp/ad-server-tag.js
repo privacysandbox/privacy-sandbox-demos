@@ -1,3 +1,4 @@
+// FIXME: Review and refactor.
 /*
  Copyright 2022 Google LLC
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,6 +11,26 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+if (false) {
+  (() => {
+    /** Local storage item containing ad unit configurations. */
+    const LOCAL_STORAGE_PAGE_ADS_CONFIG = 'PAGE_ADS_CONFIG';
+
+    const getContextualBidResponse = (adUnits) => {
+      const $script = document.currentScript;
+      const contextualBidRequest = new URL($script.src);
+      contextualBidRequest.pathname = '/ssp/contextual-bid';
+      adUnits.map(async (adUnit) => {});
+    };
+
+    // Main function.
+    (() => {
+      const {adUnits} = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE_PAGE_ADS_CONFIG),
+      );
+    })();
+  })();
+}
 
 class AdServerLib {
   constructor(hostname) {

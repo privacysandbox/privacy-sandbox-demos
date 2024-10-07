@@ -14,6 +14,15 @@
  limitations under the License.
  */
 
+/**
+ * Where is this script used:
+ *   This script is loaded inside the ad-tech iframe to run a single-seller
+ *   Protected Audience auction.
+ *
+ * What does this script do:
+ *   This script fetches the auction configurations from its server and this
+ *   script includes any embedded first-party context in the iframe URL.
+ */
 (() => {
   /** Makes a request to the server to retrieve an auction config. */
   const getAuctionConfig = async () => {

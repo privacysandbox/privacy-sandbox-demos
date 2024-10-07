@@ -4,6 +4,13 @@ volumes:
   shop_node_modules:
   travel_node_modules:
   ad-tech_node_modules:
+  dsp_node_modules:
+  dsp-a_node_modules:
+  dsp-b_node_modules:
+  ssp_node_modules:
+  ssp-a_node_modules:
+  ssp-b_node_modules:
+  topics_node_modules:
   topics-server_node_modules:
   ad_server_node_modules:
 
@@ -58,80 +65,80 @@ services:
       - adnetwork
 
   dsp:
-    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
-    build: ./services/ad-tech
+    image: gcr.io/privacy-sandbox-demos/dsp:latest
+    build: ./services/dsp
     container_name: "sandcastle_dsp"
     hostname: ${DSP_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
-      - ad-tech_node_modules:/workspace/node_modules
+      - ./services/dsp:/workspace
+      - dsp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
   dsp-a:
-    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
-    build: ./services/ad-tech
+    image: gcr.io/privacy-sandbox-demos/dsp-a:latest
+    build: ./services/dsp-a
     container_name: "sandcastle_dsp_a"
     hostname: ${DSP_A_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
-      - ad-tech_node_modules:/workspace/node_modules
+      - ./services/dsp-a:/workspace
+      - dsp-a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
   dsp-b:
-    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
-    build: ./services/ad-tech
+    image: gcr.io/privacy-sandbox-demos/dsp-b:latest
+    build: ./services/dsp-b
     container_name: "sandcastle_dsp_b"
     hostname: ${DSP_B_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
-      - ad-tech_node_modules:/workspace/node_modules
+      - ./services/dsp-b:/workspace
+      - dsp-b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
   ssp:
-    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
-    build: ./services/ad-tech
+    image: gcr.io/privacy-sandbox-demos/ssp:latest
+    build: ./services/ssp
     container_name: "sandcastle_ssp"
     hostname: ${SSP_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
-      - ad-tech_node_modules:/workspace/node_modules
+      - ./services/ssp:/workspace
+      - ssp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
   ssp-a:
-    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
-    build: ./services/ad-tech
+    image: gcr.io/privacy-sandbox-demos/ssp-a:latest
+    build: ./services/ssp-a
     container_name: "sandcastle_ssp_a"
     hostname: ${SSP_A_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
-      - ad-tech_node_modules:/workspace/node_modules
+      - ./services/ssp-a:/workspace
+      - ssp-a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
   ssp-b:
-    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
-    build: ./services/ad-tech
+    image: gcr.io/privacy-sandbox-demos/ssp-b:latest
+    build: ./services/ssp-b
     container_name: "sandcastle_ssp_b"
     hostname: ${SSP_B_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
-      - ad-tech_node_modules:/workspace/node_modules
+      - ./services/ssp-b:/workspace
+      - ssp-b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -157,6 +164,18 @@ services:
       - .env
     volumes:
       - ./services/collector:/workspace
+    networks:
+      - adnetwork
+
+  topics:
+    image: gcr.io/privacy-sandbox-demos/topics:latest
+    build: ./services/topics
+    container_name: "sandcastle_topics"
+    env_file:
+      - .env
+    volumes:
+      - ./services/topics:/workspace
+      - topics_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -203,6 +222,7 @@ services:
       - dsp-b
       - ad-server
       - collector
+      - topics
       - topics-server
 
 networks:

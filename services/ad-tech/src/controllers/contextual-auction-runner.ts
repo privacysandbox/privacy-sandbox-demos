@@ -70,7 +70,8 @@ export const ContextualAuctionRunner = (() => {
     }
     const bidResponse = await response.json();
     console.log('Received bid response from DSP', {bidResponse});
-    if (!bidResponse.bidder) { // Set bidder if missing.
+    if (!bidResponse.bidder) {
+      // Set bidder if missing.
       bidResponse.bidder = bidder;
     }
     return bidResponse;

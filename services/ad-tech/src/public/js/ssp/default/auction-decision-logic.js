@@ -52,8 +52,8 @@ function scoreAd(
     trustedScoringSignals?.renderURL[browserSignals.renderURL],
   );
   if (parsedScoringSignals?.label.toUpperCase() === 'BLOCKED') {
-    // Reject bid if creative is blocked.
     return {
+      // Reject bid if creative is blocked.
       desirability: 0,
       allowComponentAuction: true,
       rejectReason: 'blocked-by-publisher',

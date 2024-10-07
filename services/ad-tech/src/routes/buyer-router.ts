@@ -29,7 +29,9 @@ export const MIN_CONTEXTUAL_BID = 0.5;
 /** Name of the contextual advertiser. */
 export const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
 
-/** BYOS implementaion of Key Value store. */
+// ************************************************************************
+// BYOS implementation of Key - Value store
+// ************************************************************************
 const trustedBiddingSignalStore = new KeyValueStore(
   /* defaultValues= */ [
     ['isActive', 'true'],
