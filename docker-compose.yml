@@ -3,7 +3,6 @@ volumes:
   news_node_modules:
   shop_node_modules:
   travel_node_modules:
-  ad_tech_node_modules:
   dsp_node_modules:
   dsp_a_node_modules:
   dsp_b_node_modules:
