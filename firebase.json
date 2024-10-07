@@ -2,7 +2,7 @@
   "hosting": [
     {
       "target": "dsp",
-      "public": "services/dsp/src/public",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -21,7 +21,7 @@
     },
     {
       "target": "dsp-a",
-      "public": "services/dsp-a/src/public",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -40,7 +40,7 @@
     },
     {
       "target": "dsp-b",
-      "public": "services/dsp-b/src/public",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -97,7 +97,7 @@
     },
     {
       "target": "ssp",
-      "public": "services/ssp/src/public",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -116,7 +116,7 @@
     },
     {
       "target": "ssp-a",
-      "public": "services/ssp-a/src/public",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -135,7 +135,7 @@
     },
     {
       "target": "ssp-b",
-      "public": "services/ssp-b/src/public",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -208,24 +208,6 @@
       ]
     },
     {
-      "target": "topics",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "run": {
-            "serviceId": "topics",
-            "region": "us-central1"
-          }
-        }
-      ]
-    },
-    {
       "target": "topics-motorcycles",
       "ignore": [
         "firebase.json",
@@ -237,7 +219,7 @@
         {
           "source": "**",
           "run": {
-            "serviceId": "topics",
+            "serviceId": "news",
             "region": "us-central1"
           }
         }
@@ -255,7 +237,7 @@
         {
           "source": "**",
           "run": {
-            "serviceId": "topics",
+            "serviceId": "news",
             "region": "us-central1"
           }
         }
@@ -273,7 +255,7 @@
         {
           "source": "**",
           "run": {
-            "serviceId": "topics",
+            "serviceId": "news",
             "region": "us-central1"
           }
         }
