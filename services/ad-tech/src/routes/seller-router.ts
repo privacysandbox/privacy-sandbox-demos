@@ -70,7 +70,7 @@ const trustedScoringSignalsStore = new KeyValueStore(
 // ********************************************************
 const getPerBuyerSignals = (
   buyerSignals: {[key: string]: {[key: string]: string}} = {},
-) => {
+): {[key: string]: {[key: string]: string}} => {
   const perBuyerSignals: {[key: string]: {[key: string]: string}} = {};
   for (const dspOrigin of DSP_ORIGINS) {
     if (buyerSignals[dspOrigin]) {
@@ -81,6 +81,7 @@ const getPerBuyerSignals = (
       };
     }
   }
+  return perBuyerSignals;
 };
 
 /** Assembles and returns an auction configuration. */
@@ -103,6 +104,7 @@ const constructAuctionConfig = (context: {
     useCase,
     adType,
     auctionSignals,
+    buyerSignals,
     resolveToConfig,
   });
   const auctionConfig = {
@@ -114,11 +116,11 @@ const constructAuctionConfig = (context: {
       `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/scoring-signal.json`,
     ).toString(),
     /*
-    TODO: Consider implementing direct from seller signals.
-    directFromSellerSignals: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/direct-signal.json`,
-    ),
-    */
+     TODO: Consider implementing direct from seller signals.
+     directFromSellerSignals: new URL(
+       `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/direct-signal.json`,
+     ),
+     */
     interestGroupBuyers: DSP_ORIGINS,
     auctionSignals: {
       'auction_signals': 'auction_signals',
@@ -168,12 +170,15 @@ SellerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
     /* bidderHosts= */ DSP_HOSTS,
     /* signals= */ signals,
   );
-  const [winningContextualBid] = contextualBids.sort((a, b) => b.bid - a.bid);
+  const [winningContextualBid] = contextualBids.sort(
+    (bid1, bid2) => Number(bid2.bid!) - Number(bid1.bid!),
+  );
+  console.log('Winning contextual bid', {winningContextualBid});
   // Collect buyer signals from contextual bids.
   const buyerSignals: {[key: string]: any} = {};
   for (const contextualBid of contextualBids) {
     if (contextualBid.buyerSignals) {
-      buyerSignals[contextualBid.bidder] = contextualBid.buyerSignals;
+      buyerSignals[contextualBid.bidder!] = contextualBid.buyerSignals;
     }
   }
   const response = {
@@ -188,7 +193,7 @@ SellerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
       buyerSignals,
     }),
   };
-  console.log('Responding to contextual bid request', response);
+  console.log('Responding to contextual bid request', {response});
   res.json(response);
 });
 

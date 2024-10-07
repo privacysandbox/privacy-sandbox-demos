@@ -17,6 +17,15 @@ import {EXTERNAL_PORT, PORT} from '../lib/constants.js';
 
 export const CONTEXTUAL_AUCTION_TIMEOUT_MS = 5000;
 
+/** Generalized contents of a contextual bid response. */
+export interface ContextualBidResponse {
+  bidder?: string;
+  auctionId?: string;
+  bid?: string;
+  renderURL?: string;
+  buyerSignals?: any;
+}
+
 /**
  * Static controller to gather contextual bid responses from other ad-techs.
  *
@@ -34,7 +43,7 @@ export const ContextualAuctionRunner = (() => {
   const getBidUrlByBidder = (
     bidderHosts: string[],
     signals: {[key: string]: string},
-  ) => {
+  ): Map<string, string> => {
     // Convert signals into request query parameters.
     const bidQuery = Object.entries(signals)
       .map(([key, value]) => `${key}=${value}`)
@@ -55,7 +64,10 @@ export const ContextualAuctionRunner = (() => {
   };
 
   /** Returns contextual bid response for the given URL. */
-  const getContextualBidResponse = async (bidder: string, bidUrl: string) => {
+  const getContextualBidResponse = async (
+    bidder: string,
+    bidUrl: string,
+  ): Promise<ContextualBidResponse> => {
     console.log('Making contextual bid request', {bidUrl});
     const response = await fetch(bidUrl);
     if (!response.ok) {
@@ -65,7 +77,7 @@ export const ContextualAuctionRunner = (() => {
       });
       return {
         bidder,
-        bid: 0.0,
+        bid: '0.0',
       };
     }
     const bidResponse = await response.json();
@@ -81,7 +93,7 @@ export const ContextualAuctionRunner = (() => {
   async function getContextualBids(
     bidderHosts: string[] = [],
     signals: {[key: string]: string} = {},
-  ) {
+  ): Promise<ContextualBidResponse[]> {
     console.log('Starting contextual auction', {signals});
     const bidUrlByBidder = getBidUrlByBidder(bidderHosts, signals);
     const bidResponsePromises = [...bidUrlByBidder.entries()].map(
@@ -89,8 +101,10 @@ export const ContextualAuctionRunner = (() => {
         getContextualBidResponse(bidder, contextualBidUrl),
     );
     const bidResponses = await Promise.race([
-      Promise.allSettled(bidResponsePromises),
-      new Promise((resolve) =>
+      (await Promise.allSettled(bidResponsePromises))
+        .filter((p) => p.status == 'fulfilled')
+        .map((p) => p.value),
+      new Promise<ContextualBidResponse[]>((resolve) =>
         setTimeout(() => resolve([]), CONTEXTUAL_AUCTION_TIMEOUT_MS),
       ),
     ]);
