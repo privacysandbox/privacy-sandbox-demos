@@ -3,13 +3,13 @@ volumes:
   news_node_modules:
   shop_node_modules:
   travel_node_modules:
-  ad-tech_node_modules:
+  ad_tech_node_modules:
   dsp_node_modules:
-  dsp-a_node_modules:
-  dsp-b_node_modules:
+  dsp_a_node_modules:
+  dsp_b_node_modules:
   ssp_node_modules:
-  ssp-a_node_modules:
-  ssp-b_node_modules:
+  ssp_a_node_modules:
+  ssp_b_node_modules:
   topics_node_modules:
   topics-server_node_modules:
   ad_server_node_modules:
@@ -86,7 +86,7 @@ services:
       - .env
     volumes:
       - ./services/dsp-a:/workspace
-      - dsp-a_node_modules:/workspace/node_modules
+      - dsp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -99,7 +99,7 @@ services:
       - .env
     volumes:
       - ./services/dsp-b:/workspace
-      - dsp-b_node_modules:/workspace/node_modules
+      - dsp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -125,7 +125,7 @@ services:
       - .env
     volumes:
       - ./services/ssp-a:/workspace
-      - ssp-a_node_modules:/workspace/node_modules
+      - ssp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -138,7 +138,7 @@ services:
       - .env
     volumes:
       - ./services/ssp-b:/workspace
-      - ssp-b_node_modules:/workspace/node_modules
+      - ssp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
