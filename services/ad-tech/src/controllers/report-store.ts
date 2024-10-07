@@ -38,9 +38,12 @@ export const ReportStore = (() => {
   // In-memory storage for reports.
   const Reports: Report[] = [];
   // Clear in-memory storage every 10 min
-  setInterval(() => {
-    Reports.length = 0;
-  }, 1000 * 60 * 10);
+  setInterval(
+    () => {
+      Reports.length = 0;
+    },
+    1000 * 60 * 10,
+  );
 
   /** Add a new report to the in-memory storage. */
   const addReport = (report: Report) => {
