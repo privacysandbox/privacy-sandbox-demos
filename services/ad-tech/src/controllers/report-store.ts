@@ -46,15 +46,12 @@ export const ReportStore = (() => {
 
   /** Add a new report to the in-memory storage. */
   const addReport = (report: Report) => {
-    Reports.set(
-      `${report.category}||${report.timestamp}`,
-      report,
-    );
+    Reports.set(`${report.category}||${report.timestamp}`, report);
   };
 
   /** Returns all reports from in-memory storage. */
   const getAllReports = (): Report[] => {
-    return Reports.keys().map(key => Reports.get(key) as Report);
+    return Reports.keys().map((key) => Reports.get(key) as Report);
   };
 
   return {
