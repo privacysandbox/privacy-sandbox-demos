@@ -7,7 +7,8 @@
   "scripts": {
     "start": "npm run build && node ./build/main.js",
     "build": "tsc && cp -r src/views build/",
-    "ncu": "npx npm-check-updates -u"
+    "ncu": "npx npm-check-updates -u",
+    "fmt": "prettier --write ."
   },
   "dependencies": {
     "cbor": "^9.0.2",
