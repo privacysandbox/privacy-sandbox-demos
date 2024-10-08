@@ -27,7 +27,9 @@ import {
   SHOP_DETAIL,
   SHOP_HOST,
   SSP_HOST,
-} from './env.js';
+  SSP_A_HOST,
+  SSP_B_HOST,
+} from './lib/constants.js';
 import {
   Order,
   addOrder,
@@ -92,7 +94,11 @@ app.locals = {
     const {item, size, quantity} = order;
     return [
       new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
     ].map((triggerUrl) => {
       triggerUrl.pathname = '/register-trigger';
       triggerUrl.searchParams.append('id', item.id);
@@ -113,8 +119,8 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 // serves the static ads creative from shop site (redirected from ssp)
-app.get('/ads/:id', async (req: Request, res: Response) => {
-  const id = req.params.id;
+app.get('/ads/:id?', async (req: Request, res: Response) => {
+  const id = req.params.id ? req.params.id : '1f6d2';
   const imgPath = `/image/svg/emoji_u${id}.svg`;
   //res.set("Content-Type", "image/svg+xml")
   console.log(`redirecting to /image/svg/emoji_u${id}.svg`);
@@ -124,16 +130,15 @@ app.get('/ads/:id', async (req: Request, res: Response) => {
 app.get('/items/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   const item = await getItem(id);
-  const isMultiSeller = req.query.auctionType === 'multi';
 
   const DSP_TAG_URL = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
   const DSP_A_TAG_URL = new URL(
-    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
   const DSP_B_TAG_URL = new URL(
-    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
 
   res.render('item', {
@@ -142,7 +147,6 @@ app.get('/items/:id', async (req: Request, res: Response) => {
     DSP_A_TAG_URL,
     DSP_B_TAG_URL,
     SHOP_HOST,
-    isMultiSeller,
   });
 });
 

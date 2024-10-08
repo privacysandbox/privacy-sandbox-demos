@@ -81,29 +81,17 @@
       <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
     </div>
     <script>
-      function buildDspScriptTag(tagUrl, tagClass) {
+      function buildDspScriptTag(tagUrl) {
         const scriptEl = document.createElement('script')
-        scriptEl.className = tagClass
+        scriptEl.className = 'dsp_tag'
         scriptEl.src = tagUrl
         scriptEl.dataset.advertiser = '<%= SHOP_HOST %>'
-        scriptEl.dataset.id = '<%= item.id %>'
-
+        scriptEl.dataset.itemId = '<%= item.id %>'
         return scriptEl
       }
-
-      const DSP_A_TAG_URL = '<%= DSP_A_TAG_URL %>'
-      const DSP_B_TAG_URL = '<%= DSP_B_TAG_URL %>'
-
-      if ('<%= isMultiSeller %>' === 'true') {
-        const dspAScript = buildDspScriptTag(`${DSP_A_TAG_URL}`, 'dsp_a_tag')
-        document.body.appendChild(dspAScript);
-
-        const dspBScript = buildDspScriptTag(`${DSP_B_TAG_URL}`, 'dsp_b_tag')
-        document.body.appendChild(dspBScript);
-      } else {
-        const dspScript = buildDspScriptTag('<%= DSP_TAG_URL %>', 'dsp_tag')
-        document.body.appendChild(dspScript);
-      }
+      document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
+      document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
+      document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
     </script>
   </body>
 </html>

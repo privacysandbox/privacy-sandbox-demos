@@ -1,5 +1,3 @@
-version: "3.8"
-
 volumes:
   home_node_modules:
   news_node_modules:
@@ -9,7 +7,6 @@ volumes:
   dsp_a_node_modules:
   dsp_b_node_modules:
   ssp_node_modules:
-  ssp_top_node_modules:
   ssp_a_node_modules:
   ssp_b_node_modules:
   topics_node_modules:
@@ -229,5 +226,4 @@ services:
 
 networks:
   adnetwork:
-    name: sandcastle-network
     driver: bridge

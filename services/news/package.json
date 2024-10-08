@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "npm run build && node ./src/index.js",
+    "start": "npm run build && node ./build/index.js",
     "build": "npm-run-all -p build:*",
     "build:tsc": "tsc",
     "build:css": "npx tailwindcss -i ./src/public/css/global.tailwind.css -o ./src/public/css/global.css",
