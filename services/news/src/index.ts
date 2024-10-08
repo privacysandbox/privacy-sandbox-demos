@@ -19,6 +19,7 @@ import express, {Application, Request, Response} from 'express';
 import {EXTERNAL_PORT, PORT, NEWS_HOST, NEWS_DETAIL} from './constants.js';
 import {HOME_HOST, SSP_HOST, SSP_A_HOST, SSP_B_HOST} from './constants.js';
 import {SSP_A_ORIGIN, SSP_B_ORIGIN, AD_SERVER_HOST} from './constants.js';
+import {TOPICS_SERVER_HOST} from './constants.js';
 
 const app: Application = express();
 
@@ -67,6 +68,16 @@ app.get('/test', async (req: Request, res: Response) => {
       `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ad-server-lib.js`,
     ).toString(),
   });
+});
+
+app.get('/test-topics', async (req: Request, res: Response) => {
+  const hostname = req.hostname;
+  const title = hostname.substring(0, hostname.indexOf('.')) || 'news';
+  const params = {
+    title,
+    TOPICS_SERVER_HOST,
+  };
+  res.render('test-topics', params);
 });
 
 app.listen(PORT, async () => {

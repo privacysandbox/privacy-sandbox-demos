@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="icon" href="/img/spy.svg" />
+</head>
+
+<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-3/5 bg-slate-50 pt-8">
+  <header class="flex flex-col items-center gap-4">
+    <h1 class="text-6xl">Daily Privacy News</h1>
+    <h2 class="text-2xl">This is a news demo site about <b>
+        <%= title %>
+      </b>.</h2>
+    <hr class="w-full">
+  </header>
+
+  <div>
+    <p>This site is part of a Topics API demo that shows how topics can be marked as observed, and then accessed, by
+      using a <code>fetch()</code> request. </p>
+  </div>
+
+  <div id="fetch-data">
+    <h3>Topics collected via fetch() request headers will be displayed here: </h3>
+    <ul id="observed-topics">
+
+    </ul>
+  </div>
+
+</body>
+
+<script id="topics-script" data-server="<%= TOPICS_SERVER_HOST %>">
+
+    const topicsList = document.querySelector('#observed-topics')
+
+    let currentTopics = '';
+    const emptyTopics = '();p=P0000000000000000000000000000000';
+    const topics_server = document.querySelector("#topics-script").dataset.server;
+    const topics_server_url = new URL(`https://${topics_server}`)
+
+    async function makeFetchRequest() {
+        const response = await fetch(topics_server_url, { browsingTopics: true });
+        const json = await response.json();
+        const topics = json.topics;
+        if (topics && topics !== currentTopics && topics != emptyTopics) {
+            const li = document.createElement("li");
+            li.textContent = `fetch() request made with sec-browsing-topics header: ${JSON.stringify(topics, null, 2)}`;
+            topicsList.appendChild(li);
+            console.log(topics)
+            currentTopics = topics;
+        }
+    }
+
+    const intervalId = setInterval(makeFetchRequest, 2000); 
+
+</script>
+
+</html>
