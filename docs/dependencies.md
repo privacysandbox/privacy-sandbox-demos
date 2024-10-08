@@ -20,4 +20,4 @@ exploration of Privacy Sandbox APIs.
 </dl>
 
 Additionally, this codebase does not provide extensive information about Advertising Technology. You should be familiar with these before you start
-exploring. We recommend the following resource to learn more https://clearcode.cc/blog/understanding-advertising-technology/
+exploring. We recommend the following resource to learn more <https://clearcode.cc/blog/understanding-advertising-technology/>
