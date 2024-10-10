@@ -35,12 +35,13 @@ you have a look at our [Google-hosted instances](https://privacy-sandbox-demos.d
 
 The current release supports the following use cases:
 
-|         **Category**          |                                                           **Use Case**                                                            |            **Privacy Sandbox APIs**            |              **Relevant for**              |
-| :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------: | :----------------------------------------: |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience multi-seller auction](services/home/docs/demos/instream-video-ad-multi-seller.md) |             Protected Audience API             | Publisher, Ad Server, SSP, Advertiser, DSP |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience single-seller auction](services/home/docs/demos/vast-video-protected-audience.md) |             Protected Audience API             |      Publisher, SSP, Advertiser, DSP       |
-| Show Relevant Content and Ads |                         [Retargeting / Remarketing](services/home/docs/demos/retargeting-remarketing.md)                          |             Protected Audience API             |      Publisher, SSP, Advertiser, DSP       |
-|      Measure Digital Ads      |              [Single-touch conversion Attribution](services/home/docs/demos/single-touch-conversion-attribution.md)               | Attribution Reporting API, Aggregation Service |      Publisher, SSP, Advertiser, DSP       |
+|         **Category**          |                                                           **Use Case**                                                            |                 **Privacy Sandbox APIs**                 |              **Relevant for**              |
+| :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------: |
+|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience multi-seller auction](services/home/docs/demos/instream-video-ad-multi-seller.md) |                  Protected Audience API                  | Publisher, Ad Server, SSP, Advertiser, DSP |
+|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience single-seller auction](services/home/docs/demos/vast-video-protected-audience.md) |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
+| Show Relevant Content and Ads |                         [Retargeting / Remarketing](services/home/docs/demos/retargeting-remarketing.md)                          |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
+|      Measure Digital Ads      |              [Single-touch conversion Attribution](services/home/docs/demos/single-touch-conversion-attribution.md)               |      Attribution Reporting API, Aggregation Service      |      Publisher, SSP, Advertiser, DSP       |
+|      Measure Digital Ads      |               [Multi-touch conversion Attribution](services/home/docs/demos/multi-touch-conversion-attribution.md)                | Private Aggregation, Shared Storage, Aggregation Service |         Publisher, Advertiser, DSP         |
 
 These use cases are based on a set of demo apps and services that we have developed to simulate the actors in the ad tech ecosystem :
 
