@@ -46,6 +46,7 @@ export const ReportStore = (() => {
 
   /** Add a new report to the in-memory storage. */
   const addReport = (report: Report) => {
+    // TODO: Consider partitioning by use-case.
     Reports.set(`${report.category}||${report.timestamp}`, report);
   };
 
