@@ -11,27 +11,125 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-if (false) {
-  (() => {
-    /** Local storage item containing ad unit configurations. */
-    const LOCAL_STORAGE_PAGE_ADS_CONFIG = 'PAGE_ADS_CONFIG';
 
-    const getContextualBidResponse = (adUnits) => {
-      const $script = document.currentScript;
-      const contextualBidRequest = new URL($script.src);
-      contextualBidRequest.pathname = '/ssp/contextual-bid';
-      adUnits.map(async (adUnit) => {});
-    };
+ (() => {
+  /** Local storage item containing ad unit configurations. */
+  const LOCAL_STORAGE_PAGE_ADS_CONFIG = 'PAGE_ADS_CONFIG';
+  /** Local storage item to store the winning header bid. */
+  const LOCAL_STORAGE_WINNING_HEADER_BID = 'WINNING_HEADER_BID';
+  /** Local storage item to store component auction configs. */
+  const LOCAL_STORAGE_AUCTION_CONFIGS = 'AUCTION_CONFIGS';
+  /** Local storage item to indicate overall status of header bidding. */
+  const LOCAL_STORAGE_HEADER_BIDDING_STATUS = 'HEADER_BIDDING_STATUS';
+  /** Text indicating completed status. */
+  const HEADER_BIDDING_STATUS_COMPLETE = 'COMPLETE';
 
-    // Main function.
-    (() => {
-      const {adUnits} = JSON.parse(
-        localStorage.getItem(LOCAL_STORAGE_PAGE_ADS_CONFIG),
-      );
-    })();
+  /** Builds and returns the various bid request URLs. */
+  const getBidRequestUrlByAuctionId = (adUnits) => {
+    const $script = document.currentScript;
+    const bidRequestUrlByAuctionId = {};
+    for (const adUnit of adUnits) {
+      const bidRequestQuery = Object.entries(adUnit)
+        .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+      const auctionId = adUnit.auctionId || `HB-${crypto.randomUUID()}`;
+      if (!adUnit.auctionId) {
+        adUnit.auctionId = auctionId;
+      }
+      const bidRequest = new URL($script.src);
+      bidRequest.pathname = '/ssp/contextual-bid';
+      bidRequestUrlByAuctionId[auctionId] =
+        `${bidRequest.toString()}?${bidRequestQuery}`;
+    }
+    return bidRequestUrlByAuctionId;
+  };
+
+  /** Makes and returns the various contextual bid responses. */
+  const getContextualBidResponses = async (adUnits) => {
+    const bidRequestUrlByAuctionId = getBidRequestUrlByAuctionId(adUnits);
+    const bidResponsePromises = Object.entries(bidRequestUrlByAuctionId)
+      .map(async ([auctionId, bidRequestUrl]) => {
+        console.log('[PSDemo] Making ad server bid request', {bidRequestUrl});
+        const response = await fetch(bidRequestUrl);
+        if (response.ok) {
+          const bidResponse = await response.json();
+          console.log('[PSDemo] Received ad server bid response', {bidResponse});
+          return [auctionId, bidResponse];
+        } else {
+          console.log('[PSDemo] Error in contextual bid response', {
+            statusText: response.statusText,
+            bidRequestUrl,
+          });
+          return [auctionId, {bid: 0.0}];
+        }
+    });
+    // Use Promise.race to implement the timeout.
+    const bidResponses = await Promise.race([
+      (await Promise.allSettled(bidResponsePromises))
+        .filter((p) => p.status === 'fulfilled')
+        .map((p) => p.value),
+      new Promise((resolve) =>
+        setTimeout(() => resolve([]), CONTEXTUAL_AUCTION_TIMEOUT_MS),
+      ),
+    ]);
+    return bidResponses;
+  };
+
+  /** Returns the winning header bid from local storage. */
+  const getWinningHeaderBid = (auctionId) => {
+    const keyForWinningBid = `${LOCAL_STORAGE_WINNING_HEADER_BID}||${auctionId}`;
+    if (localStorage.hasOwnProperty(keyForWinningBid)) {
+      return JSON.parse(localStorage.getItem(keyForWinningBid));
+    }
+  };
+
+  /** Returns the auction configs from local storage. */
+  const getHeaderBiddingAuctionConfigs = (auctionId) => {
+    const keyForAuctionConfigs = `${LOCAL_STORAGE_AUCTION_CONFIGS}||${auctionId}`;
+    if (localStorage.hasOwnProperty(keyForAuctionConfigs)) {
+      return JSON.parse(localStorage.getItem(keyForAuctionConfigs));
+    }
+  };
+
+  const completeAdAuction = (auctionId, adServerBid) => {
+    const winningHeaderBid = getWinningHeaderBid(auctionId);
+    const auctionConfigs = getHeaderBiddingAuctionConfigs(auctionId);
+    const [winningContextualBid] = [adServerBid, winningHeaderBid].sort(
+      (bid1, bid2) => Number(bid2.bid) - Number(bid1.bid));
+    console.log('[PSDemo] Ad server processing', {
+      auctionId,
+      headerBid: winningHeaderBid,
+      adServerBid,
+      winningContextualBid,
+      auctionConfigs,
+    });
+  };
+
+  // Main function.
+  (async () => {
+    const {adUnits} = JSON.parse(
+      localStorage.getItem(LOCAL_STORAGE_PAGE_ADS_CONFIG),
+    );
+    // Start contextual auction and wait for header bidding to complete.
+    const contextualBidResponses = await getContextualBidResponses(adUnits);
+    // Wait for header bidding auctions to complete.
+    console.log('[PSDemo] Ad server lib waiting for header bidding.');
+    let intervalId = setInterval(function() {
+      const headerBiddingStatus = localStorage.getItem(
+        LOCAL_STORAGE_HEADER_BIDDING_STATUS);
+      if (HEADER_BIDDING_STATUS_COMPLETE === headerBiddingStatus) {
+        console.log('[PSDemo] Header bidding is complete');
+        for (const [auctionId, adServerBid] of contextualBidResponses) {
+          completeAdAuction(auctionId, adServerBid);
+        }
+        clearInterval(intervalId);
+      }
+      console.log('[PSDemo] Header bidding status is', headerBiddingStatus);
+    }, 500); // Check every 500 milliseconds
   })();
-}
+})();
 
+/*
 class AdServerLib {
   constructor(hostname) {
     this.adServerOrigin = `https://${hostname}`;
@@ -239,3 +337,4 @@ class AdServerLib {
     return containerFrameEl;
   }
 }
+*/

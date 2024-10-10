@@ -40,7 +40,7 @@
   /** Local storage item to store component auction configs. */
   const LOCAL_STORAGE_AUCTION_CONFIGS = 'AUCTION_CONFIGS';
   /** Local storage item to indicate overall status of header bidding. */
-  const LOCAL_STORAGE_HEADER_BIDDING_STATUS = 'HEADER_BIDDING'
+  const LOCAL_STORAGE_HEADER_BIDDING_STATUS = 'HEADER_BIDDING_STATUS';
   /** Text indicating pending status. */
   const HEADER_BIDDING_STATUS_PENDING = 'PENDING';
   /** Text indicating completed status. */
@@ -189,6 +189,8 @@
   // ****************************************************************
   (async () => {
     // Set status to PENDING while header bidding is in progress.
+    console.log('[PSDemo] Header bidding in progress',
+      {LOCAL_STORAGE_HEADER_BIDDING_STATUS});
     localStorage.setItem(LOCAL_STORAGE_HEADER_BIDDING_STATUS,
       HEADER_BIDDING_STATUS_PENDING);
     resetLocalStorage();
@@ -217,5 +219,7 @@
     // Set status to COMPLETE.
     localStorage.setItem(LOCAL_STORAGE_HEADER_BIDDING_STATUS,
       HEADER_BIDDING_STATUS_COMPLETE);
+    console.log('[PSDemo] Header bidding complete',
+      {LOCAL_STORAGE_HEADER_BIDDING_STATUS});
   })();
 })();

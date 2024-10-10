@@ -10,7 +10,8 @@
     "build:tsc": "tsc",
     "build:css": "npx tailwindcss -i ./src/public/css/global.tailwind.css -o ./src/public/css/global.css",
     "dev": "npm-run-all -p start \"build:css -- --watch\"",
-    "ncu": "npx npm-check-updates -u"
+    "ncu": "npx npm-check-updates -u",
+    "fmt": "pre-commit run --all-files"
   },
   "dependencies": {
     "ejs": "^3.1.9",

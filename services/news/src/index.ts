@@ -55,7 +55,7 @@ app.get('/video-ad', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/test', async (req: Request, res: Response) => {
+app.get('/unified-multi-seller', async (req: Request, res: Response) => {
   res.render('test', {
     title: TITLE,
     lorem: LOREM,
@@ -64,7 +64,7 @@ app.get('/test', async (req: Request, res: Response) => {
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
     AD_SERVER_LIB_URL: new URL(
-      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ad-server-lib.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ad-server-tag.js`,
     ).toString(),
   });
 });
