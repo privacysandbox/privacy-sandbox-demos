@@ -40,53 +40,19 @@ export interface ContextualBidResponse {
  */
 export const ContextualAuctionRunner = (() => {
   /** Helper function to construct contextual bid URLs. */
-  const getBidUrlByBidder = (
+  const getContextualBidUrls = (
     bidderHosts: string[],
     signals: {[key: string]: string},
-  ): Map<string, string> => {
+  ): string[] => {
     // Convert signals into request query parameters.
     const bidQuery = Object.entries(signals)
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-    // Assemble DSP contextual bidding endpoints.
-    const bidUrlByBidder = new Map<string, string>();
-    for (const bidderHost of bidderHosts) {
-      bidUrlByBidder.set(
-        /* bidder= */ new URL(
-          `https://${bidderHost}:${EXTERNAL_PORT}/`,
-        ).toString(),
-        /* contextualBidUrl= */ new URL(
-          `http://${bidderHost}:${PORT}/dsp/contextual-bid?${bidQuery}`,
-        ).toString(),
-      );
-    }
-    return bidUrlByBidder;
-  };
-
-  /** Returns contextual bid response for the given URL. */
-  const getContextualBidResponse = async (
-    bidder: string,
-    bidUrl: string,
-  ): Promise<ContextualBidResponse> => {
-    console.log('Making contextual bid request', {bidUrl});
-    const response = await fetch(bidUrl);
-    if (!response.ok) {
-      console.log('Error in contextual bid response', {
-        bidUrl,
-        statusText: response.statusText,
-      });
-      return {
-        bidder,
-        bid: '0.0',
-      };
-    }
-    const bidResponse = await response.json();
-    console.log('Received bid response from DSP', {bidResponse});
-    if (!bidResponse.bidder) {
-      // Set bidder if missing.
-      bidResponse.bidder = bidder;
-    }
-    return bidResponse;
+    return bidderHosts.map((bidderHost) =>
+      new URL(
+        `http://${bidderHost}:${PORT}/dsp/contextual-bid?${bidQuery}`,
+      ).toString(),
+    );
   };
 
   /** Executes a contextual auction and returns the winning bid. */
@@ -94,12 +60,20 @@ export const ContextualAuctionRunner = (() => {
     bidderHosts: string[] = [],
     signals: {[key: string]: string} = {},
   ): Promise<ContextualBidResponse[]> {
-    console.log('Starting contextual auction', {signals});
-    const bidUrlByBidder = getBidUrlByBidder(bidderHosts, signals);
-    const bidResponsePromises = [...bidUrlByBidder.entries()].map(
-      async ([bidder, contextualBidUrl]) =>
-        getContextualBidResponse(bidder, contextualBidUrl),
-    );
+    console.log('Starting contextual auction', {bidderHosts, signals});
+    const bidUrls = getContextualBidUrls(bidderHosts, signals);
+    const bidResponsePromises = bidUrls.map(async (bidUrl) => {
+      console.log('Making contextual bid request', {bidUrl});
+      const response = await fetch(bidUrl);
+      if (response.ok) {
+        const bidResponse = await response.json();
+        console.log('Received contextual bid response', {bidResponse});
+        return bidResponse;
+      } else {
+        console.log('Error in contextual bid response', {response});
+        return {bid: '0.0'};
+      }
+    });
     const bidResponses = await Promise.race([
       (await Promise.allSettled(bidResponsePromises))
         .filter((p) => p.status == 'fulfilled')

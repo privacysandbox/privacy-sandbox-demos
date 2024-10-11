@@ -13,25 +13,35 @@
     body {
       width: 100vw;
       height: 100vh;
-
       margin: 0;
       padding: 0;
-
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    #ad-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 4px;
+      padding: 4px;
+      background: #3f3f3f;
+      color: white;
+      font-family: monospace;
     }
   </style>
   <script src="/js/ad-frame.js"></script>
 </head>
 
 <body>
+  <p id="ad-label"></p>
   <a width="300"
      height="250"
      target="_blank"
      rel="noopener noreferrer"
      href="<%= destination %>">
-    <!-- smaller for avoid scrollbar -->
+    <!-- Smaller to avoid scrollbar -->
     <img width="294"
          height="245"
          loading="lazy"

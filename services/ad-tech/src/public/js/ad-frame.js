@@ -22,22 +22,51 @@
  *   registerAdBeacon().
  */
 (() => {
-  if (!window.fence?.reportEvent) {
-    console.log('[PSDemo] Fenced frames ads reporting API not available.');
-    return;
-  }
-  window.fence.reportEvent({
-    'eventType': 'impression',
-    'destination': ['buyer', 'seller', 'component-seller'],
-  });
-  window.fence.setReportEventDataForAutomaticBeacons({
-    'eventType': 'reserved.top_navigation_start',
-    'eventData': '{"event": "top_navigation_start"}',
-    'destination': ['seller', 'buyer', 'component-seller'],
-  });
-  window.fence.setReportEventDataForAutomaticBeacons({
-    'eventType': 'reserved.top_navigation_commit',
-    'eventData': '{"event": "top_navigation_commit"}',
-    'destination': ['seller', 'buyer', 'component-seller'],
-  });
+  /** Name of the contextual advertiser. */
+  const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
+  const HOST_CODENAME = ((scriptSrc) => {
+    const currentHost = new URL(scriptSrc).hostname;
+    return currentHost.substring('privacy-sandbox-demos-'.length);
+  })(document.currentScript.src);
+  const CURRENT_URL = new URL(location.href);
+
+  /** Triggers all the ad beacons registered in Protected Audience auction. */
+  const triggerAdBeacons = () => {
+    if (!window.fence?.reportEvent) {
+      console.log('[PSDemo] Fenced frames ads reporting API not available.');
+      return;
+    }
+    window.fence.reportEvent({
+      'eventType': 'impression',
+      'destination': ['buyer', 'seller', 'component-seller'],
+    });
+    window.fence.setReportEventDataForAutomaticBeacons({
+      'eventType': 'reserved.top_navigation_start',
+      'eventData': '{"event": "top_navigation_start"}',
+      'destination': ['seller', 'buyer', 'component-seller'],
+    });
+    window.fence.setReportEventDataForAutomaticBeacons({
+      'eventType': 'reserved.top_navigation_commit',
+      'eventData': '{"event": "top_navigation_commit"}',
+      'destination': ['seller', 'buyer', 'component-seller'],
+    });
+  };
+
+  /** Adds a description for demonstration purposes. */
+  const addDescriptionToAdContainer = () => {
+    document.addEventListener('DOMContentLoaded', async (e) => {
+      const advertiser = CURRENT_URL.searchParams.get('advertiser');
+      const $adLabel = document.getElementById('ad-label');
+      if (ADVERTISER_CONTEXTUAL === advertiser) {
+        $adLabel.innerText = `Contextual ad from ${HOST_CODENAME}`;
+      } else {
+        $adLabel.innerText = `PA ad from ${HOST_CODENAME}`;
+      }
+    });
+  };
+
+  (() => {
+    addDescriptionToAdContainer();
+    triggerAdBeacons();
+  })();
 })();

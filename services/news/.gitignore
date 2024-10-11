@@ -1,5 +1,3 @@
-**/*.js
-!src/public/**/*.js
 **/*.css
-!src/public/css/video-ad-style.css
+!src/public/css/unified.css
 !**/*.tailwind.css

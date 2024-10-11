@@ -87,22 +87,21 @@ const getPerBuyerSignals = (
 /** Assembles and returns an auction configuration. */
 const constructAuctionConfig = (context: {
   useCase?: string;
-  adType?: string;
+  isFencedFrame?: string;
   auctionSignals?: {[key: string]: string};
   buyerSignals?: {[key: string]: {[key: string]: string}};
 }) => {
   const useCase = context.useCase || 'default';
-  const adType = context.adType || 'display';
-  const {auctionSignals, buyerSignals} = context;
+  const {isFencedFrame, auctionSignals, buyerSignals} = context;
+  const resolveToConfig = 'true' === isFencedFrame ? true : false;
   /* If `adType` is `video`, set `resolveToConfig` to `false`. This is because
    * video ads are only supported with iframes. If `resolveToConfig` is set to
    * `true`, `runAdAuction()` returns a `FencedFrameConfig`, which can only be
    * rendered in FencedFrames and not iframes.
    */
-  const resolveToConfig = adType !== 'video';
   console.log('Constructing auction config', {
     useCase,
-    adType,
+    isFencedFrame,
     auctionSignals,
     buyerSignals,
     resolveToConfig,
@@ -124,7 +123,7 @@ const constructAuctionConfig = (context: {
     interestGroupBuyers: DSP_ORIGINS,
     auctionSignals: {
       'auction_signals': 'auction_signals',
-      adType,
+      isFencedFrame,
       ...auctionSignals, // Copy signals from request query.
     },
     sellerSignals: {
@@ -145,7 +144,8 @@ const constructAuctionConfig = (context: {
 // ************************************************************************
 // HTTP handlers
 // ************************************************************************
-/** Iframe document used as context to run PAAPI auction. */
+// TODO: Rename to run-single-seller-ad-auction after unified branch is merged.
+/** Iframe document used as context to run single-seller PAAPI auction. */
 SellerRouter.get(
   '/run-ad-auction.html',
   async (req: Request, res: Response) => {
@@ -188,7 +188,7 @@ SellerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
     renderURL: winningContextualBid.renderURL,
     componentAuctionConfig: constructAuctionConfig({
       useCase: req.query.useCase?.toString(),
-      adType: req.query.adType?.toString(),
+      isFencedFrame: req.query.isFencedFrame?.toString(),
       auctionSignals: signals,
       buyerSignals,
     }),
@@ -207,7 +207,7 @@ SellerRouter.get(
     }
     const auctionConfig = constructAuctionConfig({
       useCase: req.query.useCase?.toString(),
-      adType: req.query.adType?.toString(),
+      isFencedFrame: req.query.isFencedFrame?.toString(),
       auctionSignals: signals,
     });
     console.log('Returning auction config: ', {auctionConfig});

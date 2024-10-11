@@ -36,3 +36,12 @@
   -webkit-box-shadow: inset 0 -2px #22303f;
   box-shadow: inset 0 -2px #22303f;
 }
+
+.ad-row {
+  justify-content: center;
+}
+
+.ad-slot {
+  text-align: center;
+  margin: 0 5px;
+}

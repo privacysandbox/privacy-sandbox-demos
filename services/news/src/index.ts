@@ -16,22 +16,29 @@
 
 import express, {Application, Request, Response} from 'express';
 
-import {EXTERNAL_PORT, PORT, NEWS_HOST, NEWS_DETAIL} from './constants.js';
-import {HOME_HOST, SSP_HOST, SSP_A_HOST, SSP_B_HOST} from './constants.js';
-import {SSP_A_ORIGIN, SSP_B_ORIGIN, AD_SERVER_HOST} from './constants.js';
+import {
+  AD_SERVER_HOST,
+  EXTERNAL_PORT,
+  HOME_HOST,
+  LOREM,
+  NEWS_DETAIL,
+  NEWS_HOST,
+  PORT,
+  SSP_A_HOST,
+  SSP_A_ORIGIN,
+  SSP_B_HOST,
+  SSP_B_ORIGIN,
+  SSP_HOST,
+} from './constants.js';
 
 const app: Application = express();
-
-const TITLE = NEWS_DETAIL;
-const LOREM =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
   res.render('index', {
-    title: TITLE,
+    title: NEWS_DETAIL,
     lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
@@ -47,7 +54,7 @@ app.get('/', async (req: Request, res: Response) => {
 
 app.get('/video-ad', async (req: Request, res: Response) => {
   res.render('video-ad', {
-    title: TITLE,
+    title: NEWS_DETAIL,
     lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
@@ -55,16 +62,28 @@ app.get('/video-ad', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/unified-multi-seller', async (req: Request, res: Response) => {
-  res.render('test', {
-    title: TITLE,
+app.get('/single-seller', async (req: Request, res: Response) => {
+  res.render('single-seller', {
+    title: NEWS_DETAIL,
+    lorem: LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    AD_SERVER_LIB_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
+    ).toString(),
+  });
+});
+
+app.get('/multi-seller', async (req: Request, res: Response) => {
+  res.render('multi-seller', {
+    title: NEWS_DETAIL,
     lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
     AD_SERVER_LIB_URL: new URL(
-      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ad-server-tag.js`,
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
     ).toString(),
   });
 });
