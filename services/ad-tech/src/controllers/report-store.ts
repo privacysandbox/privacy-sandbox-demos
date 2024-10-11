@@ -14,6 +14,8 @@
  limitations under the License.
  */
 
+import NodeCache from 'node-cache';
+
 /** Basic categories of reports. */
 export enum ReportCategory {
   EVENT_LEVEL_LOG,
@@ -34,25 +36,23 @@ export interface Report {
   data: any;
 }
 
+/** TTL for in-memory reports: 10 minutes */
+export const REPORT_TTL_SECONDS = 10 * 60;
+
+/** Simple in-memory implementation of report storage. */
 export const ReportStore = (() => {
   // In-memory storage for reports.
-  const Reports: Report[] = [];
-  // Clear in-memory storage every 10 min
-  setInterval(
-    () => {
-      Reports.length = 0;
-    },
-    1000 * 60 * 10,
-  );
+  const Reports = new NodeCache({stdTTL: REPORT_TTL_SECONDS});
 
   /** Add a new report to the in-memory storage. */
   const addReport = (report: Report) => {
-    Reports.push(report);
+    // TODO: Consider partitioning by use-case.
+    Reports.set(`${report.category}||${report.timestamp}`, report);
   };
 
   /** Returns all reports from in-memory storage. */
   const getAllReports = (): Report[] => {
-    return [...Reports];
+    return Reports.keys().map((key) => Reports.get(key) as Report);
   };
 
   return {
