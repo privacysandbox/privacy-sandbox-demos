@@ -49,15 +49,24 @@ function selectDealId(selectedAd) {
     buyerAndSellerReportingId,
     selectableBuyerAndSellerReportingIds,
   } = selectedAd;
-  const countOfSelectableIds = selectableBuyerAndSellerReportingIds.length;
-  const randomIndex = Math.floor(Math.random() * countOfSelectableIds);
-  const selectedId = selectableBuyerAndSellerReportingIds[randomIndex];
-  log('Reporting IDs', {
-    buyerReportingId,
-    buyerAndSellerReportingId,
-    selectedBuyerAndSellerReportingId: selectedId,
-  });
-  return selectedId;
+  if (selectableBuyerAndSellerReportingIds?.length) {
+    const countOfSelectableIds = selectableBuyerAndSellerReportingIds.length;
+    const randomIndex = Math.floor(Math.random() * countOfSelectableIds);
+    const selectedId = selectableBuyerAndSellerReportingIds[randomIndex];
+    log('Reporting IDs', {
+      buyerReportingId,
+      buyerAndSellerReportingId,
+      selectableBuyerAndSellerReportingIds,
+      selectedBuyerAndSellerReportingId: selectedId,
+    });
+    return selectedId;
+  } else {
+    log('Reporting IDs', {
+      buyerReportingId,
+      buyerAndSellerReportingId,
+      selectableBuyerAndSellerReportingIds,
+    });
+  }
 }
 
 // ********************************************************
@@ -79,7 +88,7 @@ function generateBid(
   });
   if ('true' !== trustedBiddingSignals['isActive']) {
     // Don't place a bid if campaign is inactive.
-    log('Campaign inactive', {trustedBiddingSignals});
+    log('Campaign inactive, not bidding.', {trustedBiddingSignals});
     return;
   }
   // Use real-time signals to generate bid amount.
@@ -87,34 +96,34 @@ function generateBid(
   // Select a deal ID from buyer and seller reporting IDs.
   const selectedId = selectDealId(interestGroup.ads[0]);
   return {
-    'ad': interestGroup.ads[0].metadata,
-    'bid': bidCpm,
-    'bidCurrency': 'USD',
-    'allowComponentAuction': true,
-    'render': {
-      'url': interestGroup.ads[0].renderURL,
+    ad: interestGroup.ads[0].metadata,
+    bid: bidCpm,
+    bidCurrency: 'USD',
+    allowComponentAuction: true,
+    render: {
+      url: interestGroup.ads[0].renderURL,
       // Specify ad size for macro replacements.
-      'width': interestGroup.ads[0].metadata.adSizes[0].width,
-      'height': interestGroup.ads[0].metadata.adSizes[0].height,
+      width: interestGroup.ads[0].metadata.adSizes[0].width,
+      height: interestGroup.ads[0].metadata.adSizes[0].height,
     },
     // Specify selected deal ID for reporting.
-    'selectedBuyerAndSellerReportingId': selectedId,
+    selectedBuyerAndSellerReportingId: selectedId,
     /*
       TODO: Use-case: Ad cost reporting
-      'adCost': optionalAdCost,
+      adCost: optionalAdCost,
     */
     /*
       TODO: Use-case: Ad components     
-      'adComponents':[
+      adComponents:[
         {url: adComponent1, width: componentWidth1, height: componentHeight1},
         {url: adComponent2, width: componentWidth2, height: componentHeight2},
       ],
-      'targetNumAdComponents': 3,
-      'numMandatoryAdComponents': 1,
+      targetNumAdComponents: 3,
+      numMandatoryAdComponents: 1,
     */
     /*
       TODO: Use-case: Modeling signals
-      'modelingSignals': 123,
+      modelingSignals: 123,
     */
   };
 }
