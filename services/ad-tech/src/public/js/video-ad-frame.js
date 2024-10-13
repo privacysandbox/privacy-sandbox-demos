@@ -14,14 +14,92 @@
  limitations under the License.
  */
 
+/**
+ * Where is this script used:
+ *   This script is loaded inside the Protected Audience renderURL frame for a
+ *   video ad. For video ads, this renderURL frame is hidden because the video
+ *   ad is loaded on the video player on the publisher page.
+ *
+ * What does this script do:
+ *   This script post-messages the VAST XML content to configure ads in the
+ *   video player.
+ */
 (async () => {
-  const data = {
-    adVastUrl:
-      'https://pubads.g.doubleclick.net/gampad/ads?' +
+  /** VAST XML representing the video ad to be served. */
+  const DSP_VAST_URI = encodeURIComponent(
+    'https://pubads.g.doubleclick.net/gampad/ads?' +
       'iu=/21775744923/external/single_ad_samples&sz=640x480&' +
       'cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&' +
       'gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&' +
       'impl=s&correlator=',
+  );
+
+  /** Fetches the final VAST XML content from the SSP. */
+  const fetchFinalizedVastXmlFromSsp = async (auctionId) => {
+    const currentUrl = new URL(location.href);
+    // Find SSP's VAST XML URL in renderURL query parameters.
+    const sspVastQuery = currentUrl.searchParams.get('sspVast');
+    if (!sspVastQuery) {
+      return console.log('[PSDemo] Expected sspVast query in renderURL', {
+        url: location.href,
+        queryParam: 'sspVast',
+      });
+    }
+    // The SSP's endpoint accepts two query parameters -- dspVast, auctionId --
+    // which the SSP embeds in the finalized VAST XML.
+    const sspVastUrl = new URL(decodeURIComponent(sspVastQuery));
+    sspVastUrl.searchParams.append('auctionId', auctionId);
+    sspVastUrl.searchParams.append('dspVast', DSP_VAST_URI);
+    // Copy query parameters from renderURL.
+    for (const [key, value] of Object.entries(currentUrl.searchParams)) {
+      if ('sspVast' === key) {
+        continue;
+      }
+      sspVastUrl.searchParams.append(key, value);
+    }
+    return sspVastUrl;
+    // Fetch the finalized VAST XML from the ad serving SSP.
+    /*
+    const response = await fetch(sspVastUrl);
+    const result = await response.text();
+    return result;
+    */
   };
-  window.top.postMessage(JSON.stringify(data), '*');
+
+  // **************************************************************************
+  // MAIN FUNCTION
+  // **************************************************************************
+  (() => {
+    // The rendering process begins when the frame receives the auctionId.
+    window.addEventListener('message', async (message) => {
+      if (!message.origin.startsWith('https://privacy-sandbox-demos-ssp')) {
+        return console.log(
+          '[PSDemo] Ignoring message from unknonw origin',
+          message,
+        );
+      }
+      try {
+        const {auctionId} = JSON.parse(message.data);
+        if (!auctionId || 'string' !== typeof auctionId) {
+          return console.log('[PSDemo] auctionId not found', {message});
+        }
+        const vastXmlText = await fetchFinalizedVastXmlFromSsp(auctionId);
+        if (vastXmlText) {
+          // The finalized VAST XML is messaged to the top-most frame that will
+          // pass the VAST XML to the video player
+          const {0: containerFrame} = window.top.frames;
+          containerFrame.top.postMessage(
+            JSON.stringify({
+              vastXml: vastXmlText.toString(),
+            }),
+            '*',
+          );
+        } else {
+          console.log('[PSDemo] Could not fetch VAST XML', {auctionId});
+        }
+      } catch (e) {
+        console.log('[PSDemo] Encountered error delivering video ad', {e});
+      }
+    });
+  })();
 })();

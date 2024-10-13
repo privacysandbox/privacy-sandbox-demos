@@ -14,4 +14,13 @@
  limitations under the License.
  */
 
-console.log('[PSDemo] main.js');
+/**
+ * Where is this script used:
+ *   This script is loaded on all pages.
+ *
+ * What does this script do:
+ *   This script initializes PSDemo module as an empty namepsace.
+ */
+(() => {
+  window.PSDemo = window.PSDemo || {};
+})();

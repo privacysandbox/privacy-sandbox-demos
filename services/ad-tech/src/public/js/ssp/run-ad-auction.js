@@ -31,13 +31,8 @@
   // HELPER FUNCTIONS
   // ****************************************************************
   /** Logs to console. */
-  const log = (label, o) => {
-    console.log(
-      '[PSDemo] Ad server',
-      CURR_HOSTNAME,
-      label,
-      JSON.stringify(o, ' ', ' '),
-    );
+  const log = (label, context) => {
+    console.log('[PSDemo] Ad seller', CURR_HOSTNAME, label, {context});
   };
 
   /** Validates the post messages and returns a valid adUnit if found. */
@@ -55,6 +50,7 @@
       if (otherSellers && otherSellers.length) {
         log('ignoring other sellers', {adUnit, otherSellers});
       }
+      log('received valid adUnit config', {adUnit});
       return adUnit;
     } catch (e) {
       return log('encountered error in parsing adUnit config', {message});
@@ -98,11 +94,19 @@
   /** Executes the single-seller ad auction for the given adUnit config. */
   const runSingleSellerAdAuction = async (message) => {
     const adUnit = getValidatedAdUnit(message);
+    if (!adUnit) {
+      return;
+    }
     const auctionConfig = await getAuctionConfig(adUnit);
+    log('starting Protected Audience auction', {auctionConfig});
     const adAuctionResult = await navigator.runAdAuction(auctionConfig);
     if (!adAuctionResult) {
-      return log("didn't get a Protected Audience result", {adAuctionResult});
+      return log("didn't get a Protected Audience result", {
+        auctionConfig,
+        adAuctionResult,
+      });
     } else {
+      log('got Protected Audience result', {auctionConfig, adAuctionResult});
       const {isFencedFrame, size} = adUnit;
       const adElement = isFencedFrame ? 'fencedframe' : 'iframe';
       const adFrame = document.createElement(adElement);
@@ -112,7 +116,20 @@
         adFrame.src = adAuctionResult;
       }
       [adFrame.width, adFrame.height] = size;
-      log('delivering ads in ', {adFrame});
+      adFrame.addEventListener('load', () => {
+        adFrame.contentWindow.postMessage(
+          JSON.stringify({
+            auctionId: adUnit.auctionId,
+          }),
+          '*',
+        );
+      });
+      log('delivering ads in ', {
+        adFrame,
+        adUnit,
+        auctionConfig,
+        adAuctionResult,
+      });
       document.body.appendChild(adFrame);
     }
   };

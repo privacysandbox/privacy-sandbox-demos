@@ -33,13 +33,8 @@
   // HELPER FUNCTIONS
   // ********************************************************
   /** Logs to console. */
-  const log = (label, o) => {
-    console.log(
-      '[PSDemo] Ad server',
-      CURR_HOSTNAME,
-      label,
-      JSON.stringify(o, ' ', ' '),
-    );
+  const log = (label, context) => {
+    console.log('[PSDemo] Ad seller', CURR_HOSTNAME, label, {context});
   };
 
   /** Returns frame URL with page context as search query. */
@@ -78,6 +73,7 @@
         iframeEl.setAttribute(key, value);
       }
     }
+    log('injecting iframe', {src, divId, iframeEl});
     document.getElementById(divId).appendChild(iframeEl);
     return iframeEl;
   };
@@ -88,11 +84,16 @@
       if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) {
         return;
       }
+      log('received post-message from DSP', {event});
       if ('string' === typeof event.data) {
-        const {adVastUrl} = JSON.parse(event.data);
-        setUpIMA(adVastUrl);
+        const {vastXml} = JSON.parse(event.data);
+        if (vastXml) {
+          log('parsed VAST response', {vastXml});
+          window.PSDemo.VideoAdHelper.setUpIMA(vastXml);
+        }
       }
     });
+    log('listening for post-messages from buyers');
   };
 
   /** Adds a descriptive label for demonstration purposes. */
@@ -143,6 +144,10 @@
 
   /** Iterates through adUnit configs and delivers ads. */
   const deliverAds = (adUnits, otherSellers) => {
+    // Iterate over adUnits and inject an ad-container iframe for each adUnit.
+    // The container iframe has additional scripts to execute ad auctions for
+    // a given adUnit config. This ssp-tag will post message the adUnit config
+    // to the injected iframe once it's loaded.
     for (const adUnit of adUnits) {
       if (!isValidAdUnit(adUnit)) {
         continue;
@@ -155,7 +160,7 @@
         addEventListenerForDspPostMessages();
         size = [0, 0]; // Hide frame as this will only post message the VAST.
       } else {
-        return log('unsupported ad type', {adUnit});
+        return log('unsupported adType', {adUnit});
       }
       const pathname = ((otherSellers) => {
         if (!otherSellers || !otherSellers.length) {
@@ -183,6 +188,7 @@
           }),
           '*',
         );
+        log('post-messaged adUnit configs', {adUnit, iframeEl});
       });
       log('delivering for validated adUnit', {adUnit, iframeEl});
     }
@@ -191,13 +197,16 @@
   /** Main function. */
   (() => {
     // Read page ad unit configurations from local storage.
-    if (!window.PAGE_ADS_CONFIG) {
-      return log('did not find', {'PAGE_ADS_CONFIG': window.PAGE_ADS_CONFIG});
+    if (!window.PSDemo || !window.PSDemo.PAGE_ADS_CONFIG) {
+      return log('did not find', {key: 'window.PSDemo.PAGE_ADS_CONFIG'});
     }
-    const {adUnits, otherSellers} = window.PAGE_ADS_CONFIG;
+    const {adUnits, otherSellers} = window.PSDemo.PAGE_ADS_CONFIG;
     if (!adUnits || !adUnits.length) {
-      return log('did not find adUnits: window.PAGE_ADS_CONFIG');
+      return log('did not find adUnits', {
+        PAGE_ADS_CONFIG: window.PSDemo.PAGE_ADS_CONFIG,
+      });
     }
+    log('delivering ads', {adUnits, otherSellers});
     deliverAds(adUnits, otherSellers);
   })();
 })();

@@ -14,7 +14,9 @@
  limitations under the License.
  */
 
-(() => {
+window.PSDemo = window.PSDemo || {};
+
+window.PSDemo.VideoAdHelper = (() => {
   let adsManager;
   let adsLoader;
   let adDisplayContainer;
@@ -25,9 +27,9 @@
   let videoContent;
 
   /** Sets up IMA ad display container, ads loader, and makes an ad request. */
-  const setUpIMA = (vast, auctionType) => {
-    if (!vast) {
-      return console.log('[PSDemo] No VAST XML or URI provided.');
+  const setUpIMA = async (vastXml) => {
+    if (!vastXml) {
+      return console.log('[PSDemo] No VAST XML provided.');
     }
     // Create the ad display container.
     createAdDisplayContainer();
@@ -54,14 +56,13 @@
       adsLoader.contentComplete();
     };
     videoContent.onended = contentEndedListener;
-    // Request video ads.
     const adsRequest = new google.ima.AdsRequest();
-    if (auctionType === 'multi') {
-      // In a multi-seller setup, we pass in the XML string
-      adsRequest.adsResponse = vast;
+    // Set ad to provided VAST XML, which is either a URL representing the XML
+    // or the XML text itself.
+    if (vastXml.startsWith('https')) {
+      adsRequest.adTagUrl = vastXml;
     } else {
-      // In a single-seller setup, we pass in the VAST URI
-      adsRequest.adTagUrl = vast;
+      adsRequest.adsResponse = vastXml;
     }
     // Specify the linear and nonlinear slot sizes. This helps the SDK to
     // select the correct creative if multiple are returned.
@@ -214,4 +215,9 @@
     playButton.addEventListener('click', playContentMaybeAds);
     console.log('[PSDemo] Video content initialized.');
   })();
+
+  // Exported members of VideoAdHelper
+  return {
+    setUpIMA,
+  };
 })();

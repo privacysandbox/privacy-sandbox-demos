@@ -14,20 +14,22 @@
 import express, {Request, Response} from 'express';
 
 import {KeyValueStore} from '../controllers/key-value-store.js';
-import {HOSTNAME, EXTERNAL_PORT, CURRENT_ORIGIN} from '../lib/constants.js';
+import {
+  CURRENT_ORIGIN,
+  EXTERNAL_PORT,
+  HOSTNAME,
+  SSP_HOST,
+  SSP_A_HOST,
+  SSP_B_HOST,
+} from '../lib/constants.js';
 import {getTemplateVariables} from '../lib/template-utils.js';
+import {InterestGroupHelper} from '../lib/interest-group-helper.js';
 
 export const BuyerRouter = express.Router();
-
-/** Both types of ad size macros supported in render URLs. */
-export const RENDER_URL_SIZE_MACRO =
-  'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
-/** Max bid CPM for contextual auctions. */
-export const MAX_CONTEXTUAL_BID = 1.5;
-/** Min bid CPM for contextual auctions. */
-export const MIN_CONTEXTUAL_BID = 0.5;
 /** Name of the contextual advertiser. */
 export const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
+/** SSPs to integrate with. */
+const SSP_HOSTS = [SSP_HOST!, SSP_A_HOST!, SSP_B_HOST!];
 
 // ************************************************************************
 // BYOS implementation of Key - Value store
@@ -57,7 +59,7 @@ BuyerRouter.get(
 
 /** Places a bid for the contextual auction. */
 BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
-  const bid = getBidPrice();
+  const bid = InterestGroupHelper.getBidPrice();
   // Generate a new auction ID if missing in request.
   const auctionId = req.query.auctionId || `DSP-${crypto.randomUUID()}`;
   // Assemble render URL query parameters.
@@ -127,22 +129,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
-    ads: [
-      {
-        renderURL: getRenderUrl(req.query),
-        sizeGroup: 'medium-rectangle',
-        // Reporting IDs
-        selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
-        buyerReportingId: 'buyerSpecificInfo1',
-        buyerAndSellerReportingId: 'seatid-1234',
-        // Custom ad metadata defined by ad-tech.
-        metadata: {
-          advertiser,
-          adType: 'image',
-          adSizes: [{'width': '300px', 'height': '250px'}],
-        },
-      },
-    ],
+    ads: InterestGroupHelper.getAdsForRequest(req, SSP_HOSTS),
   });
 });
 
@@ -174,6 +161,27 @@ BuyerRouter.get('/bidding-signal.json', async (req: Request, res: Response) => {
   res.json(biddingSignals);
 });
 
+// TODO: Implement
+// BuyerRouter.get('/daily-update-url', async (req: Request, res: Response) => {
+// })
+
+/** Iframe document used as context to test Private Aggregation. */
+BuyerRouter.get(
+  '/test-private-aggregation.html',
+  async (req: Request, res: Response) => {
+    const bucket = req.query.bucket;
+    const cloudEnv = req.query.cloudEnv;
+    console.log(`${bucket}, ${cloudEnv}`);
+    res.render('dsp/test-private-aggregation', {
+      bucket: bucket,
+      cloudEnv: cloudEnv,
+    });
+  },
+);
+
+// ************************************************************************
+// HTTP endpoints used for demonstration purposes
+// ************************************************************************
 /** Adds values in query parameters to Key Value Store. */
 BuyerRouter.get(
   '/set-bidding-signal.json',
@@ -194,49 +202,3 @@ BuyerRouter.get(
     res.status(200).send(`Rewrote default real-time signals: ${HOSTNAME}`);
   },
 );
-
-// TODO: Implement
-// BuyerRouter.get('/daily-update-url', async (req: Request, res: Response) => {
-// })
-
-/** Iframe document used as context to test Private Aggregation. */
-BuyerRouter.get(
-  '/test-private-aggregation.html',
-  async (req: Request, res: Response) => {
-    const bucket = req.query.bucket;
-    const cloudEnv = req.query.cloudEnv;
-    console.log(`${bucket}, ${cloudEnv}`);
-    res.render('dsp/test-private-aggregation', {
-      bucket: bucket,
-      cloudEnv: cloudEnv,
-    });
-  },
-);
-
-// ************************************************************************
-// DSP helper functions
-// ************************************************************************
-/** Constructs render URL to use in Interest Groups. */
-const getRenderUrl = (requestQuery: any): string => {
-  if ('video' === requestQuery.adType) {
-    return new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/html/video-ad-creative.html`,
-    ).toString();
-  } else {
-    const advertiser = requestQuery.advertiser || HOSTNAME;
-    const imageCreative = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
-    imageCreative.searchParams.append('advertiser', advertiser);
-    if (requestQuery.itemId) {
-      imageCreative.searchParams.append('itemId', requestQuery.itemId);
-    }
-    return `${imageCreative.toString()}&${RENDER_URL_SIZE_MACRO}`;
-  }
-};
-
-/** Returns a random bid price with 2 decimal digits. */
-const getBidPrice = (): string => {
-  const minBid = MIN_CONTEXTUAL_BID;
-  const maxBid = MAX_CONTEXTUAL_BID;
-  const bid = (Math.random() * (maxBid - minBid) + minBid).toFixed(2);
-  return bid;
-};

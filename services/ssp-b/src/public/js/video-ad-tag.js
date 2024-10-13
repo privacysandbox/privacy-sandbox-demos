@@ -31,5 +31,5 @@ window.addEventListener('message', (event) => {
   if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) return;
   if (typeof event.data !== 'string') return;
   const {adVastUrl} = JSON.parse(event.data);
-  setUpIMA(adVastUrl);
+  window.PSDemo.VideoAdHelper.setUpIMA(adVastUrl);
 });

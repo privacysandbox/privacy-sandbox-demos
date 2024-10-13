@@ -20,46 +20,16 @@
   // HELPER FUNCTIONS
   // ****************************************************************
   /** Logs to console. */
-  const log = (label, o) => {
-    console.log('[PSDemo] Ad server',
-      CURR_SCRIPT_URL.hostname,
-      label,
-      JSON.stringify(o, ' ', ' '),
-    );
-  }
-
-  const deliverAd = async () => {
-    const auctionResult = await navigator.runAdAuction(auctionConfig)
-    const isVideo = type === 'video'
-    let frameEl
-    // If there is no Protected Audience auction
-    // winner, render the contextual ad
-    if (!auctionResult && !isVideo) {
-      frameEl = document.createElement('iframe')
-      frameEl.src = contextualAd.renderUrl
-    // Render the ad in a fenced frame
-    } else if (auctionResult instanceof FencedFrameConfig) {
-      frameEl = document.createElement('fencedframe')
-      frameEl.config = auctionResult
-    // Render the ad in an iframe
-    } else {
-      frameEl = document.createElement('iframe')
-      frameEl.src = auctionResult
-    }
-    if (auctionResult && isVideo) {
-      frameEl.className = 'video-ad'
-    } else {
-      frameEl.className = 'ad'
-    }
-    // A unique ID is passed into the creative iframe
-    frameEl.onload = () => frameEl.contentWindow.postMessage(auctionId, '*')
-    document.body.appendChild(frameEl)
-  }
+  const log = (label, context) => {
+    console.log('[PSDemo] Ad seller', CURR_SCRIPT_URL.hostname, label, {
+      context,
+    });
+  };
 
   /** Validates the post messages and returns the adUnit and other sellers. */
   const getValidatedAdUnitAndOtherSellers = (message) => {
-    const iframeUrl = new URL(window.location.href)
-    const publisher = iframeUrl.searchParams.get('publisher')
+    const iframeUrl = new URL(window.location.href);
+    const publisher = iframeUrl.searchParams.get('publisher');
     if (message.origin !== publisher) {
       return log('ignoring message from unknown origin', {message, publisher});
     }
@@ -104,10 +74,10 @@
       const response = await fetch(bidRequestUrl);
       if (response.ok) {
         const bidResponse = await response.json();
-        console.log('received contextual bid response', {bidResponse});
+        log('received contextual bid response', {bidResponse});
         return bidResponse;
       } else {
-        console.log('encountered error in contextual bid response', {
+        log('encountered error in contextual bid response', {
           statusText: response.statusText,
           bidRequestUrl,
         });
@@ -127,7 +97,11 @@
   };
 
   /** Assembles and returns a multi-seller auction configuration. */
-  const assembleAuctionConfig = (adUnit, winningContextualBid, componentAuctions) => {
+  const assembleAuctionConfig = (
+    adUnit,
+    winningContextualBid,
+    componentAuctions,
+  ) => {
     const topLevelSellerScript = new URL(CURR_SCRIPT_URL.origin);
     topLevelSellerScript.pathname = '/js/ssp/default/auction-decision-logic.js';
     return {
@@ -141,7 +115,7 @@
       },
       sellerCurrency: 'USD',
       // deprecatedRenderURLReplacements: {},
-      resolveToConfig: adUnit.adType !== 'VIDEO',
+      resolveToConfig: adUnit.isFencedFrame,
       // signal: AbortSignal,
       componentAuctions,
     };
@@ -150,19 +124,30 @@
   /** Executes the PAAPI auction in sequence and returns the overall result. */
   const executeSequentialAuction = async (adUnit, contextualBidResponses) => {
     const [winningContextualBid] = contextualBidResponses.sort(
-      (bid1, bid2) => Number(bid2.bid) - Number(bid1.bid));
+      (bid1, bid2) => Number(bid2.bid) - Number(bid1.bid),
+    );
     const componentAuctionConfigs = contextualBidResponses.map(
-      (bidResponse) => bidResponse.componentAuctionConfig);
+      (bidResponse) => bidResponse.componentAuctionConfig,
+    );
     const auctionConfig = assembleAuctionConfig(
-      adUnit, winningContextualBid, componentAuctionConfigs);
-    log('executing sequential auction', {adUnit, winningContextualBid, auctionConfig});
+      adUnit,
+      winningContextualBid,
+      componentAuctionConfigs,
+    );
+    log('executing sequential auction', {
+      adUnit,
+      winningContextualBid,
+      auctionConfig,
+    });
     const adAuctionResult = await navigator.runAdAuction(auctionConfig);
     if (adAuctionResult) {
+      log('delivering Protected Audience ad', {adAuctionResult});
       return {
         type: 'PROTECTED_AUDIENCE',
         value: adAuctionResult,
       };
     } else {
+      log('delivering contextual ad', {winningContextualBid});
       return {
         type: 'CONTEXTUAL',
         value: winningContextualBid.renderURL,
@@ -173,11 +158,21 @@
   /** Executes the multi-seller ad auction for the given adUnit config. */
   const runMultiSellerAdAuction = async (message) => {
     const [adUnit, otherSellers] = getValidatedAdUnitAndOtherSellers(message);
-    const contextualBidResponses = await getAllBidResponses(adUnit, otherSellers);
+    const contextualBidResponses = await getAllBidResponses(
+      adUnit,
+      otherSellers,
+    );
     if (!contextualBidResponses || !contextualBidResponses.length) {
-      return log('received no contextual bid responses', {adUnit, otherSellers});
+      return log('received no contextual bid responses', {
+        adUnit,
+        otherSellers,
+      });
     }
-    const adAuctionResult = await executeSequentialAuction(adUnit, contextualBidResponses);
+    const adAuctionResult = await executeSequentialAuction(
+      adUnit,
+      contextualBidResponses,
+    );
+    const {auctionId, isFencedFrame, size} = adUnit;
     const adElement = isFencedFrame ? 'fencedframe' : 'iframe';
     const adFrame = document.createElement(adElement);
     if ('CONTEXTUAL' === adAuctionResult.type || !isFencedFrame) {
@@ -186,10 +181,13 @@
       adFrame.config = adAuctionResult.value;
     }
     [adFrame.width, adFrame.height] = size;
-    log('delivering ads', {adUnit, otherSellers, adAuctionResult, adFrame});
+    adFrame.addEventListener('load', () => {
+      adFrame.contentWindow.postMessage(JSON.stringify({auctionId}), '*');
+    });
+    log('rendering ad', {adUnit, otherSellers, adAuctionResult, adFrame});
     document.body.appendChild(adFrame);
   };
- 
+
   // ****************************************************************
   // MAIN FUNCTION
   // ****************************************************************

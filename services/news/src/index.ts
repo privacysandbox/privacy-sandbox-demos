@@ -38,8 +38,8 @@ app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
   res.render('index', {
-    title: NEWS_DETAIL,
-    lorem: LOREM,
+    TITLE: NEWS_DETAIL,
+    LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_A_HOST,
@@ -48,24 +48,28 @@ app.get('/', async (req: Request, res: Response) => {
     SSP_TAG_URL: `https://${SSP_HOST}/js/ssp/ssp-tag.js`,
     AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
     HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
-    isMultiSeller: 'multi' === req.query.auctionType,
+    IS_MULTI_SELLER: 'multi' === req.query.auctionType,
   });
 });
 
 app.get('/video-ad', async (req: Request, res: Response) => {
   res.render('video-ad', {
-    title: NEWS_DETAIL,
-    lorem: LOREM,
+    TITLE: NEWS_DETAIL,
+    LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
-    SSP_HOST,
+    SSP_A_ORIGIN,
+    SSP_B_ORIGIN,
+    AD_SERVER_LIB_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
+    ).toString(),
   });
 });
 
 app.get('/single-seller', async (req: Request, res: Response) => {
   res.render('single-seller', {
-    title: NEWS_DETAIL,
-    lorem: LOREM,
+    TITLE: NEWS_DETAIL,
+    LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     AD_SERVER_LIB_URL: new URL(
@@ -76,8 +80,8 @@ app.get('/single-seller', async (req: Request, res: Response) => {
 
 app.get('/multi-seller', async (req: Request, res: Response) => {
   res.render('multi-seller', {
-    title: NEWS_DETAIL,
-    lorem: LOREM,
+    TITLE: NEWS_DETAIL,
+    LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_A_ORIGIN,

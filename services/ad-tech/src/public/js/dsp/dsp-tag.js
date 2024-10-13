@@ -56,6 +56,7 @@
         $iframe.setAttribute(key, value);
       }
     }
+    console.log('[PSDemo] Ad buyer injecting iframe', {src, $iframe});
     const $script = document.currentScript;
     $script.parentElement.insertBefore($iframe, $script);
   };

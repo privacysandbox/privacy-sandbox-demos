@@ -107,7 +107,7 @@ class AdServerLib {
     window.addEventListener('message', ({origin, data}) => {
       if (buyers.some((buyer) => buyer.includes(origin))) {
         // Pass the VAST XML to the video ad helper that renders the ad
-        setUpIMA(data, 'multi');
+        window.PSDemo.VideoAdHelper.setUpIMA(data, 'multi');
       }
     });
   }

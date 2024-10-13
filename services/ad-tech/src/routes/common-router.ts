@@ -102,11 +102,16 @@ CommonRouter.get('/reports', async (req: Request, res: Response) => {
   });
 });
 
-/** Used as render URL in interest groups. */
+/** Used as render URL in interest groups for display ads. */
 CommonRouter.get('/ads', async (req: Request, res: Response) => {
   const templateVariables = getAdTemplateVariables(req.query);
   console.log('Loading ad creative: ', templateVariables);
   res.render('ad-frame', templateVariables);
+});
+
+/** Used as render URL in interest groups for video ads. */
+CommonRouter.get('/video-ads', async (req: Request, res: Response) => {
+  res.render('video-ad-frame');
 });
 
 // HTTP handlers for event-level reporting and logging.
