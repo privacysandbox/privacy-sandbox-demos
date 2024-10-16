@@ -260,6 +260,10 @@ SellerRouter.get('/vast.xml', async (req: Request, res: Response) => {
   const auctionId =
     req.query.auctionId?.toString() || `SSP-${crypto.randomUUID()}`;
   const advertiser = req.query.advertiser?.toString() || HOSTNAME;
+  /**
+   * TODO: Consider using additional video ad types.
+   * https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
+   */
   res.type('application/xml').render('ssp/vast-preroll', {
     HOSTNAME,
     EXTERNAL_PORT,
