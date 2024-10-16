@@ -76,7 +76,12 @@ function selectDealId(selectedAd) {
   }
 }
 
-function selectVideoAd({interestGroup, trustedBiddingSignals, browserSignals}) {
+/** Returns the bid response for a video ad request. */
+function getBidForVideoAd({
+  interestGroup,
+  trustedBiddingSignals,
+  browserSignals,
+}) {
   const {seller} = browserSignals;
   const {ads} = interestGroup;
   // Filter for video ads specifically mapped to current SSP.
@@ -109,7 +114,8 @@ function selectVideoAd({interestGroup, trustedBiddingSignals, browserSignals}) {
   };
 }
 
-function selectDisplayAd({
+/** Returns the bid response for a display ad request. */
+function getBidForDisplayAd({
   interestGroup,
   trustedBiddingSignals,
   browserSignals,
@@ -186,21 +192,15 @@ function generateBid(
     });
     return;
   }
-  const {adType} = auctionSignals;
-  let bid;
-  if ('VIDEO' === adType) {
-    bid = selectVideoAd({
-      interestGroup,
-      trustedBiddingSignals,
-      browserSignals,
-    });
-  } else {
-    bid = selectDisplayAd({
-      interestGroup,
-      trustedBiddingSignals,
-      browserSignals,
-    });
-  }
+  const biddingContext = {
+    interestGroup,
+    trustedBiddingSignals,
+    browserSignals,
+  };
+  const bid =
+    'VIDEO' === auctionSignals.adType
+      ? getBidForVideoAd(biddingContext)
+      : getBidForDisplayAd(biddingContext);
   if (bid) {
     log('returning bid', {bid});
     return bid;

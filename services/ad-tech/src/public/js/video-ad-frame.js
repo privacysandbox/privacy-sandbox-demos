@@ -57,13 +57,22 @@
       }
       sspVastUrl.searchParams.append(key, value);
     }
-    return sspVastUrl;
     // Fetch the finalized VAST XML from the ad serving SSP.
-    /*
     const response = await fetch(sspVastUrl);
     const result = await response.text();
     return result;
-    */
+  };
+
+  /** Adds a descriptive label about the involved ad-techs. */
+  const addDescriptionToAdContainer = (seller) => {
+    const buyerCodeName = location.hostname.substring(
+      'privacy-sandbox-demos-'.length,
+    );
+    const sellerCodeName = seller.substring('privacy-sandbox-demos-'.length);
+    const $adLabelEl = document.getElementById('ad-label');
+    if ($adLabelEl) {
+      $adLabelEl.innerText = `Video ad from ${buyerCodeName} delivered by ${sellerCodeName}`;
+    }
   };
 
   // **************************************************************************
@@ -79,17 +88,20 @@
         );
       }
       try {
-        const {auctionId} = JSON.parse(message.data);
+        const {auctionId, seller} = JSON.parse(message.data);
         if (!auctionId || 'string' !== typeof auctionId) {
           return console.log('[PSDemo] auctionId not found', {message});
         }
         const vastXmlText = await fetchFinalizedVastXmlFromSsp(auctionId);
         if (vastXmlText) {
+          addDescriptionToAdContainer(seller);
           // The finalized VAST XML is messaged to the top-most frame that will
           // pass the VAST XML to the video player
           const {0: containerFrame} = window.top.frames;
           containerFrame.top.postMessage(
             JSON.stringify({
+              auctionId,
+              buyer: location.hostname,
               vastXml: vastXmlText.toString(),
             }),
             '*',

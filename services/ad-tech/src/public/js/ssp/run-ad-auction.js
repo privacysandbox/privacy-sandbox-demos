@@ -120,6 +120,7 @@
         adFrame.contentWindow.postMessage(
           JSON.stringify({
             auctionId: adUnit.auctionId,
+            seller: location.hostname,
           }),
           '*',
         );

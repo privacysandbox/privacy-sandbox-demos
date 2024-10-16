@@ -84,21 +84,16 @@
       if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) {
         return;
       }
-      log('received post-message from DSP', {event});
       if ('string' === typeof event.data) {
-        const {vastXml} = JSON.parse(event.data);
-        if (vastXml) {
-          log('received VAST response', {vastXml});
-          const vastResponse = await fetch(vastXml);
-          if (vastResponse.ok) {
-            const vastXmlText = await vastResponse.text();
-            window.PSDemo.VideoAdHelper.setUpIMA(vastXmlText);
-          } else {
-            log('did not receive VAST XML response', {
-              url: vastXml,
-              statusText: vastResponse.statusText,
-            });
+        try {
+          const {auctionId, buyer, vastXml} = JSON.parse(event.data);
+          log('received VAST post-message from DSP', {auctionId, buyer, event});
+          if (vastXml) {
+            log('setting up video ad', {auctionId, buyer, vastXml});
+            window.PSDemo.VideoAdHelper.setUpIMA(vastXml);
           }
+        } catch (err) {
+          log('encountered error while parsing post-message', {e});
         }
       }
     });
@@ -107,11 +102,14 @@
 
   /** Adds a descriptive label for demonstration purposes. */
   const addDescriptionToAdContainer = (divId, adType, isFencedFrame) => {
+    const sellerCodeName = new URL(
+      document.currentScript.src,
+    ).hostname.substring('privacy-sandbox-demos-'.length);
     const paragraphEl = document.createElement('p');
     paragraphEl.innerText = `${adType} ad in ${
-      isFencedFrame ? 'fenced frame' : 'iframe'
-    }`.toUpperCase();
-    paragraphEl.className = 'font-mono text-sm';
+      isFencedFrame ? 'FENCED FRAME' : 'IFRAME'
+    } by ${sellerCodeName}`;
+    paragraphEl.className = 'ad-label';
     const adContainer = document.getElementById(divId);
     if (adContainer) {
       adContainer.appendChild(paragraphEl);
@@ -167,7 +165,7 @@
         addDescriptionToAdContainer(divId, adType, isFencedFrame);
       } else if ('VIDEO' === adType.toUpperCase()) {
         addEventListenerForDspPostMessages();
-        size = [0, 0]; // Hide frame as this will only post message the VAST.
+        size[1] = 32; // Set height to 32px, just enough for a description.
       } else {
         return log('unsupported adType', {adUnit});
       }

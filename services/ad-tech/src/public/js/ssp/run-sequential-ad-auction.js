@@ -182,7 +182,13 @@
     }
     [adFrame.width, adFrame.height] = size;
     adFrame.addEventListener('load', () => {
-      adFrame.contentWindow.postMessage(JSON.stringify({auctionId}), '*');
+      adFrame.contentWindow.postMessage(
+        JSON.stringify({
+          auctionId,
+          seller: location.hostname,
+        }),
+        '*',
+      );
     });
     log('rendering ad', {adUnit, otherSellers, adAuctionResult, adFrame});
     document.body.appendChild(adFrame);

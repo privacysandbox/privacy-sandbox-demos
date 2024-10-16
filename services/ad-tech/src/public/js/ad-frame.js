@@ -60,7 +60,7 @@
       if (ADVERTISER_CONTEXTUAL === advertiser) {
         $adLabel.innerText = `Contextual ad from ${HOST_CODENAME}`;
       } else {
-        $adLabel.innerText = `PA ad from ${HOST_CODENAME}`;
+        $adLabel.innerText = `PAAPI ad from ${HOST_CODENAME}`;
       }
     });
   };

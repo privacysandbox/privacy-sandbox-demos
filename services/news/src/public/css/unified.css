@@ -61,3 +61,11 @@
   text-align: center;
   margin: 0 5px;
 }
+
+.ad-label {
+  margin: 4px;
+  background: white;
+  color: black;
+  font-family: monospace;
+  font-size: 10pt;
+}
