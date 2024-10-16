@@ -14,12 +14,19 @@
 import {Request} from 'express';
 import {EXTERNAL_PORT, HOSTNAME} from './constants.js';
 
+/** Supported ad types. */
+export enum AdType {
+  DISPLAY = 'DISPLAY',
+  VIDEO = 'VIDEO',
+}
+
+/** Generalized interface for an interest group ad object. */
 export interface InterestGroupAd {
   // REQUIRED FIELDS
   renderURL: string;
   metadata: {
     advertiser: string;
-    adType: string;
+    adType: AdType;
     adSizes?: {width: string; height: string}[];
     seller?: string;
   };
@@ -49,54 +56,67 @@ export const InterestGroupHelper = (() => {
     return bid;
   };
 
-  const getAdsForRequest = (
-    req: Request,
+  /** Returns the video ads to be included in the given interest group. */
+  const getVideoAdsForRequest = (
+    advertiser: string,
     sspHosts: string[],
   ): InterestGroupAd[] => {
-    const advertiser = req.query.advertiser?.toString() || HOSTNAME!;
-    const adType = req.query.adType?.toString().toUpperCase() || 'DISPLAY';
-    const ads: InterestGroupAd[] = [];
-    if ('VIDEO' === adType) {
-      const renderUrl = new URL(
-        `https://${HOSTNAME}:${EXTERNAL_PORT}/video-ads`,
+    const videoAds: InterestGroupAd[] = [];
+    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/video-ads`);
+    renderUrl.searchParams.append('advertiser', advertiser);
+    for (const sspHost of sspHosts) {
+      const sspVastUrl = encodeURIComponent(
+        new URL(`https://${sspHost}:${EXTERNAL_PORT}/ssp/vast.xml`).toString(),
       );
-      renderUrl.searchParams.append('advertiser', advertiser);
-      for (const sspHost of sspHosts) {
-        const sspVastUrl = encodeURIComponent(
-          new URL(
-            `https://${sspHost}:${EXTERNAL_PORT}/ssp/vast.xml`,
-          ).toString(),
-        );
-        renderUrl.searchParams.delete('sspVast');
-        renderUrl.searchParams.append('sspVast', sspVastUrl);
-        ads.push({
-          renderURL: renderUrl.toString(),
-          metadata: {
-            advertiser,
-            adType,
-            seller: sspHost,
-          },
-        });
-      }
-    } else {
-      const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
-      renderUrl.searchParams.append('advertiser', advertiser);
-      if (req.query.itemId) {
-        renderUrl.searchParams.append('itemId', req.query.itemId.toString());
-      }
-      ads.push({
-        renderURL: `${renderUrl.toString()}&${RENDER_URL_SIZE_MACRO}`,
+      renderUrl.searchParams.delete('sspVast');
+      renderUrl.searchParams.append('sspVast', sspVastUrl);
+      videoAds.push({
+        renderURL: renderUrl.toString(),
         metadata: {
           advertiser,
-          adType,
-          adSizes: [{width: '300px', height: '250px'}],
+          adType: AdType.VIDEO,
+          seller: new URL(`https://${sspHost}:${EXTERNAL_PORT}`).toString(),
         },
-        sizeGroup: 'medium-rectangle',
         selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
         buyerReportingId: 'buyerSpecificInfo1',
         buyerAndSellerReportingId: 'seatid-1234',
       });
     }
+    return videoAds;
+  };
+
+  const getDisplayAdForRequest = (
+    advertiser: string,
+    itemId?: string,
+  ): InterestGroupAd => {
+    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
+    renderUrl.searchParams.append('advertiser', advertiser);
+    if (itemId) {
+      renderUrl.searchParams.append('itemId', itemId);
+    }
+    return {
+      renderURL: `${renderUrl.toString()}&${RENDER_URL_SIZE_MACRO}`,
+      metadata: {
+        advertiser,
+        adType: AdType.DISPLAY,
+        adSizes: [{width: '300px', height: '250px'}],
+      },
+      sizeGroup: 'medium-rectangle',
+      selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
+      buyerReportingId: 'buyerSpecificInfo1',
+      buyerAndSellerReportingId: 'seatid-1234',
+    };
+  };
+
+  /** Returns the ads to include in the interest group request. */
+  const getAdsForRequest = (
+    req: Request,
+    sspHosts: string[],
+  ): InterestGroupAd[] => {
+    const advertiser = req.query.advertiser?.toString() || HOSTNAME!;
+    const ads: InterestGroupAd[] = [];
+    ads.push(...getVideoAdsForRequest(advertiser, sspHosts));
+    ads.push(getDisplayAdForRequest(advertiser, req.query.itemId?.toString()));
     return ads;
   };
 

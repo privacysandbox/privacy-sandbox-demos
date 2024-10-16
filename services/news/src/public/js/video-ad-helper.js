@@ -14,6 +14,17 @@
  limitations under the License.
  */
 
+/**
+ * Where is this script used:
+ *   This script is included on publisher pages to help deliver video ads.
+ *
+ * What does this script do:
+ *   This library is responsible for interpreting ad-tech's VAST XML responses
+ *   to video ad requests and configuring the video player on the page.
+ *
+ * Source: https://github.com/googleads/googleads-ima-html5
+ */
+
 window.PSDemo = window.PSDemo || {};
 
 window.PSDemo.VideoAdHelper = (() => {
@@ -22,9 +33,11 @@ window.PSDemo.VideoAdHelper = (() => {
   let adDisplayContainer;
   let intervalTimer;
   let isAdPlaying;
-  let isContentFinished;
+  let isContentFinished = false;
   let playButton;
   let videoContent;
+  let adsCompleted = false;
+  let isVideoLoaded = false;
 
   /** Sets up IMA ad display container, ads loader, and makes an ad request. */
   const setUpIMA = async (vastXml) => {
@@ -85,11 +98,19 @@ window.PSDemo.VideoAdHelper = (() => {
 
   /** Loads the video content and initializes IMA ad playback. */
   const playContentMaybeAds = () => {
-    // Initialize the container. Must be done through a user action on mobile
-    // devices.
-    // videoContent.load();
-    if (!adsManager) {
+    if (!isVideoLoaded) {
+      // Initialize the container. Must be done through a user action on mobile
+      // devices. But load the video only once.
+      videoContent.load();
+      isVideoLoaded = true;
+    }
+    if (!adsManager || adsCompleted) {
+      // Play content if adsManager isn't initialized or finished.
       videoContent.paused ? videoContent.play() : videoContent.pause();
+      return;
+    }
+    if (isAdPlaying) {
+      // If ad is currently playing, then ignore user's request.
       return;
     }
     if (adDisplayContainer) {
@@ -138,12 +159,12 @@ window.PSDemo.VideoAdHelper = (() => {
     adsManager.addEventListener(google.ima.AdEvent.Type.LOADED, onAdEvent);
     adsManager.addEventListener(google.ima.AdEvent.Type.STARTED, onAdEvent);
     adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, onAdEvent);
-    console.log('Ads Manager loaded.');
-    playButton.innerHTML = 'Play video';
+    console.log('[PSDemo] Video ad loaded in player.');
   };
 
   /** Handles actions taken in response to ad events. */
   const onAdEvent = (adEvent) => {
+    console.log('[PSDemo] Received video ads manager event', {adEvent});
     // Retrieve the ad from the event. Some events (for example,
     // ALL_ADS_COMPLETED) don't have ad object associated.
     const ad = adEvent.getAd();
@@ -177,13 +198,21 @@ window.PSDemo.VideoAdHelper = (() => {
           clearInterval(intervalTimer);
         }
         break;
+      case google.ima.AdEvent.Type.ALL_ADS_COMPLETED:
+        // This event indicates that all ads have finished playing. Flip flag
+        // to indicate completion which simplifies the checks for play / pause.
+        adsCompleted = true;
+        break;
     }
   };
 
   /** Handles ad errors. */
   const onAdError = (adErrorEvent) => {
     // Handle the error logging.
-    console.log(adErrorEvent.getError());
+    console.log(
+      '[PSDemo] Video ads manager encountered an error',
+      adErrorEvent.getError(),
+    );
     adsManager.destroy();
   };
 
@@ -210,7 +239,7 @@ window.PSDemo.VideoAdHelper = (() => {
 
   /** Initializes IMA setup. */
   (() => {
-    videoContent = document.getElementById('contentElement');
+    videoContent = document.getElementById('videoContent');
     playButton = document.getElementById('playButton');
     playButton.addEventListener('click', playContentMaybeAds);
     console.log('[PSDemo] Video content initialized.');

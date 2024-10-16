@@ -29,7 +29,13 @@
 CURR_HOST = '';
 /** Logs to console. */
 function log(msg, context) {
-  console.log('[PSDemo] Seller', CURR_HOST, 'decision logic', msg, {context});
+  console.log(
+    '[PSDemo] Seller',
+    CURR_HOST,
+    'decision logic',
+    msg,
+    JSON.stringify({context}, ' ', ' '),
+  );
 }
 
 // ********************************************************

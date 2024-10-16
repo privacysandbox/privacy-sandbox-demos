@@ -80,7 +80,7 @@
 
   /** Listen for potential post messages from DSPs. */
   const addEventListenerForDspPostMessages = () => {
-    window.addEventListener('message', (event) => {
+    window.addEventListener('message', async (event) => {
       if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) {
         return;
       }
@@ -88,8 +88,17 @@
       if ('string' === typeof event.data) {
         const {vastXml} = JSON.parse(event.data);
         if (vastXml) {
-          log('parsed VAST response', {vastXml});
-          window.PSDemo.VideoAdHelper.setUpIMA(vastXml);
+          log('received VAST response', {vastXml});
+          const vastResponse = await fetch(vastXml);
+          if (vastResponse.ok) {
+            const vastXmlText = await vastResponse.text();
+            window.PSDemo.VideoAdHelper.setUpIMA(vastXmlText);
+          } else {
+            log('did not receive VAST XML response', {
+              url: vastXml,
+              statusText: vastResponse.statusText,
+            });
+          }
         }
       }
     });

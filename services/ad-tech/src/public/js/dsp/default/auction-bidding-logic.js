@@ -29,7 +29,13 @@
 CURR_HOST = '';
 /** Logs to console. */
 function log(msg, context) {
-  console.log('[PSDemo] Buyer', CURR_HOST, 'bidding logic', msg, {context});
+  console.log(
+    '[PSDemo] Buyer',
+    CURR_HOST,
+    'bidding logic',
+    msg,
+    JSON.stringify({context}, ' ', ' '),
+  );
 }
 
 /** Calculates a bid price based on real-time signals. */
@@ -71,38 +77,36 @@ function selectDealId(selectedAd) {
 }
 
 function selectVideoAd({interestGroup, trustedBiddingSignals, browserSignals}) {
-  const {ads} = interestGroup;
   const {seller} = browserSignals;
-  // Use real-time signals to generate bid amount.
-  const bidCpm = calculateBidAmount(trustedBiddingSignals);
-  for (let i = 0; i < ads.length; i++) {
-    if (
-      'VIDEO' === ads[i].metadata.adType &&
-      seller.includes(ads[i].metadata.seller)
-    ) {
-      return {
-        ad: {
-          ...ads[i].metadata,
-          seller: browserSignals.seller,
-          topLevelSeller: browserSignals.topLevelSeller,
-        },
-        bid: bidCpm,
-        bidCurrency: 'USD',
-        allowComponentAuction: true,
-        render: ads[i].renderURL,
-        /*
-          TODO: Use-case: Ad cost reporting
-          adCost: optionalAdCost,
-        */
-        /*
-          TODO: Use-case: Modeling signals
-          modelingSignals: 123,
-        */
-      };
-    }
+  const {ads} = interestGroup;
+  // Filter for video ads specifically mapped to current SSP.
+  const [selectedAd] = ads.filter(
+    (ad) =>
+      'VIDEO' === ad.metadata.adType && ad.metadata.seller.includes(seller),
+  );
+  if (!selectedAd) {
+    log('didnt find eligible video ad in IG', {interestGroup, browserSignals});
+    return {bid: '0.0'};
   }
-  log("can't select video ad, SSP not preconfigured", {ads, seller});
-  return {bid: '0.0'};
+  return {
+    ad: {
+      ...selectedAd.metadata,
+      seller: browserSignals.seller,
+      topLevelSeller: browserSignals.topLevelSeller,
+    },
+    bid: calculateBidAmount(trustedBiddingSignals),
+    bidCurrency: 'USD',
+    allowComponentAuction: true,
+    render: selectedAd.renderURL,
+    /*
+      TODO: Use-case: Ad cost reporting
+      adCost: optionalAdCost,
+    */
+    /*
+      TODO: Use-case: Modeling signals
+      modelingSignals: 123,
+    */
+  };
 }
 
 function selectDisplayAd({
@@ -117,17 +121,13 @@ function selectDisplayAd({
     log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
   }
-  // Use real-time signals to generate bid amount.
-  const bidCpm = calculateBidAmount(trustedBiddingSignals);
-  // Select a deal ID from buyer and seller reporting IDs.
-  const selectedId = selectDealId(selectedAd);
   return {
     ad: {
       ...selectedAd.metadata,
       seller: browserSignals.seller,
       topLevelSeller: browserSignals.topLevelSeller,
     },
-    bid: bidCpm,
+    bid: calculateBidAmount(trustedBiddingSignals),
     bidCurrency: 'USD',
     allowComponentAuction: true,
     render: {
@@ -137,7 +137,7 @@ function selectDisplayAd({
       height: selectedAd.metadata.adSizes[0].height,
     },
     // Specify selected deal ID for reporting.
-    selectedBuyerAndSellerReportingId: selectedId,
+    selectedBuyerAndSellerReportingId: selectDealId(selectedAd),
     /*
       TODO: Use-case: Ad cost reporting
       adCost: optionalAdCost,
@@ -187,18 +187,23 @@ function generateBid(
     return;
   }
   const {adType} = auctionSignals;
+  let bid;
   if ('VIDEO' === adType) {
-    return selectVideoAd({
+    bid = selectVideoAd({
       interestGroup,
       trustedBiddingSignals,
       browserSignals,
     });
   } else {
-    return selectDisplayAd({
+    bid = selectDisplayAd({
       interestGroup,
       trustedBiddingSignals,
       browserSignals,
     });
+  }
+  if (bid) {
+    log('returning bid', {bid});
+    return bid;
   }
 }
 

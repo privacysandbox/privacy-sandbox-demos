@@ -11,7 +11,6 @@
         </Error>
 		<Impression id="Impression-ID">
           <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=vast-impression&auctionId=${AUCTION_ID}` %>
-          
         </Impression>
 		<Creatives>
 		  <Creative id="1234"
@@ -48,7 +47,7 @@
 		</Creative>
 	  </Creatives>
 	  <VASTAdTagURI>
-	    <![CDATA[<%= DSP_VAST %>]]>
+      <![CDATA[<%- `${DSP_VAST}` %>]]>
 	  </VASTAdTagURI>
 	</Wrapper>
   </Ad>

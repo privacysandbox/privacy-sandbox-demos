@@ -20,7 +20,6 @@ import {DSP_HOST, DSP_A_HOST, DSP_B_HOST} from '../lib/constants.js';
 import {KNOWN_SHOP_ITEM_LABELS_BY_ID} from '../lib/constants.js';
 import {RENDER_URL_SIZE_MACRO} from '../lib/interest-group-helper.js';
 import {ContextualAuctionRunner} from '../controllers/contextual-auction-runner.js';
-import {ADVERTISER} from '../lib/arapi.js';
 
 export const SellerRouter = express.Router();
 const DSP_HOSTS = [DSP_HOST!, DSP_A_HOST!, DSP_B_HOST!];
@@ -257,14 +256,15 @@ SellerRouter.get(
 
 /** Returns the finalized VAST XML to deliver video ads with PAAPI. */
 SellerRouter.get('/vast.xml', async (req: Request, res: Response) => {
-  const dspVast = req.query.dspVast?.toString();
-  const auctionId = req.query.auctionId?.toString();
+  const dspVast = decodeURIComponent(req.query.dspVast?.toString() || '');
+  const auctionId =
+    req.query.auctionId?.toString() || `SSP-${crypto.randomUUID()}`;
   const advertiser = req.query.advertiser?.toString() || HOSTNAME;
   res.type('application/xml').render('ssp/vast-preroll', {
     HOSTNAME,
     EXTERNAL_PORT,
     AUCTION_ID: auctionId,
-    DSP_VAST: dspVast ? decodeURIComponent(dspVast) : '',
+    DSP_VAST: dspVast,
     ADVERTISER_HOST: advertiser,
   });
 });
