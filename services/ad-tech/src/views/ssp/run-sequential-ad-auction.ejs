@@ -1,29 +1,50 @@
 <%/* This is used in iframes to run multi-seller auctions */%>
 <!DOCTYPE html>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" href="" />
-<title></title>
+<html>
 
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    width: 100vw;
-    height: 100vh;
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1" />
+  <link rel="icon"
+        href="" />
+  <title></title>
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      width: 100vw;
+      height: 100vh;
 
-  fencedframe {
-    border: none;
-    width: 100vw;
-    height: 100vh;
-    background-color: aliceblue;
-  }
-</style>
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-<script src="/js/ssp/run-sequential-ad-auction.js"></script>
+    #ad-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 0px;
+      padding: 4px;
+      font-family: monospace;
+    }
+
+    fencedframe {
+      border: none;
+      width: 100vw;
+      height: 100vh;
+      background-color: aliceblue;
+    }
+  </style>
+
+  <script src="/js/ssp/run-sequential-ad-auction.js"></script>
+</head>
+
+<body>
+  <p id="ad-label"></p>
+</body>
+
+</html>

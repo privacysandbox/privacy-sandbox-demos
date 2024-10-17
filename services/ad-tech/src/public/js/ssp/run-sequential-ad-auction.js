@@ -16,14 +16,20 @@
 
 (() => {
   const CURR_SCRIPT_URL = new URL(document.currentScript.src);
+  let CURR_AUCTION_ID = '';
   // ****************************************************************
   // HELPER FUNCTIONS
   // ****************************************************************
   /** Logs to console. */
-  const log = (label, context) => {
-    console.log('[PSDemo] Ad seller', CURR_SCRIPT_URL.hostname, label, {
-      context,
-    });
+  const log = (message, context) => {
+    console.log(
+      '[PSDemo] Seller',
+      CURR_SCRIPT_URL.hostname,
+      'sequential auction runner',
+      CURR_AUCTION_ID,
+      message,
+      {context},
+    );
   };
 
   /** Validates the post messages and returns the adUnit and other sellers. */
@@ -123,9 +129,9 @@
 
   /** Executes the PAAPI auction in sequence and returns the overall result. */
   const executeSequentialAuction = async (adUnit, contextualBidResponses) => {
-    const [winningContextualBid] = contextualBidResponses.sort(
-      (bid1, bid2) => Number(bid2.bid) - Number(bid1.bid),
-    );
+    const [winningContextualBid] = contextualBidResponses
+      .filter((bid) => Number(bid.bid) > 0)
+      .sort((bid1, bid2) => Number(bid2.bid) - Number(bid1.bid));
     const componentAuctionConfigs = contextualBidResponses.map(
       (bidResponse) => bidResponse.componentAuctionConfig,
     );
@@ -146,11 +152,17 @@
         type: 'PROTECTED_AUDIENCE',
         value: adAuctionResult,
       };
-    } else {
+    } else if (winningContextualBid) {
       log('delivering contextual ad', {winningContextualBid});
       return {
         type: 'CONTEXTUAL',
         value: winningContextualBid.renderURL,
+      };
+    } else {
+      document.getElementById('ad-label').innerText = 'No eligible ads found.';
+      log('found no eligible ads', {adUnit, auctionConfig});
+      return {
+        type: 'NONE',
       };
     }
   };
@@ -158,6 +170,11 @@
   /** Executes the multi-seller ad auction for the given adUnit config. */
   const runMultiSellerAdAuction = async (message) => {
     const [adUnit, otherSellers] = getValidatedAdUnitAndOtherSellers(message);
+    if (!adUnit) {
+      return;
+    }
+    const {auctionId} = adUnit;
+    CURR_AUCTION_ID = auctionId;
     const contextualBidResponses = await getAllBidResponses(
       adUnit,
       otherSellers,
@@ -172,13 +189,21 @@
       adUnit,
       contextualBidResponses,
     );
-    const {auctionId, isFencedFrame, size} = adUnit;
+    if ('NONE' === adAuctionResult.type) {
+      return;
+    }
+    const {isFencedFrame, size} = adUnit;
     const adElement = isFencedFrame ? 'fencedframe' : 'iframe';
     const adFrame = document.createElement(adElement);
-    if ('CONTEXTUAL' === adAuctionResult.type || !isFencedFrame) {
-      adFrame.src = adAuctionResult.value;
+
+    if (isFencedFrame) {
+      if ('PROTECTED_AUDIENCE' === adAuctionResult.type) {
+        adFrame.config = adAuctionResult.value;
+      } else {
+        adFrame.config = new FencedFrameConfig(adAuctionResult.value);
+      }
     } else {
-      adFrame.config = adAuctionResult.value;
+      adFrame.src = adAuctionResult.value;
     }
     [adFrame.width, adFrame.height] = size;
     adFrame.addEventListener('load', () => {

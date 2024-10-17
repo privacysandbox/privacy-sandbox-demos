@@ -27,12 +27,20 @@
 (() => {
   /** Domain of the current script. */
   const CURR_HOSTNAME = new URL(document.currentScript.src).hostname;
+  let CURR_AUCTION_ID = '';
   // ****************************************************************
   // HELPER FUNCTIONS
   // ****************************************************************
   /** Logs to console. */
-  const log = (label, context) => {
-    console.log('[PSDemo] Ad seller', CURR_HOSTNAME, label, {context});
+  const log = (message, context) => {
+    console.log(
+      '[PSDemo] Seller',
+      CURR_HOSTNAME,
+      'PAAPI auction runner',
+      CURR_AUCTION_ID,
+      message,
+      {context},
+    );
   };
 
   /** Validates the post messages and returns a valid adUnit if found. */
@@ -97,14 +105,17 @@
     if (!adUnit) {
       return;
     }
+    const {auctionId} = adUnit;
+    CURR_AUCTION_ID = auctionId;
     const auctionConfig = await getAuctionConfig(adUnit);
     log('starting Protected Audience auction', {auctionConfig});
     const adAuctionResult = await navigator.runAdAuction(auctionConfig);
     if (!adAuctionResult) {
-      return log("didn't get a Protected Audience result", {
+      log("didn't get a Protected Audience result", {
         auctionConfig,
         adAuctionResult,
       });
+      document.getElementById('ad-label').innerText = 'No eligible ads';
     } else {
       log('got Protected Audience result', {auctionConfig, adAuctionResult});
       const {isFencedFrame, size} = adUnit;

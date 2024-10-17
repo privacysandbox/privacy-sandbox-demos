@@ -11,45 +11,66 @@
  limitations under the License.
  */
 
-import {PORT, EXTERNAL_PORT} from '../lib/constants.js';
-import {HOSTNAME, SHOP_HOST} from '../lib/constants.js';
-import {DSP_HOST, DSP_A_HOST, DSP_B_HOST} from '../lib/constants.js';
-import {SSP_HOST, SSP_A_HOST, SSP_B_HOST} from '../lib/constants.js';
-import {DSP_DETAIL, DSP_A_DETAIL, DSP_B_DETAIL} from '../lib/constants.js';
-import {SSP_DETAIL, SSP_A_DETAIL, SSP_B_DETAIL} from '../lib/constants.js';
+import {
+  ADVERTISER_CONTEXTUAL,
+  DSP_A_DETAIL,
+  DSP_A_HOST,
+  DSP_B_DETAIL,
+  DSP_B_HOST,
+  DSP_DETAIL,
+  DSP_HOST,
+  EXTERNAL_PORT,
+  HOME_HOST,
+  HOSTNAME,
+  PORT,
+  SHOP_HOST,
+  SSP_A_DETAIL,
+  SSP_A_HOST,
+  SSP_B_DETAIL,
+  SSP_B_HOST,
+  SSP_DETAIL,
+  SSP_HOST,
+} from '../lib/constants.js';
 
 /** Returns variables for use in the ad template. */
 export const getAdTemplateVariables = (requestQuery: any) => {
   // Initialize template variables.
-  const advertiser = requestQuery.advertiser || HOSTNAME;
+  const advertiser = requestQuery.advertiser?.toString() || HOSTNAME!;
+  const registerSourceUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/register-source`,
+  );
+  registerSourceUrl.searchParams.append('advertiser', advertiser);
+  if (ADVERTISER_CONTEXTUAL === advertiser) {
+    return {
+      title: `Contextual ads from ${ADVERTISER_CONTEXTUAL}`,
+      destination: new URL(`https://${HOME_HOST}:${EXTERNAL_PORT}`).toString(),
+      creative: new URL( // Doughnut image.
+        `https://${HOSTNAME}:${EXTERNAL_PORT}/img/emoji_u1f369.svg`,
+      ).toString(),
+      registerSource: registerSourceUrl.toString(),
+    };
+  }
   let destination = new URL(
     `https://${advertiser}:${EXTERNAL_PORT}`,
   ).toString();
   let creative = new URL(
     `https://${advertiser}:${EXTERNAL_PORT}/ads`,
   ).toString();
-  const registerSourceUrl = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/register-source`,
-  );
-  registerSourceUrl.searchParams.append('advertiser', advertiser);
   // Load specific ad for SHOP advertiser.
-  if (requestQuery.itemId && SHOP_HOST === advertiser) {
+  const itemId = requestQuery.itemId?.toString() || '';
+  if (itemId) {
     destination = new URL(
-      `https://${advertiser}:${EXTERNAL_PORT}/items/${requestQuery.itemId}`,
+      `https://${advertiser}:${EXTERNAL_PORT}/items/${itemId}`,
     ).toString();
     creative = new URL(
-      `https://${advertiser}:${EXTERNAL_PORT}/ads/${requestQuery.itemId}`,
+      `https://${advertiser}:${EXTERNAL_PORT}/ads/${itemId}`,
     ).toString();
-    registerSourceUrl.searchParams.append('itemId', requestQuery.itemId);
+    registerSourceUrl.searchParams.append('itemId', itemId);
   }
   // If advertiser is current ad-tech itself, show static ad.
   if (HOSTNAME === advertiser) {
     creative = new URL( // Bag of cash image.
       `https://${HOSTNAME}:${EXTERNAL_PORT}/img/emoji_u1f4b0.svg`,
-    ).toString();
-  } else if ('contextual' === advertiser) {
-    creative = new URL( // Doughnut image.
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/img/emoji_u1f369.svg`,
     ).toString();
   }
   return {

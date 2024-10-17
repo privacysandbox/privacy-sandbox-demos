@@ -17,8 +17,10 @@ import {KeyValueStore} from '../controllers/key-value-store.js';
 import {CURRENT_ORIGIN, HOSTNAME} from '../lib/constants.js';
 import {EXTERNAL_PORT, SHOP_HOST, TRAVEL_HOST} from '../lib/constants.js';
 import {DSP_HOST, DSP_A_HOST, DSP_B_HOST} from '../lib/constants.js';
-import {KNOWN_SHOP_ITEM_LABELS_BY_ID} from '../lib/constants.js';
-import {RENDER_URL_SIZE_MACRO} from '../lib/interest-group-helper.js';
+import {
+  KNOWN_SHOP_ITEM_LABELS_BY_ID,
+  MACRO_DISPLAY_RENDER_URL_AD_SIZE,
+} from '../lib/constants.js';
 import {ContextualAuctionRunner} from '../controllers/contextual-auction-runner.js';
 
 export const SellerRouter = express.Router();
@@ -37,7 +39,7 @@ const getDefaultScoringSignals = (): string[][] => {
   for (const dspHost of DSP_HOSTS) {
     knownAds.push([
       new URL(
-        `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${TRAVEL_HOST}&${RENDER_URL_SIZE_MACRO}`,
+        `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${TRAVEL_HOST}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
       ).toString(),
       JSON.stringify({
         label: 'travel',
@@ -49,7 +51,7 @@ const getDefaultScoringSignals = (): string[][] => {
     for (const dspHost of DSP_HOSTS) {
       knownAds.push([
         new URL(
-          `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&itemId=${key}&${RENDER_URL_SIZE_MACRO}`,
+          `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&itemId=${key}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
         ).toString(),
         JSON.stringify({
           label: value,
@@ -130,13 +132,20 @@ const constructAuctionConfig = (context: {
       'seller_signals': 'seller_signals',
     },
     perBuyerSignals: getPerBuyerSignals(buyerSignals),
-    // Needed for size macro replacements.
+    // Needed for ad size macro replacements.
     requestedSize: {'width': '300px', 'height': '250px'},
     sellerCurrency: 'USD',
     resolveToConfig,
-    // deprecatedReplaceInURN: {
-    //   '%%SSP_VAST_URI%%': `https://${HOSTNAME}:${EXTERNAL_PORT}/vast/preroll.xml`,
-    // }
+    // This is for the video ads use-case where the DSP is expected to have
+    // included the SSP_VAST macro in the render URL.
+    deprecatedRenderURLReplacements: {
+      '${SSP_VAST}': new URL(
+        `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/vast.xml`,
+      ).toString(),
+      '%%SSP_VAST%%': new URL(
+        `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/vast.xml`,
+      ).toString(),
+    },
   };
   return auctionConfig;
 };
@@ -178,9 +187,9 @@ SellerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
     /* bidderHosts= */ DSP_HOSTS,
     /* signals= */ signals,
   );
-  const [winningContextualBid] = contextualBids.sort(
-    (bid1, bid2) => Number(bid2.bid!) - Number(bid1.bid!),
-  );
+  const [winningContextualBid] = contextualBids
+    .filter((bid) => Number(bid.bid) > 0)
+    .sort((bid1, bid2) => Number(bid2.bid!) - Number(bid1.bid!));
   console.log('Winning contextual bid', {winningContextualBid});
   // Collect buyer signals from contextual bids.
   const buyerSignals: {[key: string]: any} = {};

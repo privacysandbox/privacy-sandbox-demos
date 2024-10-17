@@ -240,9 +240,17 @@ window.PSDemo.VideoAdHelper = (() => {
   /** Initializes IMA setup. */
   (() => {
     videoContent = document.getElementById('videoContent');
+    if (!videoContent) {
+      console.log('[PSDemo] No video content found.');
+      return;
+    }
     playButton = document.getElementById('playButton');
-    playButton.addEventListener('click', playContentMaybeAds);
-    console.log('[PSDemo] Video content initialized.');
+    if (playButton) {
+      playButton.addEventListener('click', playContentMaybeAds);
+      console.log('[PSDemo] Video content initialized.');
+    } else {
+      console.log('[PSDemo] Play button for video not found.');
+    }
   })();
 
   // Exported members of VideoAdHelper

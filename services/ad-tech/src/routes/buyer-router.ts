@@ -15,6 +15,7 @@ import express, {Request, Response} from 'express';
 
 import {KeyValueStore} from '../controllers/key-value-store.js';
 import {
+  ADVERTISER_CONTEXTUAL,
   CURRENT_ORIGIN,
   EXTERNAL_PORT,
   HOSTNAME,
@@ -23,12 +24,10 @@ import {
   SSP_B_HOST,
 } from '../lib/constants.js';
 import {getTemplateVariables} from '../lib/template-utils.js';
-import {InterestGroupHelper} from '../lib/interest-group-helper.js';
+import {AdType, InterestGroupHelper} from '../lib/interest-group-helper.js';
 
 export const BuyerRouter = express.Router();
 
-/** Name of the contextual advertiser. */
-export const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
 /** Max bid CPM for contextual auctions. */
 export const MAX_CONTEXTUAL_BID = 1.5;
 /** Min bid CPM for contextual auctions. */
@@ -64,14 +63,28 @@ BuyerRouter.get(
 
 /** Places a bid for the contextual auction. */
 BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
-  const bid = getBidPrice();
   // Generate a new auction ID if missing in request.
   const auctionId = req.query.auctionId || `DSP-${crypto.randomUUID()}`;
+  const adType = req.query.adType?.toString().toUpperCase() || '';
+  if (AdType.VIDEO === adType) {
+    // Don't place contextual bids for video ads request.
+    res.json({
+      bidder: CURRENT_ORIGIN,
+      auctionId,
+      bid: 0.0,
+      buyerSignals: {
+        contextualBid: 0.0,
+        ...req.query,
+      },
+    });
+    return;
+  }
   // Assemble render URL query parameters.
   const renderUrlQuery = `advertiser=${ADVERTISER_CONTEXTUAL}&auctionId=${auctionId}`;
   const renderURL = new URL(
     `https://${HOSTNAME}:${EXTERNAL_PORT}/ads?${renderUrlQuery}`,
   ).toString();
+  const bid = getBidPrice();
   /** Return contextual bid with buyer signals. */
   res.json({
     bidder: CURRENT_ORIGIN,
@@ -90,7 +103,8 @@ BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
 /** Returns the interest group to join on advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   // Set advertiser from query or fallback to current host.
-  const advertiser = req.query.advertiser || HOSTNAME;
+  const advertiser = req.query.advertiser?.toString() || HOSTNAME!;
+  const itemId = req.query.itemId?.toString() || '';
   // Set usecase if included in query, else 'default'.
   const usecase = ((usecase) => {
     if (!usecase) {
@@ -134,7 +148,7 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
-    ads: InterestGroupHelper.getAdsForRequest(req, SSP_HOSTS),
+    ads: InterestGroupHelper.getAdsForRequest(advertiser, itemId),
   });
 });
 

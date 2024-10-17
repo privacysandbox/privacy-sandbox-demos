@@ -82,13 +82,9 @@ function getBidForVideoAd({
   trustedBiddingSignals,
   browserSignals,
 }) {
-  const {seller} = browserSignals;
   const {ads} = interestGroup;
   // Filter for video ads specifically mapped to current SSP.
-  const [selectedAd] = ads.filter(
-    (ad) =>
-      'VIDEO' === ad.metadata.adType && ad.metadata.seller.includes(seller),
-  );
+  const [selectedAd] = ads.filter((ad) => 'VIDEO' === ad.metadata.adType);
   if (!selectedAd) {
     log('didnt find eligible video ad in IG', {interestGroup, browserSignals});
     return {bid: '0.0'};

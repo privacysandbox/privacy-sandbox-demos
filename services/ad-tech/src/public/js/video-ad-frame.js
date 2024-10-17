@@ -34,10 +34,9 @@
       'impl=s&correlator=',
   );
 
-  /** Fetches the final VAST XML content from the SSP. */
-  const fetchFinalizedVastXmlFromSsp = async (auctionId) => {
+  /** Finds and returns SSP's VAST XML URL in renderURL query parameters. */
+  const getSspVastQueryFromCurrentUrl = () => {
     const currentUrl = new URL(location.href);
-    // Find SSP's VAST XML URL in renderURL query parameters.
     const sspVastQuery = currentUrl.searchParams.get('sspVast');
     if (!sspVastQuery) {
       return console.log('[PSDemo] Expected sspVast query in renderURL', {
@@ -45,12 +44,18 @@
         queryParam: 'sspVast',
       });
     }
+    return decodeURIComponent(sspVastQuery);
+  };
+
+  /** Fetches the final VAST XML content from the SSP. */
+  const fetchFinalizedVastXmlFromSsp = async (sspVast, auctionId) => {
     // The SSP's endpoint accepts two query parameters -- dspVast, auctionId --
     // which the SSP embeds in the finalized VAST XML.
-    const sspVastUrl = new URL(decodeURIComponent(sspVastQuery));
+    const sspVastUrl = new URL(sspVast);
     sspVastUrl.searchParams.append('auctionId', auctionId);
     sspVastUrl.searchParams.append('dspVast', DSP_VAST_URI);
     // Copy query parameters from renderURL.
+    const currentUrl = new URL(location.href);
     for (const [key, value] of Object.entries(currentUrl.searchParams)) {
       if ('sspVast' === key) {
         continue;
@@ -64,7 +69,8 @@
   };
 
   /** Adds a descriptive label about the involved ad-techs. */
-  const addDescriptionToAdContainer = (seller) => {
+  const addDescriptionToAdContainer = (sspVast) => {
+    const seller = new URL(sspVast).hostname;
     const buyerCodeName = location.hostname.substring(
       'privacy-sandbox-demos-'.length,
     );
@@ -88,13 +94,17 @@
         );
       }
       try {
-        const {auctionId, seller} = JSON.parse(message.data);
+        const {auctionId} = JSON.parse(message.data);
         if (!auctionId || 'string' !== typeof auctionId) {
           return console.log('[PSDemo] auctionId not found', {message});
         }
-        const vastXmlText = await fetchFinalizedVastXmlFromSsp(auctionId);
+        const sspVast = getSspVastQueryFromCurrentUrl();
+        const vastXmlText = await fetchFinalizedVastXmlFromSsp(
+          sspVast,
+          auctionId,
+        );
         if (vastXmlText) {
-          addDescriptionToAdContainer(seller);
+          addDescriptionToAdContainer(sspVast);
           // The finalized VAST XML is messaged to the top-most frame that will
           // pass the VAST XML to the video player
           const {0: containerFrame} = window.top.frames;

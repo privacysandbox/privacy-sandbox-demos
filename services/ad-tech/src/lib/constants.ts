@@ -67,6 +67,9 @@ export const DSP_B_ORIGIN = new URL(
   `https://${DSP_B_HOST}:${EXTERNAL_PORT}`,
 ).toString();
 
+/** Name of the contextual advertiser. */
+export const ADVERTISER_CONTEXTUAL = 'ContextNext';
+
 /** Shop item labels indexed by their ID. */
 export const KNOWN_SHOP_ITEM_LABELS_BY_ID = {
   '1f45e': "Man's brown shoe",
@@ -82,3 +85,32 @@ export const KNOWN_SHOP_ITEM_LABELS_BY_ID = {
   '1f3bf': 'Ski boots',
   '26f8': 'Ice skate',
 };
+
+// ****************************************************************************
+// PROTECTED AUDIENCE RENDER URL MACROS
+// ****************************************************************************
+/**
+ * This macro is used with render URLs for display ads, where AD_WIDTH and
+ * AD_HEIGHT are natively supported macros in Protected Audience. These macros
+ * may be specified in either formats: ${...} or {%...%}
+ *
+ * For the macro replacement to work, the SSP needs to request an ad size in
+ * the auction configuration and the DSP needs to specify the ad size with the
+ * bid. The values returned by the DSP are used for macro replacements. These
+ * values need not match the size requested by the SSP. Regardless of whether
+ * the ad size included in the DSP's bid matches the ad size requested by the
+ * SSP, the decision is made via the SSP's scoring logic. Both the requested
+ * and the response ad sizes are accessible the SSP's scoreAd().
+ */
+export const MACRO_DISPLAY_RENDER_URL_AD_SIZE =
+  'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
+
+/**
+ * This macro is used in render URLs for video ads, where SSP_VAST is a custom
+ * macro included in the SSP's component auction configuration. At render time,
+ * this macro will be replaced with the winning SSP's VAST XML endpoint. This
+ * SSP endpoint returns a wrapped VAST XML for a given DSP VAST XML and
+ * auction ID.
+ */
+export const MACRO_VIDEO_RENDER_URL_SSP_VAST =
+  'sspVast=${SSP_VAST}&sspVastAlt=%%SSP_VAST%%';

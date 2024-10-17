@@ -33,8 +33,14 @@
   // HELPER FUNCTIONS
   // ********************************************************
   /** Logs to console. */
-  const log = (label, context) => {
-    console.log('[PSDemo] Ad seller', CURR_HOSTNAME, label, {context});
+  const log = (message, context) => {
+    console.log(
+      '[PSDemo] Seller',
+      CURR_HOSTNAME,
+      'ad tag',
+      message,
+      {context},
+    );
   };
 
   /** Returns frame URL with page context as search query. */
@@ -159,15 +165,13 @@
       if (!isValidAdUnit(adUnit)) {
         continue;
       }
+      log('processing adUnit', {adUnit});
       const {divId, adType, isFencedFrame} = adUnit;
       let {size} = adUnit;
-      if ('DISPLAY' === adType.toUpperCase()) {
-        addDescriptionToAdContainer(divId, adType, isFencedFrame);
-      } else if ('VIDEO' === adType.toUpperCase()) {
+      addDescriptionToAdContainer(divId, adType, isFencedFrame);
+      if ('VIDEO' === adType.toUpperCase()) {
         addEventListenerForDspPostMessages();
-        size[1] = 32; // Set height to 32px, just enough for a description.
-      } else {
-        return log('unsupported adType', {adUnit});
+        size[1] = 28; // Set height to 32px, just enough for a description.
       }
       const pathname = ((otherSellers) => {
         if (!otherSellers || !otherSellers.length) {
@@ -176,10 +180,12 @@
           return '/ssp/run-sequential-ad-auction.html'; // Multi-seller
         }
       })(otherSellers);
+      const src = getIframeUrlWithPageContext(pathname);
+      log('injecting iframe for adUnit', {src, adUnit});
       const iframeEl = injectAndReturnIframe({
-        src: getIframeUrlWithPageContext(pathname),
-        divId: divId,
-        size: size,
+        src,
+        divId,
+        size,
         attributes: {
           'scrolling': 'no',
           'style': 'border: none',
