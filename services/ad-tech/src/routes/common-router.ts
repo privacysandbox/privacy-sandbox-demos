@@ -12,14 +12,21 @@
  */
 
 import express, {NextFunction, Request, Response} from 'express';
-import {getTemplateVariables} from '../../lib/template-utils.js';
 
-/**
- * This router is responsible for registering HTTP headers, preflight requests,
- * and serve the index page which isn't used in use-case journeys.
- * 
- * Path: /
- */
+import {
+  handleAttributionSourceRegistration,
+  handleAttributionTriggerRegistration,
+} from '../lib/attribution-reporting-helper.js';
+import {
+  Report,
+  ReportCategory,
+  ReportStore,
+} from '../controllers/report-store.js';
+import {
+  getAdTemplateVariables,
+  getTemplateVariables,
+} from '../lib/template-utils.js';
+
 export const CommonRouter = express.Router();
 
 // ************************************************************************
@@ -84,4 +91,74 @@ CommonRouter.get('/', async (req: Request, res: Response) => {
   } else {
     res.render('dsp/index', getTemplateVariables());
   }
+});
+
+/** Shows all reports from in-memory storage. */
+CommonRouter.get('/reports', async (req: Request, res: Response) => {
+  const hostDetails = getTemplateVariables('Reports');
+  res.render('reports', {
+    reports: ReportStore.getAllReports(),
+    ...hostDetails,
+  });
+});
+
+/** Used as render URL in interest groups for display ads. */
+CommonRouter.get('/ads', async (req: Request, res: Response) => {
+  const templateVariables = getAdTemplateVariables(req.query);
+  console.log('Loading ad creative: ', templateVariables);
+  res.render('ad-frame', templateVariables);
+});
+
+/** Used as render URL in interest groups for video ads. */
+CommonRouter.get('/video-ads', async (req: Request, res: Response) => {
+  res.render('video-ad-frame');
+});
+
+// HTTP handlers for event-level reporting and logging.
+/** Receives event logs and registers attribution source if eligible. */
+CommonRouter.get('/reporting', async (req: Request, res: Response) => {
+  const report: Report = {
+    category: ReportCategory.EVENT_LEVEL_LOG,
+    timestamp: Date.now().toString(),
+    data: req.query,
+  };
+  console.log('Event-level report received: ', req.baseUrl, report);
+  ReportStore.addReport(report);
+  handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
+});
+
+/** Receives event logs and registers attribution source if eligible. */
+CommonRouter.post('/reporting', async (req: Request, res: Response) => {
+  const report: Report = {
+    category: ReportCategory.EVENT_LEVEL_LOG,
+    timestamp: Date.now().toString(),
+    data: {
+      ...req.query,
+      ...req.body,
+    },
+  };
+  console.log('Event-level report received: ', req.baseUrl, report);
+  ReportStore.addReport(report);
+  handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
+});
+
+// HTTP Handler for Topics.
+/** TODO: Verify this use-case */
+CommonRouter.get(
+  '/observe-browsing-topics',
+  async (req: Request, res: Response) => {
+    const browsingTopics = req.get('Sec-Browsing-Topics');
+    res.json({topics: browsingTopics});
+  },
+);
+
+// HTTP Handlers for Attribution Reporting.
+/** Registers a click or view attribution source. */
+CommonRouter.get('/register-source', async (req: Request, res: Response) => {
+  handleAttributionSourceRegistration(req, res);
+});
+
+/** Registers an attribution trigger. */
+CommonRouter.get('/register-trigger', async (req: Request, res: Response) => {
+  handleAttributionTriggerRegistration(req, res);
 });

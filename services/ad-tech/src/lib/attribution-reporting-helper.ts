@@ -99,7 +99,7 @@ export const handleAttributionSourceRegistration = (
       .filter(([key, _]) => key !== 'redirect')
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-    const redirectUrl = `${req.query['redirect']}/attribution/register-source?${query}`;
+    const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
     console.log('[ARA] Following redirect chain: ', redirectUrl);
     res.redirect(redirectUrl);
     return;

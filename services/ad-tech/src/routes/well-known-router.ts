@@ -13,25 +13,17 @@
 
 import cbor from 'cbor';
 import express, {Request, Response} from 'express';
-import {ReportStore, ReportCategory} from '../../controllers/report-store.js';
-import {decodeBucket} from '../../lib/arapi.js';
+import {ReportStore, ReportCategory} from '../controllers/report-store.js';
+import {decodeBucket} from '../lib/arapi.js';
 
-/**
- * This router is responsible for handling the well-known endpoints for the
- * Attribution Reporting API. There are two types reports with this API --
- * (1) event-level reports, and (2) summary reports or aggregate reports. And
- * for each report type, we may receive regular reports and debug reports.
- * 
- * Path: /.well-known/attribution-reporting/
- */
-export const WellKnownAttributionReportingRouter = express.Router();
+export const WellKnownRouter = express.Router();
 
 // ************************************************************************
-// Attribution Reporting: Event-level Reports
+// Attribution Reporting
 // ************************************************************************
 // Event-level Report: Regular Report
-WellKnownAttributionReportingRouter.post(
-  '/report-event-attribution',
+WellKnownRouter.post(
+  '/attribution-reporting/report-event-attribution',
   async (req: Request, res: Response) => {
     console.log(
       '[ARA] Received event-level report on live endpoint: ',
@@ -47,8 +39,8 @@ WellKnownAttributionReportingRouter.post(
 );
 
 // Event-level Report: Debug Report
-WellKnownAttributionReportingRouter.post(
-  '/debug/report-event-attribution',
+WellKnownRouter.post(
+  '/attribution-reporting/debug/report-event-attribution',
   async (req: Request, res: Response) => {
     console.log(
       '[ARA] Received event-level report on debug endpoint: ',
@@ -63,12 +55,9 @@ WellKnownAttributionReportingRouter.post(
   },
 );
 
-// ************************************************************************
-// Attribution Reporting: Aggregate Reports
-// ************************************************************************
 // Aggregate Report: Regular Report
-WellKnownAttributionReportingRouter.post(
-  '/report-aggregate-attribution',
+WellKnownRouter.post(
+  '/attribution-reporting/report-aggregate-attribution',
   async (req: Request, res: Response) => {
     const report = req.body;
     report.shared_info = JSON.parse(report.shared_info);
@@ -86,8 +75,8 @@ WellKnownAttributionReportingRouter.post(
 );
 
 // Aggregate Report: Debug Report
-WellKnownAttributionReportingRouter.post(
-  '/debug/report-aggregate-attribution',
+WellKnownRouter.post(
+  '/attribution-reporting/debug/report-aggregate-attribution',
   async (req: Request, res: Response) => {
     const debugReport = req.body;
     debugReport.shared_info = JSON.parse(debugReport.shared_info);
@@ -119,6 +108,76 @@ WellKnownAttributionReportingRouter.post(
       category: ReportCategory.ARA_AGGREGATE_DEBUG,
       timestamp: Date.now().toString(),
       data: debugReport,
+    });
+    res.sendStatus(200);
+  },
+);
+
+// ************************************************************************
+// Private Aggregation with Shared Storage
+// ************************************************************************
+WellKnownRouter.post(
+  '/private-aggregation/report-shared-storage',
+  async (req: Request, res: Response) => {
+    console.log(
+      '[pAgg+SS] Received aggregatable report on live endpoint: ',
+      req.body,
+    );
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_SS,
+      timestamp: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
+WellKnownRouter.post(
+  '/private-aggregation/debug/report-shared-storage',
+  async (req: Request, res: Response) => {
+    console.log(
+      '[pAgg+SS] Received aggregatable report on debug endpoint: ',
+      req.body,
+    );
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_SS_DEBUG,
+      timestamp: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
+// ************************************************************************
+// Private Aggregation with Protected Audience
+// ************************************************************************
+WellKnownRouter.post(
+  '/private-aggregation/report-protected-audience',
+  async (req: Request, res: Response) => {
+    console.log(
+      '[pAgg+SS] Received aggregatable report on live endpoint: ',
+      req.body,
+    );
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_PAAPI,
+      timestamp: Date.now().toString(),
+      data: req.body,
+    });
+    res.sendStatus(200);
+  },
+);
+
+WellKnownRouter.post(
+  '/private-aggregation/debug/report-protected-audience',
+  async (req: Request, res: Response) => {
+    console.log(
+      '[pAgg+SS] Received aggregatable report on debug endpoint: ',
+      req.body,
+    );
+    ReportStore.addReport({
+      category: ReportCategory.PAGG_VIA_PAAPI_DEBUG,
+      timestamp: Date.now().toString(),
+      data: req.body,
     });
     res.sendStatus(200);
   },

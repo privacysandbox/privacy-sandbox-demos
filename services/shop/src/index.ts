@@ -100,7 +100,7 @@ app.locals = {
       new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
     ].map((triggerUrl) => {
-      triggerUrl.pathname = '/attribution/register-trigger';
+      triggerUrl.pathname = '/register-trigger';
       triggerUrl.searchParams.append('id', item.id);
       triggerUrl.searchParams.append('category', `${item.category}`);
       triggerUrl.searchParams.append('quantity', `${quantity}`);

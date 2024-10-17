@@ -11,24 +11,12 @@
  limitations under the License.
  */
 
-import {
-  PORT,
-  EXTERNAL_PORT,
-  HOSTNAME,
-  SHOP_HOST,
-  DSP_HOST,
-  DSP_A_HOST,
-  DSP_B_HOST,
-  SSP_HOST,
-  SSP_A_HOST,
-  SSP_B_HOST,
-  DSP_DETAIL,
-  DSP_A_DETAIL,
-  DSP_B_DETAIL,
-  SSP_DETAIL,
-  SSP_A_DETAIL,
-  SSP_B_DETAIL,
-} from '../lib/constants.js';
+import {PORT, EXTERNAL_PORT} from '../lib/constants.js';
+import {HOSTNAME, SHOP_HOST} from '../lib/constants.js';
+import {DSP_HOST, DSP_A_HOST, DSP_B_HOST} from '../lib/constants.js';
+import {SSP_HOST, SSP_A_HOST, SSP_B_HOST} from '../lib/constants.js';
+import {DSP_DETAIL, DSP_A_DETAIL, DSP_B_DETAIL} from '../lib/constants.js';
+import {SSP_DETAIL, SSP_A_DETAIL, SSP_B_DETAIL} from '../lib/constants.js';
 
 /** Returns variables for use in the ad template. */
 export const getAdTemplateVariables = (requestQuery: any) => {
@@ -41,7 +29,7 @@ export const getAdTemplateVariables = (requestQuery: any) => {
     `https://${advertiser}:${EXTERNAL_PORT}/ads`,
   ).toString();
   const registerSourceUrl = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/register-source`,
   );
   registerSourceUrl.searchParams.append('advertiser', advertiser);
   // Load specific ad for SHOP advertiser.

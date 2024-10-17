@@ -12,7 +12,7 @@
  */
 
 import {Request} from 'express';
-import {EXTERNAL_PORT, HOSTNAME, RENDER_URL_SIZE_MACRO} from './constants.js';
+import {EXTERNAL_PORT, HOSTNAME} from './constants.js';
 
 /** Supported ad types. */
 export enum AdType {
@@ -38,17 +38,31 @@ export interface InterestGroupAd {
   buyerAndSellerReportingId?: string;
 }
 
+/** Both types of ad size macros supported in render URLs. */
+export const RENDER_URL_SIZE_MACRO =
+  'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
+/** Max bid CPM for contextual auctions. */
+export const MAX_CONTEXTUAL_BID = 1.5;
+/** Min bid CPM for contextual auctions. */
+export const MIN_CONTEXTUAL_BID = 0.5;
+
 /** Helper module used to build interest group objects. */
 export const InterestGroupHelper = (() => {
+  /** Returns a random bid price with 2 decimal digits. */
+  const getBidPrice = (): string => {
+    const minBid = MIN_CONTEXTUAL_BID;
+    const maxBid = MAX_CONTEXTUAL_BID;
+    const bid = (Math.random() * (maxBid - minBid) + minBid).toFixed(2);
+    return bid;
+  };
+
   /** Returns the video ads to be included in the given interest group. */
   const getVideoAdsForRequest = (
     advertiser: string,
     sspHosts: string[],
   ): InterestGroupAd[] => {
     const videoAds: InterestGroupAd[] = [];
-    const renderUrl = new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/video-ads`,
-    );
+    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/video-ads`);
     renderUrl.searchParams.append('advertiser', advertiser);
     for (const sspHost of sspHosts) {
       const sspVastUrl = encodeURIComponent(
@@ -75,9 +89,7 @@ export const InterestGroupHelper = (() => {
     advertiser: string,
     itemId?: string,
   ): InterestGroupAd => {
-    const renderUrl = new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/display-ads`,
-    );
+    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
     renderUrl.searchParams.append('advertiser', advertiser);
     if (itemId) {
       renderUrl.searchParams.append('itemId', itemId);
@@ -111,5 +123,6 @@ export const InterestGroupHelper = (() => {
   // Exported members of the module.
   return {
     getAdsForRequest,
+    getBidPrice,
   };
 })();

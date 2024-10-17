@@ -44,9 +44,12 @@ const {
 // In-memory storage for all reports
 const Reports: any[] = [];
 // Clear in-memory storage every 10 min
-setInterval(() => {
-  Reports.length = 0;
-}, 1000 * 60 * 10);
+setInterval(
+  () => {
+    Reports.length = 0;
+  },
+  1000 * 60 * 10,
+);
 
 const app: Application = express();
 app.use(express.urlencoded({extended: true}));
@@ -106,7 +109,7 @@ app.get('/ads', async (req, res) => {
   const move = new URL(`https://${advertiser}:${EXTERNAL_PORT}/items/${id}`);
   const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}/ads/${id}`);
   const registerSource = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/attribution/register-source`,
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/register-source`,
   );
   registerSource.searchParams.append('advertiser', advertiser as string);
   registerSource.searchParams.append('id', id as string);
@@ -239,7 +242,7 @@ app.post('/reporting', async (req: Request, res: Response) => {
 // ************************************************************************
 // Attribution Reporting HTTP handlers
 // ************************************************************************
-app.get('/attribution/register-source', async (req: Request, res: Response) => {
+app.get('/register-source', async (req: Request, res: Response) => {
   if (!req.headers['attribution-reporting-eligible']) {
     res.status(400).send('"Attribution-Reporting-Eligible" header is missing');
     return;
@@ -255,58 +258,55 @@ app.get('/attribution/register-source', async (req: Request, res: Response) => {
   }
 });
 
-app.get(
-  '/attribution/register-trigger',
-  async (req: Request, res: Response) => {
-    const id: string = req.query.id as string;
-    const quantity: string = req.query.quantity as string;
-    const size: string = req.query.size as string;
-    const category: string = req.query.category as string;
-    const gross: string = req.query.gross as string;
-    const AttributionReportingRegisterTrigger = {
-      event_trigger_data: [
-        {
-          trigger_data: '1',
-          priority: '100',
-          // deduplication_key: '1234',
-        },
-      ],
-      aggregatable_trigger_data: [
-        {
-          key_piece: triggerKeyPiece({
-            type: TRIGGER_TYPE['quantity'],
-            id: parseInt(id, 16),
-            size: Number(size),
-            category: Number(category),
-            option: 0,
-          }),
-          source_keys: ['quantity'],
-        },
-        {
-          key_piece: triggerKeyPiece({
-            type: TRIGGER_TYPE['gross'],
-            id: parseInt(id, 16),
-            size: Number(size),
-            category: Number(category),
-            option: 0,
-          }),
-          source_keys: ['gross'],
-        },
-      ],
-      aggregatable_values: {
-        // TODO: scaling
-        quantity: Number(quantity),
-        gross: Number(gross),
+app.get('/register-trigger', async (req: Request, res: Response) => {
+  const id: string = req.query.id as string;
+  const quantity: string = req.query.quantity as string;
+  const size: string = req.query.size as string;
+  const category: string = req.query.category as string;
+  const gross: string = req.query.gross as string;
+  const AttributionReportingRegisterTrigger = {
+    event_trigger_data: [
+      {
+        trigger_data: '1',
+        priority: '100',
+        // deduplication_key: '1234',
       },
-      debug_key: debugKey(),
-    };
-    res.setHeader(
-      'Attribution-Reporting-Register-Trigger',
-      JSON.stringify(AttributionReportingRegisterTrigger),
-    );
-    res.sendStatus(200);
-  },
-);
+    ],
+    aggregatable_trigger_data: [
+      {
+        key_piece: triggerKeyPiece({
+          type: TRIGGER_TYPE['quantity'],
+          id: parseInt(id, 16),
+          size: Number(size),
+          category: Number(category),
+          option: 0,
+        }),
+        source_keys: ['quantity'],
+      },
+      {
+        key_piece: triggerKeyPiece({
+          type: TRIGGER_TYPE['gross'],
+          id: parseInt(id, 16),
+          size: Number(size),
+          category: Number(category),
+          option: 0,
+        }),
+        source_keys: ['gross'],
+      },
+    ],
+    aggregatable_values: {
+      // TODO: scaling
+      quantity: Number(quantity),
+      gross: Number(gross),
+    },
+    debug_key: debugKey(),
+  };
+  res.setHeader(
+    'Attribution-Reporting-Register-Trigger',
+    JSON.stringify(AttributionReportingRegisterTrigger),
+  );
+  res.sendStatus(200);
+});
 
 app.post(
   '/.well-known/attribution-reporting/report-event-attribution',
@@ -477,7 +477,7 @@ const handleEventLevelReport = (req: Request, res: Response, report: any) => {
       .filter(([key, _]) => key !== 'redirect')
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-    const redirectUrl = `${req.query['redirect']}/attribution/register-source?${query}`;
+    const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
     res.redirect(redirectUrl);
   } else {
     res
