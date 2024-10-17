@@ -82,3 +82,41 @@ export const KNOWN_SHOP_ITEM_LABELS_BY_ID = {
   '1f3bf': 'Ski boots',
   '26f8': 'Ice skate',
 };
+
+/** Both types of ad size macros supported in render URLs. */
+export const RENDER_URL_SIZE_MACRO =
+  'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
+
+/**
+ * List of DSP hostnames to integrate with as an SSP.
+ * This is only read by SSP code. When a DSP host is included in this list, the
+ * SSP will make a server-side contextual bid request to the DSP host to gather
+ * buyerSignals for Protected Audience, and also include the DSP host as an
+ * interest group buyers in the auction configurations returned by this SSP.
+ */
+export const DSP_HOSTS_TO_INTEGRATE = [DSP_HOST!, DSP_A_HOST!, DSP_B_HOST!];
+
+/**
+ * List of DSP origins to integrate with as an SSP. This is generated from
+ * DSP_HOSTS_TO_INTEGRATE.
+ */
+export const DSP_ORIGINS_TO_INTEGRATE = DSP_HOSTS_TO_INTEGRATE.map(
+  (dspHost) => {
+    return new URL(`https://${dspHost}:${EXTERNAL_PORT}`).toString();
+  },
+);
+
+/**
+ * List of SSP hostnames to integrate with as a DSP.
+ * This is only read by DSP code. When an SSP host is included in this list,
+ * the DSP will include a video ad specific to this SSP in the interest group.
+ * Listing ads specific to SSPs is a known constraint for video ads.
+ */
+export const SSP_HOSTS_TO_INTEGRATE = [SSP_HOST!, SSP_A_HOST!, SSP_B_HOST!];
+
+/** Max bid CPM for contextual auctions. */
+export const MAX_CONTEXTUAL_BID = 1.5;
+/** Min bid CPM for contextual auctions. */
+export const MIN_CONTEXTUAL_BID = 0.5;
+/** Name of the contextual advertiser. */
+export const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
