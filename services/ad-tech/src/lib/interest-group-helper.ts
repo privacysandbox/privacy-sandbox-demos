@@ -44,7 +44,7 @@ export const RENDER_URL_SIZE_MACRO =
 
 /** Helper module used to build interest group objects. */
 export const InterestGroupHelper = (() => {
-  /** Returns the video ads to be included in the given interest group. */
+  /** Returns video ads for a given advertiser and SSP hosts to integrate. */
   const getVideoAdsForRequest = (
     advertiser: string,
     sspHosts: string[],
@@ -73,6 +73,7 @@ export const InterestGroupHelper = (() => {
     return videoAds;
   };
 
+  /** Returns the interest group display ad to for the given advertiser. */
   const getDisplayAdForRequest = (
     advertiser: string,
     itemId?: string,
@@ -102,10 +103,13 @@ export const InterestGroupHelper = (() => {
     sspHosts: string[],
   ): InterestGroupAd[] => {
     const advertiser = req.query.advertiser?.toString() || HOSTNAME!;
-    const ads: InterestGroupAd[] = [];
-    ads.push(...getVideoAdsForRequest(advertiser, sspHosts));
-    ads.push(getDisplayAdForRequest(advertiser, req.query.itemId?.toString()));
-    return ads;
+    const itemId = req.query.itemId?.toString() || '';
+    // Include all types of ads in the interest group and filter based on
+    // opportunity at bidding time.
+    return [
+      getDisplayAdForRequest(advertiser, itemId),
+      ...getVideoAdsForRequest(advertiser, sspHosts),
+    ];
   };
 
   // Exported members of the module.
