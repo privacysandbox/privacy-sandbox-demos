@@ -41,21 +41,9 @@ export interface InterestGroupAd {
 /** Both types of ad size macros supported in render URLs. */
 export const RENDER_URL_SIZE_MACRO =
   'adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
-/** Max bid CPM for contextual auctions. */
-export const MAX_CONTEXTUAL_BID = 1.5;
-/** Min bid CPM for contextual auctions. */
-export const MIN_CONTEXTUAL_BID = 0.5;
 
 /** Helper module used to build interest group objects. */
 export const InterestGroupHelper = (() => {
-  /** Returns a random bid price with 2 decimal digits. */
-  const getBidPrice = (): string => {
-    const minBid = MIN_CONTEXTUAL_BID;
-    const maxBid = MAX_CONTEXTUAL_BID;
-    const bid = (Math.random() * (maxBid - minBid) + minBid).toFixed(2);
-    return bid;
-  };
-
   /** Returns the video ads to be included in the given interest group. */
   const getVideoAdsForRequest = (
     advertiser: string,
@@ -123,6 +111,5 @@ export const InterestGroupHelper = (() => {
   // Exported members of the module.
   return {
     getAdsForRequest,
-    getBidPrice,
   };
 })();

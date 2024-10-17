@@ -26,8 +26,13 @@ import {getTemplateVariables} from '../lib/template-utils.js';
 import {InterestGroupHelper} from '../lib/interest-group-helper.js';
 
 export const BuyerRouter = express.Router();
+
 /** Name of the contextual advertiser. */
 export const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
+/** Max bid CPM for contextual auctions. */
+export const MAX_CONTEXTUAL_BID = 1.5;
+/** Min bid CPM for contextual auctions. */
+export const MIN_CONTEXTUAL_BID = 0.5;
 /** SSPs to integrate with. */
 const SSP_HOSTS = [SSP_HOST!, SSP_A_HOST!, SSP_B_HOST!];
 
@@ -59,7 +64,7 @@ BuyerRouter.get(
 
 /** Places a bid for the contextual auction. */
 BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
-  const bid = InterestGroupHelper.getBidPrice();
+  const bid = getBidPrice();
   // Generate a new auction ID if missing in request.
   const auctionId = req.query.auctionId || `DSP-${crypto.randomUUID()}`;
   // Assemble render URL query parameters.
@@ -202,3 +207,14 @@ BuyerRouter.get(
     res.status(200).send(`Rewrote default real-time signals: ${HOSTNAME}`);
   },
 );
+
+// ************************************************************************
+// DSP helper functions
+// ************************************************************************
+/** Returns a random bid price with 2 decimal digits. */
+const getBidPrice = (): string => {
+  const minBid = MIN_CONTEXTUAL_BID;
+  const maxBid = MAX_CONTEXTUAL_BID;
+  const bid = (Math.random() * (maxBid - minBid) + minBid).toFixed(2);
+  return bid;
+};
