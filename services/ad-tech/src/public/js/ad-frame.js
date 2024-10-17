@@ -23,7 +23,7 @@
  */
 (() => {
   /** Name of the contextual advertiser. */
-  const ADVERTISER_CONTEXTUAL = 'Context Next inc.';
+  const ADVERTISER_CONTEXTUAL = 'ContextNext';
   const HOST_CODENAME = ((scriptSrc) => {
     const currentHost = new URL(scriptSrc).hostname;
     return currentHost.substring('privacy-sandbox-demos-'.length);
