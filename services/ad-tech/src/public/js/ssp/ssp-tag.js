@@ -34,13 +34,7 @@
   // ********************************************************
   /** Logs to console. */
   const log = (message, context) => {
-    console.log(
-      '[PSDemo] Seller',
-      CURR_HOSTNAME,
-      'ad tag',
-      message,
-      {context},
-    );
+    console.log('[PSDemo] Seller', CURR_HOSTNAME, 'ad tag', message, {context});
   };
 
   /** Returns frame URL with page context as search query. */
