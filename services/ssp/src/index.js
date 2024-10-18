@@ -45,12 +45,9 @@ const {
 // In-memory storage for debug reports
 const Reports = [];
 // Clear in-memory storage every 10 min
-setInterval(
-  () => {
-    Reports.length = 0;
-  },
-  1000 * 60 * 10,
-);
+setInterval(() => {
+  Reports.length = 0;
+}, 1000 * 60 * 10);
 
 const app = express();
 
@@ -183,7 +180,7 @@ app.post('/reporting', async (req, res) => {
 // ************************************************************************
 // Attribution Reporting HTTP handlers
 // ************************************************************************
-app.get('/register-source', async (req, res) => {
+app.get('/attribution/register-source', async (req, res) => {
   if (!req.headers['attribution-reporting-eligible']) {
     res.status(400).send('"Attribution-Reporting-Eligible" header is missing');
     return;
@@ -199,7 +196,7 @@ app.get('/register-source', async (req, res) => {
   }
 });
 
-app.get('/register-trigger', async (req, res) => {
+app.get('/attribution/register-trigger', async (req, res) => {
   const {id, quantity, size, category, gross} = req.query;
   const AttributionReportingRegisterTrigger = {
     event_trigger_data: [
@@ -469,7 +466,7 @@ const handleEventLevelReport = (req, res, report) => {
       .filter(([key, _]) => key !== 'redirect')
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-    const redirectUrl = `${req.query['redirect']}/register-source?${query}`;
+    const redirectUrl = `${req.query['redirect']}/attribution/register-source?${query}`;
     res.redirect(redirectUrl);
   } else {
     res

@@ -71,13 +71,10 @@
   /** Adds a descriptive label about the involved ad-techs. */
   const addDescriptionToAdContainer = (sspVast) => {
     const seller = new URL(sspVast).hostname;
-    const buyerCodeName = location.hostname.substring(
-      'privacy-sandbox-demos-'.length,
-    );
-    const sellerCodeName = seller.substring('privacy-sandbox-demos-'.length);
-    const $adLabelEl = document.getElementById('ad-label');
-    if ($adLabelEl) {
-      $adLabelEl.innerText = `Video ad from ${buyerCodeName} delivered by ${sellerCodeName}`;
+    const buyer = location.hostname;
+    const $adLabel = document.getElementById('ad-label');
+    if ($adLabel) {
+      $adLabel.innerText = `Video ad from ${buyer} delivered by ${seller}`;
     }
   };
 
@@ -87,7 +84,7 @@
   (() => {
     // The rendering process begins when the frame receives the auctionId.
     window.addEventListener('message', async (message) => {
-      if (!message.origin.startsWith('https://privacy-sandbox-demos-ssp')) {
+      if (!message.origin.startsWith('https://<%= AD_SERVER_HOST %>')) {
         return console.log(
           '[PSDemo] Ignoring message from unknonw origin',
           message,

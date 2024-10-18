@@ -29,6 +29,7 @@ import {
   SSP_B_HOST,
   SSP_B_ORIGIN,
   SSP_HOST,
+  SSP_ORIGIN,
 } from './constants.js';
 
 const app: Application = express();
@@ -73,7 +74,7 @@ app.get('/single-seller', async (req: Request, res: Response) => {
     EXTERNAL_PORT,
     HOME_HOST,
     AD_SERVER_LIB_URL: new URL(
-      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
     ).toString(),
   });
 });
@@ -84,10 +85,11 @@ app.get('/multi-seller', async (req: Request, res: Response) => {
     LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
+    SSP_ORIGIN,
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
     AD_SERVER_LIB_URL: new URL(
-      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
     ).toString(),
   });
 });

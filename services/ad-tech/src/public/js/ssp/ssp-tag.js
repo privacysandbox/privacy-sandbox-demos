@@ -81,7 +81,7 @@
   /** Listen for potential post messages from DSPs. */
   const addEventListenerForDspPostMessages = () => {
     window.addEventListener('message', async (event) => {
-      if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) {
+      if (!event.origin.startsWith('https://<%= DEMO_HOST_PREFIX %>')) {
         return;
       }
       if ('string' === typeof event.data) {
@@ -102,13 +102,10 @@
 
   /** Adds a descriptive label for demonstration purposes. */
   const addDescriptionToAdContainer = (divId, adType, isFencedFrame) => {
-    const sellerCodeName = new URL(
-      document.currentScript.src,
-    ).hostname.substring('privacy-sandbox-demos-'.length);
     const paragraphEl = document.createElement('p');
     paragraphEl.innerText = `${adType} ad in ${
       isFencedFrame ? 'FENCED FRAME' : 'IFRAME'
-    } by ${sellerCodeName}`;
+    } by ${CURR_HOSTNAME}`;
     paragraphEl.className = 'ad-label';
     const adContainer = document.getElementById(divId);
     if (adContainer) {
@@ -165,7 +162,7 @@
       addDescriptionToAdContainer(divId, adType, isFencedFrame);
       if ('VIDEO' === adType.toUpperCase()) {
         addEventListenerForDspPostMessages();
-        size[1] = 28; // Set height to 32px, just enough for a description.
+        size[1] = 48; // Set height to 48px, just enough for a description.
       }
       const pathname = ((otherSellers) => {
         if (!otherSellers || !otherSellers.length) {

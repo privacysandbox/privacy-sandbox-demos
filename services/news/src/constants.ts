@@ -41,6 +41,10 @@ export const CURRENT_ORIGIN = new URL(
   `https://${HOSTNAME}:${EXTERNAL_PORT}`,
 ).toString();
 
+export const SSP_ORIGIN = new URL(
+  `https://${SSP_HOST}:${EXTERNAL_PORT}`,
+).toString();
+
 export const SSP_A_ORIGIN = new URL(
   `https://${SSP_A_HOST}:${EXTERNAL_PORT}`,
 ).toString();

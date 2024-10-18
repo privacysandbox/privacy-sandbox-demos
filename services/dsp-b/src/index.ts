@@ -51,12 +51,9 @@ const SSP_B_VAST_URL = `${SSP_B}vast`;
 const Reports: any[] = [];
 
 // clear in-memory storage every 10 min
-setInterval(
-  () => {
-    Reports.length = 0;
-  },
-  1000 * 60 * 10,
-);
+setInterval(() => {
+  Reports.length = 0;
+}, 1000 * 60 * 10);
 
 const app: Application = express();
 
@@ -116,7 +113,7 @@ app.get('/ads', async (req, res) => {
   const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}/ads/${id}`);
 
   const registerSource = new URL(
-    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/register-source`,
+    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/attribution/register-source`,
   );
   registerSource.searchParams.append('advertiser', advertiser as string);
   registerSource.searchParams.append('id', id as string);
@@ -256,7 +253,7 @@ app.get('/ad-server-bid', async (req, res) => {
 // ************************************************************************
 // [START] Section for Attribution Reporting API Code ***
 // ************************************************************************
-app.get('/register-source', async (req: Request, res: Response) => {
+app.get('/attribution/register-source', async (req: Request, res: Response) => {
   const advertiser: string = req.query.advertiser as string;
   const id: string = req.query.id as string;
 
@@ -349,49 +346,52 @@ app.get('/register-source', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/register-trigger', async (req: Request, res: Response) => {
-  const id: string = req.query.id as string;
-  const quantity: string = req.query.quantity as string;
-  const size: string = req.query.size as string;
-  const category: string = req.query.category as string;
-  const gross: string = req.query.gross as string;
+app.get(
+  '/attribution/register-trigger',
+  async (req: Request, res: Response) => {
+    const id: string = req.query.id as string;
+    const quantity: string = req.query.quantity as string;
+    const size: string = req.query.size as string;
+    const category: string = req.query.category as string;
+    const gross: string = req.query.gross as string;
 
-  const AttributionReportingRegisterTrigger = {
-    aggregatable_trigger_data: [
-      {
-        key_piece: triggerKeyPiece({
-          type: TRIGGER_TYPE['quantity'],
-          id: parseInt(id, 16),
-          size: Number(size),
-          category: Number(category),
-          option: 0,
-        }),
-        source_keys: ['quantity'],
+    const AttributionReportingRegisterTrigger = {
+      aggregatable_trigger_data: [
+        {
+          key_piece: triggerKeyPiece({
+            type: TRIGGER_TYPE['quantity'],
+            id: parseInt(id, 16),
+            size: Number(size),
+            category: Number(category),
+            option: 0,
+          }),
+          source_keys: ['quantity'],
+        },
+        {
+          key_piece: triggerKeyPiece({
+            type: TRIGGER_TYPE['gross'],
+            id: parseInt(id, 16),
+            size: Number(size),
+            category: Number(category),
+            option: 0,
+          }),
+          source_keys: ['gross'],
+        },
+      ],
+      aggregatable_values: {
+        // TODO: scaling
+        quantity: Number(quantity),
+        gross: Number(gross),
       },
-      {
-        key_piece: triggerKeyPiece({
-          type: TRIGGER_TYPE['gross'],
-          id: parseInt(id, 16),
-          size: Number(size),
-          category: Number(category),
-          option: 0,
-        }),
-        source_keys: ['gross'],
-      },
-    ],
-    aggregatable_values: {
-      // TODO: scaling
-      quantity: Number(quantity),
-      gross: Number(gross),
-    },
-    debug_key: debugKey(),
-  };
-  res.setHeader(
-    'Attribution-Reporting-Register-Trigger',
-    JSON.stringify(AttributionReportingRegisterTrigger),
-  );
-  res.sendStatus(200);
-});
+      debug_key: debugKey(),
+    };
+    res.setHeader(
+      'Attribution-Reporting-Register-Trigger',
+      JSON.stringify(AttributionReportingRegisterTrigger),
+    );
+    res.sendStatus(200);
+  },
+);
 
 app.post(
   '/.well-known/attribution-reporting/debug/report-aggregate-attribution',

@@ -189,22 +189,39 @@
       adUnit,
       contextualBidResponses,
     );
+    let adFrame;
+    const {isFencedFrame} = adUnit;
     if ('NONE' === adAuctionResult.type) {
       return;
-    }
-    const {isFencedFrame, size} = adUnit;
-    const adElement = isFencedFrame ? 'fencedframe' : 'iframe';
-    const adFrame = document.createElement(adElement);
-
-    if (isFencedFrame) {
-      if ('PROTECTED_AUDIENCE' === adAuctionResult.type) {
+    } else if ('CONTEXTUAL' === adAuctionResult.type) {
+      // FencedFrames can only be intialized with a FencedFrameConfig, and a
+      // FencedFrameConfig constructor isn't currently exposed to JavaScript.
+      // As a result, contextual ads can't be shown in FencedFrames without
+      // using the following Chrome flag:
+      // chrome://flags/#enable-fenced-frames-developer-mode
+      // See: https://github.com/WICG/fenced-frame/blob/master/explainer/use_cases.md#manual-construction-for-general-purpose-usage-and-testing
+      if (isFencedFrame) {
+        log('forcing render in iframe for contextual ad', {
+          adUnit,
+          adAuctionResult,
+        });
+      }
+      // As such, render contextual ad in iframes regardless of adUnit config.
+      adFrame = document.createElement('iframe');
+      adFrame.src = adAuctionResult.value;
+    } else if ('PROTECTED_AUDIENCE' === adAuctionResult.type) {
+      if (isFencedFrame) {
+        adFrame = document.createElement('fencedframe');
         adFrame.config = adAuctionResult.value;
       } else {
-        adFrame.config = new FencedFrameConfig(adAuctionResult.value);
+        adFrame = document.createElement('iframe');
+        adFrame.src = adAuctionResult.value;
       }
     } else {
-      adFrame.src = adAuctionResult.value;
+      log('auction result type not implemented', {adUnit, adAuctionResult});
+      return;
     }
+    const {size} = adUnit;
     [adFrame.width, adFrame.height] = size;
     adFrame.addEventListener('load', () => {
       adFrame.contentWindow.postMessage(

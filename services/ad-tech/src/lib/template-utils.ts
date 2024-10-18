@@ -12,7 +12,9 @@
  */
 
 import {
+  AD_SERVER_HOST,
   ADVERTISER_CONTEXTUAL,
+  DEMO_HOST_PREFIX,
   DSP_A_DETAIL,
   DSP_A_HOST,
   DSP_B_DETAIL,
@@ -20,7 +22,6 @@ import {
   DSP_DETAIL,
   DSP_HOST,
   EXTERNAL_PORT,
-  HOME_HOST,
   HOSTNAME,
   PORT,
   SHOP_HOST,
@@ -30,24 +31,53 @@ import {
   SSP_B_HOST,
   SSP_DETAIL,
   SSP_HOST,
+  TRAVEL_HOST,
 } from '../lib/constants.js';
 
+// ****************************************************************************
+// HELPER FUNCTIONS
+// ****************************************************************************
+/** Returns the mapped ad tech label. */
+const getAdTechDetail = (adTechHost?: string): string | undefined => {
+  switch (adTechHost) {
+    case DSP_HOST:
+      return DSP_DETAIL;
+    case DSP_A_HOST:
+      return DSP_A_DETAIL;
+    case DSP_B_HOST:
+      return DSP_B_DETAIL;
+    case SSP_HOST:
+      return SSP_DETAIL;
+    case SSP_A_HOST:
+      return SSP_A_DETAIL;
+    case SSP_B_HOST:
+      return SSP_B_DETAIL;
+    default:
+      return 'FIXME: UNKNOWN HOST';
+  }
+};
+
+// ****************************************************************************
+// EXPORTED FUNCTIONS
+// ****************************************************************************
 /** Returns variables for use in the ad template. */
 export const getAdTemplateVariables = (requestQuery: any) => {
   // Initialize template variables.
   const advertiser = requestQuery.advertiser?.toString() || HOSTNAME!;
   const registerSourceUrl = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/register-source`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source`,
   );
   registerSourceUrl.searchParams.append('advertiser', advertiser);
   if (ADVERTISER_CONTEXTUAL === advertiser) {
     return {
-      title: `Contextual ads from ${ADVERTISER_CONTEXTUAL}`,
-      destination: new URL(`https://${HOME_HOST}:${EXTERNAL_PORT}`).toString(),
-      creative: new URL( // Doughnut image.
+      TITLE: `Contextual ads from ${ADVERTISER_CONTEXTUAL}`,
+      DESTINATION: new URL(
+        `https://${TRAVEL_HOST}:${EXTERNAL_PORT}`,
+      ).toString(),
+      CREATIVE: new URL( // Doughnut image.
         `https://${HOSTNAME}:${EXTERNAL_PORT}/img/emoji_u1f369.svg`,
       ).toString(),
-      registerSource: registerSourceUrl.toString(),
+      ATTRIBUTION_SRC: registerSourceUrl.toString(),
     };
   }
   let destination = new URL(
@@ -74,42 +104,31 @@ export const getAdTemplateVariables = (requestQuery: any) => {
     ).toString();
   }
   return {
-    title: `Your special ads from ${advertiser}`,
-    destination,
-    creative,
-    registerSource: registerSourceUrl.toString(),
+    TITLE: `Your special ads from ${advertiser}`,
+    DESTINATION: destination,
+    CREATIVE: creative,
+    ATTRIBUTION_SRC: registerSourceUrl.toString(),
   };
 };
 
-/** Returns EJS template variables for current host. */
+/** Returns EJS template variables for JS files. */
+export const getJavaScriptTemplateVariables = () => {
+  return {
+    DEMO_HOST_PREFIX,
+    AD_SERVER_HOST,
+    ADVERTISER_CONTEXTUAL,
+  };
+};
+
+/** Returns EJS template variables for EJS files. */
 export const getTemplateVariables = (titleMessage: string = '') => {
   const hostDetails = {
     HOSTNAME,
     EXTERNAL_PORT,
     PORT,
     SHOP_HOST,
-    title: [getAdTechDetail(HOSTNAME), titleMessage].join(' - '),
+    TITLE: [getAdTechDetail(HOSTNAME), titleMessage].join(' - '),
   };
   console.log('Built template context: ', hostDetails);
   return hostDetails;
-};
-
-/** Returns the mapped ad tech label. */
-const getAdTechDetail = (adTechHost?: string): string | undefined => {
-  switch (adTechHost) {
-    case DSP_HOST:
-      return DSP_DETAIL;
-    case DSP_A_HOST:
-      return DSP_A_DETAIL;
-    case DSP_B_HOST:
-      return DSP_B_DETAIL;
-    case SSP_HOST:
-      return SSP_DETAIL;
-    case SSP_A_HOST:
-      return SSP_A_DETAIL;
-    case SSP_B_HOST:
-      return SSP_B_DETAIL;
-    default:
-      return 'FIXME: UNKNOWN HOST';
-  }
 };

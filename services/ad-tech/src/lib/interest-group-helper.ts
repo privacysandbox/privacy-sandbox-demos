@@ -42,65 +42,65 @@ export interface InterestGroupAd {
   buyerAndSellerReportingId?: string;
 }
 
-/** Helper module used to build interest group objects. */
-export const InterestGroupHelper = (() => {
-  /** Returns video ads for a given advertiser and SSP hosts to integrate. */
-  const getVideoAdForRequest = (advertiser: string): InterestGroupAd => {
-    const renderUrl = new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/video-ads?`,
-    );
-    renderUrl.searchParams.append('advertiser', advertiser);
-    return {
-      renderURL: `${renderUrl.toString()}&${MACRO_VIDEO_RENDER_URL_SSP_VAST}`,
-      metadata: {
-        advertiser,
-        adType: AdType.VIDEO,
-      },
-      selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
-      buyerReportingId: 'buyerSpecificInfo1',
-      buyerAndSellerReportingId: 'seatid-1234',
-    };
-  };
-
-  /** Returns the interest group display ad to for the given advertiser. */
-  const getDisplayAdForRequest = (
-    advertiser: string,
-    itemId?: string,
-  ): InterestGroupAd => {
-    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}/ads`);
-    renderUrl.searchParams.append('advertiser', advertiser);
-    if (itemId) {
-      renderUrl.searchParams.append('itemId', itemId);
-    }
-    return {
-      renderURL: `${renderUrl.toString()}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
-      metadata: {
-        advertiser,
-        adType: AdType.DISPLAY,
-        adSizes: [{width: '300px', height: '250px'}],
-      },
-      sizeGroup: 'medium-rectangle',
-      selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
-      buyerReportingId: 'buyerSpecificInfo1',
-      buyerAndSellerReportingId: 'seatid-1234',
-    };
-  };
-
-  /** Returns the interest groups ads for the given advertiser. */
-  const getAdsForRequest = (
-    advertiser: string,
-    itemId?: string,
-  ): InterestGroupAd[] => {
-    // Include all types of ads in the interest group and filter based on
-    // opportunity at bidding time.
-    return [
-      getDisplayAdForRequest(advertiser, itemId),
-      getVideoAdForRequest(advertiser),
-    ];
-  };
-
-  // Exported members of the module.
+// ****************************************************************************
+// HELPER FUNCTIONS
+// ****************************************************************************
+/** Returns video ads for a given advertiser and SSP hosts to integrate. */
+const getVideoAdForRequest = (advertiser: string): InterestGroupAd => {
+  const renderUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/video-ads?`,
+  );
+  renderUrl.searchParams.append('advertiser', advertiser);
   return {
-    getAdsForRequest,
+    renderURL: `${renderUrl.toString()}&${MACRO_VIDEO_RENDER_URL_SSP_VAST}`,
+    metadata: {
+      advertiser,
+      adType: AdType.VIDEO,
+    },
+    selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
+    buyerReportingId: 'buyerSpecificInfo1',
+    buyerAndSellerReportingId: 'seatid-1234',
   };
-})();
+};
+
+/** Returns the interest group display ad to for the given advertiser. */
+const getDisplayAdForRequest = (
+  advertiser: string,
+  itemId?: string,
+): InterestGroupAd => {
+  const renderUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/display-ads`,
+  );
+  renderUrl.searchParams.append('advertiser', advertiser);
+  if (itemId) {
+    renderUrl.searchParams.append('itemId', itemId);
+  }
+  return {
+    renderURL: `${renderUrl.toString()}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
+    metadata: {
+      advertiser,
+      adType: AdType.DISPLAY,
+      adSizes: [{width: '300px', height: '250px'}],
+    },
+    sizeGroup: 'medium-rectangle',
+    selectableBuyerAndSellerReportingIds: ['deal1', 'deal2', 'deal3'],
+    buyerReportingId: 'buyerSpecificInfo1',
+    buyerAndSellerReportingId: 'seatid-1234',
+  };
+};
+
+// ****************************************************************************
+// EXPORTED FUNCTIONS
+// ****************************************************************************
+/** Returns the interest groups ads for the given advertiser. */
+export const getAdsForRequest = (
+  advertiser: string,
+  itemId?: string,
+): InterestGroupAd[] => {
+  // Include all types of ads in the interest group and filter based on
+  // opportunity at bidding time.
+  return [
+    getDisplayAdForRequest(advertiser, itemId),
+    getVideoAdForRequest(advertiser),
+  ];
+};

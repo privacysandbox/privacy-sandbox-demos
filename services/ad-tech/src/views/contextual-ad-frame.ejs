@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
+  <title><%= TITLE %></title>
   <link rel="icon"
         href="" />
   <style>
@@ -40,7 +40,7 @@
       background: white;
     }
   </style>
-  <script src="/js/ad-frame.js"></script>
+  <script src="/js/contextual-ad-frame.js"></script>
 </head>
 
 <body>
@@ -49,12 +49,14 @@
      height="250"
      target="_blank"
      rel="noopener noreferrer"
-     href="<%= destination %>">
+     attributionsrc="<%= ATTRIBUTION_SRC %>"
+     href="<%= DESTINATION %>">
     <!-- Smaller to avoid scrollbar -->
     <img width="294"
          height="245"
          loading="lazy"
-         src="<%= creative %>">
+         attributionsrc="<%= ATTRIBUTION_SRC %>"
+         src="<%= CREATIVE %>">
   </a>
 </body>
 
