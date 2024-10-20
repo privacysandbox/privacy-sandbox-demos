@@ -27,12 +27,14 @@
 // Helper Functions
 // ********************************************************
 CURR_HOST = '';
+AUCTION_ID = '';
 /** Logs to console. */
 function log(msg, context) {
   console.log(
     '[PSDemo] Buyer',
     CURR_HOST,
     'bidding logic',
+    AUCTION_ID,
     msg,
     JSON.stringify({context}, ' ', ' '),
   );
@@ -171,6 +173,7 @@ function generateBid(
   browserSignals,
 ) {
   CURR_HOST = interestGroup.owner.substring('https://'.length);
+  AUCTION_ID = auctionSignals.auctionId;
   log('generating bid', {
     interestGroup,
     auctionSignals,
@@ -212,6 +215,7 @@ function reportWin(
   if (sellerSignals.buyer) {
     CURR_HOST = sellerSignals.buyer.substring('https://'.length);
   }
+  AUCTION_ID = auctionSignals.auctionId;
   log('reporting win', {
     auctionSignals,
     perBuyerSignals,

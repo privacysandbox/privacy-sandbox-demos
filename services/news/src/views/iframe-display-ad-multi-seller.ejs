@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <title><%= TITLE %></title>
+  <link rel="stylesheet"
+        href="/css/global.css" />
+  <link rel="stylesheet"
+        href="/css/unified.css" />
+  <link rel="icon"
+        href="/img/spy.svg" />
+  <script src="/js/main.js"></script>
+  <script>
+    window.PSDemo = window.PSDemo || {};
+    // Publishers configure the ad units available on the page.
+    window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
+      // Seller acting as ad server is included implictly, and their tag
+      // is included on the page directly. This configuration field should
+      // list additional sellers to include in the ad auctions.
+      otherSellers: [
+        '<%= SSP_ORIGIN %>',
+        '<%= SSP_A_ORIGIN %>',
+        '<%= SSP_B_ORIGIN %>',
+      ],
+      // Ad units to request bids for.
+      adUnits: [{
+        code: 'displayIframeAdUnit',
+        auctionId: `PUB-${crypto.randomUUID()}`,
+        divId: 'display-ad--iframe',
+        adType: 'DISPLAY',
+        size: [300, 250],
+        isFencedFrame: false,
+      }],
+    });
+  </script>
+  <script async defer
+          src="<%= AD_SERVER_LIB_URL %>"
+  ></script>
+</head>
+
+<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
+  <header class="flex flex-col items-center gap-4">
+    <h1 class="text-6xl">Daily Privacy News</h1>
+    <h2 class="text-2xl">This is a news demo site.</h2>
+    <hr class="w-full">
+  </header>
+  <main class="flex flex-col lg:flex-row justify-between gap-6">
+    <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
+      <p><%= LOREM %></p>
+      <p><%= LOREM %></p>
+      <div class="w-full flex flex-row justify-center ad-row">
+        <div id="display-ad--iframe" class="ad-slot"></div>
+      </div>
+      <p><%= LOREM %></p>
+      <div class="w-full flex flex-col items-center">
+      </div>
+      <p><%= LOREM %></p>
+      <p><%= LOREM %></p>
+      <p><%= LOREM %></p>
+    </article>
+
+    <aside class="flex flex-col gap-4">
+      <h3 class="font-bold text-2xl">
+        Today's stories
+      </h3>
+      <ul class="list-disc pl-4">
+        <%- include('pages') %>
+      </ul>
+    </aside>
+  </main>
+  <footer>
+    <hr>
+    <p><a href=<%= `https://${HOME_HOST}:${EXTERNAL_PORT}` %>>back to top</a>
+  </footer>
+</body>
+
+</html>

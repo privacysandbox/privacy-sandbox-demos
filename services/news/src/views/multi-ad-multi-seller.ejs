@@ -19,9 +19,12 @@
     window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
       // Seller acting as ad server is included implictly, and their tag
       // is included on the page directly. This configuration field should
-      // list additional sellers to include in the ad auctions. No additional
-      // sellers to include in single-seller auctions.
-      otherSellers: [],
+      // list additional sellers to include in the ad auctions.
+      otherSellers: [
+        '<%= SSP_ORIGIN %>',
+        '<%= SSP_A_ORIGIN %>',
+        '<%= SSP_B_ORIGIN %>',
+      ],
       // Ad units to request bids for.
       adUnits: [{
         code: 'displayIframeAdUnit',
@@ -37,9 +40,22 @@
         adType: 'DISPLAY',
         size: [300, 250],
         isFencedFrame: true,
+      },
+      {
+        code: 'videoIframeAdUnit',
+        auctionId: `PUB-${crypto.randomUUID()}`,
+        divId: 'video-ad--iframe',
+        adType: 'VIDEO',
+        size: [640, 320],
+        isFencedFrame: false,
       }],
     });
   </script>
+  <script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"
+  ></script>
+  <script async defer
+          src="/js/video-ad-helper.js"
+  ></script>
   <script async defer
           src="<%= AD_SERVER_LIB_URL %>"
   ></script>
@@ -54,6 +70,20 @@
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
       <p><%= LOREM %></p>
+      <div id="video-ad-container" class="w-full flex flex-col items-center">
+        <div id="video-ad--iframe"></div>
+        <div class="w-full flex flex-col items-center">
+          <div id="mainContainer">
+            <div id="content">
+              <video id="videoContent">
+                <source src="https://storage.googleapis.com/gvabox/media/samples/stock.mp4"></source>
+              </video>
+            </div>
+            <div id="adContainer"></div>
+          </div>
+          <button id="playButton">Play / Pause</button>
+        </div>
+      </div>
       <p><%= LOREM %></p>
       <div class="w-full flex flex-row justify-center ad-row">
         <div id="display-ad--fenced-frame" class="ad-slot"></div>
@@ -72,16 +102,7 @@
         Today's stories
       </h3>
       <ul class="list-disc pl-4">
-        <li><a href=#>Lorem ipsum dolor sit amet</a></li>
-        <li><a href=#>consectetur adipiscing elit</a></li>
-        <li><a href=#>sed do eiusmod tempor incididunt</a></li>
-        <li><a href=#>ut labore et dolore magna aliqua</a></li>
-        <li><a href=#>Ut enim ad minim veniam</a></li>
-        <li><a href=#>quis nostrud exercitation ullamco aboris</a></li>
-        <li><a href=#>nisi ut aliquip ex ea commodo consequat</a></li>
-        <li><a href=#>Duis aute irure dolor in reprehenderit</a></li>
-        <li><a href=#>in voluptate velit esse cillum dolore</a></li>
-        <li><a href=#>eu fugiat nulla pariatur</a></li>
+        <%- include('pages') %>
       </ul>
     </aside>
   </main>

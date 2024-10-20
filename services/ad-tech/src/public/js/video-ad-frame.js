@@ -84,7 +84,7 @@
   (() => {
     // The rendering process begins when the frame receives the auctionId.
     window.addEventListener('message', async (message) => {
-      if (!message.origin.startsWith('https://<%= AD_SERVER_HOST %>')) {
+      if (!message.origin.startsWith('https://<%= DEMO_HOST_PREFIX %>')) {
         return console.log(
           '[PSDemo] Ignoring message from unknonw origin',
           message,

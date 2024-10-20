@@ -31,7 +31,7 @@ AUCTION_ID = '';
 /** Logs to console. */
 function log(msg, context) {
   console.log(
-    '[PSDemo] Seller',
+    '[PSDemo] Top-level Seller',
     CURR_HOST,
     'decision logic',
     AUCTION_ID,
@@ -51,7 +51,10 @@ function scoreAd(
   browserSignals,
 ) {
   CURR_HOST = auctionConfig.seller.substring('https://'.length);
-  AUCTION_ID = auctionConfig.auctionSignals.auctionId;
+  const {componentSeller} = browserSignals;
+  AUCTION_ID = auctionConfig.componentAuctions.find(
+    (componentAuction) => componentSeller === componentAuction.seller,
+  ).auctionSignals.auctionId;
   log('scoring ad', {
     adMetadata,
     bid,
@@ -98,7 +101,10 @@ function scoreAd(
 
 function reportResult(auctionConfig, browserSignals) {
   CURR_HOST = auctionConfig.seller.substring('https://'.length);
-  AUCTION_ID = auctionConfig.auctionSignals.auctionId;
+  const winningComponentSeller = browserSignals.componentSeller;
+  AUCTION_ID = auctionConfig.componentAuctions.find(
+    (componentAuction) => winningComponentSeller === componentAuction.seller,
+  ).auctionSignals.auctionId;
   log('reporting result', {auctionConfig, browserSignals});
   sendReportTo(auctionConfig.seller + '/reporting?report=result');
   return {
