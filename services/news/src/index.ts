@@ -20,7 +20,7 @@ import {
   AD_SERVER_HOST,
   EXTERNAL_PORT,
   HOME_HOST,
-  LOREM,
+  TEXT_LOREM,
   NEWS_DETAIL,
   NEWS_HOST,
   PORT,
@@ -40,7 +40,7 @@ app.set('views', 'src/views');
 app.get('/', async (req: Request, res: Response) => {
   res.render('index', {
     TITLE: NEWS_DETAIL,
-    LOREM,
+    LOREM: TEXT_LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_A_HOST,
@@ -56,7 +56,7 @@ app.get('/', async (req: Request, res: Response) => {
 app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
     TITLE: NEWS_DETAIL,
-    LOREM,
+    TEXT_LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_ORIGIN,

@@ -1,0 +1,28 @@
+<footer>
+  <hr>
+  <h4 class="text-xl font-bold">TIPS</h4>
+  <ul class="list-disc pl-4">
+    <li>
+      <p>Inspect the ad slot configurations for the current page at:
+        <section class="font-mono pl-4">
+          window.PSDemo.PAGE_ADS_CONFIG
+        </section>
+      </p>
+    </li>
+    <li>
+      <p>Filter all logs in Chrome developer console by:
+        <section class="font-mono pl-4">
+          window.PSDemo.PAGE_ADS_CONFIG.adUnits[${index}].auctionId
+        </section>
+      </p>
+    </li>
+    <li>
+        <p>Inspect event-level reports received by ad-tech server at:
+          <section class="font-mono pl-4">
+            https://${adTechOrigin}/reporting/view-reports
+          </section>
+        </p>
+      </li>
+  </ul>
+  <p><a href=<%= `https://${HOME_HOST}:${EXTERNAL_PORT}` %>>back to home</a>
+</footer>

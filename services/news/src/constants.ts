@@ -53,7 +53,7 @@ export const SSP_B_ORIGIN = new URL(
   `https://${SSP_B_HOST}:${EXTERNAL_PORT}`,
 ).toString();
 
-export const LOREM =
+export const TEXT_LOREM =
   'Lorem ipsum dolor sit amet, consectetur adipiscing ' +
   'elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ' +
   'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ' +
