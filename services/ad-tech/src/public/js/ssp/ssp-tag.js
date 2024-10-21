@@ -184,6 +184,13 @@
         },
       });
       // Post-message the adUnit config to the injected iframe.
+      adUnit.pageURL = location.href;
+      adUnit.pageTitle = document.title;
+      adUnit.userAgent = navigator.userAgent;
+      adUnit.isMobile = navigator.userAgentData.mobile;
+      adUnit.platform = navigator.userAgentData.platform;
+      adUnit.version = navigator.userAgentData.brands.find(
+        (brand) => 'Google Chrome' === brand.brand).version;
       iframeEl.addEventListener('load', () => {
         iframeEl.contentWindow.postMessage(
           JSON.stringify({
