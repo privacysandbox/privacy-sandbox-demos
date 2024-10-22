@@ -85,20 +85,9 @@
       <p><%= LOREM %></p>
       <p><%= LOREM %></p>
     </article>
-
-    <aside class="flex flex-col gap-4">
-      <h3 class="font-bold text-2xl">
-        Today's stories
-      </h3>
-      <ul class="list-disc pl-4">
-        <%- include('pages') %>
-      </ul>
-    </aside>
+    <%- include('components/aside') %>
   </main>
-  <footer>
-    <hr>
-    <p><a href=<%= `https://${HOME_HOST}:${EXTERNAL_PORT}` %>>back to top</a>
-  </footer>
+  <%- include('components/footer') %>
   <script>
     function addScriptEl(src, className, resolve) {
       const scriptEl = document.createElement('script')

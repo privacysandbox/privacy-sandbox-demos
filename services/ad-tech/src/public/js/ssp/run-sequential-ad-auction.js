@@ -109,7 +109,8 @@
     componentAuctions,
   ) => {
     const topLevelSellerScript = new URL(CURR_SCRIPT_URL.origin);
-    topLevelSellerScript.pathname = '/js/ssp/default/top-level-auction-decision-logic.js';
+    topLevelSellerScript.pathname =
+      '/js/ssp/default/top-level-auction-decision-logic.js';
     return {
       seller: CURR_SCRIPT_URL.origin,
       decisionLogicURL: topLevelSellerScript.toString(),

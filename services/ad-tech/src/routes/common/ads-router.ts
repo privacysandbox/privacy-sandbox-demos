@@ -31,7 +31,9 @@ export const AdsRouter = express.Router();
 AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
   const templateVariables = getAdTemplateVariables(req.query);
   console.log('Loading interest group ad', templateVariables);
-  res.render('display-ad-frame', templateVariables);
+  res
+    .set('Allow-Fenced-Frame-Automatic-Beacons', 'true')
+    .render('display-ad-frame', templateVariables);
 });
 
 /** Used as render URL for contextual ads or static ads. */
