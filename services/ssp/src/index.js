@@ -45,9 +45,12 @@ const {
 // In-memory storage for debug reports
 const Reports = [];
 // Clear in-memory storage every 10 min
-setInterval(() => {
-  Reports.length = 0;
-}, 1000 * 60 * 10);
+setInterval(
+  () => {
+    Reports.length = 0;
+  },
+  1000 * 60 * 10,
+);
 
 const app = express();
 
