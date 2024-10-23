@@ -61,10 +61,10 @@ SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
     .sort((bid1, bid2) => Number(bid2.bid!) - Number(bid1.bid!));
   console.log('Winning contextual bid', {winningContextualBid});
   // Collect buyer signals from contextual bids.
-  const buyerSignals: {[key: string]: any} = {};
+  const perBuyerSignals: {[key: string]: any} = {};
   for (const contextualBid of contextualBids) {
     if (contextualBid.buyerSignals) {
-      buyerSignals[contextualBid.bidderOrigin!] = contextualBid.buyerSignals;
+      perBuyerSignals[contextualBid.bidderOrigin!] = contextualBid.buyerSignals;
     }
   }
   const response: ContextualBidResponse = {
@@ -79,7 +79,8 @@ SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
       useCase: req.query.useCase?.toString(),
       isFencedFrame: req.query.isFencedFrame?.toString(),
       auctionSignals: signals,
-      buyerSignals,
+      sellerSignals: {winningContextualBid},
+      perBuyerSignals,
     }),
   };
   console.log('Responding to contextual bid request', {response});

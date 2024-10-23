@@ -46,31 +46,31 @@ export interface ContextualBidResponse {
   bid?: string;
   /** URL of the ad creative. */
   renderURL?: string;
+
+  // FIELDS THAT ARE ONLY FOUND ON SPECIFIC RESPONSES AS NOTED BELOW
   /**
+   * Included in buyer's server-to-server response to seller's request.
    * Buyer signals to include in component auction config. The buyer may choose
    * to not include additional signals or not participate in the Protected
    * Audience auction altogether as well.
    */
   buyerSignals?: any;
   /**
-   * Hostname of the ad buyer placing the bid. This is typically present in the
-   * ad seller's bid responses where buyerHost will represent the ultimate ad
-   * buyer while bidderHost is set to the ad seller responding to the bid
-   * request.
+   * Included in seller's response to ad server's request from the browser.
+   * Hostname of the ultimate ad buyer placing the bid while bidderHost is set
+   * to the ad seller responding to the bid request.
    */
   buyerHost?: string;
   /**
-   * Origin of the ad buyer placing the bid. This is typically present in the
-   * ad seller's bid responses where buyerHost will represent the ultimate ad
-   * buyer while bidderHost is set to the ad seller responding to the bid
-   * request.
+   * Included in seller's response to ad server's request from the browser.
+   * Origin of the ultimate ad buyer placing the bid while bidderHost is set to
+   * the ad seller responding to the bid request.
    */
   buyerOrigin?: string;
   /**
+   * Included in seller's response to ad server's request from the browser.
    * Component auction configuration to include in the overall Protected
-   * Audience auction configuration. This is typically present in the ad
-   * seller's bid responses where the ad server is collating component auction
-   * configurations.
+   * Audience auction configuration.
    */
   componentAuctionConfig?: any;
 }
@@ -85,6 +85,14 @@ const getContextualBidUrl = (origin: string) => {
   return contextualBidUrl.toString();
 };
 
+/**
+ * We use an environment variable to determine the contextual bidding endpoint
+ * because the origins vary across the execution environments -- local, dev,
+ * and prod deployments. For local deployments, we rely on Docker mesh for
+ * networking, routing requests to: http://...dsp.dev:8080/, while in dev and
+ * prod environments, these need to be plain HTTPS requests made to the public
+ * endpoint: https://...dsp.dev:443/
+ */
 /** Map of ad buyer contextual bidding URLs indexed by hostname. */
 export const CONTEXTUAL_ENDPOINT_BY_BUYER_HOST = new Map([
   [DSP_HOST!, getContextualBidUrl(DSP_URI!)],
@@ -125,6 +133,7 @@ export async function getContextualBids(
       return {bid: '0.0'};
     }
   });
+  // Use Promise.race to implement a timeout for the contextual auction.
   const bidResponses = await Promise.race([
     (await Promise.allSettled(bidResponsePromises))
       .filter((p) => p.status === 'fulfilled')

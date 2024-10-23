@@ -72,8 +72,8 @@
     return bidRequestUrls;
   };
 
-  /** Runs and returns contextual bid responses. */
-  const getAllBidResponses = async (adUnit, sellers) => {
+  /** Fetches all the contextual bid responses with a timeout. */
+  const getAllContextualBidResponses = async (adUnit, sellers) => {
     const bidRequestUrls = getBidRequestUrlsWithContext(adUnit, sellers);
     const bidResponsePromises = bidRequestUrls.map(async (bidRequestUrl) => {
       log('making contextual bid request', {bidRequestUrl});
@@ -108,13 +108,20 @@
     winningContextualBid,
     componentAuctions,
   ) => {
-    const topLevelSellerScript = new URL(CURR_SCRIPT_URL.origin);
-    topLevelSellerScript.pathname =
-      '/js/ssp/default/top-level-auction-decision-logic.js';
+    const decisionLogicURL = (() => {
+      const url = new URL(CURR_SCRIPT_URL.origin);
+      url.pathname = '/js/ssp/default/top-level-auction-decision-logic.js';
+      return url.toString();
+    })();
+    const trustedScoringSignalsURL = (() => {
+      const url = new URL(CURR_SCRIPT_URL.origin);
+      url.pathname = '/ssp/realtime-signals/scoring-signal.json';
+      return url.toString();
+    })();
     return {
       seller: CURR_SCRIPT_URL.origin,
-      decisionLogicURL: topLevelSellerScript.toString(),
-      // trustedScoringSignalsURL: '',
+      decisionLogicURL,
+      trustedScoringSignalsURL,
       // 'maxTrustedScoringSignalsURLLength': 10000,
       sellerSignals: {
         adUnit,
@@ -128,6 +135,9 @@
     };
   };
 
+  // ****************************************************************
+  // PROTECTED AUDIENCE: RUN AD AUCTION
+  // ****************************************************************
   /** Executes the PAAPI auction in sequence and returns the overall result. */
   const executeSequentialAuction = async (adUnit, contextualBidResponses) => {
     const [winningContextualBid] = contextualBidResponses
@@ -168,6 +178,9 @@
     }
   };
 
+  // ****************************************************************
+  // POST-MESSAGE LISTENER
+  // ****************************************************************
   /** Executes the multi-seller ad auction for the given adUnit config. */
   const runMultiSellerAdAuction = async (message) => {
     const [adUnit, otherSellers] = getValidatedAdUnitAndOtherSellers(message);
@@ -176,7 +189,7 @@
     }
     const {auctionId} = adUnit;
     CURR_AUCTION_ID = auctionId;
-    const contextualBidResponses = await getAllBidResponses(
+    const contextualBidResponses = await getAllContextualBidResponses(
       adUnit,
       otherSellers,
     );

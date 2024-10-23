@@ -32,7 +32,6 @@ export interface InterestGroupAd {
     advertiser: string;
     adType: AdType;
     adSizes?: {width: string; height: string}[];
-    seller?: string;
   };
   // OPTIONAL FIELDS
   sizeGroup?: string;

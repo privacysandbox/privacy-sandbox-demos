@@ -99,7 +99,10 @@
     }
   };
 
-  /** Executes the single-seller ad auction for the given adUnit config. */
+  // ****************************************************************
+  // PROTECTED AUDIENCE : RUN AD AUCTION
+  // ****************************************************************
+  /** Post-message listener that executes the single-seller ad auction. */
   const runSingleSellerAdAuction = async (message) => {
     const adUnit = getValidatedAdUnit(message);
     if (!adUnit) {

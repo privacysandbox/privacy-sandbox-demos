@@ -189,8 +189,8 @@
       adUnit.userAgent = navigator.userAgent;
       adUnit.isMobile = navigator.userAgentData.mobile;
       adUnit.platform = navigator.userAgentData.platform;
-      adUnit.version = navigator.userAgentData.brands.find(
-        (brand) => 'Google Chrome' === brand.brand,
+      adUnit.browserVersion = navigator.userAgentData.brands.find(
+        (brand) => 'Chromium' === brand.brand,
       ).version;
       iframeEl.addEventListener('load', () => {
         iframeEl.contentWindow.postMessage(
