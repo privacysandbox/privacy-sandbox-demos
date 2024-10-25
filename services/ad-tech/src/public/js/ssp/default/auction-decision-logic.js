@@ -82,14 +82,12 @@ function getRejectScoreIfCreativeBlocked(scoringContext) {
       'BLOCKED' === parsedScoringSignals.label.toUpperCase()
     ) {
       // Reject bid if creative is blocked.
-      // Reject bid if creative is blocked.
       log('rejecting bid blocked by publisher', {
         parsedScoringSignals,
         trustedScoringSignals,
         renderURL,
         buyer: browserSignals.interestGroupOwner,
         dataVersion: browserSignals.dataVersion,
-        scoringContext,
         scoringContext,
       });
       return {
