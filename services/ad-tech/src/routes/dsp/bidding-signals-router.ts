@@ -11,8 +11,14 @@
  limitations under the License.
  */
 
-import express, {Request, Response} from 'express';
-import {HOSTNAME} from '../../lib/constants.js';
+import express, {query, Request, Response} from 'express';
+import {
+  BIDDING_SIGNALS_DEALS,
+  BIDDING_SIGNALS_DEFAULT,
+  HOSTNAME,
+  SHOP_HOST,
+  TRAVEL_HOST,
+} from '../../lib/constants.js';
 import {KeyValueStore} from '../../controllers/key-value-store.js';
 
 /**
@@ -28,14 +34,10 @@ export const BiddingSignalsRouter = express.Router();
 // ************************************************************************
 // BYOS implementation of Key - Value store
 // ************************************************************************
-const trustedBiddingSignalStore = new KeyValueStore(
-  /* defaultValues= */ [
-    ['isActive', 'true'],
-    ['minBid', '3.5'],
-    ['maxBid', '4.5'],
-    ['multiplier', '1.1'],
-  ],
-);
+const trustedBiddingSignalStore = new KeyValueStore([
+  ...BIDDING_SIGNALS_DEFAULT,
+  ...BIDDING_SIGNALS_DEALS,
+]);
 
 // ************************************************************************
 // HTTP handlers
@@ -49,24 +51,31 @@ BiddingSignalsRouter.get(
     const signalsFromKeyValueStore = trustedBiddingSignalStore.getMultiple(
       queryKeys!,
     );
-    console.log('KV BYOS', {publisher, queryKeys});
-    res.setHeader('X-Allow-FLEDGE', 'true');
-    res.setHeader('X-fledge-bidding-signals-format-version', '2');
+    const interestGroupNames = req.query
+      .interestGroupNames!.toString()
+      .split(',');
+    const perInterestGroupData: {[key: string]: any} = {};
+    for (const name of interestGroupNames) {
+      perInterestGroupData[name] = {
+        'priorityVector': {
+          'signal1': 100,
+          'signal2': 200,
+        },
+        'updateIfOlderThanMs': 1,
+      };
+    }
     const biddingSignals = {
       keys: {...signalsFromKeyValueStore},
-      perInterestGroupData: {
-        'name1': {
-          'priorityVector': {
-            'signal1': 100,
-            'signal2': 200,
-          },
-        },
-      },
+      perInterestGroupData,
     };
-    console.log('Returning trusted bidding signals: ', {
-      url: `${req.baseUrl}${req.path}`,
+    console.log('Returning bidding signals: ', {
+      url: req.originalUrl,
+      publisher,
+      queryKeys,
       biddingSignals,
     });
+    res.setHeader('X-Allow-FLEDGE', 'true');
+    res.setHeader('X-fledge-bidding-signals-format-version', '2');
     res.json(biddingSignals);
   },
 );

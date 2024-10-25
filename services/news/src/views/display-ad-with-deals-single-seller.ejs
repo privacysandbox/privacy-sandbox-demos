@@ -14,17 +14,24 @@
         href="/img/spy.svg" />
   <script src="/js/main.js"></script>
   <script>
+    // Source some parameters from URL query for demonstrative purposes.
+    const searchParams = (new URL(location.href)).searchParams
+    // If strict=true is included in URL query, then reject bids without deals.
+    const strictRejectForDeals = 'true' === searchParams.get('strict');
+    // Optionally source deal IDs from URL query: deals=deal-1,deal-2,deal-3.
+    const availableDeals = [];
+    if (searchParams.has('deals')) {
+      availableDeals.push(...searchParams.get('deals').split(','));
+    } else {
+      availableDeals.push('deal-1', 'deal-2');
+    }
     window.PSDemo = window.PSDemo || {};
     // Publishers configure the ad units available on the page.
     window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
       // Seller acting as ad server is included implictly, and their tag
       // is included on the page directly. This configuration field should
       // list additional sellers to include in the ad auctions.
-      otherSellers: [
-        '<%= SSP_ORIGIN %>',
-        '<%= SSP_A_ORIGIN %>',
-        '<%= SSP_B_ORIGIN %>',
-      ],
+      otherSellers: [],
       // Ad units to request bids for.
       adUnits: [{
         code: 'displayFencedFrameAdUnit',
@@ -34,10 +41,9 @@
         size: [300, 250],
         isFencedFrame: true,
         // Include available deals in ad slot config which will flow through
-        // to auctionSignals.
-        availableDeals: ['deal1', 'deal3'],
-        // Reject all bids that don't use the above deals.
-        strictRejectForDeals: true,
+        // to Protected Audience auctionSignals.
+        availableDeals,
+        strictRejectForDeals,
       }],
     });
   </script>

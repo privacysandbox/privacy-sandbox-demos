@@ -69,17 +69,47 @@ export const CURRENT_ORIGIN = new URL(
 ).toString();
 
 // ****************************************************************************
-// CONTEXTUAL AUCTION METADATA
+// BIDDING SIGNALS - CONTEXTUAL AUCTIONS
 // ****************************************************************************
+// NOTE: These bidding signals are only used on the server-side to respond to a
+// contextual bid request from the browser or server-to-server.
 /**
  * Name of the contextual advertiser.
  * This is used in the buyer's bid response to contextual bid requests.
  */
 export const ADVERTISER_CONTEXTUAL = 'ContextNext';
 /** Max bid CPM for contextual auctions. */
-export const MAX_CONTEXTUAL_BID = 1.5;
+export const CONTEXTUAL_BID_MAX = 1.5;
 /** Min bid CPM for contextual auctions. */
-export const MIN_CONTEXTUAL_BID = 0.5;
+export const CONTEXTUAL_BID_MIN = 0.5;
+
+// ****************************************************************************
+// BIDDING SIGNALS - PROTECTED AUDIENCE AUCTIONS
+// ****************************************************************************
+// NOTE: These bidding signals are stored in the BYOS Key-Value Server, where
+// values are stored as strings.
+export const BIDDING_SIGNAL_KEY_IS_ACTIVE = 'isActive';
+export const BIDDING_SIGNAL_KEY_BID_MIN = 'minBid';
+export const BIDDING_SIGNAL_KEY_BID_MAX = 'maxBid';
+export const BIDDING_SIGNAL_KEY_BID_MULTIPLIER = 'multiplier';
+/** The deafult bidding signals for the BYOS Key-Value Serice. */
+export const BIDDING_SIGNALS_DEFAULT = [
+  // Whether the campaign is active.
+  [BIDDING_SIGNAL_KEY_IS_ACTIVE, 'true'],
+  // Min bid CPM for Protected Audience auctions.
+  [BIDDING_SIGNAL_KEY_BID_MIN, '3.5'],
+  // Max bid CPM for Protected Audience auctions.
+  [BIDDING_SIGNAL_KEY_BID_MAX, '4.5'],
+  // Default bid multiplier for Protected Audience auctions.
+  [BIDDING_SIGNAL_KEY_BID_MULTIPLIER, '1.1'],
+];
+export const BIDDING_SIGNALS_DEALS = [
+  // Deal specific bid multipliers for Protected Audience auctions.
+  // Template for keys: `multiplier-${dealId}`
+  ['multiplier-deal-1', '0.5'], // Deal ID: deal-1
+  ['multiplier-deal-2', '0.4'], // Deal ID: deal-2
+  ['multiplier-deal-3', '0.45'], // Deal ID: deal-3
+];
 
 // ****************************************************************************
 // ADVERTISER METADATA

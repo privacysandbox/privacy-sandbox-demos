@@ -83,11 +83,60 @@ function isCurrentCampaignActive(biddingContext) {
   return true;
 }
 
+/** Logs execution context for demonstrative purposes. */
+function logContextForDemo(message, context) {
+  const {
+    interestGroup,
+    auctionSignals,
+    perBuyerSignals,
+    // UNUSED trustedBiddingSignals,
+    // UNUSED browserSignals,
+    sellerSignals,
+  } = context;
+  AUCTION_ID = auctionSignals.auctionId;
+  if (interestGroup) {
+    CURR_HOST = interestGroup.owner.substring('https://'.length);
+  } else if (perBuyerSignals && perBuyerSignals.buyerHost) {
+    CURR_HOST = perBuyerSignals.buyerHost;
+  } else if (sellerSignals && sellerSignals.buyer) {
+    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
+  }
+  log(message, context);
+}
+
+/** Checks whether the current ad campaign is active. */
+function isCurrentCampaignActive(biddingContext) {
+  const {
+    // UNUSED interestGroup,
+    // UNUSED auctionSignals,
+    // UNUSED perBuyerSignals,
+    trustedBiddingSignals,
+    browserSignals,
+  } = biddingContext;
+  if ('true' !== trustedBiddingSignals['isActive']) {
+    // Don't place a bid if campaign is inactive.
+    log('not bidding since campaign is inactive', {
+      trustedBiddingSignals,
+      seller: browserSignals.seller,
+      topLevelSeller: browserSignals.topLevelSeller,
+      dataVersion: browserSignals.dataVersion,
+    });
+    return false;
+  }
+  return true;
+}
+
 /** Calculates a bid price based on real-time signals. */
-function calculateBidAmount(trustedBiddingSignals) {
+function calculateBidAmount(trustedBiddingSignals, dealId) {
   const minBid = Number(trustedBiddingSignals.minBid) || 0.5;
   const maxBid = Number(trustedBiddingSignals.maxBid) || 1.5;
-  const multiplier = Number(trustedBiddingSignals.multiplier) || 1.0;
+  let multiplier = 1.0;
+  if (dealId) {
+    // If an eligible deal is found, use the corresponding bid multiplier.
+    multiplier = Number(trustedBiddingSignals[`multiplier-${dealId}`]) || 0.5;
+  } else {
+    multiplier = Number(trustedBiddingSignals.multiplier) || 1.0;
+  }
   let bid = Math.random() * (maxBid - minBid) + minBid;
   bid = (bid * multiplier).toFixed(2);
   log('calculated bid price', {bid, minBid, maxBid, multiplier});
@@ -145,22 +194,26 @@ function getBidForVideoAd({
   browserSignals,
 }) {
   const {ads} = interestGroup;
-  // Filter for video ads specifically mapped to current SSP.
+  // Select an ad meeting the auction requirements.
   const [selectedAd] = ads.filter((ad) => 'VIDEO' === ad.metadata.adType);
   if (!selectedAd) {
     log('didnt find eligible video ad in IG', {interestGroup, browserSignals});
     return {bid: '0.0'};
   }
+  // Check if any deals are eligible.
+  const dealId = selectDealId(selectedAd, auctionSignals);
   return {
     ad: {
       ...selectedAd.metadata,
       seller: browserSignals.seller,
       topLevelSeller: browserSignals.topLevelSeller,
     },
-    bid: calculateBidAmount(trustedBiddingSignals),
+    bid: calculateBidAmount(trustedBiddingSignals, dealId),
     bidCurrency: 'USD',
     allowComponentAuction: true,
     render: selectedAd.renderURL,
+    // Specify selected deal ID for reporting.
+    selectedBuyerAndSellerReportingId: dealId,
     /*
       TODO: Use-case: Ad cost reporting
       adCost: optionalAdCost,
@@ -180,6 +233,7 @@ function getBidForDisplayAd({
   trustedBiddingSignals,
   browserSignals,
 }) {
+  // Select an ad meeting the auction requirements.
   const [selectedAd] = interestGroup.ads.filter(
     (ad) => 'DISPLAY' === ad.metadata.adType,
   );
@@ -187,13 +241,15 @@ function getBidForDisplayAd({
     log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
   }
+  // Check if any deals are eligible.
+  const dealId = selectDealId(selectedAd, auctionSignals);
   return {
     ad: {
       ...selectedAd.metadata,
       seller: browserSignals.seller,
       topLevelSeller: browserSignals.topLevelSeller,
     },
-    bid: calculateBidAmount(trustedBiddingSignals),
+    bid: calculateBidAmount(trustedBiddingSignals, dealId),
     bidCurrency: 'USD',
     allowComponentAuction: true,
     render: {
@@ -203,7 +259,7 @@ function getBidForDisplayAd({
       height: selectedAd.metadata.adSizes[0].height,
     },
     // Specify selected deal ID for reporting.
-    selectedBuyerAndSellerReportingId: selectDealId(selectedAd, auctionSignals),
+    selectedBuyerAndSellerReportingId: dealId,
     /*
       TODO: Use-case: Ad cost reporting
       adCost: optionalAdCost,
@@ -243,6 +299,7 @@ function generateBid(
   };
   logContextForDemo('generateBid()', biddingContext);
   if (!isCurrentCampaignActive(biddingContext)) {
+    log('not bidding as campaign is inactive', biddingContext);
     return;
   }
   const bid =
