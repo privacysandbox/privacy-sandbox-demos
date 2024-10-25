@@ -16,7 +16,7 @@
 
 (async () => {
   const ins = document.querySelector('ins.ads');
-  const script = document.querySelector('.ssp_tag');
+  const script = document.currentScript;
   const src = new URL(script.src);
   src.pathname = '/video-ad-tag.html';
   const iframe = document.createElement('iframe');
@@ -31,5 +31,5 @@ window.addEventListener('message', (event) => {
   if (!event.origin.startsWith('https://privacy-sandbox-demos-dsp')) return;
   if (typeof event.data !== 'string') return;
   const {adVastUrl} = JSON.parse(event.data);
-  setUpIMA(adVastUrl);
+  window.PSDemo.VideoAdHelper.setUpIMA(adVastUrl);
 });

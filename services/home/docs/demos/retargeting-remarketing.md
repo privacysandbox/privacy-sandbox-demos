@@ -276,7 +276,7 @@ to be displayed
     height="250"
     target="_blank"
     rel="noopener noreferrer"
-    attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
     href="https://privacy-sandbox-demos-shop.dev/items/1fa70"
   >
     <!-- smaller for avoid scrollbar -->
@@ -284,7 +284,7 @@ to be displayed
       width="294"
       height="245"
       loading="lazy"
-      attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+      attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
       src="https://privacy-sandbox-demos-shop.dev/ads/1fa70"
     />
   </a>

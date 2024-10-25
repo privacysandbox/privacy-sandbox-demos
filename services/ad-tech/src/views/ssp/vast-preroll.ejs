@@ -1,0 +1,54 @@
+<VAST version="4.0" xmlns="https://privacy-sandbox-demos.dev">
+  <Ad id="1234"
+      sequence="1"
+      conditionalAd="false">
+    <Wrapper followAdditionalWrappers="0"
+             allowMultipleAds="1"
+             fallbackOnNoAd="0">
+	  <AdSystem version="4.0">Privacy Sandbox</AdSystem>
+		<Error>
+          <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=vast-error&auctionId=${AUCTION_ID}` %>
+        </Error>
+		<Impression id="Impression-ID">
+          <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=vast-impression&auctionId=${AUCTION_ID}` %>
+        </Impression>
+		<Creatives>
+		  <Creative id="1234"
+                    sequence="1"
+                    adId="1234">
+		  <UniversalAdId idRegistry="Ad-ID"
+                         idValue="1234">
+            1234
+          </UniversalAdId>
+		  <Linear>
+		    <TrackingEvents>
+			  <Tracking event="start">
+                <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=vast-start&auctionId=${AUCTION_ID}` %>
+              </Tracking>
+			  <Tracking event="firstQuartile">
+                <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=firstQuartile&auctionId=${AUCTION_ID}` %>
+              </Tracking>
+			  <Tracking event="midpoint">
+                <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=vast-midpoint&auctionId=${AUCTION_ID}` %>
+              </Tracking>
+			  <Tracking event="thirdQuartile">
+                <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=vast-thirdQuartile&auctionId=${AUCTION_ID}` %>
+              </Tracking>
+			  <Tracking event="complete">
+                <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/reporting?report=vast-complete&auctionId=${AUCTION_ID}` %>
+              </Tracking>
+			</TrackingEvents>
+			<VideoClicks>
+			  <ClickThrough id="shop">
+				<![CDATA[<%= `https://${ADVERTISER_HOST}:${EXTERNAL_PORT}?auctionId=${AUCTION_ID}` %>]]>
+			  </ClickThrough>
+			</VideoClicks>
+		  </Linear>
+		</Creative>
+	  </Creatives>
+	  <VASTAdTagURI>
+      <![CDATA[<%- `${DSP_VAST}` %>]]>
+	  </VASTAdTagURI>
+	</Wrapper>
+  </Ad>
+</VAST>

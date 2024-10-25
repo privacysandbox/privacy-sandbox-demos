@@ -15,6 +15,7 @@
  */
 
 /**
+ * TODO: Rename to run-single-seller-ad-auction after unified branch is merged.
  * Where is this script used:
  *   This script is loaded inside the ad-tech iframe to run a single-seller
  *   Protected Audience auction.
@@ -24,56 +25,139 @@
  *   script includes any embedded first-party context in the iframe URL.
  */
 (() => {
-  /** Makes a request to the server to retrieve an auction config. */
-  const getAuctionConfig = async () => {
-    const currentUrl = new URL(location.href);
-    const auctionConfigUrl = new URL(location.origin);
-    auctionConfigUrl.pathname = '/ssp/auction-config.json';
-    // Copy query params from current context.
-    for (const searchParam of currentUrl.searchParams) {
-      auctionConfigUrl.searchParams.append(searchParam[0], searchParam[1]);
+  /** Domain of the current script. */
+  const CURR_HOSTNAME = new URL(document.currentScript.src).hostname;
+  let CURR_AUCTION_ID = '';
+  // ****************************************************************
+  // HELPER FUNCTIONS
+  // ****************************************************************
+  /** Logs to console. */
+  const log = (message, context) => {
+    console.log(
+      '[PSDemo] Seller',
+      CURR_HOSTNAME,
+      'PAAPI auction runner',
+      CURR_AUCTION_ID,
+      message,
+      {context},
+    );
+  };
+
+  /** Validates the post messages and returns a valid adUnit if found. */
+  const getValidatedAdUnit = (message) => {
+    const iframeUrl = new URL(window.location.href);
+    const publisher = iframeUrl.searchParams.get('publisher');
+    if (message.origin !== publisher) {
+      return log('ignoring message from unknown origin', {message, publisher});
     }
-    const res = await fetch(auctionConfigUrl);
-    if (res.ok) {
-      return res.json();
+    try {
+      const {adUnit, otherSellers} = JSON.parse(message.data);
+      if (!adUnit.adType) {
+        return log('stopping as adType not found in adUnit', {adUnit});
+      }
+      if (otherSellers && otherSellers.length) {
+        log('ignoring other sellers', {adUnit, otherSellers});
+      }
+      log('received valid adUnit config', {adUnit});
+      return adUnit;
+    } catch (e) {
+      return log('encountered error in parsing adUnit config', {message});
     }
   };
 
-  /** Main function that starts the single-seller auction. */
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (navigator.runAdAuction === undefined) {
-      console.log('[PSDemo] Protected Audience API is not supported.');
-      return;
+  /** Makes a request to the server to retrieve an auction config. */
+  const getAuctionConfig = async (adUnit) => {
+    const currentUrl = new URL(location.href);
+    const auctionConfigUrl = new URL(location.origin);
+    auctionConfigUrl.pathname = '/ssp/auction-config.json';
+    // Copy adUnit configs as query params.
+    for (const [key, value] of Object.entries(adUnit)) {
+      auctionConfigUrl.searchParams.append(key, value);
     }
-    const auctionConfig = await getAuctionConfig();
-    const adAuctionResult = await navigator.runAdAuction(auctionConfig);
-    console.log('[PSDemo] Protected Audience config, result: ', {
-      auctionConfig,
-      adAuctionResult,
-    });
-    if (!adAuctionResult) {
-      console.log('[PSDemo] Protected Audience did not return a result.');
-      return;
+    // Copy query params from current context.
+    for (const [key, value] of currentUrl.searchParams) {
+      if (auctionConfigUrl.searchParams.has(key)) {
+        log('INTERNAL overwriting query parameter', {
+          key,
+          oldValue: auctionConfigUrl.searchParams.get(key),
+          newValue: value,
+          url: auctionConfigUrl.toString(),
+        });
+      }
+      auctionConfigUrl.searchParams.append(key, value);
     }
-    if (new URL(location.href).searchParams.get('adType') === 'video') {
-      // Video ads are only supported with iframes.
-      const adFrame = document.createElement('iframe');
-      adFrame.id = 'video-ad-frame';
-      adFrame.src = adAuctionResult;
-      adFrame.width = 0;
-      adFrame.height = 0;
-      document.body.appendChild(adFrame);
+    log('retrieving auction config', {auctionConfigUrl});
+    const res = await fetch(auctionConfigUrl);
+    if (res.ok) {
+      const auctionConfig = await res.json();
+      log('retrieved auction config', {auctionConfig});
+      return auctionConfig;
     } else {
-      // Default to display ads with fencedframes.
-      const fencedframe = document.createElement('fencedframe');
-      fencedframe.config = adAuctionResult;
-      fencedframe.setAttribute('mode', 'opaque-ads');
-      fencedframe.setAttribute('scrolling', 'no');
-      // fencedframe.setAttribute('allow', 'attribution-reporting');
-      fencedframe.width = 300;
-      fencedframe.height = 250;
-      console.log('[PSDemo] Display ads in ', fencedframe);
-      document.body.appendChild(fencedframe);
+      log('encountered error in fetching auction config', {
+        status: res.statusText,
+      });
     }
-  });
+  };
+
+  // ****************************************************************
+  // PROTECTED AUDIENCE : RUN AD AUCTION
+  // ****************************************************************
+  /** Post-message listener that executes the single-seller ad auction. */
+  const runSingleSellerAdAuction = async (message) => {
+    const adUnit = getValidatedAdUnit(message);
+    if (!adUnit) {
+      return;
+    }
+    const {auctionId} = adUnit;
+    CURR_AUCTION_ID = auctionId;
+    const auctionConfig = await getAuctionConfig(adUnit);
+    log('starting Protected Audience auction', {auctionConfig});
+    const adAuctionResult = await navigator.runAdAuction(auctionConfig);
+    if (!adAuctionResult) {
+      log("didn't get a Protected Audience result", {
+        auctionConfig,
+        adAuctionResult,
+      });
+      document.getElementById('ad-label').innerText = 'No eligible ads';
+    } else {
+      log('got Protected Audience result', {auctionConfig, adAuctionResult});
+      const {isFencedFrame, size} = adUnit;
+      const adElement = isFencedFrame ? 'fencedframe' : 'iframe';
+      const adFrame = document.createElement(adElement);
+      if (isFencedFrame) {
+        adFrame.config = adAuctionResult;
+      } else {
+        adFrame.src = adAuctionResult;
+      }
+      [adFrame.width, adFrame.height] = size;
+      adFrame.addEventListener('load', () => {
+        adFrame.contentWindow.postMessage(
+          JSON.stringify({
+            auctionId: adUnit.auctionId,
+            seller: location.hostname,
+          }),
+          '*',
+        );
+      });
+      log('delivering ads in ', {
+        adFrame,
+        adUnit,
+        auctionConfig,
+        adAuctionResult,
+      });
+      document.body.appendChild(adFrame);
+    }
+  };
+
+  // ****************************************************************
+  // MAIN FUNCTION
+  // ****************************************************************
+  (() => {
+    if (!navigator.runAdAuction) {
+      return log('stopping becuase Protected Audience is not supported', {});
+    }
+    // Wait for adUnit object to be post-messaged by ad server tag.
+    window.addEventListener('message', runSingleSellerAdAuction);
+    log('single-seller waiting for adUnit configs', {});
+  })();
 })();
