@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= TITLE %></title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/unified.css">
+  <link rel="icon" href="/img/spy.svg" />
+  <script src="/js/main.js"></script>
+  <script>
+    window.PSDemo = window.PSDemo || {};
+    // Publishers configure the ad units available on the page.
+    window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
+      // Seller acting as ad server is included implictly, and their tag
+      // is included on the page directly. This configuration field should
+      // list additional sellers to include in the ad auctions.
+      otherSellers: [],
+      // Ad units to request bids for.
+      adUnits: [{
+        code: 'videoIframeAdUnit',
+        auctionId: `PUB-${crypto.randomUUID()}`,
+        divId: 'video-ad--iframe',
+        adType: 'VIDEO',
+        size: [640, 320],
+        isFencedFrame: false,
+      }],
+    });
+  </script>
+  <script src="/js/main.js"></script>
+  <script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"
+  ></script>
+  <script async defer
+          src="/js/video-ad-helper.js"
+  ></script>
+  <script async defer
+          src="<%= AD_SERVER_LIB_URL %>"
+  ></script>
+</head>
+
+<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-3/5 bg-slate-50 pt-8">
+  <%- include('components/header') %>
+  <main class="flex flex-col lg:flex-row justify-between gap-6">
+    <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
+      <p><%= TEXT_LOREM %></p>
+      <%- include('components/video-ad') %>
+      <p><%= TEXT_LOREM %></p>
+      <p><%= TEXT_LOREM %></p>
+      <p><%= TEXT_LOREM %></p>
+    </article>
+    <%- include('components/aside') %>
+  </main>
+  <%- include('components/footer', {HOME_HOST, EXTERNAL_PORT}) %>
+</body>
+
+</html>

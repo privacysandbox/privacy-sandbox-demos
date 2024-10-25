@@ -227,4 +227,4 @@ function test() {
   console.log(decodeTrigger(trigger));
 }
 
-test();
+// test();

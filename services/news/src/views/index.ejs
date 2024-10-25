@@ -5,13 +5,34 @@
   <meta charset="UTF-8" />
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
+  <title><%= TITLE %></title>
   <link rel="stylesheet"
         href="/css/global.css" />
   <link rel="stylesheet"
-        href="/css/video-ad-style.css">
+        href="/css/unified.css">
   <link rel="icon"
         href="/img/spy.svg" />
+  <script src="/js/main.js"></script>
+  <script>
+    window.PSDemo = window.PSDemo || {};
+    // Configs for unified ad stack
+    window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
+      // Seller acting as ad server is included implictly, and their tag
+      // is included on the page directly. This configuration field should
+      // list additional sellers to include in the ad auctions. No additional
+      // sellers to include in single-seller auctions.
+      otherSellers: [],
+      // Ad units to request bids for.
+      adUnits: [{
+        code: 'displayFencedFrameAdUnit',
+        auctionId: `PUB-${crypto.randomUUID()}`,
+        divId: 'legacy-ads',
+        adType: 'DISPLAY',
+        size: [300, 250],
+        isFencedFrame: true,
+      }],
+    });
+  </script>
   <script defer src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
   <script defer src="/js/video-ad-helper.js"></script>
   <style>
@@ -34,13 +55,13 @@
   </header>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
-      <p><%= lorem %></p>
+      <p><%= LOREM %></p>
       <div id="video-ad-container"class="w-full flex flex-col items-center">
         <div id="video-ad--iframe"></div>
         <div class="w-full flex flex-col items-center">
           <div id="mainContainer">
             <div id="content">
-              <video id="contentElement">
+              <video id="videoContent">
                 <source src="https://storage.googleapis.com/gvabox/media/samples/stock.mp4"></source>
               </video>
             </div>
@@ -49,44 +70,24 @@
           <button id="playButton">Loading video...</button>
         </div>
       </div>
-      <p><%= lorem %></p>
-      <div class="w-full flex flex-col items-center">
+      <p><%= LOREM %></p>
+      <div id="legacy-ads" class="w-full flex flex-col items-center">
         <ins class="ads"></ins>
       </div>
       <div class="w-full flex flex-row justify-center ad-row">
         <div id="image-ad--fenced-frame" class="ad-slot"></div>
         <div id="image-ad--iframe" class="ad-slot"></div>
       </div>
-      <p><%= lorem %></p>
+      <p><%= LOREM %></p>
       <div class="w-full flex flex-col items-center">
       </div>
-      <p><%= lorem %></p>
-      <p><%= lorem %></p>
-      <p><%= lorem %></p>
+      <p><%= LOREM %></p>
+      <p><%= LOREM %></p>
+      <p><%= LOREM %></p>
     </article>
-
-    <aside class="flex flex-col gap-4">
-      <h3 class="font-bold text-2xl">
-        Today's stories
-      </h3>
-      <ul class="list-disc pl-4">
-        <li><a href=#>Lorem ipsum dolor sit amet</a></li>
-        <li><a href=#>consectetur adipiscing elit</a></li>
-        <li><a href=#>sed do eiusmod tempor incididunt</a></li>
-        <li><a href=#>ut labore et dolore magna aliqua</a></li>
-        <li><a href=#>Ut enim ad minim veniam</a></li>
-        <li><a href=#>quis nostrud exercitation ullamco aboris</a></li>
-        <li><a href=#>nisi ut aliquip ex ea commodo consequat</a></li>
-        <li><a href=#>Duis aute irure dolor in reprehenderit</a></li>
-        <li><a href=#>in voluptate velit esse cillum dolore</a></li>
-        <li><a href=#>eu fugiat nulla pariatur</a></li>
-      </ul>
-    </aside>
+    <%- include('components/aside') %>
   </main>
-  <footer>
-    <hr>
-    <p><a href=<%= `https://${HOME_HOST}:${EXTERNAL_PORT}` %>>back to top</a>
-  </footer>
+  <%- include('components/footer') %>
   <script>
     function addScriptEl(src, className, resolve) {
       const scriptEl = document.createElement('script')
@@ -181,7 +182,7 @@
     }
 
     (async () => {
-      if ('<%= isMultiSeller %>' !== 'true') {
+      if ('<%= IS_MULTI_SELLER %>' !== 'true') {
         document.getElementById('video-ad-container').style.display = 'none'
         addScriptEl('<%= SSP_TAG_URL %>', 'ssp_tag')
         return
