@@ -36,7 +36,6 @@ function log(message, context) {
     'decision logic',
     AUCTION_ID,
     message,
-    message,
     JSON.stringify({context}, ' ', ' '),
   );
 }
