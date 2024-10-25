@@ -16,24 +16,31 @@
 
 import express, {Application, Request, Response} from 'express';
 
-import {EXTERNAL_PORT, PORT, NEWS_HOST, NEWS_DETAIL} from './constants.js';
-import {HOME_HOST, SSP_HOST, SSP_A_HOST, SSP_B_HOST} from './constants.js';
-import {SSP_A_ORIGIN, SSP_B_ORIGIN, AD_SERVER_HOST} from './constants.js';
-import {TOPICS_SERVER_HOST} from './constants.js';
+import {
+  AD_SERVER_HOST,
+  EXTERNAL_PORT,
+  HOME_HOST,
+  TEXT_LOREM,
+  NEWS_DETAIL,
+  NEWS_HOST,
+  PORT,
+  SSP_A_HOST,
+  SSP_A_ORIGIN,
+  SSP_B_HOST,
+  SSP_B_ORIGIN,
+  SSP_HOST,
+  SSP_ORIGIN,
+} from './constants.js';
 
 const app: Application = express();
-
-const TITLE = NEWS_DETAIL;
-const LOREM =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
   res.render('index', {
-    title: TITLE,
-    lorem: LOREM,
+    TITLE: NEWS_DETAIL,
+    LOREM: TEXT_LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_A_HOST,
@@ -42,42 +49,23 @@ app.get('/', async (req: Request, res: Response) => {
     SSP_TAG_URL: `https://${SSP_HOST}/js/ssp/ssp-tag.js`,
     AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
     HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
-    isMultiSeller: 'multi' === req.query.auctionType,
+    IS_MULTI_SELLER: 'multi' === req.query.auctionType,
   });
 });
 
-app.get('/video-ad', async (req: Request, res: Response) => {
-  res.render('video-ad', {
-    title: TITLE,
-    lorem: LOREM,
+app.get('*', async (req: Request, res: Response) => {
+  res.render(req.path.substring(1), {
+    TITLE: NEWS_DETAIL,
+    TEXT_LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
-    SSP_HOST,
-  });
-});
-
-app.get('/test', async (req: Request, res: Response) => {
-  res.render('test', {
-    title: TITLE,
-    lorem: LOREM,
-    EXTERNAL_PORT,
-    HOME_HOST,
+    SSP_ORIGIN,
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
     AD_SERVER_LIB_URL: new URL(
-      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ad-server-lib.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
     ).toString(),
   });
-});
-
-app.get('/test-topics', async (req: Request, res: Response) => {
-  const hostname = req.hostname;
-  const title = hostname.substring(0, hostname.indexOf('.')) || 'news';
-  const params = {
-    title,
-    TOPICS_SERVER_HOST,
-  };
-  res.render('test-topics', params);
 });
 
 app.listen(PORT, async () => {

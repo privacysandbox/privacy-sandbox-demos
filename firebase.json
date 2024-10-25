@@ -263,6 +263,7 @@
     },
     {
       "target": "topics-server",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -281,7 +282,7 @@
     },
     {
       "target": "ad-server",
-      "public": "services/ad-server/src/public",
+      "public": "services/ad-tech/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",

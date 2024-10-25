@@ -22,18 +22,6 @@
  *   This script contains a few helper functions that help copy over
  *   first-party context attached either to the top-level page URL or to the
  *   current script tag.
- *
- * How to tag a new page on the advertiser's site?
- *   Add the following HTML to the page:
- *   <script>
- *     const scriptEl = document.createElement('script')
- *     scriptEl.src = 'https://<%= DSP_HOST %>/js/dsp/dsp-tag.js'
- *     scriptEl.dataset.advertiser = '<%= ADV_HOST %>'
- *     scriptEl.dataset.itemId = '<%= itemId %>'
- *     scriptEl.async = true
- *     scriptEl.defer = true
- *     document.body.appendChild(scriptEl)
- *   </script>
  */
 
 (async () => {
@@ -56,6 +44,7 @@
         $iframe.setAttribute(key, value);
       }
     }
+    console.log('[PSDemo] Ad buyer injecting iframe', {src, $iframe});
     const $script = document.currentScript;
     $script.parentElement.insertBefore($iframe, $script);
   };
