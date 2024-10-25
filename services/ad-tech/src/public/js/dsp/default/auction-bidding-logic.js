@@ -29,15 +29,59 @@
 CURR_HOST = '';
 AUCTION_ID = '';
 /** Logs to console. */
-function log(msg, context) {
+function log(message, context) {
   console.log(
     '[PSDemo] Buyer',
     CURR_HOST,
     'bidding logic',
     AUCTION_ID,
-    msg,
+    message,
+    message,
     JSON.stringify({context}, ' ', ' '),
   );
+}
+
+/** Logs execution context for demonstrative purposes. */
+function logContextForDemo(message, context) {
+  const {
+    interestGroup,
+    auctionSignals,
+    perBuyerSignals,
+    // UNUSED trustedBiddingSignals,
+    // UNUSED browserSignals,
+    sellerSignals,
+  } = context;
+  AUCTION_ID = auctionSignals.auctionId;
+  if (interestGroup) {
+    CURR_HOST = interestGroup.owner.substring('https://'.length);
+  } else if (perBuyerSignals && perBuyerSignals.buyerHost) {
+    CURR_HOST = perBuyerSignals.buyerHost;
+  } else if (sellerSignals && sellerSignals.buyer) {
+    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
+  }
+  log(message, context);
+}
+
+/** Checks whether the current ad campaign is active. */
+function isCurrentCampaignActive(biddingContext) {
+  const {
+    // UNUSED interestGroup,
+    // UNUSED auctionSignals,
+    // UNUSED perBuyerSignals,
+    trustedBiddingSignals,
+    browserSignals,
+  } = biddingContext;
+  if ('true' !== trustedBiddingSignals['isActive']) {
+    // Don't place a bid if campaign is inactive.
+    log('not bidding since campaign is inactive', {
+      trustedBiddingSignals,
+      seller: browserSignals.seller,
+      topLevelSeller: browserSignals.topLevelSeller,
+      dataVersion: browserSignals.dataVersion,
+    });
+    return false;
+  }
+  return true;
 }
 
 /** Calculates a bid price based on real-time signals. */
@@ -172,37 +216,26 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  CURR_HOST = interestGroup.owner.substring('https://'.length);
-  AUCTION_ID = auctionSignals.auctionId;
-  log('generating bid', {
+  const biddingContext = {
     interestGroup,
     auctionSignals,
     perBuyerSignals,
     trustedBiddingSignals,
     browserSignals,
-  });
-  if ('true' !== trustedBiddingSignals['isActive']) {
-    // Don't place a bid if campaign is inactive.
-    log('not bidding since campaign is inactive', {
-      trustedBiddingSignals,
-      seller: browserSignals.seller,
-      topLevelSeller: browserSignals.topLevelSeller,
-      dataVersion: browserSignals.dataVersion,
-    });
+  };
+  logContextForDemo('generateBid()', biddingContext);
+  if (!isCurrentCampaignActive(biddingContext)) {
     return;
   }
-  const biddingContext = {
-    interestGroup,
-    trustedBiddingSignals,
-    browserSignals,
-  };
   const bid =
     'VIDEO' === auctionSignals.adType
       ? getBidForVideoAd(biddingContext)
       : getBidForDisplayAd(biddingContext);
   if (bid) {
-    log('returning bid', {bid});
+    log('returning bid', {bid, biddingContext});
     return bid;
+  } else {
+    log('not bidding', {biddingContext});
   }
 }
 
@@ -212,11 +245,7 @@ function reportWin(
   sellerSignals,
   browserSignals,
 ) {
-  if (sellerSignals.buyer) {
-    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
-  }
-  AUCTION_ID = auctionSignals.auctionId;
-  log('reporting win', {
+  logContextForDemo('reportWin()', {
     auctionSignals,
     perBuyerSignals,
     sellerSignals,

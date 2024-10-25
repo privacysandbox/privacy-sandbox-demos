@@ -82,6 +82,8 @@ BuyerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
     renderURL,
     buyerSignals: {
       auctionId,
+      buyerHost: HOSTNAME,
+      buyerOrigin: CURRENT_ORIGIN,
       contextualBid: bid,
       contextualRenderURL: renderURL,
       contextualAdvertiser: ADVERTISER_CONTEXTUAL,

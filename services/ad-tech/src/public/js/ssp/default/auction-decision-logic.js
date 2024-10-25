@@ -29,15 +29,77 @@
 CURR_HOST = '';
 AUCTION_ID = '';
 /** Logs to console. */
-function log(msg, context) {
+function log(message, context) {
   console.log(
     '[PSDemo] Seller',
     CURR_HOST,
     'decision logic',
     AUCTION_ID,
-    msg,
+    message,
+    message,
     JSON.stringify({context}, ' ', ' '),
   );
+}
+
+/** Logs execution context for demonstrative purposes. */
+function logContextForDemo(message, context) {
+  const {
+    // UNUSED adMetadata,
+    // UNUSED bid,
+    auctionConfig,
+    // UNUSED trustedScoringSignals,
+    browserSignals,
+  } = context;
+  CURR_HOST = auctionConfig.seller.substring('https://'.length);
+  AUCTION_ID = auctionConfig.auctionSignals.auctionId;
+  log(message, context);
+  // Log reporting IDs if found.
+  const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
+    context.browserSignals;
+  if (buyerAndSellerReportingId || selectedBuyerAndSellerReportingId) {
+    log('found reporting IDs', {
+      buyerAndSellerReportingId,
+      selectedBuyerAndSellerReportingId,
+    });
+  }
+}
+
+/** Returns a rejection score response if scored creative is blocked. */
+function getRejectScoreIfCreativeBlocked(scoringContext) {
+  const {
+    // UNUSED adMetadata,
+    // UNUSED bid,
+    // UNUSED auctionConfig,
+    trustedScoringSignals,
+    browserSignals,
+  } = scoringContext;
+  const {renderURL} = browserSignals;
+  if (trustedScoringSignals && trustedScoringSignals.renderURL[renderURL]) {
+    const parsedScoringSignals = JSON.parse(
+      trustedScoringSignals.renderURL[renderURL],
+    );
+    if (
+      parsedScoringSignals &&
+      'BLOCKED' === parsedScoringSignals.label.toUpperCase()
+    ) {
+      // Reject bid if creative is blocked.
+      // Reject bid if creative is blocked.
+      log('rejecting bid blocked by publisher', {
+        parsedScoringSignals,
+        trustedScoringSignals,
+        renderURL,
+        buyer: browserSignals.interestGroupOwner,
+        dataVersion: browserSignals.dataVersion,
+        scoringContext,
+        scoringContext,
+      });
+      return {
+        desirability: 0,
+        allowComponentAuction: true,
+        rejectReason: 'blocked-by-publisher',
+      };
+    }
+  }
 }
 
 // ********************************************************
@@ -50,45 +112,18 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
-  CURR_HOST = auctionConfig.seller.substring('https://'.length);
-  AUCTION_ID = auctionConfig.auctionSignals.auctionId;
-  log('scoring ad', {
+  const scoringContext = {
     adMetadata,
     bid,
     auctionConfig,
     trustedScoringSignals,
     browserSignals,
-  });
-  const {renderURL} = browserSignals;
-  if (trustedScoringSignals && trustedScoringSignals.renderURL[renderURL]) {
-    const parsedScoringSignals = JSON.parse(
-      trustedScoringSignals.renderURL[renderURL],
-    );
-    if (
-      parsedScoringSignals &&
-      'BLOCKED' === parsedScoringSignals.label.toUpperCase()
-    ) {
-      log('rejecting bid blocked by publisher', {
-        parsedScoringSignals,
-        trustedScoringSignals,
-        renderURL,
-        buyer: browserSignals.interestGroupOwner,
-        dataVersion: browserSignals.dataVersion,
-      });
-      return {
-        // Reject bid if creative is blocked.
-        desirability: 0,
-        allowComponentAuction: true,
-        rejectReason: 'blocked-by-publisher',
-      };
-    }
+  };
+  logContextForDemo('scoreAd()', scoringContext);
+  const rejectScore = getRejectScoreIfCreativeBlocked(scoringContext);
+  if (rejectScore) {
+    return rejectScore;
   }
-  const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
-    browserSignals;
-  log('found reporting IDs', {
-    buyerAndSellerReportingId,
-    selectedBuyerAndSellerReportingId,
-  });
   return {
     desirability: bid,
     allowComponentAuction: true,
@@ -97,11 +132,9 @@ function scoreAd(
 }
 
 function reportResult(auctionConfig, browserSignals) {
-  CURR_HOST = auctionConfig.seller.substring('https://'.length);
-  AUCTION_ID = auctionConfig.auctionSignals.auctionId;
-  log('reporting result', {auctionConfig, browserSignals});
+  logContextForDemo('reportResult()', {auctionConfig, browserSignals});
   sendReportTo(auctionConfig.seller + '/reporting?report=result');
-  return {
+  return /* sellerSignals= */ {
     success: true,
     auctionId: AUCTION_ID,
     buyer: browserSignals.interestGroupOwner,
