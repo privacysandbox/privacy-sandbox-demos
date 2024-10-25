@@ -3,7 +3,12 @@ volumes:
   news_node_modules:
   shop_node_modules:
   travel_node_modules:
-  ad_tech_node_modules:
+  dsp_node_modules:
+  dsp_a_node_modules:
+  dsp_b_node_modules:
+  ssp_node_modules:
+  ssp_a_node_modules:
+  ssp_b_node_modules:
   topics-server_node_modules:
   ad_server_node_modules:
 
@@ -66,7 +71,7 @@ services:
       - .env
     volumes:
       - ./services/ad-tech:/workspace
-      - ad_tech_node_modules:/workspace/node_modules
+      - dsp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -79,7 +84,7 @@ services:
       - .env
     volumes:
       - ./services/ad-tech:/workspace
-      - ad_tech_node_modules:/workspace/node_modules
+      - dsp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -92,7 +97,7 @@ services:
       - .env
     volumes:
       - ./services/ad-tech:/workspace
-      - ad_tech_node_modules:/workspace/node_modules
+      - dsp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -105,7 +110,7 @@ services:
       - .env
     volumes:
       - ./services/ad-tech:/workspace
-      - ad_tech_node_modules:/workspace/node_modules
+      - ssp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -118,7 +123,7 @@ services:
       - .env
     volumes:
       - ./services/ad-tech:/workspace
-      - ad_tech_node_modules:/workspace/node_modules
+      - ssp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -131,19 +136,19 @@ services:
       - .env
     volumes:
       - ./services/ad-tech:/workspace
-      - ad_tech_node_modules:/workspace/node_modules
+      - ssp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
   ad-server:
-    image: gcr.io/privacy-sandbox-demos/ad-server:latest
-    build: ./services/ad-server
+    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
+    build: ./services/ad-tech
     container_name: "sandcastle_ad_server"
     hostname: ${AD_SERVER_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/ad-server:/workspace
+      - ./services/ad-tech:/workspace
       - ad_server_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -161,14 +166,14 @@ services:
       - adnetwork
 
   topics-server:
-    image: gcr.io/privacy-sandbox-demos/topics-server:latest
-    build: ./services/topics-server
+    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
+    build: ./services/ad-tech
     container_name: "sandcastle_topics-server"
     hostname: ${TOPICS_SERVER_HOST:?err}
     env_file:
       - .env
     volumes:
-      - ./services/topics-server:/workspace
+      - ./services/ad-tech:/workspace
       - topics-server_node_modules:/workspace/node_modules
     networks:
       - adnetwork

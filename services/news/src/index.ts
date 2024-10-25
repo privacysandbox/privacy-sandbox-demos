@@ -68,16 +68,6 @@ app.get('*', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/test-topics', async (req: Request, res: Response) => {
-  const hostname = req.hostname;
-  const title = hostname.substring(0, hostname.indexOf('.')) || 'news';
-  const params = {
-    title,
-    TOPICS_SERVER_HOST,
-  };
-  res.render('test-topics', params);
-});
-
 app.listen(PORT, async () => {
   console.log(`Listening on port ${PORT}`);
 });
