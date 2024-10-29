@@ -37,12 +37,14 @@
     const iframeUrl = new URL(window.location.href);
     const publisher = iframeUrl.searchParams.get('publisher');
     if (message.origin !== publisher) {
-      return log('ignoring message from unknown origin', {message, publisher});
+      log('ignoring message from unknown origin', {message, publisher});
+      return [];
     }
     try {
       const {adUnit, otherSellers} = JSON.parse(message.data);
       if (!adUnit.adType) {
-        return log('stopping as adType not found in adUnit', {adUnit});
+        log('stopping as adType not found in adUnit', {adUnit});
+        return [];
       }
       if (!otherSellers || !otherSellers.length) {
         log('did not find other sellers', {adUnit, otherSellers});
@@ -50,7 +52,8 @@
       }
       return [adUnit, otherSellers];
     } catch (e) {
-      return log('encountered error in parsing adUnit config', {message});
+      log('encountered error in parsing adUnit config', {message});
+      return [];
     }
   };
 

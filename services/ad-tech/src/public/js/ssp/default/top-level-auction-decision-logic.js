@@ -40,6 +40,69 @@ function log(msg, context) {
   );
 }
 
+/** Logs execution context for demonstrative purposes. */
+function logContextForDemo(message, context) {
+  const {
+    // UNUSED adMetadata,
+    // UNUSED bid,
+    auctionConfig,
+    // UNUSED trustedScoringSignals,
+    browserSignals,
+  } = context;
+  CURR_HOST = auctionConfig.seller.substring('https://'.length);
+  const winningComponentSeller = browserSignals.componentSeller;
+  const winningComponentAuctionConfig = auctionConfig.componentAuctions.find(
+    (componentAuction) => winningComponentSeller === componentAuction.seller,
+  );
+  AUCTION_ID = winningComponentAuctionConfig.auctionSignals.auctionId;
+  log(message, context);
+  // Log reporting IDs if found.
+  const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
+    context.browserSignals;
+  if (buyerAndSellerReportingId || selectedBuyerAndSellerReportingId) {
+    log('found reporting IDs', {
+      buyerAndSellerReportingId,
+      selectedBuyerAndSellerReportingId,
+    });
+  }
+}
+
+/** Returns a rejection score response if scored creative is blocked. */
+function getRejectScoreIfCreativeBlocked(scoringContext) {
+  const {
+    // UNUSED adMetadata,
+    // UNUSED bid,
+    // UNUSED auctionConfig,
+    trustedScoringSignals,
+    browserSignals,
+  } = scoringContext;
+  const {renderURL} = browserSignals;
+  if (trustedScoringSignals && trustedScoringSignals.renderURL[renderURL]) {
+    const parsedScoringSignals = JSON.parse(
+      trustedScoringSignals.renderURL[renderURL],
+    );
+    if (
+      parsedScoringSignals &&
+      'BLOCKED' === parsedScoringSignals.label.toUpperCase()
+    ) {
+      // Reject bid if creative is blocked.
+      log('rejecting bid blocked by publisher', {
+        parsedScoringSignals,
+        trustedScoringSignals,
+        renderURL,
+        buyer: browserSignals.interestGroupOwner,
+        dataVersion: browserSignals.dataVersion,
+        scoringContext,
+      });
+      return {
+        desirability: 0,
+        allowComponentAuction: true,
+        rejectReason: 'blocked-by-publisher',
+      };
+    }
+  }
+}
+
 // ********************************************************
 // Top-level decision logic functions
 // ********************************************************
@@ -50,41 +113,18 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
-  CURR_HOST = auctionConfig.seller.substring('https://'.length);
-  const {componentSeller} = browserSignals;
-  AUCTION_ID = auctionConfig.componentAuctions.find(
-    (componentAuction) => componentSeller === componentAuction.seller,
-  ).auctionSignals.auctionId;
-  log('scoring ad', {
+  const scoringContext = {
     adMetadata,
     bid,
     auctionConfig,
     trustedScoringSignals,
     browserSignals,
-  });
-  const {renderURL} = browserSignals;
-  if (trustedScoringSignals && trustedScoringSignals.renderURL[renderURL]) {
-    const parsedScoringSignals = JSON.parse(
-      trustedScoringSignals.renderURL[renderURL],
-    );
-    if (
-      parsedScoringSignals &&
-      'BLOCKED' === parsedScoringSignals.label.toUpperCase()
-    ) {
-      log('rejecting bid blocked by publisher', {
-        parsedScoringSignals,
-        trustedScoringSignals,
-        renderURL,
-        buyer: browserSignals.interestGroupOwner,
-        dataVersion: browserSignals.dataVersion,
-      });
-      return {
-        // Reject bid if creative is blocked.
-        desirability: 0,
-        allowComponentAuction: true,
-        rejectReason: 'blocked-by-publisher',
-      };
-    }
+  };
+  logContextForDemo('scoreAd()', scoringContext);
+  const creativeBlockedRejectScore =
+    getRejectScoreIfCreativeBlocked(scoringContext);
+  if (creativeBlockedRejectScore) {
+    return creativeBlockedRejectScore;
   }
   const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
     browserSignals;
@@ -100,13 +140,29 @@ function scoreAd(
 }
 
 function reportResult(auctionConfig, browserSignals) {
-  CURR_HOST = auctionConfig.seller.substring('https://'.length);
+  logContextForDemo('reportResult()', {auctionConfig, browserSignals});
   const winningComponentSeller = browserSignals.componentSeller;
-  AUCTION_ID = auctionConfig.componentAuctions.find(
+  const winningComponentAuctionConfig = auctionConfig.componentAuctions.find(
     (componentAuction) => winningComponentSeller === componentAuction.seller,
-  ).auctionSignals.auctionId;
+  );
   log('reporting result', {auctionConfig, browserSignals});
-  sendReportTo(auctionConfig.seller + '/reporting?report=result');
+  const reportingContext = {
+    auctionId: AUCTION_ID,
+    pageURL: winningComponentAuctionConfig.auctionSignals.pageURL,
+    winningComponentSeller,
+    winningBuyer: browserSignals.interestGroupOwner,
+    renderURL: browserSignals.renderURL,
+    bid: browserSignals.bid,
+    bidCurrency: browserSignals.bidCurrency,
+    buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+    selectedBuyerAndSellerReportingId:
+      browserSignals.selectedBuyerAndSellerReportingId,
+  };
+  let reportUrl = auctionConfig.seller + '/reporting?report=result';
+  for (const [key, value] of Object.entries(reportingContext)) {
+    reportUrl = `${reportUrl}&${key}=${value}`;
+  }
+  sendReportTo(reportUrl);
   return {
     success: true,
     auctionId: AUCTION_ID,

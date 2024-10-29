@@ -95,35 +95,52 @@ function calculateBidAmount(trustedBiddingSignals) {
 }
 
 /** Selects a deal ID from selectable buyer and seller reporting IDs. */
-function selectDealId(selectedAd) {
+function selectDealId(selectedAd, auctionSignals) {
   const {
     buyerReportingId,
     buyerAndSellerReportingId,
     selectableBuyerAndSellerReportingIds,
   } = selectedAd;
-  if (selectableBuyerAndSellerReportingIds?.length) {
-    const countOfSelectableIds = selectableBuyerAndSellerReportingIds.length;
-    const randomIndex = Math.floor(Math.random() * countOfSelectableIds);
-    const selectedId = selectableBuyerAndSellerReportingIds[randomIndex];
-    log('found reporting IDs', {
-      buyerReportingId,
-      buyerAndSellerReportingId,
-      selectableBuyerAndSellerReportingIds,
-      selectedBuyerAndSellerReportingId: selectedId,
-    });
-    return selectedId;
-  } else {
-    log('found reporting IDs', {
-      buyerReportingId,
-      buyerAndSellerReportingId,
-      selectableBuyerAndSellerReportingIds,
-    });
+  if (
+    !selectableBuyerAndSellerReportingIds ||
+    !selectableBuyerAndSellerReportingIds.length
+  ) {
+    // No deal IDs in interest group to choose from.
+    return;
   }
+  // Filter deals in interest group with deals from bid request.
+  const eligibleDeals = ((availableDeals) => {
+    if (availableDeals && availableDeals.length) {
+      return selectableBuyerAndSellerReportingIds.filter((id) =>
+        auctionSignals.availableDeals.includes(id),
+      );
+    } else {
+      return selectableBuyerAndSellerReportingIds;
+    }
+  })(auctionSignals.availableDeals.split(','));
+  if (!eligibleDeals || !eligibleDeals.length) {
+    // No eligible deals for this bid request.
+    return;
+  }
+  // Choose one of the eligible deals at random.
+  const countOfEligibleIds = eligibleDeals.length;
+  const randomIndex = Math.floor(Math.random() * countOfEligibleIds);
+  const selectedId = eligibleDeals[randomIndex];
+  // Log reporting IDs to console.
+  log('found reporting IDs', {
+    buyerReportingId,
+    buyerAndSellerReportingId,
+    selectableBuyerAndSellerReportingIds,
+    selectedId,
+  });
+  return selectedId;
 }
 
 /** Returns the bid response for a video ad request. */
 function getBidForVideoAd({
   interestGroup,
+  // UNUSED auctionSignals,
+  // UNUSED perBuyerSignals,
   trustedBiddingSignals,
   browserSignals,
 }) {
@@ -158,6 +175,8 @@ function getBidForVideoAd({
 /** Returns the bid response for a display ad request. */
 function getBidForDisplayAd({
   interestGroup,
+  auctionSignals,
+  // UNUSED perBuyerSignals,
   trustedBiddingSignals,
   browserSignals,
 }) {
@@ -184,7 +203,7 @@ function getBidForDisplayAd({
       height: selectedAd.metadata.adSizes[0].height,
     },
     // Specify selected deal ID for reporting.
-    selectedBuyerAndSellerReportingId: selectDealId(selectedAd),
+    selectedBuyerAndSellerReportingId: selectDealId(selectedAd, auctionSignals),
     /*
       TODO: Use-case: Ad cost reporting
       adCost: optionalAdCost,
@@ -250,6 +269,15 @@ function reportWin(
     sellerSignals,
     browserSignals,
   });
+  const reportingContext = {
+    auctionId: AUCTION_ID,
+    pageURL: auctionSignals.pageURL,
+    componentSeller: browserSignals.seller,
+    topLevelSeller: browserSignals.topLevelSeller,
+    renderURL: browserSignals.renderURL,
+    bid: browserSignals.bid,
+    bidCurrency: browserSignals.bidCurrency,
+  };
   // Add query parameters from renderURL to beacon URL.
   const additionalQueryParams = browserSignals.renderURL
     .substring(browserSignals.renderURL.indexOf('?') + 1)

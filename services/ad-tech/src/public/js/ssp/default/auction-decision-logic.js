@@ -47,7 +47,7 @@ function logContextForDemo(message, context) {
     // UNUSED bid,
     auctionConfig,
     // UNUSED trustedScoringSignals,
-    browserSignals,
+    // UNUSED browserSignals,
   } = context;
   CURR_HOST = auctionConfig.seller.substring('https://'.length);
   AUCTION_ID = auctionConfig.auctionSignals.auctionId;
@@ -99,6 +99,31 @@ function getRejectScoreIfCreativeBlocked(scoringContext) {
   }
 }
 
+/** Returns a rejection score if the deal in bid is not eligible. */
+function getRejectScoreIfDealIneligible(scoringContext) {
+  const {selectedBuyerAndSellerReportingId} = scoringContext.browserSignals;
+  const {availableDeals, strictRejectForDeals} =
+    scoringContext.auctionConfig.auctionSignals;
+  if (availableDeals && availableDeals.length) {
+    if (!availableDeals.includes(selectedBuyerAndSellerReportingId)) {
+      if (strictRejectForDeals) {
+        // For strict rejections on deals, assign score of 0.
+        return {
+          desirability: 0,
+          allowComponentAuction: true,
+          rejectReason: 'blocked-by-publisher',
+        };
+      } else {
+        // For lax rejections on deals, execute first price auction.
+        return {
+          desirability: scoringContext.bid,
+          allowComponentAuction: true,
+        };
+      }
+    }
+  }
+}
+
 // ********************************************************
 // Top-level decision logic functions
 // ********************************************************
@@ -117,10 +142,19 @@ function scoreAd(
     browserSignals,
   };
   logContextForDemo('scoreAd()', scoringContext);
-  const rejectScore = getRejectScoreIfCreativeBlocked(scoringContext);
-  if (rejectScore) {
-    return rejectScore;
+  // Check if ad creative is blocked.
+  const creativeBlockedRejectScore =
+    getRejectScoreIfCreativeBlocked(scoringContext);
+  if (creativeBlockedRejectScore) {
+    return creativeBlockedRejectScore;
   }
+  // Check if DSP responded with the correct deal.
+  const dealIneligibleRejectScore =
+    getRejectScoreIfDealIneligible(scoringContext);
+  if (dealIneligibleRejectScore) {
+    return dealIneligibleRejectScore;
+  }
+  // Finally execute a first-price auction.
   return {
     desirability: bid,
     allowComponentAuction: true,
@@ -130,7 +164,23 @@ function scoreAd(
 
 function reportResult(auctionConfig, browserSignals) {
   logContextForDemo('reportResult()', {auctionConfig, browserSignals});
-  sendReportTo(auctionConfig.seller + '/reporting?report=result');
+  const reportingContext = {
+    auctionId: AUCTION_ID,
+    pageURL: auctionConfig.auctionSignals.pageURL,
+    topLevelSeller: browserSignals.topLevelSeller,
+    winningBuyer: browserSignals.interestGroupOwner,
+    renderURL: browserSignals.renderURL,
+    bid: browserSignals.bid,
+    bidCurrency: browserSignals.bidCurrency,
+    buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+    selectedBuyerAndSellerReportingId:
+      browserSignals.selectedBuyerAndSellerReportingId,
+  };
+  let reportUrl = auctionConfig.seller + '/reporting?report=result';
+  for (const [key, value] of Object.entries(reportingContext)) {
+    reportUrl = `${reportUrl}&${key}=${value}`;
+  }
+  sendReportTo(reportUrl);
   return /* sellerSignals= */ {
     success: true,
     auctionId: AUCTION_ID,
