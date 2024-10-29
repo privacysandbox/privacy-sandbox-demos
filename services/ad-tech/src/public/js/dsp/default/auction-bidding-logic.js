@@ -269,6 +269,10 @@ function reportWin(
     sellerSignals,
     browserSignals,
   });
+  // Assemble query parameters for event logs.
+  let additionalQueryParams = browserSignals.renderURL.substring(
+    browserSignals.renderURL.indexOf('?') + 1,
+  );
   const reportingContext = {
     auctionId: AUCTION_ID,
     pageURL: auctionSignals.pageURL,
@@ -277,15 +281,22 @@ function reportWin(
     renderURL: browserSignals.renderURL,
     bid: browserSignals.bid,
     bidCurrency: browserSignals.bidCurrency,
+    redirect: browserSignals.seller,
+    buyerReportingId: browserSignals.buyerReportingId,
+    buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+    selectedBuyerAndSellerReportingId:
+      browserSignals.selectedBuyerAndSellerReportingId,
   };
-  // Add query parameters from renderURL to beacon URL.
-  const additionalQueryParams = browserSignals.renderURL
-    .substring(browserSignals.renderURL.indexOf('?') + 1)
-    .concat(`&redirect=${browserSignals.seller}`);
+  for (const [key, value] of Object.entries(reportingContext)) {
+    additionalQueryParams = additionalQueryParams.concat(`&${key}=${value}`);
+  }
   registerAdBeacon({
     'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
     'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
     'reserved.top_navigation_commit': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
   });
-  sendReportTo(browserSignals.interestGroupOwner + '/reporting?report=win');
+  sendReportTo(
+    browserSignals.interestGroupOwner +
+      `/reporting?report=win&${additionalQueryParams}`,
+  );
 }
