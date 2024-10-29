@@ -62,7 +62,7 @@ steps:
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
 
-        gcloud run deploy dsp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,production,--service=dsp,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
+        gcloud run deploy dsp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
 
   # DSP-A
   # Deploy container image to Cloud Run
@@ -79,7 +79,7 @@ steps:
         HOSTNAME_ENV="HOSTNAME=$(grep "DSP_A_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
-        gcloud run deploy dsp-a --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,production,--service=dsp-a,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
+        gcloud run deploy dsp-a --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp-a,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
 
   # DSP-B
   # Deploy container image to Cloud Run
@@ -96,7 +96,7 @@ steps:
         HOSTNAME_ENV="HOSTNAME=$(grep "DSP_B_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
-        gcloud run deploy dsp-b --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,production,--service=dsp-b,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
+        gcloud run deploy dsp-b --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp-b,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
 
   # HOME
   # Build the HTML files with docusaurus
@@ -239,7 +239,7 @@ steps:
         HOSTNAME_ENV="HOSTNAME=$(grep "SSP_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
-        gcloud run deploy ssp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,production,--service=ssp,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
+        gcloud run deploy ssp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=ssp,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
 
   # SSP-A
   # Deploy container image to Cloud Run
