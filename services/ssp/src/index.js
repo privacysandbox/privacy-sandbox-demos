@@ -31,6 +31,7 @@ import {
   SOURCE_TYPE,
   TRIGGER_TYPE,
 } from './arapi.js';
+import useCaseBaServer from './server/uc-ba/index.js';
 
 const {
   EXTERNAL_PORT,
@@ -45,12 +46,9 @@ const {
 // In-memory storage for debug reports
 const Reports = [];
 // Clear in-memory storage every 10 min
-setInterval(
-  () => {
-    Reports.length = 0;
-  },
-  1000 * 60 * 10,
-);
+setInterval(() => {
+  Reports.length = 0;
+}, 1000 * 60 * 10);
 
 const app = express();
 
@@ -85,6 +83,9 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+// Route for Bidding & Auction Services use case
+app.use('/uc-ba', useCaseBaServer);
 
 app.use(
   express.static('src/public', {

@@ -16,7 +16,7 @@
 
 // DSP
 import express, {Application, Request, Response} from 'express';
-import {buildInterestGroup} from './server/helper/build-interest-group.js';
+import ucBaRouter from './server/uc-ba/index.js';
 
 const {EXTERNAL_PORT, PORT, DSP_Y_HOST, DSP_Y_TOKEN, DSP_Y_DETAIL, SHOP_HOST} =
   process.env;
@@ -32,6 +32,13 @@ app.use((req: Request, res: Response, next) => {
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
+app.use((req: Request, res: Response, next) => {
+  if (req.get('sec-fetch-dest') === 'fencedframe') {
+    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
+  }
+  next();
+});
+
 app.use(
   express.static('src/public', {
     setHeaders: (res: Response, path) => {
@@ -43,12 +50,7 @@ app.use(
   }),
 );
 
-app.use((req: Request, res: Response, next) => {
-  if (req.get('sec-fetch-dest') === 'fencedframe') {
-    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
-  }
-  next();
-});
+app.use('/uc-ba', ucBaRouter);
 
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
@@ -57,36 +59,6 @@ app.get('/', async (req: Request, res: Response) => {
   const title = DSP_Y_DETAIL;
   res.render('index', {title, DSP_Y_HOST, SHOP_HOST, EXTERNAL_PORT});
 });
-
-app.get(
-  '/uc-:useCaseName/join-ad-interest-group.html',
-  async (req: Request, res: Response) => {
-    const {useCaseName} = req.params;
-    const title = 'DSP Y - Join Ad Interest Group';
-    res.render(`uc-${useCaseName}/join-ad-interest-group`, {
-      title,
-      DSP_Y_HOST,
-      EXTERNAL_PORT,
-    });
-  },
-);
-
-app.get(
-  '/uc-:useCaseName/interest-group.json',
-  async (req: Request, res: Response) => {
-    const {useCaseName} = req.params;
-    const {advertiser, id} = req.query;
-    if (
-      advertiser === undefined ||
-      id === undefined ||
-      typeof advertiser !== 'string'
-    ) {
-      return res.sendStatus(400);
-    }
-
-    res.json(buildInterestGroup(useCaseName, advertiser));
-  },
-);
 
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);

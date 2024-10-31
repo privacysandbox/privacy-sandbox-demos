@@ -13,19 +13,29 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-function scoreAd(
-  adMetadata,
-  bid,
-  auctionConfig,
-  trustedScoringSignals,
+
+function generateBid(
+  interestGroup,
+  auctionSignals,
+  perBuyerSignals,
+  trustedBiddingSignals,
   browserSignals,
 ) {
-  return {
-    desirability: 1,
-    allowComponentAuction: true,
+  const response = {
+    bid: Math.floor(Math.random() * 100, 100),
+    render:
+      'https://privacy-sandbox-demos-dsp-a.dev/uc-ba/html/protected-audience-ad.html',
+    allowComponentAuction: !!browserSignals.topLevelSeller,
   };
+
+  return response;
 }
 
-function reportResult(auctionConfig, browserSignals) {
-  sendReportTo(auctionConfig.seller + '/reporting?report=result');
+function reportWin(
+  auctionSignals,
+  perBuyerSignals,
+  sellerSignals,
+  browserSignals,
+) {
+  sendReportTo(browserSignals.interestGroupOwner + `/reporting?report=win`);
 }

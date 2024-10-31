@@ -79,16 +79,11 @@ app.get('/video-ad', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/uc-:useCaseName', async (req: Request, res: Response) => {
-  const {useCaseName} = req.params;
-
-  res.render(`uc-${useCaseName}`, {
+app.get('/uc-ba', async (req: Request, res: Response) => {
+  res.render('uc-ba', {
     title: TITLE,
     lorem: LOREM,
-    EXTERNAL_PORT,
-    HOME_HOST,
-    NEWS_TOKEN,
-    SSP_HOST,
+    UC_BA_SSP_TAG_URL: `https://${SSP_HOST}/uc-ba/js/ad-tag.js`,
   });
 });
 

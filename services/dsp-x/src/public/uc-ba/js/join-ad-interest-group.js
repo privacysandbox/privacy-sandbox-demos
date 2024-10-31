@@ -32,12 +32,13 @@ document.addEventListener('DOMContentLoaded', async (e) => {
   if (navigator.joinAdInterestGroup === undefined) {
     return console.log('[DEMO] Protected Audience API is not supported');
   }
-  const interestGroup = await getInterestGroupFromServer();
-  console.log(`[DEMO] ${JSON.stringify(interestGroup)}`);
-  const kSecsPerDay = 3600 * 24 * 30;
-  console.log(await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay));
 
-  // TODO: consider using Topics API for choosing Ads
-  // const topics = await document.browsingTopics?.()
-  // console.log({ topics })
+  // Clear previously added interest groups since each demo may
+  // use a different interest group
+  navigator.clearOriginJoinedAdInterestGroups(location.origin);
+
+  const interestGroup = await getInterestGroupFromServer();
+  console.log(`[DSP-X] ${JSON.stringify(interestGroup)}}`);
+  const kSecsPerDay = 3600 * 24 * 30;
+  await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay);
 });

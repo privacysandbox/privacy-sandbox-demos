@@ -131,18 +131,29 @@ app.get('/items/:id', async (req: Request, res: Response) => {
   const DSP_TAG_URL = new URL(
     `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
   );
-  const DSP_A_TAG_URL = new URL(
+  let DSP_A_TAG_URL = new URL(
     `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
   );
-  const DSP_B_TAG_URL = new URL(
+  let DSP_B_TAG_URL = new URL(
     `https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
   );
-  const DSP_X_TAG_URL = new URL(
-    `https://${DSP_X_HOST}:${EXTERNAL_PORT}/uc-${auctionType}/dsp-tag.js`,
-  );
-  const DSP_Y_TAG_URL = new URL(
-    `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/uc-${auctionType}/dsp-tag.js`,
-  );
+  let DSP_X_TAG_URL;
+  let DSP_Y_TAG_URL;
+
+  if (auctionType === 'ba') {
+    DSP_A_TAG_URL = new URL(
+      `https://${DSP_A_HOST}:${EXTERNAL_PORT}/uc-ba/js/dsp-tag.js`,
+    );
+    DSP_B_TAG_URL = new URL(
+      `https://${DSP_B_HOST}:${EXTERNAL_PORT}/uc-ba/js/dsp-tag.js`,
+    );
+    DSP_X_TAG_URL = new URL(
+      `https://${DSP_X_HOST}:${EXTERNAL_PORT}/uc-ba/js/dsp-tag.js`,
+    );
+    DSP_Y_TAG_URL = new URL(
+      `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/uc-ba/js/dsp-tag.js`,
+    );
+  }
 
   res.render('item', {
     item,

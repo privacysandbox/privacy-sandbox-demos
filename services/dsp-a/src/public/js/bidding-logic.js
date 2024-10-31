@@ -28,14 +28,14 @@ function generateBid(
   let render;
 
   if (adType === 'image') {
-    render = ads.find((ad) => ad.metadata.adType === 'image')?.renderUrl;
+    render = ads.find((ad) => ad.metadata.adType === 'image')?.renderURL;
   } else if (adType === 'video') {
     // We look through the video ads passed in from the interest group and
     // select the ad that matches the component seller's origin
     render = ads.find(
       (ad) =>
         ad.metadata.adType === 'video' && ad.metadata.seller.includes(seller),
-    ).renderUrl;
+    ).renderURL;
   }
 
   const response = {

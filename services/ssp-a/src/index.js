@@ -20,6 +20,8 @@ import path from 'path';
 import {readFile} from 'fs/promises';
 import url from 'url';
 
+import ucBaRouter from './server/uc-ba/index.js';
+
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -68,6 +70,8 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use('/uc-ba', ucBaRouter);
 
 app.use(
   express.static('src/public', {

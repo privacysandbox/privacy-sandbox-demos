@@ -13,19 +13,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-function scoreAd(
-  adMetadata,
-  bid,
-  auctionConfig,
-  trustedScoringSignals,
-  browserSignals,
-) {
-  return {
-    desirability: 1,
-    allowComponentAuction: true,
-  };
-}
 
-function reportResult(auctionConfig, browserSignals) {
-  sendReportTo(auctionConfig.seller + '/reporting?report=result');
-}
+(async () => {
+  const containerEl = document.querySelector('ins.ads');
+  const tagEl = document.querySelector('.ssp_tag');
+
+  const src = new URL(tagEl.src);
+  src.pathname = '/uc-ba/ad-tag.html';
+
+  const iframeEl = document.createElement('iframe');
+  iframeEl.width = 300;
+  iframeEl.height = 250;
+  iframeEl.src = src;
+  iframeEl.setAttribute('scrolling', 'no');
+  iframeEl.setAttribute('style', 'border: none');
+  iframeEl.setAttribute('allow', 'attribution-reporting; run-ad-auction');
+  containerEl.appendChild(iframeEl);
+})();

@@ -16,6 +16,7 @@
 
 // SSP-X
 import express, {Application, Request, Response} from 'express';
+import ucBaRouter from './uc-ba/server/index.js'
 
 const {
   EXTERNAL_PORT,
@@ -24,7 +25,7 @@ const {
   SSP_B_HOST,
   SSP_X_HOST,
   SSP_Y_HOST,
-  SSP_Y_DETAIL,
+  SSP_X_DETAIL,
   DSP_A_HOST,
   DSP_B_HOST,
   DSP_X_HOST,
@@ -50,6 +51,7 @@ const app: Application = express();
 
 app.use((req: Request, res: Response, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
 
@@ -63,30 +65,15 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
-app.use(
-  express.static('src/public', {
-    setHeaders: (res, path) => {
-      const shouldAddAuctionHeader = ['decision-logic.js'].some((fileName) =>
-        path.includes(fileName),
-      );
+app.use('/uc-ba', ucBaRouter);
 
-      if (shouldAddAuctionHeader) {
-        return res.set('Ad-Auction-Allowed', 'true');
-      }
-
-      if (path.endsWith('/run-ad-auction.js')) {
-        res.set('Supports-Loading-Mode', 'fenced-frame');
-        res.set('Permissions-Policy', 'run-ad-auction=(*)');
-      }
-    },
-  }),
-);
+app.use(express.static('src/public'));
 
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
-  const title = SSP_Y_DETAIL;
+  const title = SSP_X_DETAIL;
   res.render('index.html.ejs', {title, EXTERNAL_PORT});
 });
 

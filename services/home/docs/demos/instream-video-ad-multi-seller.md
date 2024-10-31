@@ -279,13 +279,13 @@ const interestGroup = {
   // ...
   ads: [
     {
-      renderUrl: 'https://privacy-sandbox-demos-ssp-a.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
+      renderURL: 'https://privacy-sandbox-demos-ssp-a.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
       metadata: {
         seller: 'ssp-a'
       }
     },
     {
-      renderUrl: 'https://privacy-sandbox-demos-ssp-b.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
+      renderURL: 'https://privacy-sandbox-demos-ssp-b.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
       metadata: {
         seller: 'ssp-b'
       }
@@ -316,7 +316,7 @@ const interestGroup = {
 const interestGroup = {
   // ...
   ads: [{
-    renderUrl: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=%%SSP_VAST_URL%%'
+    renderURL: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=%%SSP_VAST_URL%%'
   }]
 }
 ```
@@ -336,14 +336,14 @@ const interestGroup = {
   // ...
   ads: [
     {
-      renderUrl: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=https://privacy-sandbox-demos-ssp-a.dev/vast',
+      renderURL: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=https://privacy-sandbox-demos-ssp-a.dev/vast',
       metadata: {
         adType: 'video',
         seller: 'https://privacy-sandbox-demos-ssp-a.dev/'
       }
     },
     {
-      renderUrl: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=https://privacy-sandbox-demos-ssp-b.dev/vast',
+      renderURL: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=https://privacy-sandbox-demos-ssp-b.dev/vast',
       metadata: {
         adType: 'video',
         seller: 'https://privacy-sandbox-demos-ssp-b.dev/'

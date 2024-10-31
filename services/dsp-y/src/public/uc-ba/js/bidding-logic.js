@@ -21,31 +21,18 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  const {ads} = interestGroup;
-  const {adType} = auctionSignals;
-  const {seller, topLevelSeller} = browserSignals;
+  // console.log('$$$ interestGroup', { interestGroup })
+  // console.log('$$$ auctionSignals', { auctionSignals })
+  // console.log('$$$ perBuyerSignals', { perBuyerSignals })
+  // console.log('$$$ trustedBiddingSignals', { trustedBiddingSignals })
+  // console.log('$$$ browserSignals', { browserSignals })
 
-  let render;
-
-  if (adType === 'image') {
-    render = ads.find((ad) => ad.metadata.adType === 'image')?.renderUrl;
-  } else if (adType === 'video') {
-    // We look through the video ads passed in from the interest group and
-    // select the ad that matches the component seller's origin
-    render = ads.find(
-      (ad) =>
-        ad.metadata.adType === 'video' && ad.metadata.seller.includes(seller),
-    ).renderUrl;
-  }
-
-  const response = {
-    // We return a random bid of 0 to 100
-    bid: Math.floor(Math.random() * 100, 10),
-    render,
-    allowComponentAuction: !!topLevelSeller,
+  return {
+    bid: Math.floor(Math.random() * 100),
+    render:
+      'https://privacy-sandbox-demos-dsp-y.dev/uc-ba/html/protected-audience-ad.html',
+    allowComponentAuction: !!browserSignals.topLevelSeller,
   };
-
-  return response;
 }
 
 function reportWin(

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -41,7 +41,7 @@
         // winner, render the contextual ad
         if (!auctionResult && !isVideo) {
           frameEl = document.createElement('iframe')
-          frameEl.src = contextualAd.renderUrl
+          frameEl.src = contextualAd.renderURL
 
         // Render the ad in a fenced frame
         } else if (auctionResult instanceof FencedFrameConfig) {

@@ -18,6 +18,7 @@
 import express, {Application, Request, Response} from 'express';
 import cbor from 'cbor';
 import {decodeDict} from 'structured-field-values';
+import ucBaRouter from './server/uc-ba/index.js';
 import {
   debugKey,
   sourceEventId,
@@ -51,12 +52,9 @@ const SSP_B_VAST_URL = `${SSP_B}vast`;
 const Reports: any[] = [];
 
 // clear in-memory storage every 10 min
-setInterval(
-  () => {
-    Reports.length = 0;
-  },
-  1000 * 60 * 10,
-);
+setInterval(() => {
+  Reports.length = 0;
+}, 1000 * 60 * 10);
 
 const app: Application = express();
 
@@ -80,6 +78,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  // opt-in fencedframe
+  if (req.get('sec-fetch-dest') === 'fencedframe') {
+    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
+  }
+  next();
+});
+
 app.use(
   express.static('src/public', {
     setHeaders: (res: Response, path, stat) => {
@@ -94,13 +100,7 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
-  // opt-in fencedframe
-  if (req.get('sec-fetch-dest') === 'fencedframe') {
-    res.setHeader('Supports-Loading-Mode', 'fenced-frame');
-  }
-  next();
-});
+app.use('/uc-ba', ucBaRouter);
 
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
@@ -180,7 +180,7 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
     },
     ads: [
       {
-        renderUrl: imageCreative,
+        renderURL: imageCreative,
         metadata: {
           adType: 'image',
         },
@@ -194,14 +194,14 @@ app.get('/interest-group.json', async (req: Request, res: Response) => {
       // available to component auction participants in M123:
       // https://github.com/WICG/turtledove/issues/286#issuecomment-1910551260
       {
-        renderUrl: videoCreativeForSspA,
+        renderURL: videoCreativeForSspA,
         metadata: {
           adType: 'video',
           seller: SSP_A,
         },
       },
       {
-        renderUrl: videoCreativeForSspB,
+        renderURL: videoCreativeForSspB,
         metadata: {
           adType: 'video',
           seller: SSP_B,
@@ -237,15 +237,15 @@ app.get('/bidding_signal.json', async (req: Request, res: Response) => {
 // Audience ad
 app.get('/header-bid', async (req: Request, res: Response) => {
   res.json({
-    bid: Math.floor(Math.random() * 70),
-    renderUrl: `https://${DSP_A_HOST}/html/header-bidding-ad.html`,
+    bid: Math.floor(Math.random() * 100),
+    renderURL: `https://${DSP_A_HOST}/html/header-bidding-ad.html`,
   });
 });
 
 app.get('/ad-server-bid', async (req: Request, res: Response) => {
   res.json({
-    bid: Math.floor(Math.random() * 70),
-    renderUrl: `https://${DSP_A_HOST}/html/ad-server-ad.html`,
+    bid: Math.floor(Math.random() * 100),
+    renderURL: `https://${DSP_A_HOST}/html/ad-server-ad.html`,
   });
 });
 

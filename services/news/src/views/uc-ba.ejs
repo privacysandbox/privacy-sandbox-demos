@@ -28,10 +28,10 @@
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
       <p><%= lorem %></p>
-      <p><%= lorem %></p>
       <div class="w-full flex flex-col items-center">
-        <ins class="ads"></ins>
+        <ins class="ads"><script class="ssp_tag" src="<%= UC_BA_SSP_TAG_URL %>"></script></ins>
       </div>
+      <p><%= lorem %></p>
       <div class="w-full flex flex-row justify-center ad-row">
         <div id="image-ad--fenced-frame" class="ad-slot"></div>
         <div id="image-ad--iframe" class="ad-slot"></div>
@@ -44,26 +44,7 @@
       <p><%= lorem %></p>
     </article>
   </main>
-  <script>
-    function addScriptEl(src, className, resolve) {
-      const scriptEl = document.createElement('script')
-      scriptEl.src = src
-      scriptEl.className = className
-
-      if (resolve) {
-        scriptEl.addEventListener('load', resolve)
-      }
-
-      document.body.appendChild(scriptEl)
-      return scriptEl
-    }
-
-    async function setupDemo () {
-      // TODO
-    }
-
-    setupDemo()
-  </script>
+  
 </body>
 
 </html>
