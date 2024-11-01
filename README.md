@@ -1,6 +1,6 @@
 # Privacy Sandbox Demos
 
-A use case demo library for [Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) on the web.
+A use case demo library for the [Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) on the web.
 
 ## Motivation
 
