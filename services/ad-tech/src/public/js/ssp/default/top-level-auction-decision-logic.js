@@ -67,42 +67,6 @@ function logContextForDemo(message, context) {
   }
 }
 
-/** Returns a rejection score response if scored creative is blocked. */
-function getRejectScoreIfCreativeBlocked(scoringContext) {
-  const {
-    // UNUSED adMetadata,
-    // UNUSED bid,
-    // UNUSED auctionConfig,
-    trustedScoringSignals,
-    browserSignals,
-  } = scoringContext;
-  const {renderURL} = browserSignals;
-  if (trustedScoringSignals && trustedScoringSignals.renderURL[renderURL]) {
-    const parsedScoringSignals = JSON.parse(
-      trustedScoringSignals.renderURL[renderURL],
-    );
-    if (
-      parsedScoringSignals &&
-      'BLOCKED' === parsedScoringSignals.label.toUpperCase()
-    ) {
-      // Reject bid if creative is blocked.
-      log('rejecting bid blocked by publisher', {
-        parsedScoringSignals,
-        trustedScoringSignals,
-        renderURL,
-        buyer: browserSignals.interestGroupOwner,
-        dataVersion: browserSignals.dataVersion,
-        scoringContext,
-      });
-      return {
-        desirability: 0,
-        allowComponentAuction: true,
-        rejectReason: 'blocked-by-publisher',
-      };
-    }
-  }
-}
-
 // ********************************************************
 // Top-level decision logic functions
 // ********************************************************
@@ -113,24 +77,12 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
-  const scoringContext = {
+  logContextForDemo('scoreAd()', {
     adMetadata,
     bid,
     auctionConfig,
     trustedScoringSignals,
     browserSignals,
-  };
-  logContextForDemo('scoreAd()', scoringContext);
-  const creativeBlockedRejectScore =
-    getRejectScoreIfCreativeBlocked(scoringContext);
-  if (creativeBlockedRejectScore) {
-    return creativeBlockedRejectScore;
-  }
-  const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
-    browserSignals;
-  log('found reporting IDs', {
-    buyerAndSellerReportingId,
-    selectedBuyerAndSellerReportingId,
   });
   return {
     desirability: bid,
@@ -145,7 +97,6 @@ function reportResult(auctionConfig, browserSignals) {
   const winningComponentAuctionConfig = auctionConfig.componentAuctions.find(
     (componentAuction) => winningComponentSeller === componentAuction.seller,
   );
-  log('reporting result', {auctionConfig, browserSignals});
   const reportingContext = {
     auctionId: AUCTION_ID,
     pageURL: winningComponentAuctionConfig.auctionSignals.pageURL,
