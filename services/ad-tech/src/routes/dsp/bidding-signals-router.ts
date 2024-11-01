@@ -51,6 +51,7 @@ BiddingSignalsRouter.get(
     const signalsFromKeyValueStore = trustedBiddingSignalStore.getMultiple(
       queryKeys!,
     );
+    // Return perInterestGroupData for requested interes groups.
     const interestGroupNames = req.query
       .interestGroupNames!.toString()
       .split(',');
@@ -61,6 +62,7 @@ BiddingSignalsRouter.get(
           'signal1': 100,
           'signal2': 200,
         },
+        // Force an interest group update.
         'updateIfOlderThanMs': 1,
       };
     }

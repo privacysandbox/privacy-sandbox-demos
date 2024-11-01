@@ -293,7 +293,6 @@ function reportWin(
     renderURL: browserSignals.renderURL,
     bid: browserSignals.bid,
     bidCurrency: browserSignals.bidCurrency,
-    redirect: browserSignals.seller,
     buyerReportingId: browserSignals.buyerReportingId,
     buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
     selectedBuyerAndSellerReportingId:
@@ -302,13 +301,16 @@ function reportWin(
   for (const [key, value] of Object.entries(reportingContext)) {
     additionalQueryParams = additionalQueryParams.concat(`&${key}=${value}`);
   }
+  sendReportTo(
+    browserSignals.interestGroupOwner +
+      `/reporting?report=win&${additionalQueryParams}`,
+  );
+  additionalQueryParams = additionalQueryParams.concat(
+    `&redirect=${browserSignals.seller}`,
+  );
   registerAdBeacon({
     'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
     'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
     'reserved.top_navigation_commit': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
   });
-  sendReportTo(
-    browserSignals.interestGroupOwner +
-      `/reporting?report=win&${additionalQueryParams}`,
-  );
 }
