@@ -59,7 +59,7 @@
     },
     {
       "target": "shop",
-      "public": "services/shop/public",
+      "public": "services/shop/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
