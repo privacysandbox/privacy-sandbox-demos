@@ -83,49 +83,6 @@ function isCurrentCampaignActive(biddingContext) {
   return true;
 }
 
-/** Logs execution context for demonstrative purposes. */
-function logContextForDemo(message, context) {
-  const {
-    interestGroup,
-    auctionSignals,
-    perBuyerSignals,
-    // UNUSED trustedBiddingSignals,
-    // UNUSED browserSignals,
-    sellerSignals,
-  } = context;
-  AUCTION_ID = auctionSignals.auctionId;
-  if (interestGroup) {
-    CURR_HOST = interestGroup.owner.substring('https://'.length);
-  } else if (perBuyerSignals && perBuyerSignals.buyerHost) {
-    CURR_HOST = perBuyerSignals.buyerHost;
-  } else if (sellerSignals && sellerSignals.buyer) {
-    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
-  }
-  log(message, context);
-}
-
-/** Checks whether the current ad campaign is active. */
-function isCurrentCampaignActive(biddingContext) {
-  const {
-    // UNUSED interestGroup,
-    // UNUSED auctionSignals,
-    // UNUSED perBuyerSignals,
-    trustedBiddingSignals,
-    browserSignals,
-  } = biddingContext;
-  if ('true' !== trustedBiddingSignals['isActive']) {
-    // Don't place a bid if campaign is inactive.
-    log('not bidding since campaign is inactive', {
-      trustedBiddingSignals,
-      seller: browserSignals.seller,
-      topLevelSeller: browserSignals.topLevelSeller,
-      dataVersion: browserSignals.dataVersion,
-    });
-    return false;
-  }
-  return true;
-}
-
 /** Calculates a bid price based on real-time signals. */
 function calculateBidAmount(trustedBiddingSignals, dealId) {
   const minBid = Number(trustedBiddingSignals.minBid) || 0.5;
@@ -163,8 +120,6 @@ function selectDealId(selectedAd, auctionSignals) {
       return selectableBuyerAndSellerReportingIds.filter((id) =>
         auctionSignals.availableDeals.includes(id),
       );
-    } else {
-      return selectableBuyerAndSellerReportingIds;
     }
   })(auctionSignals.availableDeals.split(','));
   if (!eligibleDeals || !eligibleDeals.length) {

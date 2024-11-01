@@ -77,7 +77,7 @@ export interface InterestGroup {
   sizeGroups?: {[key: string]: string[]};
 }
 
-/** Generalized interface of the interest targeting context. */
+/** Generalized interface of the interest group targeting context. */
 export interface TargetingContext {
   // REQUIRED FIELDS
   /** Hostname of the advertiser. */
