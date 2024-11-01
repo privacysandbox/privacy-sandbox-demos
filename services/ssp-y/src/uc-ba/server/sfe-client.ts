@@ -8,7 +8,7 @@ const GRPC_SERVER_ADDRESS = '192.168.10.204:50053';
 
 const protoPath = path.join(
   path.resolve(),
-  '/build/server/uc-ba/proto/sfe-client.proto',
+  '/build/uc-ba/server/proto/sfe-client.proto',
 );
 
 const packageDefinition = protoLoader.loadSync(protoPath, {

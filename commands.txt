@@ -1,0 +1,43 @@
+export INPUT_PATH=select_ad_request.json
+export SFE_HOST_ADDRESS=seller-1-test.ba-test-seller.com
+export CLIENT_IP=172.19.0.1
+telnet
+./builders/tools/bazel-debian run //tools/secure_invoke:invoke \
+    -- \
+    -target_service=sfe \
+    -input_file="/src/workspace/${INPUT_PATH}" \
+    -host_addr=${SFE_HOST_ADDRESS} \
+    -client_ip=${CLIENT_IP} \
+    -insecure=true 
+    
+    
+export INPUT_PATH=select_ad_request.json
+export SFE_HOST_ADDRESS=seller-1-non-prod.ba-seller-gtech.com
+export CLIENT_IP=172.19.0.1
+
+./builders/tools/bazel-debian run //tools/secure_invoke:invoke \
+    -- \
+    -target_service=sfe \
+    -input_file="/src/workspace/${INPUT_PATH}" \
+    -host_addr=${SFE_HOST_ADDRESS} \
+    -client_ip=${CLIENT_IP} \
+    -insecure=true 
+    
+grpcurl --plaintext -H 'X-BnA-Client-IP:172.19.0.1' -H 'X-User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36' -H 'x-accept-language: en-US,en;q=0.9' -d '@' localhost:50053 privacy_sandbox.bidding_auction_servers.SellerFrontEnd/SelectAd < select_ad_request.json
+
+    
+grpcurl --plaintext -H 'X-BnA-Client-IP:172.19.0.1' -H 'X-User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36' -H 'x-accept-language: en-US,en;q=0.9' -d '@' seller-1-non-prod.ba-seller-gtech.com:50053 privacy_sandbox.bidding_auction_servers.SellerFrontEnd/SelectAd < select_ad_request.json
+
+grpcurl --plaintext -H 'X-BnA-Client-IP:172.19.0.1' -H 'X-User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36' -H 'x-accept-language: en-US,en;q=0.9' -d '@' seller-1-test.ba-test-seller.com:50053 privacy_sandbox.bidding_auction_servers.SellerFrontEnd/SelectAd < select_ad_request.json
+
+
+
+production/packaging/build_and_test_all_in_docker --service-path auction_service --service-path seller_frontend_service --instance gcp --platform gcp --build-flavor non_prod --no-tests --no-precommit --gcp-image-repo us-east4-docker.pkg.dev/arched-inkwell-368821/seller-41 --gcp-image-tag non-prod
+
+us-east4-docker.pkg.dev/arched-inkwell-368821/seller/auction_service
+us-east4-docker.pkg.dev/arched-inkwell-368821/seller/auction_service:non-prod
+
+
+
+
+grpcurl --plaintext -H 'X-BnA-Client-IP:172.19.0.1' -H 'X-User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36' -H 'x-accept-language: en-US,en;q=0.9' -d '@' https://seller-1-demo.ba-test-seller.com:50053 privacy_sandbox.bidding_auction_servers.SellerFrontEnd/SelectAd < select_ad_request.json
