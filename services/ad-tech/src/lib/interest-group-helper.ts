@@ -33,17 +33,26 @@ export enum AdType {
 /** Interface for an interest group ad object. */
 export interface InterestGroupAd {
   // REQUIRED FIELDS
+  /** Main creative URL. */
   renderURL: string;
+  /** Custom ad metadata stored by ad-tech. */
   metadata: {
+    /** Hostname of the advertiser. */
     advertiser: string;
+    /** DSIPLAY or VIDEO */
     adType: AdType;
-    adSizes?: {width: string; height: string}[];
+    /** List of compatible ad sizes. */
+    adSizes?: InterestGroupAdSize[];
   };
   // OPTIONAL FIELDS
+  /** Associated ad size group label. */
   sizeGroup?: string;
   // [Optional] Reporting IDs
+  /** Selectable reporting ID accessible to both buyer and seller. */
   selectableBuyerAndSellerReportingIds?: string[];
+  /** Non-selectable reporting ID accessible to buyer only. */
   buyerReportingId?: string;
+  /** Non-selectable reporting ID accessible to both buyer and seller. */
   buyerAndSellerReportingId?: string;
 }
 
