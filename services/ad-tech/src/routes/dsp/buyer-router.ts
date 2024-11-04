@@ -12,9 +12,12 @@
  */
 
 import express, {Request, Response} from 'express';
-import {CURRENT_ORIGIN, EXTERNAL_PORT, HOSTNAME} from '../../lib/constants.js';
+import {HOSTNAME} from '../../lib/constants.js';
 import {getTemplateVariables} from '../../lib/template-utils.js';
-import {getAdsForRequest} from '../../lib/interest-group-helper.js';
+import {
+  getInterestGroup,
+  TargetingContext,
+} from '../../lib/interest-group-helper.js';
 
 /**
  * This is the main ad buyer router and is responsible for a variety of
@@ -39,61 +42,21 @@ BuyerRouter.get(
   },
 );
 
-/** Returns the interest group to join on advertiser page. */
+/** Returns the interest group to join on an advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
-  // Set advertiser from query or fallback to current host.
-  const advertiser = req.query.advertiser?.toString() || HOSTNAME!;
-  const itemId = req.query.itemId?.toString() || '';
-  // Set usecase if included in query, else 'default'.
-  const usecase = ((usecase) => {
-    if (!usecase) {
-      return 'default';
-    }
-    return Array.isArray(usecase) ? usecase[0] : usecase;
-  })(req.query.usecase);
-  // Add to keys if query includes tbsKey=<key>.
-  const trustedBiddingSignalsKeys = ((keys) => {
-    const defaultKeys = ['isActive', 'minBid', 'maxBid', 'multiplier'];
-    if (!keys) {
-      return defaultKeys;
-    } else if (Array.isArray(keys)) {
-      return [...defaultKeys, ...keys];
-    } else {
-      return [...defaultKeys, keys];
-    }
-  })(req.query.tbsKey);
-  console.log('Returning IG JSON: ', req.query);
-  res.json({
-    name: `${advertiser}-${usecase}`,
-    owner: CURRENT_ORIGIN,
-    biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
-    ).toString(),
-    trustedBiddingSignalsURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/realtime-signals/bidding-signal.json`,
-    ).toString(),
-    trustedBiddingSignalsKeys,
-    // Daily update is not implemented yet.
-    // updateURL: new URL(
-    //  `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/daily-update-url`,
-    // ),
-    userBiddingSignals: {
-      'user_bidding_signals': 'user_bidding_signals',
-      ...req.query, // Copy query from request URL.
-    },
-    adSizes: {
-      'medium-rectangle-default': {'width': '300px', 'height': '250px'},
-    },
-    sizeGroups: {
-      'medium-rectangle': ['medium-rectangle-default'],
-    },
-    ads: getAdsForRequest(advertiser, itemId),
-  });
+  const targetingContext = assembleTargetingContext(req.query);
+  res.json(getInterestGroup(targetingContext));
 });
 
-// TODO: Implement
-// BuyerRouter.get('/daily-update-url', async (req: Request, res: Response) => {
-// })
+/** Returns the updated interest group, usually daily, may be overridden. */
+BuyerRouter.get(
+  '/interest-group-update.json',
+  async (req: Request, res: Response) => {
+    const targetingContext = assembleTargetingContext(req.query);
+    targetingContext.isUpdateRequest = true;
+    res.json(getInterestGroup(targetingContext));
+  },
+);
 
 /** Iframe document used as context to test Private Aggregation. */
 BuyerRouter.get(
@@ -108,3 +71,50 @@ BuyerRouter.get(
     });
   },
 );
+
+const KNOWN_TARGETING_CONTEXT_KEYS = [
+  'advertiser',
+  'usecase',
+  'itemId',
+  'biddingSignalKeys',
+];
+/** Assembles the targeting context from query parameters. */
+const assembleTargetingContext = (query: any): TargetingContext => {
+  const {advertiser, usecase, itemId, biddingSignalKeys} = query;
+  const targetingContext: TargetingContext = {
+    advertiser: advertiser?.toString() || HOSTNAME!, // Default to current host
+    usecase: usecase?.toString() || 'default',
+    itemId: itemId?.toString() || '',
+    isUpdateRequest: false,
+  };
+  targetingContext.biddingSignalKeys = [];
+  if (biddingSignalKeys) {
+    if (Array.isArray(biddingSignalKeys)) {
+      targetingContext.biddingSignalKeys.push(
+        ...biddingSignalKeys.map((key) => key.toString()),
+      );
+    } else {
+      targetingContext.biddingSignalKeys.push(
+        biddingSignalKeys.toString().split(','),
+      );
+    }
+  }
+  targetingContext.additionalContext = {};
+  for (const [key, value] of Object.entries(query)) {
+    if (KNOWN_TARGETING_CONTEXT_KEYS.includes(key)) {
+      continue;
+    }
+    if (value) {
+      if (Array.isArray(value)) {
+        targetingContext.additionalContext[key.toString()] = value.map(
+          (value) => value.toString(),
+        );
+      } else {
+        targetingContext.additionalContext[key.toString()] = [
+          ...value.toString().split(','),
+        ];
+      }
+    }
+  }
+  return targetingContext;
+};

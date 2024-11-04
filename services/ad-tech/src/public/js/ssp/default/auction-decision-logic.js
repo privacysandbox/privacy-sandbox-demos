@@ -47,7 +47,7 @@ function logContextForDemo(message, context) {
     // UNUSED bid,
     auctionConfig,
     // UNUSED trustedScoringSignals,
-    browserSignals,
+    // UNUSED browserSignals,
   } = context;
   CURR_HOST = auctionConfig.seller.substring('https://'.length);
   AUCTION_ID = auctionConfig.auctionSignals.auctionId;
@@ -63,8 +63,23 @@ function logContextForDemo(message, context) {
   }
 }
 
-/** Returns a rejection score response if scored creative is blocked. */
-function getRejectScoreIfCreativeBlocked(scoringContext) {
+/** Checks whether the bid is below the winning contextual bid. */
+function isBidBelowAuctionFloor({
+  // UNUSED adMetadata,
+  bid,
+  auctionConfig,
+  // UNUSED trustedScoringSignals,
+  // UNUSED browserSignals,
+}) {
+  const {winningContextualBid} = auctionConfig.sellerSignals;
+  if (!winningContextualBid) {
+    return false;
+  }
+  return bid < Number(winningContextualBid.bid);
+}
+
+/** Checks real-time signals to see whether the ad creative is blocked. */
+function isCreativeBlocked(scoringContext) {
   const {
     // UNUSED adMetadata,
     // UNUSED bid,
@@ -90,13 +105,26 @@ function getRejectScoreIfCreativeBlocked(scoringContext) {
         dataVersion: browserSignals.dataVersion,
         scoringContext,
       });
-      return {
-        desirability: 0,
-        allowComponentAuction: true,
-        rejectReason: 'blocked-by-publisher',
-      };
+      return true;
     }
   }
+  return false;
+}
+
+/** Checks whether the bid includes a valid and eligible deal ID. */
+function doesBidHaveEligibleDeal({
+  // UNUSED adMetadata,
+  // UNUSED bid,
+  auctionConfig,
+  // UNUSED trustedScoringSignals,
+  browserSignals,
+}) {
+  const {availableDeals} = auctionConfig.auctionSignals;
+  if (!availableDeals || !availableDeals.length) {
+    return false; // No deals available.
+  }
+  const {selectedBuyerAndSellerReportingId} = browserSignals;
+  return availableDeals.includes(selectedBuyerAndSellerReportingId);
 }
 
 // ********************************************************
@@ -117,20 +145,62 @@ function scoreAd(
     browserSignals,
   };
   logContextForDemo('scoreAd()', scoringContext);
-  const rejectScore = getRejectScoreIfCreativeBlocked(scoringContext);
-  if (rejectScore) {
-    return rejectScore;
-  }
-  return {
+  // Initialize ad score defaulting to a first-price auction.
+  const score = {
     desirability: bid,
     allowComponentAuction: true,
-    // incomingBidInSellerCurrency: optional
   };
+  // Check if ad creative is blocked.
+  if (isCreativeBlocked(scoringContext)) {
+    score.desirability = 0;
+    score.rejectReason = 'disapproved-by-exchange';
+    log('rejecting bid with blocked creative', scoringContext);
+    return score;
+  }
+  // Check if DSP responded with an eligible deal ID.
+  const bidHasEligibleDeal = doesBidHaveEligibleDeal(scoringContext);
+  const {strictRejectForDeals} = auctionConfig.auctionSignals;
+  if (strictRejectForDeals && !bidHasEligibleDeal) {
+    // Only accepting bids with eligible bids.
+    score.desirability = 0;
+    score.rejectReason = 'invalid-bid';
+    log('rejecting bid with ineligible deal', scoringContext);
+    return score;
+  } else if (bidHasEligibleDeal) {
+    // Boost desirability score by 10 points for bids with eligible deals.
+    score.desirability = bid + 10.0;
+    log('boosting bid with eligible deal', scoringContext);
+    return score;
+  }
+  // Check if bid is below auction floor.
+  if (isBidBelowAuctionFloor(scoringContext)) {
+    score.desirability = 0;
+    score.rejectReason = 'bid-below-auction-floor';
+    return score;
+  }
+  // In all other cases, default to a first-price auction.
+  return score;
 }
 
 function reportResult(auctionConfig, browserSignals) {
   logContextForDemo('reportResult()', {auctionConfig, browserSignals});
-  sendReportTo(auctionConfig.seller + '/reporting?report=result');
+  const reportingContext = {
+    auctionId: AUCTION_ID,
+    pageURL: auctionConfig.auctionSignals.pageURL,
+    topLevelSeller: browserSignals.topLevelSeller,
+    winningBuyer: browserSignals.interestGroupOwner,
+    renderURL: browserSignals.renderURL,
+    bid: browserSignals.bid,
+    bidCurrency: browserSignals.bidCurrency,
+    buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+    selectedBuyerAndSellerReportingId:
+      browserSignals.selectedBuyerAndSellerReportingId,
+  };
+  let reportUrl = auctionConfig.seller + '/reporting?report=result';
+  for (const [key, value] of Object.entries(reportingContext)) {
+    reportUrl = `${reportUrl}&${key}=${value}`;
+  }
+  sendReportTo(reportUrl);
   return /* sellerSignals= */ {
     success: true,
     auctionId: AUCTION_ID,
