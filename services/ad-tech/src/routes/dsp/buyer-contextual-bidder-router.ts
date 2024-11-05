@@ -17,8 +17,8 @@ import {
   CURRENT_ORIGIN,
   EXTERNAL_PORT,
   HOSTNAME,
-  MAX_CONTEXTUAL_BID,
-  MIN_CONTEXTUAL_BID,
+  CONTEXTUAL_BID_MAX,
+  CONTEXTUAL_BID_MIN,
 } from '../../lib/constants.js';
 import {AdType} from '../../lib/interest-group-helper.js';
 import {ContextualBidResponse} from '../../lib/contextual-auction-helper.js';
@@ -36,8 +36,8 @@ export const BuyerContextualBidderRouter = express.Router();
 // ************************************************************************
 /** Returns a random bid price with 2 decimal digits. */
 const getContextualBidPrice = (): string => {
-  const minBid = MIN_CONTEXTUAL_BID;
-  const maxBid = MAX_CONTEXTUAL_BID;
+  const minBid = CONTEXTUAL_BID_MIN;
+  const maxBid = CONTEXTUAL_BID_MAX;
   const bid = (Math.random() * (maxBid - minBid) + minBid).toFixed(2);
   return bid;
 };
@@ -82,6 +82,8 @@ BuyerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
     renderURL,
     buyerSignals: {
       auctionId,
+      buyerHost: HOSTNAME,
+      buyerOrigin: CURRENT_ORIGIN,
       contextualBid: bid,
       contextualRenderURL: renderURL,
       contextualAdvertiser: ADVERTISER_CONTEXTUAL,

@@ -69,17 +69,43 @@ export const CURRENT_ORIGIN = new URL(
 ).toString();
 
 // ****************************************************************************
-// CONTEXTUAL AUCTION METADATA
+// BIDDING SIGNALS - CONTEXTUAL AUCTIONS
 // ****************************************************************************
+// NOTE: These bidding signals are only used on the server-side to respond to a
+// contextual bid request from the browser or server-to-server.
 /**
  * Name of the contextual advertiser.
  * This is used in the buyer's bid response to contextual bid requests.
  */
 export const ADVERTISER_CONTEXTUAL = 'ContextNext';
 /** Max bid CPM for contextual auctions. */
-export const MAX_CONTEXTUAL_BID = 1.5;
+export const CONTEXTUAL_BID_MAX = 1.5;
 /** Min bid CPM for contextual auctions. */
-export const MIN_CONTEXTUAL_BID = 0.5;
+export const CONTEXTUAL_BID_MIN = 0.5;
+
+// ****************************************************************************
+// BIDDING SIGNALS - PROTECTED AUDIENCE AUCTIONS
+// ****************************************************************************
+// NOTE: These bidding signals are stored in the BYOS Key-Value Server, where
+// values are stored as strings.
+/** The deafult bidding signals for the BYOS Key-Value Serice. */
+export const BIDDING_SIGNALS_DEFAULT = [
+  // Whether the campaign is active.
+  ['isActive', 'true'],
+  // Min bid CPM for Protected Audience auctions.
+  ['minBid', '3.5'],
+  // Max bid CPM for Protected Audience auctions.
+  ['maxBid', '4.5'],
+  // Default bid multiplier for Protected Audience auctions.
+  ['multiplier', '1.1'],
+];
+/** Deal specific bid multipliers for Protected Audience auctions. */
+export const BIDDING_SIGNALS_DEALS = [
+  // Template for keys: `multiplier-${dealId}`
+  ['multiplier-deal-1', '0.5'], // Deal ID: deal-1
+  ['multiplier-deal-2', '0.4'], // Deal ID: deal-2
+  ['multiplier-deal-3', '0.45'], // Deal ID: deal-3
+];
 
 // ****************************************************************************
 // ADVERTISER METADATA

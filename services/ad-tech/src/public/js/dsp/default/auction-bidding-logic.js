@@ -29,22 +29,71 @@
 CURR_HOST = '';
 AUCTION_ID = '';
 /** Logs to console. */
-function log(msg, context) {
+function log(message, context) {
   console.log(
     '[PSDemo] Buyer',
     CURR_HOST,
     'bidding logic',
     AUCTION_ID,
-    msg,
+    message,
     JSON.stringify({context}, ' ', ' '),
   );
 }
 
+/** Logs execution context for demonstrative purposes. */
+function logContextForDemo(message, context) {
+  const {
+    interestGroup,
+    auctionSignals,
+    perBuyerSignals,
+    // UNUSED trustedBiddingSignals,
+    // UNUSED browserSignals,
+    sellerSignals,
+  } = context;
+  AUCTION_ID = auctionSignals.auctionId;
+  if (interestGroup) {
+    CURR_HOST = interestGroup.owner.substring('https://'.length);
+  } else if (perBuyerSignals && perBuyerSignals.buyerHost) {
+    CURR_HOST = perBuyerSignals.buyerHost;
+  } else if (sellerSignals && sellerSignals.buyer) {
+    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
+  }
+  log(message, context);
+}
+
+/** Checks whether the current ad campaign is active. */
+function isCurrentCampaignActive(biddingContext) {
+  const {
+    // UNUSED interestGroup,
+    // UNUSED auctionSignals,
+    // UNUSED perBuyerSignals,
+    trustedBiddingSignals,
+    browserSignals,
+  } = biddingContext;
+  if ('true' !== trustedBiddingSignals['isActive']) {
+    // Don't place a bid if campaign is inactive.
+    log('not bidding since campaign is inactive', {
+      trustedBiddingSignals,
+      seller: browserSignals.seller,
+      topLevelSeller: browserSignals.topLevelSeller,
+      dataVersion: browserSignals.dataVersion,
+    });
+    return false;
+  }
+  return true;
+}
+
 /** Calculates a bid price based on real-time signals. */
-function calculateBidAmount(trustedBiddingSignals) {
+function calculateBidAmount(trustedBiddingSignals, dealId) {
   const minBid = Number(trustedBiddingSignals.minBid) || 0.5;
   const maxBid = Number(trustedBiddingSignals.maxBid) || 1.5;
-  const multiplier = Number(trustedBiddingSignals.multiplier) || 1.0;
+  let multiplier = 1.0;
+  if (dealId) {
+    // If an eligible deal is found, use the corresponding bid multiplier.
+    multiplier = Number(trustedBiddingSignals[`multiplier-${dealId}`]) || 0.5;
+  } else {
+    multiplier = Number(trustedBiddingSignals.multiplier) || 1.0;
+  }
   let bid = Math.random() * (maxBid - minBid) + minBid;
   bid = (bid * multiplier).toFixed(2);
   log('calculated bid price', {bid, minBid, maxBid, multiplier});
@@ -52,55 +101,74 @@ function calculateBidAmount(trustedBiddingSignals) {
 }
 
 /** Selects a deal ID from selectable buyer and seller reporting IDs. */
-function selectDealId(selectedAd) {
+function selectDealId(selectedAd, auctionSignals) {
   const {
     buyerReportingId,
     buyerAndSellerReportingId,
     selectableBuyerAndSellerReportingIds,
   } = selectedAd;
-  if (selectableBuyerAndSellerReportingIds?.length) {
-    const countOfSelectableIds = selectableBuyerAndSellerReportingIds.length;
-    const randomIndex = Math.floor(Math.random() * countOfSelectableIds);
-    const selectedId = selectableBuyerAndSellerReportingIds[randomIndex];
-    log('found reporting IDs', {
-      buyerReportingId,
-      buyerAndSellerReportingId,
-      selectableBuyerAndSellerReportingIds,
-      selectedBuyerAndSellerReportingId: selectedId,
-    });
-    return selectedId;
-  } else {
-    log('found reporting IDs', {
-      buyerReportingId,
-      buyerAndSellerReportingId,
-      selectableBuyerAndSellerReportingIds,
-    });
+  if (
+    !selectableBuyerAndSellerReportingIds ||
+    !selectableBuyerAndSellerReportingIds.length
+  ) {
+    // No deal IDs in interest group to choose from.
+    return;
   }
+  // Filter deals in interest group with deals from bid request.
+  const eligibleDeals = ((availableDeals) => {
+    if (availableDeals && availableDeals.length) {
+      return selectableBuyerAndSellerReportingIds.filter((id) =>
+        auctionSignals.availableDeals.includes(id),
+      );
+    }
+  })(auctionSignals.availableDeals.split(','));
+  if (!eligibleDeals || !eligibleDeals.length) {
+    // No eligible deals for this bid request.
+    return;
+  }
+  // Choose one of the eligible deals at random.
+  const countOfEligibleIds = eligibleDeals.length;
+  const randomIndex = Math.floor(Math.random() * countOfEligibleIds);
+  const selectedId = eligibleDeals[randomIndex];
+  // Log reporting IDs to console.
+  log('found reporting IDs', {
+    buyerReportingId,
+    buyerAndSellerReportingId,
+    selectableBuyerAndSellerReportingIds,
+    selectedId,
+  });
+  return selectedId;
 }
 
 /** Returns the bid response for a video ad request. */
 function getBidForVideoAd({
   interestGroup,
+  // UNUSED auctionSignals,
+  // UNUSED perBuyerSignals,
   trustedBiddingSignals,
   browserSignals,
 }) {
   const {ads} = interestGroup;
-  // Filter for video ads specifically mapped to current SSP.
+  // Select an ad meeting the auction requirements.
   const [selectedAd] = ads.filter((ad) => 'VIDEO' === ad.metadata.adType);
   if (!selectedAd) {
     log('didnt find eligible video ad in IG', {interestGroup, browserSignals});
     return {bid: '0.0'};
   }
+  // Check if any deals are eligible.
+  const dealId = selectDealId(selectedAd, auctionSignals);
   return {
     ad: {
       ...selectedAd.metadata,
       seller: browserSignals.seller,
       topLevelSeller: browserSignals.topLevelSeller,
     },
-    bid: calculateBidAmount(trustedBiddingSignals),
+    bid: calculateBidAmount(trustedBiddingSignals, dealId),
     bidCurrency: 'USD',
     allowComponentAuction: true,
     render: selectedAd.renderURL,
+    // Specify selected deal ID for reporting.
+    selectedBuyerAndSellerReportingId: dealId,
     /*
       TODO: Use-case: Ad cost reporting
       adCost: optionalAdCost,
@@ -115,9 +183,12 @@ function getBidForVideoAd({
 /** Returns the bid response for a display ad request. */
 function getBidForDisplayAd({
   interestGroup,
+  auctionSignals,
+  // UNUSED perBuyerSignals,
   trustedBiddingSignals,
   browserSignals,
 }) {
+  // Select an ad meeting the auction requirements.
   const [selectedAd] = interestGroup.ads.filter(
     (ad) => 'DISPLAY' === ad.metadata.adType,
   );
@@ -125,13 +196,15 @@ function getBidForDisplayAd({
     log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
   }
+  // Check if any deals are eligible.
+  const dealId = selectDealId(selectedAd, auctionSignals);
   return {
     ad: {
       ...selectedAd.metadata,
       seller: browserSignals.seller,
       topLevelSeller: browserSignals.topLevelSeller,
     },
-    bid: calculateBidAmount(trustedBiddingSignals),
+    bid: calculateBidAmount(trustedBiddingSignals, dealId),
     bidCurrency: 'USD',
     allowComponentAuction: true,
     render: {
@@ -141,7 +214,7 @@ function getBidForDisplayAd({
       height: selectedAd.metadata.adSizes[0].height,
     },
     // Specify selected deal ID for reporting.
-    selectedBuyerAndSellerReportingId: selectDealId(selectedAd),
+    selectedBuyerAndSellerReportingId: dealId,
     /*
       TODO: Use-case: Ad cost reporting
       adCost: optionalAdCost,
@@ -172,37 +245,27 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  CURR_HOST = interestGroup.owner.substring('https://'.length);
-  AUCTION_ID = auctionSignals.auctionId;
-  log('generating bid', {
+  const biddingContext = {
     interestGroup,
     auctionSignals,
     perBuyerSignals,
     trustedBiddingSignals,
     browserSignals,
-  });
-  if ('true' !== trustedBiddingSignals['isActive']) {
-    // Don't place a bid if campaign is inactive.
-    log('not bidding since campaign is inactive', {
-      trustedBiddingSignals,
-      seller: browserSignals.seller,
-      topLevelSeller: browserSignals.topLevelSeller,
-      dataVersion: browserSignals.dataVersion,
-    });
+  };
+  logContextForDemo('generateBid()', biddingContext);
+  if (!isCurrentCampaignActive(biddingContext)) {
+    log('not bidding as campaign is inactive', biddingContext);
     return;
   }
-  const biddingContext = {
-    interestGroup,
-    trustedBiddingSignals,
-    browserSignals,
-  };
   const bid =
     'VIDEO' === auctionSignals.adType
       ? getBidForVideoAd(biddingContext)
       : getBidForDisplayAd(biddingContext);
   if (bid) {
-    log('returning bid', {bid});
+    log('returning bid', {bid, biddingContext});
     return bid;
+  } else {
+    log('not bidding', {biddingContext});
   }
 }
 
@@ -212,24 +275,42 @@ function reportWin(
   sellerSignals,
   browserSignals,
 ) {
-  if (sellerSignals.buyer) {
-    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
-  }
-  AUCTION_ID = auctionSignals.auctionId;
-  log('reporting win', {
+  logContextForDemo('reportWin()', {
     auctionSignals,
     perBuyerSignals,
     sellerSignals,
     browserSignals,
   });
-  // Add query parameters from renderURL to beacon URL.
-  const additionalQueryParams = browserSignals.renderURL
-    .substring(browserSignals.renderURL.indexOf('?') + 1)
-    .concat(`&redirect=${browserSignals.seller}`);
+  // Assemble query parameters for event logs.
+  let additionalQueryParams = browserSignals.renderURL.substring(
+    browserSignals.renderURL.indexOf('?') + 1,
+  );
+  const reportingContext = {
+    auctionId: AUCTION_ID,
+    pageURL: auctionSignals.pageURL,
+    componentSeller: browserSignals.seller,
+    topLevelSeller: browserSignals.topLevelSeller,
+    renderURL: browserSignals.renderURL,
+    bid: browserSignals.bid,
+    bidCurrency: browserSignals.bidCurrency,
+    buyerReportingId: browserSignals.buyerReportingId,
+    buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+    selectedBuyerAndSellerReportingId:
+      browserSignals.selectedBuyerAndSellerReportingId,
+  };
+  for (const [key, value] of Object.entries(reportingContext)) {
+    additionalQueryParams = additionalQueryParams.concat(`&${key}=${value}`);
+  }
+  sendReportTo(
+    browserSignals.interestGroupOwner +
+      `/reporting?report=win&${additionalQueryParams}`,
+  );
+  additionalQueryParams = additionalQueryParams.concat(
+    `&redirect=${browserSignals.seller}`,
+  );
   registerAdBeacon({
     'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
     'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
     'reserved.top_navigation_commit': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
   });
-  sendReportTo(browserSignals.interestGroupOwner + '/reporting?report=win');
 }
