@@ -82,3 +82,24 @@ app.get('/video-ad', async (req: Request, res: Response) => {
 app.listen(PORT, async () => {
   console.log(`Listening on port ${PORT}`);
 });
+
+app.get('/uc-publisher-ads-req', async (req: Request, res: Response) => {
+  const {auctionType} = req.query;
+  const bucket = req.query.key;
+  const cloudEnv = req.query.env;
+
+  res.render('uc-publisher-ads-req', {
+    title: TITLE,
+    lorem: LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    NEWS_TOKEN,
+    DSP_HOST,
+    SSP_A_HOST,
+    SSP_B_HOST,
+    AD_SERVER_HOST,
+    SSP_TAG_URL: `https://${SSP_HOST}/js/uc-publisher-ads-req/ad-tag.js`,
+    bucket: bucket,
+    cloudEnv: cloudEnv,
+  });
+});

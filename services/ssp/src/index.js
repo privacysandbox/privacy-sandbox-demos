@@ -51,6 +51,47 @@ const {
 
 const app = express();
 
+const AD_RENDER_URL_START =
+  'https://privacy-sandbox-demos-dsp.dev/ads?advertiser=privacy-sandbox-demos-shop.dev&id=';
+const AD_TAGS = {
+  [AD_RENDER_URL_START + '1f45e']: {
+    product_tags: ['brown_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f45f']: {
+    product_tags: ['blue_shoe', 'sports_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f460']: {
+    product_tags: ['red_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f461']: {
+    product_tags: ['brown_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f462']: {
+    product_tags: ['brown_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f6fc']: {
+    product_tags: ['blue_shoe', 'sports_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f97e']: {
+    product_tags: ['brown_shoe', 'sports_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f97f']: {
+    product_tags: ['blue_shoe'],
+  },
+  [AD_RENDER_URL_START + '1fa70']: {
+    product_tags: ['brown_shoe'],
+  },
+  [AD_RENDER_URL_START + '1fa74']: {
+    product_tags: ['blue_shoe'],
+  },
+  [AD_RENDER_URL_START + '1f3bf']: {
+    product_tags: ['blue_shoe', 'sports_shoe'],
+  },
+  [AD_RENDER_URL_START + '26f8']: {
+    product_tags: ['sports_shoe'],
+  },
+};
+
 app.use((req, res, next) => {
   res.setHeader('Origin-Trial', SSP_TOKEN);
   next();
@@ -308,4 +349,25 @@ app.get('/auction-config.json', async (req, res) => {
 
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);
+});
+
+app.get('/uc-publisher-ads-req/ad-tag.html', async (req, res) => {
+  res.render('uc-publisher-ads-req/ad-tag.html.ejs');
+});
+
+app.get('/trusted-scoring-uc-publisher-ads-req', async (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
+
+  const response = {
+    renderURLs: {},
+  };
+  const queryRenderUrls = req.query.renderUrls?.toString().split(',') || [];
+
+  queryRenderUrls.forEach((queryRenderUrl) => {
+    if (AD_TAGS[queryRenderUrl]) {
+      response.renderURLs[queryRenderUrl] = AD_TAGS[queryRenderUrl];
+    }
+  });
+
+  res.json(response);
 });
