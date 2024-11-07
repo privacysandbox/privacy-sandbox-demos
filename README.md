@@ -11,7 +11,7 @@ Web ecosystem developers expect new approaches to typical use cases supported to
 incorporating a combination of new Privacy Sandbox APIs into their products, which requires advanced planning and a clear understanding how these APIs
 work.
 
-## Our Proposition
+## Our proposition
 
 The Privacy Sandbox Demos repository offers cookbook recipes, sample code, and demo applications, based on Privacy Sandbox APIs. These are intended to
 aid businesses and developers in adapting their applications and the businesses they support to a web ecosystem without third-party cookies.
