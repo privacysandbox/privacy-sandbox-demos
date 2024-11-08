@@ -52,7 +52,7 @@ const {
 const app = express();
 
 const AD_RENDER_URL_START =
-  'https://privacy-sandbox-demos-dsp.dev/ads?advertiser=privacy-sandbox-demos-shop.dev&id=';
+  'https://' + DSP_HOST + '/ads?advertiser=privacy-sandbox-demos-shop.dev&id=';
 const AD_TAGS = {
   [AD_RENDER_URL_START + '1f45e']: {
     product_tags: ['brown_shoe'],

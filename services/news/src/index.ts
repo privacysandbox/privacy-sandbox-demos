@@ -33,6 +33,7 @@ const {
 const app: Application = express();
 
 const TITLE = NEWS_DETAIL;
+const PUBLISHER_ADS_REQ_TITLE = NEWS_DETAIL + ' (with ad blocking)';
 const LOREM =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
@@ -89,7 +90,7 @@ app.get('/uc-publisher-ads-req', async (req: Request, res: Response) => {
   const cloudEnv = req.query.env;
 
   res.render('uc-publisher-ads-req', {
-    title: TITLE,
+    title: PUBLISHER_ADS_REQ_TITLE,
     lorem: LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
