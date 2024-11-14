@@ -22,6 +22,8 @@ import {
   DSP_HOST,
   DSP_A_HOST,
   DSP_B_HOST,
+  DSP_X_HOST,
+  DSP_Y_HOST,
   EXTERNAL_PORT,
   PORT,
   SHOP_DETAIL,
@@ -122,9 +124,9 @@ app.get('/ads/:id', async (req: Request, res: Response) => {
 });
 
 app.get('/items/:id', async (req: Request, res: Response) => {
+  const {auctionType} = req.query;
   const {id} = req.params;
   const item = await getItem(id);
-  const isMultiSeller = req.query.auctionType === 'multi';
 
   const DSP_TAG_URL = new URL(
     `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
@@ -135,14 +137,22 @@ app.get('/items/:id', async (req: Request, res: Response) => {
   const DSP_B_TAG_URL = new URL(
     `https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
   );
+  const DSP_X_TAG_URL = new URL(
+    `https://${DSP_X_HOST}:${EXTERNAL_PORT}/uc-${auctionType}/dsp-tag.js`,
+  );
+  const DSP_Y_TAG_URL = new URL(
+    `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/uc-${auctionType}/dsp-tag.js`,
+  );
 
   res.render('item', {
     item,
     DSP_TAG_URL,
     DSP_A_TAG_URL,
     DSP_B_TAG_URL,
+    DSP_X_TAG_URL,
+    DSP_Y_TAG_URL,
     SHOP_HOST,
-    isMultiSeller,
+    auctionType,
   });
 });
 

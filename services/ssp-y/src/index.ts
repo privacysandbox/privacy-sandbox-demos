@@ -15,7 +15,7 @@
  */
 
 // SSP-X
-import express from 'express';
+import express, {Application, Request, Response} from 'express';
 
 const {
   EXTERNAL_PORT,
@@ -25,7 +25,6 @@ const {
   SSP_X_HOST,
   SSP_Y_HOST,
   SSP_Y_DETAIL,
-  SSP_Y_TOKEN,
   DSP_A_HOST,
   DSP_B_HOST,
   DSP_X_HOST,
@@ -47,15 +46,14 @@ const ALLOWED_HOSTNAMES = [
   SHOP_HOST,
 ];
 
-const app = express();
+const app: Application = express();
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Origin-Trial', SSP_Y_TOKEN);
   next();
 });
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next) => {
   if (req.get('sec-fetch-dest') === 'fencedframe') {
     res.setHeader('Supports-Loading-Mode', 'fenced-frame');
   }
@@ -87,7 +85,7 @@ app.use(
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
-app.get('/', async (req, res) => {
+app.get('/', async (req: Request, res: Response) => {
   const title = SSP_Y_DETAIL;
   res.render('index.html.ejs', {title, EXTERNAL_PORT});
 });
