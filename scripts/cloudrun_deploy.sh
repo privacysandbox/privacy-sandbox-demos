@@ -15,6 +15,7 @@
 # limitations under the License.
 
 # load env vars
+source cicd/.env.dev
 source .env.deploy
 
 # setup Google Cloud SDK project
