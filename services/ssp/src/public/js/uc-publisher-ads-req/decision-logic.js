@@ -24,7 +24,7 @@ function scoreAd(
 ) {
   if (auctionConfig.sellerSignals.excludeProductTag) {
     const productTags =
-      trustedScoringSignals.renderURL[browserSignals.renderURL].product_tags;
+      trustedScoringSignals.renderURL[browserSignals.renderURL].productTags;
     if (productTags.includes(auctionConfig.sellerSignals.excludeProductTag)) {
       // Exclude ad from auction - has excluded tag
       return 0;

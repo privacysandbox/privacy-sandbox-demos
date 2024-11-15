@@ -48,40 +48,40 @@ const AD_RENDER_URL_END =
   '&adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
 const AD_TAGS = {
   [AD_RENDER_URL_START + '1f45e' + AD_RENDER_URL_END]: {
-    product_tags: ['brownShoe'],
+    productTags: ['brownShoe'],
   },
   [AD_RENDER_URL_START + '1f45f' + AD_RENDER_URL_END]: {
-    product_tags: ['blueShoe', 'sportsShoe'],
+    productTags: ['blueShoe', 'sportsShoe'],
   },
   [AD_RENDER_URL_START + '1f460' + AD_RENDER_URL_END]: {
-    product_tags: ['redShoe'],
+    productTags: ['redShoe'],
   },
   [AD_RENDER_URL_START + '1f461' + AD_RENDER_URL_END]: {
-    product_tags: ['brownShoe'],
+    productTags: ['brownShoe'],
   },
   [AD_RENDER_URL_START + '1f462' + AD_RENDER_URL_END]: {
-    product_tags: ['brownShoe'],
+    productTags: ['brownShoe'],
   },
   [AD_RENDER_URL_START + '1f6fc' + AD_RENDER_URL_END]: {
-    product_tags: ['blueShoe', 'sportsShoe'],
+    productTags: ['blueShoe', 'sportsShoe'],
   },
   [AD_RENDER_URL_START + '1f97e' + AD_RENDER_URL_END]: {
-    product_tags: ['brownShoe', 'sportsShoe'],
+    productTags: ['brownShoe', 'sportsShoe'],
   },
   [AD_RENDER_URL_START + '1f97f' + AD_RENDER_URL_END]: {
-    product_tags: ['blueShoe'],
+    productTags: ['blueShoe'],
   },
   [AD_RENDER_URL_START + '1fa70' + AD_RENDER_URL_END]: {
-    product_tags: ['brownShoe'],
+    productTags: ['brownShoe'],
   },
   [AD_RENDER_URL_START + '1fa74' + AD_RENDER_URL_END]: {
-    product_tags: ['blueShoe'],
+    productTags: ['blueShoe'],
   },
   [AD_RENDER_URL_START + '1f3bf' + AD_RENDER_URL_END]: {
-    product_tags: ['blueShoe', 'sportsShoe'],
+    productTags: ['blueShoe', 'sportsShoe'],
   },
   [AD_RENDER_URL_START + '26f8' + AD_RENDER_URL_END]: {
-    product_tags: ['sportsShoe'],
+    productTags: ['sportsShoe'],
   },
 };
 
