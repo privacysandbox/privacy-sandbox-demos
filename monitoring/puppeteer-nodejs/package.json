@@ -1,0 +1,19 @@
+{
+  "type": "module",
+  "name": "generic-puppeteer-nodejs",
+  "version": "1.0.0",
+  "description": "Contains functions for privacy sandbox demos synthetic monitoring",
+  "main": "index.js",
+  "scripts": {
+    "gcp-build": "node node_modules/puppeteer/install.mjs",
+    "start": "functions-framework --target=$npm_config_target"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.4.2",
+    "@google-cloud/synthetics-sdk-api": "^0.6.0",
+    "axios": "^1.7.7",
+    "puppeteer": "^23.7.1"
+  },
+  "license": "Apache-2.0",
+  "author": "Google Inc."
+}
