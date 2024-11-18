@@ -70,7 +70,7 @@ router.get('/service/kv', (req, res) => {
 router.get('/js/ad-tag.js', async (req, res) => {
   const filePath = path.join(
     path.resolve(),
-    '/build/public/uc-ba/js/ad-tag.js',
+    '/build/uc-ba/public/js/ad-tag.js',
   );
   const file = await readFile(filePath, {encoding: 'utf8'});
   const compiledFile = await ejs.compile(file);

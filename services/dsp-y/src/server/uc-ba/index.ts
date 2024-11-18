@@ -8,8 +8,8 @@ const router = Router();
 router.get('/service/kv', (req, res) => {
   res.json({
     keys: {
-      'a': 123,
-      'b': 456,
+      'adRenderId': 123456,
+      'renderURL': "https://privacy-sandbox-demos-dsp.dev/ads?advertiser=privacy-sandbox-demos-shop.dev&id=1f45e",
     },
   });
 });
@@ -64,7 +64,7 @@ router.get('/interest-group.json', async (req, res) => {
       },
     ],
     auctionServerRequestFlags: ['omit-ads', 'omit-user-bidding-signals'],
-    trustedBiddingSignalsKeys: ['a', 'b'],
+    trustedBiddingSignalsKeys: ['adRenderId', 'renderURL'],
   });
 });
 

@@ -26,7 +26,7 @@ class AdAuction {
     const [contextualAuctionWinner] = contextualAuctionResult;
 
     componentAuctionConfig.auctionSignals = {
-      bidFloor: contextualAuctionWinner.bid,
+      bidFloor: 0,
     };
     componentAuctionConfig.perBuyerSignals = this.#buildPerBuyerConfigs(
       contextualAuctionResult,

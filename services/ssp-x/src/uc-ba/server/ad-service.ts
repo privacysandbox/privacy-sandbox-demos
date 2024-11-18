@@ -103,7 +103,7 @@ function runProtectedAudienceAuction(
       top_level_seller: SSP_ORIGIN,
       seller: SSP_X_ORIGIN,
       seller_signals: '{"testKey":"someValue"}',
-      auction_signals: `{"bidFloor": ${contextualAuctionWinner.bid}}`,
+      auction_signals: `{"bidFloor": 0}`,
       buyer_list: [DSP_X_ORIGIN, DSP_Y_ORIGIN],
       per_buyer_config: {
         [DSP_X_ORIGIN]: {

@@ -25,9 +25,9 @@ function scoreAd(
 
   let desirability = 0;
 
-  if (bid > bidFloor) {
-    desirability = bid;
-  }
+  // if (bid > bidFloor) {
+  //   desirability = 0;
+  // }
 
   return {
     desirability,

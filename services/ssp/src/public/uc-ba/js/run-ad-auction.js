@@ -15,7 +15,7 @@
  */
 import ComponentAuctionInfoCollector from './config-collector.js';
 
-const DEMO_PARTICIPANT_COUNT = 3;
+const DEMO_PARTICIPANT_COUNT = 2;
 
 class AdAuction {
   constructor() {
@@ -51,12 +51,14 @@ class AdAuction {
     const [contextualAuctionWinner] = componentAuctionInfo
       .map(({contextualAuctionWinner}) => contextualAuctionWinner)
       .sort((a, b) => a.bid > b.bid);
-
+    contextualAuctionWinner.bid = 0;
     return contextualAuctionWinner;
   }
 
   async #setup() {
     this.auctionConfig = await this.#getTopLevelAuctionConfig();
+    console.log(window.location.search);
+    this.auctionConfig.auctionSignals = {demo: window.location.search.includes("demo")}
   }
 
   async #getTopLevelAuctionConfig() {

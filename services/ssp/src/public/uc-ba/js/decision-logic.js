@@ -29,6 +29,17 @@ function scoreAd(
     desirability = bid;
   }
 
+  if(auctionConfig.auctionSignals.demo === true){
+    console.log(browserSignals.componentSeller);
+    if(browserSignals.componentSeller === "https://privacy-sandbox-demos-ssp-x.dev"){
+      desirability = 999; 
+    }
+  } else {
+    if(browserSignals.componentSeller === "https://privacy-sandbox-demos-ssp-x.dev"){
+      desirability = 0;
+    } 
+  }
+  
   return {
     desirability,
     allowComponentAuction: true,

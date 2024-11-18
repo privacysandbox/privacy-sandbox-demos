@@ -19,7 +19,8 @@
   const tagEl = document.querySelector('.ssp_tag');
 
   const src = new URL(tagEl.src);
-  src.pathname = '/uc-ba/ad-tag.html';
+  src.pathname = '/uc-ba/ad-tag.html'
+  src.search = window.location.search.includes("demo")?  "?demo=true": "";
 
   const iframeEl = document.createElement('iframe');
   iframeEl.width = 300;
