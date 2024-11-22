@@ -28,7 +28,6 @@ export const {
   GARDENING_HOST,
 
   // Ad-techs
-  DSP_HOST,
   SSP_HOST,
   SSP_A_HOST,
   SSP_B_HOST,

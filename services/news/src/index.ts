@@ -18,7 +18,6 @@ import express, {Application, Request, Response} from 'express';
 
 import {
   AD_SERVER_HOST,
-  DSP_HOST,
   EXTERNAL_PORT,
   HOME_HOST,
   TEXT_LOREM,
@@ -66,7 +65,6 @@ app.get('/uc-publisher-ads-req', async (req: Request, res: Response) => {
     lorem: TEXT_LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
-    DSP_HOST,
     SSP_A_HOST,
     SSP_B_HOST,
     AD_SERVER_HOST,
