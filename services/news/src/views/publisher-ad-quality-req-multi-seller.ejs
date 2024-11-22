@@ -9,11 +9,15 @@
   <link rel="stylesheet"
         href="/css/global.css" />
   <link rel="stylesheet"
-        href="/css/unified.css">
+        href="/css/unified.css" />
   <link rel="icon"
         href="/img/spy.svg" />
   <script src="/js/main.js"></script>
   <script>
+    // Source some parameters from URL query for demonstrative purposes.
+    const searchParams = (new URL(location.href)).searchParams;
+    // Find creative tags to exclude on page, and include in seller signals.
+    const sellerSignalExcludeCreativeTag = searchParams.get('excludeCreativeTag');
     window.PSDemo = window.PSDemo || {};
     // Publishers configure the ad units available on the page.
     window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
@@ -27,32 +31,35 @@
       ],
       // Ad units to request bids for.
       adUnits: [{
-        code: 'videoIframeAdUnit',
+        code: 'displayFencedFrameAdUnit',
         auctionId: `PUB-${crypto.randomUUID()}`,
-        divId: 'video-ad--iframe',
-        adType: 'VIDEO',
-        size: [640, 320],
-        isFencedFrame: false,
+        divId: 'display-ad--fenced-frame',
+        adType: 'DISPLAY',
+        size: [300, 250],
+        isFencedFrame: true,
+        sellerSignalExcludeCreativeTag,
       }],
     });
   </script>
-  <script src="/js/main.js"></script>
-  <script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"
-  ></script>
-  <script async defer
-          src="/js/video-ad-helper.js"
-  ></script>
   <script async defer
           src="<%= AD_SERVER_LIB_URL %>"
   ></script>
 </head>
 
-<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-3/5 bg-slate-50 pt-8">
+<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
   <%- include('components/header') %>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
       <p><%= TEXT_LOREM %></p>
-      <%- include('components/video-ad') %>
+      <div class="hide-button-container">
+        <a href="/publisher-ad-quality-req-multi-seller" class="hide-button">Show all shoes</a>
+        <a href="/publisher-ad-quality-req-multi-seller?excludeCreativeTag=redShoe" class="hide-button">Hide red shoes</a>
+        <a href="/publisher-ad-quality-req-multi-seller?excludeCreativeTag=blueShoe" class="hide-button">Hide blue shoes</a>
+        <a href="/publisher-ad-quality-req-multi-seller?excludeCreativeTag=brownShoe" class="hide-button">Hide brown shoes</a>
+        <a href="/publisher-ad-quality-req-multi-seller?excludeCreativeTag=sportsShoe" class="hide-button">Hide sports shoes</a>
+      </div>
+      <p><%= TEXT_LOREM %></p>
+      <%- include('components/display-ads') %>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
