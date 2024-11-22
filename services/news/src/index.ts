@@ -32,6 +32,8 @@ import {
   SSP_ORIGIN,
 } from './constants.js';
 
+const PUBLISHER_ADS_REQ_TITLE = NEWS_DETAIL + ' (with ad blocking)';
+
 const app: Application = express();
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
@@ -50,6 +52,25 @@ app.get('/', async (req: Request, res: Response) => {
     AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
     HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
     IS_MULTI_SELLER: 'multi' === req.query.auctionType,
+  });
+});
+
+app.get('/uc-publisher-ads-req', async (req: Request, res: Response) => {
+  const {auctionType} = req.query;
+  const bucket = req.query.key;
+  const cloudEnv = req.query.env;
+
+  res.render('uc-publisher-ads-req', {
+    title: PUBLISHER_ADS_REQ_TITLE,
+    lorem: TEXT_LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    SSP_A_HOST,
+    SSP_B_HOST,
+    AD_SERVER_HOST,
+    SSP_TAG_URL: `https://${SSP_HOST}/js/uc-publisher-ads-req/ad-tag.js`,
+    bucket: bucket,
+    cloudEnv: cloudEnv,
   });
 });
 
