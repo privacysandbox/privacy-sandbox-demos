@@ -30,29 +30,9 @@
         adType: 'DISPLAY',
         size: [300, 250],
         isFencedFrame: false,
-      }, {
-        code: 'displayFencedFrameAdUnit',
-        auctionId: `PUB-${crypto.randomUUID()}`,
-        divId: 'display-ad--fenced-frame',
-        adType: 'DISPLAY',
-        size: [300, 250],
-        isFencedFrame: true,
-      },
-      {
-        code: 'videoIframeAdUnit',
-        auctionId: `PUB-${crypto.randomUUID()}`,
-        divId: 'video-ad--iframe',
-        adType: 'VIDEO',
-        size: [640, 320],
-        isFencedFrame: false,
       }],
     });
   </script>
-  <script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"
-  ></script>
-  <script async defer
-          src="/js/video-ad-helper.js"
-  ></script>
   <script async defer
           src="<%= AD_SERVER_TAG_URL %>"
   ></script>
@@ -62,8 +42,6 @@
   <%- include('components/header') %>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
-      <p><%= TEXT_LOREM %></p>
-      <%- include('components/video-ad') %>
       <p><%= TEXT_LOREM %></p>
       <%- include('components/display-ads') %>
       <p><%= TEXT_LOREM %></p>
