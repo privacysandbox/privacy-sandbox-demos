@@ -12,7 +12,10 @@
  */
 
 import express, {Request, Response} from 'express';
-import {getAdTemplateVariables} from '../../lib/template-utils.js';
+import {
+  getContextualAdTemplateVariables,
+  getInterestGroupAdTemplateVariables,
+} from '../../lib/template-utils.js';
 
 /**
  * This router is responsible for handling requests to serve ads, i.e. the ad
@@ -29,7 +32,7 @@ export const AdsRouter = express.Router();
 // ************************************************************************
 /** Used as render URL in interest groups for display ads. */
 AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
-  const templateVariables = getAdTemplateVariables(req.query);
+  const templateVariables = getInterestGroupAdTemplateVariables(req.query);
   console.log('Loading interest group ad', templateVariables);
   res
     .set('Allow-Fenced-Frame-Automatic-Beacons', 'true')
@@ -38,7 +41,7 @@ AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
 
 /** Used as render URL for contextual ads or static ads. */
 AdsRouter.get('/contextual-ads', async (req: Request, res: Response) => {
-  const templateVariables = getAdTemplateVariables(req.query);
+  const templateVariables = getContextualAdTemplateVariables();
   console.log('Loading contextual ad', templateVariables);
   res.render('contextual-ad-frame', templateVariables);
 });
