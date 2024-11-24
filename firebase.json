@@ -59,7 +59,7 @@
     },
     {
       "target": "shop",
-      "public": "services/shop/public",
+      "public": "services/shop/src/public",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -202,6 +202,79 @@
           "source": "**",
           "run": {
             "serviceId": "collector",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "topics-motorcycles",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "news",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "topics-soccer",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "news",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "topics-gardening",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "news",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "topics-server",
+      "public": "services/ad-tech/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "topics-server",
             "region": "us-central1"
           }
         }

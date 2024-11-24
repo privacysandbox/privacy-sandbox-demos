@@ -5,10 +5,11 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "npm run build && node ./build/main.js",
+    "start": "npm run attestation && npm run build && node ./build/main.js",
     "build": "tsc && cp -r src/views build/",
     "ncu": "npx npm-check-updates -u",
-    "fmt": "pre-commit run --all-files"
+    "fmt": "pre-commit run --all-files",
+    "attestation": "if [[ -z \"$npm_config_service\" || -z \"$npm_config_project_env\" ]]; then echo \"Warning: npm_config_service and npm_config_project_env not set. Skipping attestation file copy.\"; else cp -f src/public/.well-known/privacy-sandbox-attestations.json.\"$npm_config_service\".\"$npm_config_project_env\" src/public/.well-known/privacy-sandbox-attestations.json; fi"
   },
   "dependencies": {
     "cbor": "^9.0.2",
