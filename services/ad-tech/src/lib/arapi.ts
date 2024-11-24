@@ -56,7 +56,7 @@ type AggregationKeyStructure = {
 };
 
 export function sourceKeyPiece(ako: AggregationKeyStructure) {
-  console.log(ako);
+  console.log('[arapi] sourceKeyPiece: ', ako);
   const source = encodeSource(ako);
   const uint64: bigint = new DataView(source).getBigUint64(0, false);
   return `0x${(uint64 << 64n).toString(16)}`;
@@ -71,7 +71,7 @@ type AggregatableTriggerData = {
 };
 
 export function triggerKeyPiece(atd: AggregatableTriggerData) {
-  console.log(atd);
+  console.log('[arapi] triggerKeyPiece: ', atd);
   const trigger = encodeTrigger(atd);
   const uint64 = new DataView(trigger).getBigUint64(0, false);
   return `0x${'0'.repeat(16)}${uint64.toString(16)}`;

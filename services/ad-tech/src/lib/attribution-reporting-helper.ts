@@ -26,6 +26,7 @@ import {
   SOURCE_TYPE,
   TRIGGER_TYPE,
 } from './arapi.js';
+import {NEWS_HOST} from './constants.js';
 
 export const handleAttributionTriggerRegistration = (
   req: Request,
@@ -168,14 +169,14 @@ const registerAttributionSourceHeadersIfEligible = (
       quantity: sourceKeyPiece({
         type: SOURCE_TYPE[sourceType],
         advertiser: ADVERTISER[advertiser],
-        publisher: PUBLISHER['news'],
+        publisher: PUBLISHER[NEWS_HOST!],
         id: Number(`0x${id}`),
         dimension: DIMENSION['quantity'],
       }),
       gross: sourceKeyPiece({
         type: SOURCE_TYPE[sourceType],
         advertiser: ADVERTISER[advertiser],
-        publisher: PUBLISHER['news'],
+        publisher: PUBLISHER[NEWS_HOST!],
         id: Number(`0x${id}`),
         dimension: DIMENSION['gross'],
       }),

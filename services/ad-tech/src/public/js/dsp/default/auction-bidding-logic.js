@@ -306,9 +306,10 @@ function reportWin(
     browserSignals.interestGroupOwner +
       `/reporting?report=win&${additionalQueryParams}`,
   );
-  additionalQueryParams = additionalQueryParams.concat(
-    `&redirect=${browserSignals.seller}`,
-  );
+  // Disable redirect chain temporarily to make ARA debugging easier.
+  // additionalQueryParams = additionalQueryParams.concat(
+  //   `&redirect=${browserSignals.seller}`,
+  // );
   registerAdBeacon({
     'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
     'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
