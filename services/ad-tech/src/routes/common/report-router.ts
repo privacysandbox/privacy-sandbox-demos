@@ -19,7 +19,7 @@ import {
 } from '../../controllers/report-store.js';
 import {
   getAttributionSourceHeaders,
-  getAttributionRedirectUrlIfNeeded,
+  getAttributionRedirectUrl,
 } from '../../lib/attribution-reporting-helper.js';
 import {
   getStructuredObject,
@@ -37,11 +37,11 @@ import {decodeDict} from 'structured-field-values';
  */
 export const ReportRouter = express.Router();
 
+// ************************************************************************
+// Helper functions
+// ************************************************************************
 /** Sets ARA source registration headers if request is eligible. */
-const setAttributionReportingHeadersIfEligible = (
-  req: Request,
-  res: Response,
-) => {
+const setAttributionReportingHeaders = (req: Request, res: Response) => {
   if ('attribution-reporting-eligible' in req.headers) {
     const attributionEligibleHeader = decodeDict(
       req.headers['attribution-reporting-eligible'] as string,
@@ -52,11 +52,21 @@ const setAttributionReportingHeadersIfEligible = (
       attributionEligibleHeader,
     );
     if (sourceHeaders) {
+      console.log(
+        '[ARA] Request is eligible for attribution reporting.',
+        req.originalUrl,
+        sourceHeaders,
+      );
       res.setHeader(
         'Attribution-Reporting-Source-Headers',
         JSON.stringify(sourceHeaders),
       );
     }
+  } else {
+    console.log(
+      '[ARA] Request is not eligible for attribution reporting.',
+      req.originalUrl,
+    );
   }
 };
 
@@ -72,10 +82,11 @@ ReportRouter.get('/', async (req: Request, res: Response) => {
   };
   console.log('Event-level report received: ', req.baseUrl, report);
   ReportStore.addReport(report);
-  setAttributionReportingHeadersIfEligible(req, res);
+  setAttributionReportingHeaders(req, res);
   const queryParams = getStructuredObject(req.query);
-  const redirectUrl = getAttributionRedirectUrlIfNeeded(queryParams);
+  const redirectUrl = getAttributionRedirectUrl(queryParams);
   if (redirectUrl) {
+    console.log('[ARA] Following redirect chain: ', redirectUrl);
     res.redirect(redirectUrl);
     return;
   }
@@ -96,10 +107,11 @@ ReportRouter.post('/', async (req: Request, res: Response) => {
   };
   console.log('Event-level report received: ', req.baseUrl, report);
   ReportStore.addReport(report);
-  setAttributionReportingHeadersIfEligible(req, res);
+  setAttributionReportingHeaders(req, res);
   const queryParams = getStructuredObject(req.query);
-  const redirectUrl = getAttributionRedirectUrlIfNeeded(queryParams);
+  const redirectUrl = getAttributionRedirectUrl(queryParams);
   if (redirectUrl) {
+    console.log('[ARA] Following redirect chain: ', redirectUrl);
     res.redirect(redirectUrl);
     return;
   }

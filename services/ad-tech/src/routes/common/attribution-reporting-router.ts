@@ -16,7 +16,7 @@ import {decodeDict} from 'structured-field-values';
 import {
   getAttributionSourceHeaders,
   getAttributionTriggerHeaders,
-  getAttributionRedirectUrlIfNeeded,
+  getAttributionRedirectUrl,
 } from '../../lib/attribution-reporting-helper.js';
 import {getStructuredObject} from '../../lib/common-utils.js';
 
@@ -65,8 +65,9 @@ AttributionReportingRouter.get(
         JSON.stringify(sourceHeaders),
       );
     }
-    const redirectUrl = getAttributionRedirectUrlIfNeeded(queryParams);
+    const redirectUrl = getAttributionRedirectUrl(queryParams);
     if (redirectUrl) {
+      console.log('[ARA] Following redirect chain: ', redirectUrl);
       res.redirect(redirectUrl);
       return;
     }

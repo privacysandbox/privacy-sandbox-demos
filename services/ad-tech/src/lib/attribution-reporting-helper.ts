@@ -28,7 +28,7 @@ import {
 import {EXTERNAL_PORT, NEWS_HOST} from './constants.js';
 
 /** Returns a redirect URL for ARA if indicated in query context. */
-export const getAttributionRedirectUrlIfNeeded = (requestQuery: {
+export const getAttributionRedirectUrl = (requestQuery: {
   [key: string]: string;
 }): string | undefined => {
   if ('redirect' in requestQuery) {
