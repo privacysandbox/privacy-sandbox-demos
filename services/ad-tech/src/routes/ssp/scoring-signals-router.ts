@@ -16,7 +16,7 @@ import {
   BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST,
   EXTERNAL_PORT,
   HOSTNAME,
-  KNOWN_SHOP_ITEM_LABELS_BY_ID,
+  KNOWN_SHOP_ITEM_TAGS_BY_ID,
   MACRO_DISPLAY_RENDER_URL_AD_SIZE,
   SHOP_HOST,
   TRAVEL_HOST,
@@ -50,22 +50,22 @@ const getDefaultScoringSignals = (): string[][] => {
   for (const dspHost of buyerHostsToIntegrate) {
     knownAds.push([
       new URL(
-        `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${TRAVEL_HOST}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
+        `https://${dspHost}:${EXTERNAL_PORT}/ads/display-ads?advertiser=${TRAVEL_HOST}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
       ).toString(),
       JSON.stringify({
-        label: 'travel',
+        tags: ['travel'],
       }),
     ]);
   }
   // Ads from Shop advertiser
-  for (const [key, value] of Object.entries(KNOWN_SHOP_ITEM_LABELS_BY_ID)) {
+  for (const [key, value] of Object.entries(KNOWN_SHOP_ITEM_TAGS_BY_ID)) {
     for (const dspHost of buyerHostsToIntegrate) {
       knownAds.push([
         new URL(
-          `https://${dspHost}:${EXTERNAL_PORT}/ads?advertiser=${SHOP_HOST}&itemId=${key}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
+          `https://${dspHost}:${EXTERNAL_PORT}/ads/display-ads?advertiser=${SHOP_HOST}&itemId=${key}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
         ).toString(),
         JSON.stringify({
-          label: value,
+          tags: value,
         }),
       ]);
     }

@@ -111,24 +111,24 @@ export const BIDDING_SIGNALS_DEALS = [
 // ADVERTISER METADATA
 // ****************************************************************************
 /**
- * Map of SHOP advertiser's item metadata. Map contains item labels indexed by
+ * Map of SHOP advertiser's item metadata. Map contains item tags indexed by
  * itemId.
  * This is currently used to initialize the sellers's BYOS key-value store for
  * the Protected Audience seller's realtime creative scoring signals use-case.
  */
-export const KNOWN_SHOP_ITEM_LABELS_BY_ID = {
-  '1f45e': "Man's brown shoe",
-  '1f45f': 'Blue running shoe',
-  '1f460': 'Red high-heeled shoe',
-  '1f461': "Woman's sandal",
-  '1f462': "Woman's boot",
-  '1f6fc': 'Roller skate',
-  '1f97e': 'Hiking boot',
-  '1f97f': 'Blue flat shoe',
-  '1fa70': 'Ballet shoes',
-  '1fa74': 'Thong sandal',
-  '1f3bf': 'Ski boots',
-  '26f8': 'Ice skate',
+export const KNOWN_SHOP_ITEM_TAGS_BY_ID = {
+  '1f45e': ['brownShoe'], // Brown leather shoe
+  '1f45f': ['blueShoe', 'sportsShoe'], // Blue running shoe
+  '1f460': ['redShoe'], // Red high-heeled shoe
+  '1f461': ['brownShoe'], // Heeled backless sandal
+  '1f462': ['brownShoe'], // Brown boot
+  '1f6fc': ['blueShoe', 'sportsShoe'], // Roller skate
+  '1f97e': ['brownShoe', 'sportsShoe'], // Hiking boot
+  '1f97f': ['blueShoe'], // Blue flat shoe
+  '1fa70': ['brownShoe'], // Ballet shoes
+  '1fa74': ['blueShoe'], // Thong sandal
+  '1f3bf': ['blueShoe', 'sportsShoe'], // Ski boots
+  '26f8': ['sportsShoe'], // Ice skates
 };
 
 // ****************************************************************************

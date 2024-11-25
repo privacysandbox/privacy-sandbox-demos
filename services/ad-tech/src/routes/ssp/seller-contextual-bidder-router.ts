@@ -42,19 +42,29 @@ export const SellerContextualBidderRouter = express.Router();
 /** Returns the winning contextual ad and auction config for PAAPI. */
 SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
   // Collect signals from request context.
-  const signals: {[key: string]: string} = {};
+  const auctionSignals: {[key: string]: string} = {};
+  const sellerSignals: {[key: string]: string} = {};
   for (const key of Object.keys(req.query)) {
-    signals[key] = req.query[key]?.toString() || '';
+    if (key.startsWith('sellerSignal')) {
+      // Example key in incoming HTTP request: "sellerSignalExcludeProductTag".
+      let sellerSignalKey = key.substring('sellerSignal'.length);
+      // Convert "ExcludeProductTag" to "excludeProductTag"
+      sellerSignalKey =
+        sellerSignalKey.charAt(0).toLowerCase() + sellerSignalKey.substring(1);
+      sellerSignals[sellerSignalKey] = req.query[key]?.toString() || '';
+    } else {
+      auctionSignals[key] = req.query[key]?.toString() || '';
+    }
   }
-  if (!signals['auctionId']) {
+  if (!auctionSignals['auctionId']) {
     // Add an auction ID if missing in request.
     // E.g. of auction ID: 'SSP-32e7f33f-a7da-4ea9-af01-63e17da48ff8'
-    signals['auctionId'] = `SSP-${crypto.randomUUID()}`;
+    auctionSignals['auctionId'] = `SSP-${crypto.randomUUID()}`;
   }
   // Run server-side contextual auction.
   const contextualBids = await getContextualBids(
     /* bidderHosts= */ BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST.get(HOSTNAME!)!,
-    /* signals= */ signals,
+    /* signals= */ auctionSignals,
   );
   const [winningContextualBid] = contextualBids
     .filter((bid) => Number(bid.bid) > 0)
@@ -72,14 +82,14 @@ SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
     bidderHost: HOSTNAME,
     buyerOrigin: winningContextualBid?.bidderOrigin,
     buyerHost: winningContextualBid?.bidderHost,
-    auctionId: signals['auctionId'],
+    auctionId: auctionSignals['auctionId'],
     bid: winningContextualBid?.bid,
     renderURL: winningContextualBid?.renderURL,
     componentAuctionConfig: constructAuctionConfig({
       useCase: req.query.useCase?.toString(),
       isFencedFrame: req.query.isFencedFrame?.toString(),
-      auctionSignals: signals,
-      sellerSignals: {winningContextualBid},
+      auctionSignals: auctionSignals,
+      sellerSignals: {winningContextualBid, ...sellerSignals},
       perBuyerSignals,
     }),
   };

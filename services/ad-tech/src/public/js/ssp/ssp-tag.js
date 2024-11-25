@@ -38,14 +38,11 @@
   };
 
   /** Returns frame URL with page context as search query. */
-  const getIframeUrlWithPageContext = (pathname) => {
-    if (!pathname) {
-      return;
-    }
+  const getIframeUrlWithPageContext = () => {
     // Construct iframe URL using current script origin.
     const $script = document.currentScript;
     const src = new URL($script.src);
-    src.pathname = pathname;
+    src.pathname = '/ssp/run-sequential-ad-auction.html';
     // Append query parameters from script dataset context.
     for (const datakey in $script.dataset) {
       src.searchParams.append(datakey, $script.dataset[datakey]);
@@ -164,14 +161,7 @@
         addEventListenerForDspPostMessages();
         size[1] = 48; // Set height to 48px, just enough for a description.
       }
-      const pathname = ((otherSellers) => {
-        if (!otherSellers || !otherSellers.length) {
-          return '/ssp/run-ad-auction.html'; // Single-seller
-        } else {
-          return '/ssp/run-sequential-ad-auction.html'; // Multi-seller
-        }
-      })(otherSellers);
-      const src = getIframeUrlWithPageContext(pathname);
+      const src = getIframeUrlWithPageContext();
       log('injecting iframe for adUnit', {src, adUnit});
       const iframeEl = injectAndReturnIframe({
         src,

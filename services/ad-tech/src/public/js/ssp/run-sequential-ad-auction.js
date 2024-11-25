@@ -194,7 +194,7 @@
     CURR_AUCTION_ID = auctionId;
     const contextualBidResponses = await getAllContextualBidResponses(
       adUnit,
-      otherSellers,
+      [location.origin, ...otherSellers], // Explicitly include self.
     );
     if (!contextualBidResponses || !contextualBidResponses.length) {
       return log('received no contextual bid responses', {
