@@ -17,7 +17,7 @@ import {
   DEMO_HOST_PREFIX,
   JAVASCRIPT_TEMPLATE_VARIABLES,
 } from '../../lib/constants.js';
-import {getTemplateVariables} from '../../lib/template-utils.js';
+import {getTemplateVariables} from '../../lib/common-utils.js';
 
 /**
  * This router is responsible for registering HTTP headers, preflight requests,

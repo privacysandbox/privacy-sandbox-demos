@@ -18,7 +18,7 @@ import {
   PORT,
   SHOP_HOST,
   TRAVEL_HOST,
-} from '../lib/constants.js';
+} from './constants.js';
 
 /** Returns template variables for the contextual advertiser. */
 export const getContextualAdTemplateVariables = () => {
@@ -79,3 +79,12 @@ export const getTemplateVariables = (titleMessage: string = '') => {
   console.log('Built template context: ', hostDetails);
   return hostDetails;
 };
+
+/** Returns the given argument as a structured stringified object. */
+export const getStructuredObject = (obj: any): {[key: string]: string} => {
+  const params: {[key: string]: string} = {};
+  for (const [key, value] of Object.entries(obj)) {
+    params[key] = value as string;
+  }
+  return params;
+}

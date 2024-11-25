@@ -15,7 +15,7 @@ import express, {Request, Response} from 'express';
 import {
   getContextualAdTemplateVariables,
   getInterestGroupAdTemplateVariables,
-} from '../../lib/template-utils.js';
+} from '../../lib/common-utils.js';
 
 /**
  * This router is responsible for handling requests to serve ads, i.e. the ad
