@@ -61,7 +61,7 @@ AttributionReportingRouter.get(
     );
     if (sourceHeaders) {
       res.setHeader(
-        'Attribution-Reporting-Source-Headers',
+        'Attribution-Reporting-Register-Source',
         JSON.stringify(sourceHeaders),
       );
     }
@@ -88,7 +88,7 @@ AttributionReportingRouter.get(
     const queryParams = getStructuredObject(req.query);
     const triggerHeaders = getAttributionTriggerHeaders(queryParams);
     res.setHeader(
-      'Attribution-Reporting-Trigger-Headers',
+      'Attribution-Reporting-Register-Trigger',
       JSON.stringify(triggerHeaders),
     );
     res.sendStatus(200);

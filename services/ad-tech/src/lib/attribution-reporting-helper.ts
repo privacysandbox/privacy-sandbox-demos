@@ -93,6 +93,7 @@ export const getAttributionSourceHeaders = (
   attributionEligibleHeader: Dictionary,
 ): {[key: string]: any} | undefined => {
   let sourceType = SOURCE_TYPE.unknown;
+  console.log('[ARA] Request header: ', attributionEligibleHeader);
   if ('navigation-source' in attributionEligibleHeader) {
     sourceType = SOURCE_TYPE.click;
   } else if ('event-source' in attributionEligibleHeader) {
@@ -115,14 +116,14 @@ export const getAttributionSourceHeaders = (
     debug_reporting: true, // Enable verbose debug reports.
     aggregation_keys: {
       quantity: sourceKeyPiece({
-        type: SOURCE_TYPE[sourceType],
+        type: sourceType,
         advertiser: ADVERTISER[advertiser],
         publisher: PUBLISHER[NEWS_HOST!],
         id: Number(`0x${itemId}`),
         dimension: DIMENSION['quantity'],
       }),
       gross: sourceKeyPiece({
-        type: SOURCE_TYPE[sourceType],
+        type: sourceType,
         advertiser: ADVERTISER[advertiser],
         publisher: PUBLISHER[NEWS_HOST!],
         id: Number(`0x${itemId}`),
