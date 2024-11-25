@@ -87,4 +87,4 @@ export const getStructuredObject = (obj: any): {[key: string]: string} => {
     params[key] = value as string;
   }
   return params;
-}
+};
