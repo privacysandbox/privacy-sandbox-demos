@@ -1,4 +1,4 @@
-<%/* This is the seller's index page, not typically used in tests. */%>
+<%/* This is the ad-tech's index page, not typically used in tests. */%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,6 +15,45 @@
 
 <body>
   <h1><%= TITLE %></h1>
+  <section>
+    <h2>Demand Side Platform</h2>
+    <p>DSP provides 3rd party tag which join user into interest group via Protected Audience API.</p>
+    <script src="<%= `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js` %>"
+            class="dsp_tag"
+            data-advertiser="<%= `${HOSTNAME}` %>"
+            data-id="1f45e"
+            data-script="afterInteractive">
+    </script>
+
+    <h2>Inside iframe</h2>
+    <ul>
+      <li>
+        <a target="_blank"
+            href="<%= `https://${HOSTNAME}:${EXTERNAL_PORT}/join-ad-interest-group.html?advertiser=${SHOP_HOST}&id=1f45e` %>">
+            <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/join-ad-interest-group.html?advertiser=${SHOP_HOST}&id=1f45e` %>
+        </a>
+      </li>
+      <li>
+        <a target="_blank"
+            href="<%= `https://${HOSTNAME}:${EXTERNAL_PORT}/js/join-ad-interest-group.js` %>">
+            <%= `https://${HOSTNAME}:${EXTERNAL_PORT}/js/join-ad-interest-group.js` %>
+        </a>
+      </li>
+    </ul>
+
+    <h2>Embed script</h2>
+    <p>3rd party script provided by ssp should embed as below.</p>
+    <pre>
+        &lt;script
+            src="<%= `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js` %>"
+            class="dsp_tag"
+            data-advertiser="<%= SHOP_HOST %>"
+            data-id="1f45e"
+            data-script="afterInteractive"&gt;
+        &lt;/script&gt;
+    </pre>
+  </section>
+
   <section>
     <h2>Supply Side Platform</h2>
     <p>

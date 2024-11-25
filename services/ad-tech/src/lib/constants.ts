@@ -180,3 +180,13 @@ export const BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST = new Map([
   // ssp-b -> dsp + dsp-b
   [SSP_B_HOST!, [DSP_HOST!, DSP_B_HOST!]],
 ]);
+
+// ****************************************************************************
+// INTEGRATION CONFIGURATIONS
+// ****************************************************************************
+/** Variables referenced in static JavaScript template files. */
+export const JAVASCRIPT_TEMPLATE_VARIABLES = {
+  DEMO_HOST_PREFIX,
+  AD_SERVER_HOST,
+  ADVERTISER_CONTEXTUAL,
+};
