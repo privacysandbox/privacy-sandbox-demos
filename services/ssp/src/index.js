@@ -42,6 +42,49 @@ const {
   SHOP_HOST,
 } = process.env;
 
+const AD_RENDER_URL_START =
+  'https://' + DSP_HOST + '/ads?advertiser=privacy-sandbox-demos-shop.dev&id=';
+const AD_RENDER_URL_END =
+  '&adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT}';
+const AD_TAGS = {
+  [AD_RENDER_URL_START + '1f45e' + AD_RENDER_URL_END]: {
+    productTags: ['brownShoe'],
+  },
+  [AD_RENDER_URL_START + '1f45f' + AD_RENDER_URL_END]: {
+    productTags: ['blueShoe', 'sportsShoe'],
+  },
+  [AD_RENDER_URL_START + '1f460' + AD_RENDER_URL_END]: {
+    productTags: ['redShoe'],
+  },
+  [AD_RENDER_URL_START + '1f461' + AD_RENDER_URL_END]: {
+    productTags: ['brownShoe'],
+  },
+  [AD_RENDER_URL_START + '1f462' + AD_RENDER_URL_END]: {
+    productTags: ['brownShoe'],
+  },
+  [AD_RENDER_URL_START + '1f6fc' + AD_RENDER_URL_END]: {
+    productTags: ['blueShoe', 'sportsShoe'],
+  },
+  [AD_RENDER_URL_START + '1f97e' + AD_RENDER_URL_END]: {
+    productTags: ['brownShoe', 'sportsShoe'],
+  },
+  [AD_RENDER_URL_START + '1f97f' + AD_RENDER_URL_END]: {
+    productTags: ['blueShoe'],
+  },
+  [AD_RENDER_URL_START + '1fa70' + AD_RENDER_URL_END]: {
+    productTags: ['brownShoe'],
+  },
+  [AD_RENDER_URL_START + '1fa74' + AD_RENDER_URL_END]: {
+    productTags: ['blueShoe'],
+  },
+  [AD_RENDER_URL_START + '1f3bf' + AD_RENDER_URL_END]: {
+    productTags: ['blueShoe', 'sportsShoe'],
+  },
+  [AD_RENDER_URL_START + '26f8' + AD_RENDER_URL_END]: {
+    productTags: ['sportsShoe'],
+  },
+};
+
 // In-memory storage for debug reports
 const Reports = [];
 // Clear in-memory storage every 10 min
@@ -484,4 +527,50 @@ const handleEventLevelReport = (req, res, report) => {
 
 app.listen(PORT, function () {
   console.log(`Listening on port ${PORT}`);
+});
+
+app.get('/uc-publisher-ads-req/ad-tag.html', async (req, res) => {
+  res.render('uc-publisher-ads-req/ad-tag.html.ejs');
+});
+
+app.get('/uc-publisher-ads-req/auction-config.json', async (req, res) => {
+  const dspOrigin = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`).toString();
+  const sspOrigin = new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`).toString();
+  const auctionConfig = {
+    'seller': sspOrigin,
+    // x-allow-fledge: true
+    'decisionLogicURL': `${sspOrigin}js/uc-publisher-ads-req/decision-logic.js`,
+    'interestGroupBuyers': [dspOrigin],
+    'auctionSignals': {
+      'auction_signals': 'auction_signals',
+    },
+    'perBuyerSignals': {
+      [dspOrigin]: {
+        'per_buyer_signals': 'per_buyer_signals',
+      },
+    },
+    'trustedScoringSignalsURL': `${sspOrigin}/trusted-scoring-uc-publisher-ads-req`,
+    // Needed for size macro replacements.
+    'requestedSize': {'width': '300px', 'height': '250px'},
+    // If set to true, runAdAuction returns a FencedFrameConfig.
+    'resolveToConfig': true,
+  };
+  res.json(auctionConfig);
+});
+
+app.get('/trusted-scoring-uc-publisher-ads-req', async (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
+
+  const response = {
+    renderURLs: {},
+  };
+  const queryRenderUrls = req.query.renderUrls?.toString().split(',') || [];
+
+  queryRenderUrls.forEach((queryRenderUrl) => {
+    if (AD_TAGS[queryRenderUrl]) {
+      response.renderURLs[queryRenderUrl] = AD_TAGS[queryRenderUrl];
+    }
+  });
+
+  res.json(response);
 });

@@ -83,10 +83,14 @@ function isCreativeBlocked(scoringContext) {
   const {
     // UNUSED adMetadata,
     // UNUSED bid,
-    // UNUSED auctionConfig,
+    auctionConfig,
     trustedScoringSignals,
     browserSignals,
   } = scoringContext;
+  const {excludeCreativeTag} = auctionConfig.sellerSignals;
+  if (!excludeCreativeTag) {
+    return false; // No creative tags to exclude
+  }
   const {renderURL} = browserSignals;
   if (trustedScoringSignals && trustedScoringSignals.renderURL[renderURL]) {
     const parsedScoringSignals = JSON.parse(
@@ -94,9 +98,10 @@ function isCreativeBlocked(scoringContext) {
     );
     if (
       parsedScoringSignals &&
-      'BLOCKED' === parsedScoringSignals.label.toUpperCase()
+      parsedScoringSignals.tags &&
+      parsedScoringSignals.tags.includes(excludeCreativeTag)
     ) {
-      // Reject bid if creative is blocked.
+      // Creative tag is to be excluded, reject bid.
       log('rejecting bid blocked by publisher', {
         parsedScoringSignals,
         trustedScoringSignals,
