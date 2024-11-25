@@ -1,15 +1,16 @@
 volumes:
-  ad_server_node_modules:
-  dsp_a_node_modules:
-  dsp_b_node_modules:
-  dsp_node_modules:
   home_node_modules:
   news_node_modules:
   shop_node_modules:
+  travel_node_modules:
+  dsp_node_modules:
+  dsp_a_node_modules:
+  dsp_b_node_modules:
+  ssp_node_modules:
   ssp_a_node_modules:
   ssp_b_node_modules:
-  ssp_node_modules:
-  travel_node_modules:
+  topics_server_node_modules:
+  ad_server_node_modules:
 
 services:
   home:
@@ -164,6 +165,19 @@ services:
     networks:
       - adnetwork
 
+  topics-server:
+    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
+    build: ./services/ad-tech
+    container_name: "sandcastle_topics_server"
+    hostname: ${TOPICS_SERVER_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/ad-tech:/workspace
+      - topics_server_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
   nginx:
     image: nginx:1.22.1-alpine
     container_name: "proxy"
@@ -194,6 +208,7 @@ services:
       - dsp-b
       - ad-server
       - collector
+      - topics-server
 
 networks:
   adnetwork:

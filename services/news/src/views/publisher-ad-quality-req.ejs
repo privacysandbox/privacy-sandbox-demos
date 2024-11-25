@@ -14,13 +14,17 @@
         href="/img/spy.svg" />
   <script src="/js/main.js"></script>
   <script>
+    // Seller acting as ad server is included implictly, and their tag is
+    // included on the page directly. This configuration field should list
+    // additional sellers to include in the ad auctions.
     const otherSellers = window.PSDemo.getQueryAsArray('otherSellers') || [
       '<%= SSP_ORIGIN %>',
       '<%= SSP_A_ORIGIN %>',
       '<%= SSP_B_ORIGIN %>',
     ];
     // Find creative tags to exclude on page, and include in seller signals.
-    const sellerSignalExcludeCreativeTag = window.PSDemo.getQueryAsString('excludeCreativeTag');
+    const sellerSignalExcludeCreativeTag =
+      window.PSDemo.getQueryAsString('excludeCreativeTag');
     // Publishers configure the ad units available on the page.
     window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
       otherSellers,
