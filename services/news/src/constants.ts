@@ -36,10 +36,6 @@ export const {
   HOME_HOST,
 } = process.env;
 
-export const CURRENT_ORIGIN = new URL(
-  `https://${HOSTNAME}:${EXTERNAL_PORT}`,
-).toString();
-
 export const SSP_ORIGIN = new URL(
   `https://${SSP_HOST}:${EXTERNAL_PORT}`,
 ).toString();

@@ -1,16 +1,16 @@
 volumes:
-  ad_server_node_modules:
-  dsp_a_node_modules:
-  dsp_b_node_modules:
-  dsp_node_modules:
   home_node_modules:
   news_node_modules:
   shop_node_modules:
+  travel_node_modules:
+  dsp_node_modules:
+  dsp_a_node_modules:
+  dsp_b_node_modules:
+  ssp_node_modules:
   ssp_a_node_modules:
   ssp_b_node_modules:
-  ssp_node_modules:
   topics_server_node_modules:
-  travel_node_modules:
+  ad_server_node_modules:
 
 services:
   home:
@@ -208,6 +208,7 @@ services:
       - dsp-b
       - ad-server
       - collector
+      - topics-server
 
 networks:
   adnetwork:
