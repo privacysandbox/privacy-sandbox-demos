@@ -9,6 +9,7 @@ volumes:
   ssp_a_node_modules:
   ssp_b_node_modules:
   ssp_node_modules:
+  topics_server_node_modules:
   travel_node_modules:
 
 services:
@@ -167,13 +168,13 @@ services:
   topics-server:
     image: gcr.io/privacy-sandbox-demos/ad-tech:latest
     build: ./services/ad-tech
-    container_name: "sandcastle_topics-server"
+    container_name: "sandcastle_topics_server"
     hostname: ${TOPICS_SERVER_HOST:?err}
     env_file:
       - .env
     volumes:
       - ./services/ad-tech:/workspace
-      - topics-server_node_modules:/workspace/node_modules
+      - topics_server_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
