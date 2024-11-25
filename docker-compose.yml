@@ -208,7 +208,6 @@ services:
       - dsp-b
       - ad-server
       - collector
-      - topics-server
 
 networks:
   adnetwork:
