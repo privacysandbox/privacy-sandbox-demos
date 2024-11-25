@@ -58,7 +58,7 @@ const setAttributionReportingHeaders = (req: Request, res: Response) => {
         sourceHeaders,
       );
       res.setHeader(
-        'Attribution-Reporting-Source-Headers',
+        'Attribution-Reporting-Register-Source',
         JSON.stringify(sourceHeaders),
       );
     }
