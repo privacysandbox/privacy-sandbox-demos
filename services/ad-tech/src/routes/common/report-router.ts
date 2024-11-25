@@ -17,8 +17,15 @@ import {
   ReportCategory,
   ReportStore,
 } from '../../controllers/report-store.js';
-import {handleAttributionSourceRegistration} from '../../lib/attribution-reporting-helper.js';
-import {getTemplateVariables} from '../../lib/template-utils.js';
+import {
+  getAttributionSourceHeaders,
+  getAttributionRedirectUrlIfNeeded,
+} from '../../lib/attribution-reporting-helper.js';
+import {
+  getStructuredObject,
+  getTemplateVariables,
+} from '../../lib/common-utils.js';
+import {decodeDict} from 'structured-field-values';
 
 /**
  * This router is responsible for handling event-level report requests
@@ -29,6 +36,29 @@ import {getTemplateVariables} from '../../lib/template-utils.js';
  * Path: /reporting/
  */
 export const ReportRouter = express.Router();
+
+/** Sets ARA source registration headers if request is eligible. */
+const setAttributionReportingHeadersIfEligible = (
+  req: Request,
+  res: Response,
+) => {
+  if ('attribution-reporting-eligible' in req.headers) {
+    const attributionEligibleHeader = decodeDict(
+      req.headers['attribution-reporting-eligible'] as string,
+    );
+    const queryParams = getStructuredObject(req.query);
+    const sourceHeaders = getAttributionSourceHeaders(
+      queryParams,
+      attributionEligibleHeader,
+    );
+    if (sourceHeaders) {
+      res.setHeader(
+        'Attribution-Reporting-Source-Headers',
+        JSON.stringify(sourceHeaders),
+      );
+    }
+  }
+};
 
 // ************************************************************************
 // HTTP handlers
@@ -42,7 +72,16 @@ ReportRouter.get('/', async (req: Request, res: Response) => {
   };
   console.log('Event-level report received: ', req.baseUrl, report);
   ReportStore.addReport(report);
-  handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
+  setAttributionReportingHeadersIfEligible(req, res);
+  const queryParams = getStructuredObject(req.query);
+  const redirectUrl = getAttributionRedirectUrlIfNeeded(queryParams);
+  if (redirectUrl) {
+    res.redirect(redirectUrl);
+    return;
+  }
+  res
+    .status(200)
+    .send(`Received event-level report: ${JSON.stringify(queryParams)}`);
 });
 
 /** Receives event logs and registers attribution source if eligible. */
@@ -57,7 +96,16 @@ ReportRouter.post('/', async (req: Request, res: Response) => {
   };
   console.log('Event-level report received: ', req.baseUrl, report);
   ReportStore.addReport(report);
-  handleAttributionSourceRegistration(req, res, /* isStrict= */ false);
+  setAttributionReportingHeadersIfEligible(req, res);
+  const queryParams = getStructuredObject(req.query);
+  const redirectUrl = getAttributionRedirectUrlIfNeeded(queryParams);
+  if (redirectUrl) {
+    res.redirect(redirectUrl);
+    return;
+  }
+  res
+    .status(200)
+    .send(`Received event-level report: ${JSON.stringify(queryParams)}`);
 });
 
 // ****************************************************************************
