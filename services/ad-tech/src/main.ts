@@ -28,6 +28,7 @@ import {AdsRouter} from './routes/common/ads-router.js';
 import {ReportRouter} from './routes/common/report-router.js';
 import {AttributionReportingRouter} from './routes/common/attribution-reporting-router.js';
 import {TopicsRouter} from './routes/common/topics-router.js';
+import {VerificationSignalsRouter} from './routes/verifier/verification-signals-router.js';
 
 const app: Application = express();
 app.use(express.urlencoded({extended: true}));
@@ -55,6 +56,8 @@ app.use('/dsp/realtime-signals', BiddingSignalsRouter);
 app.use('/ssp', SellerRouter);
 app.use('/ssp/contextual-bid', SellerContextualBidderRouter);
 app.use('/ssp/realtime-signals', ScoringSignalsRouter);
+
+app.use('/verifier', VerificationSignalsRouter);
 
 app.listen(PORT, function () {
   console.log(HOSTNAME, ' listening on port ', PORT);

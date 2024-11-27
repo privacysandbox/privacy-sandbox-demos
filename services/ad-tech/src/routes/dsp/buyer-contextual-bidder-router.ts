@@ -74,6 +74,10 @@ BuyerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
   ).toString();
   const bid = getContextualBidPrice();
   /** Return contextual bid with buyer signals. */
+  /**
+   * TODO: Extract publisher page URL from req.query, retrieve ad verification
+   * signals from verification-signals-cache, and include in buyerSignals.
+   */
   const bidResponse: ContextualBidResponse = {
     bidderOrigin: CURRENT_ORIGIN,
     bidderHost: HOSTNAME,
