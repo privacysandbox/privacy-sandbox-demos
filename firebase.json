@@ -262,25 +262,6 @@
       ]
     },
     {
-      "target": "topics-server",
-      "public": "services/ad-tech/src/public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/**",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "run": {
-            "serviceId": "topics-server",
-            "region": "us-central1"
-          }
-        }
-      ]
-    },
-    {
       "target": "ad-server",
       "public": "services/ad-tech/src/public",
       "ignore": [
