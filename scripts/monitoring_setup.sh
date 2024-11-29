@@ -27,3 +27,6 @@ gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com
 
 # make the default region us-central1
 gcloud config set run/region us-central1
+
+
+

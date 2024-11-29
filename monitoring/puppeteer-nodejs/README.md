@@ -16,8 +16,8 @@ npm install
 
 ## Running
 
-The following command runs the selected function (ENTRY_POINT)locally. You will also need to export the required environment variables with
-`export KEY=VALUE` command.
+The following command runs the selected function (ENTRY_POINT)locally. You will also need to export the environment variable required by your
+function. `export KEY=VALUE` command.
 
 ```shell
 npx functions-framework --target=<ENTRY_POINT>
@@ -44,3 +44,12 @@ The following command deploys the monitoring/puppeteer-nodejs package to GCP as 
 cd <PROJECT_ROOT_DIR>
 ./script/monitoring_deploy.sh
 ```
+
+The following commands deploy the uptime checks and configure the synthetic monitors.
+
+```shell
+cd <PROJECT_ROOT_DIR>
+./script/monitoring_uptime.sh
+```
+
+Finally if you want to receive alerts on uptime checks failures, you can configure an alerting policy in Google Cloud console.
