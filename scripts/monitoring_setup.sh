@@ -21,8 +21,12 @@ source .env.deploy
 gcloud config set project $GCP_PROJECT_NAME
 gcloud config get-value project
 
-# Enable Cloud Run API
+# Enable APIs required for Cloud Monitoring Synthetic Monitor
+# See : https://cloud.google.com/monitoring/synthetic-monitors/create#monitoring_synthetic_monitor_create-console
 gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com cloudfunctions.googleapis.com logging.googleapis.com pubsub.googleapis.com run.googleapis.com
 
 # make the default region us-central1
 gcloud config set run/region us-central1
+
+
+
