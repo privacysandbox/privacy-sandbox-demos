@@ -22,13 +22,9 @@ import {
   HOME_HOST,
   TEXT_LOREM,
   NEWS_DETAIL,
-  NEWS_HOST,
   PORT,
-  SSP_A_HOST,
   SSP_A_ORIGIN,
-  SSP_B_HOST,
   SSP_B_ORIGIN,
-  SSP_HOST,
   SSP_ORIGIN,
 } from './constants.js';
 
@@ -36,22 +32,6 @@ const app: Application = express();
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
-
-app.get('/', async (req: Request, res: Response) => {
-  res.render('index', {
-    TITLE: NEWS_DETAIL,
-    LOREM: TEXT_LOREM,
-    EXTERNAL_PORT,
-    HOME_HOST,
-    SSP_A_HOST,
-    SSP_B_HOST,
-    AD_SERVER_HOST,
-    SSP_TAG_URL: `https://${SSP_HOST}/js/ssp/ssp-tag.js`,
-    AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
-    HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
-    IS_MULTI_SELLER: 'multi' === req.query.auctionType,
-  });
-});
 
 app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
@@ -62,7 +42,7 @@ app.get('*', async (req: Request, res: Response) => {
     SSP_ORIGIN,
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
-    AD_SERVER_LIB_URL: new URL(
+    AD_SERVER_TAG_URL: new URL(
       `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
     ).toString(),
   });

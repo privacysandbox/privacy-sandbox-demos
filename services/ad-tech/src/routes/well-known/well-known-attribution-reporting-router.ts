@@ -123,3 +123,7 @@ WellKnownAttributionReportingRouter.post(
     res.sendStatus(200);
   },
 );
+
+// TODO: Implement verbose debug reports for ARA.
+// WellKnownAttributionReportingRouter.post('/debug/verbose',
+//   async (req: Request, res: Response) => {});

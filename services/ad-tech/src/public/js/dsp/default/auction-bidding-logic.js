@@ -115,13 +115,14 @@ function selectDealId(selectedAd, auctionSignals) {
     return;
   }
   // Filter deals in interest group with deals from bid request.
-  const eligibleDeals = ((availableDeals) => {
+  const eligibleDeals = ((dealsQuery) => {
+    const availableDeals = dealsQuery?.split(',');
     if (availableDeals && availableDeals.length) {
       return selectableBuyerAndSellerReportingIds.filter((id) =>
         auctionSignals.availableDeals.includes(id),
       );
     }
-  })(auctionSignals.availableDeals.split(','));
+  })(auctionSignals.availableDeals);
   if (!eligibleDeals || !eligibleDeals.length) {
     // No eligible deals for this bid request.
     return;
@@ -143,7 +144,7 @@ function selectDealId(selectedAd, auctionSignals) {
 /** Returns the bid response for a video ad request. */
 function getBidForVideoAd({
   interestGroup,
-  // UNUSED auctionSignals,
+  auctionSignals,
   // UNUSED perBuyerSignals,
   trustedBiddingSignals,
   browserSignals,
@@ -305,9 +306,10 @@ function reportWin(
     browserSignals.interestGroupOwner +
       `/reporting?report=win&${additionalQueryParams}`,
   );
-  additionalQueryParams = additionalQueryParams.concat(
-    `&redirect=${browserSignals.seller}`,
-  );
+  // Disable redirect chain temporarily to make ARA debugging easier.
+  // additionalQueryParams = additionalQueryParams.concat(
+  //   `&redirect=${browserSignals.seller}`,
+  // );
   registerAdBeacon({
     'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
     'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
