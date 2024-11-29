@@ -22,40 +22,31 @@
       '<%= SSP_A_ORIGIN %>',
       '<%= SSP_B_ORIGIN %>',
     ];
+    // If strict=true is included in URL query, then reject bids without deals.
+    const strictRejectForDeals = 'true' === window.PSDemo.getQueryAsString('strict');
+    // Optionally source deal IDs from URL query: deals=deal-1,deal-2,deal-3.
+    const availableDeals = window.PSDemo.getQueryAsArray('deals') || ['deal-1', 'deal-2'];
     // Publishers configure the ad units available on the page.
     window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
+      // Seller acting as ad server is included implictly, and their tag
+      // is included on the page directly. This configuration field should
+      // list additional sellers to include in the ad auctions.
       otherSellers,
       // Ad units to request bids for.
       adUnits: [{
-        code: 'displayIframeAdUnit',
-        auctionId: `PUB-${crypto.randomUUID()}`,
-        divId: 'display-ad--iframe',
-        adType: 'DISPLAY',
-        size: [300, 250],
-        isFencedFrame: false,
-      }, {
         code: 'displayFencedFrameAdUnit',
         auctionId: `PUB-${crypto.randomUUID()}`,
         divId: 'display-ad--fenced-frame',
         adType: 'DISPLAY',
         size: [300, 250],
         isFencedFrame: true,
-      },
-      {
-        code: 'videoIframeAdUnit',
-        auctionId: `PUB-${crypto.randomUUID()}`,
-        divId: 'video-ad--iframe',
-        adType: 'VIDEO',
-        size: [640, 320],
-        isFencedFrame: false,
+        // Include available deals in ad slot config which will flow through
+        // to Protected Audience auctionSignals.
+        availableDeals,
+        strictRejectForDeals,
       }],
     });
   </script>
-  <script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"
-  ></script>
-  <script async defer
-          src="/js/video-ad-helper.js"
-  ></script>
   <script async defer
           src="<%= AD_SERVER_TAG_URL %>"
   ></script>
@@ -66,8 +57,6 @@
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
       <p><%= TEXT_LOREM %></p>
-      <%- include('components/video-ad') %>
-      <p><%= TEXT_LOREM %></p>
       <%- include('components/display-ads') %>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
@@ -77,5 +66,5 @@
   </main>
   <%- include('components/footer', {HOME_HOST, EXTERNAL_PORT}) %>
 </body>
-
+  
 </html>

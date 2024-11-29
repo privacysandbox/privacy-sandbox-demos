@@ -13,7 +13,7 @@
 
 import express, {Request, Response} from 'express';
 import {HOSTNAME} from '../../lib/constants.js';
-import {getTemplateVariables} from '../../lib/template-utils.js';
+import {getTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
   TargetingContext,

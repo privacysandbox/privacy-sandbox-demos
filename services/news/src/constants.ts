@@ -28,18 +28,13 @@ export const {
   GARDENING_HOST,
 
   // Ad-techs
+  AD_SERVER_HOST,
   SSP_HOST,
   SSP_A_HOST,
   SSP_B_HOST,
 
   HOME_HOST,
-  AD_SERVER_HOST,
-  TOPICS_SERVER_HOST,
 } = process.env;
-
-export const CURRENT_ORIGIN = new URL(
-  `https://${HOSTNAME}:${EXTERNAL_PORT}`,
-).toString();
 
 export const SSP_ORIGIN = new URL(
   `https://${SSP_HOST}:${EXTERNAL_PORT}`,
