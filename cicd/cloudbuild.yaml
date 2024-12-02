@@ -292,23 +292,6 @@ steps:
         echo $${ENV_VARS}
         gcloud run deploy ad-server --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=ad-server,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
 
-  # TOPICS-SERVER
-  # Deploy container image to Cloud Run
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: deploy-topics-server
-    waitFor:
-      - push-ad-tech
-      - read-env
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        ENV_VARS=$(cat /workspace/env_vars.txt)
-        HOSTNAME_ENV="HOSTNAME=$(grep "TOPICS_SERVER_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
-        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
-        echo $${ENV_VARS}
-        gcloud run deploy topics-server --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
-
   # TRAVEL
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
