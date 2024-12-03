@@ -130,6 +130,7 @@ Browser ->> Browser: Render ad
 ### Prerequisites
 
 - Chrome > v128 (Open chrome://version to look up your current version)
+- Enable Privacy Sandbox Protected Audience API (Open chrome://settings/adPrivacy and enable _Site-suggested ads_)
 
 ### User Journey
 
@@ -168,48 +169,49 @@ It’s in this part of the use case differs from the Retargeting / Remarketing &
 ##### News page & SSP tag
 
 The publisher-ad-quality-req news page
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/news/src/views/publisher-ad-quality-req.ejs) reads the
-excludeCreativeTag and includes it in the sellerSignalExcludeCreativeTag as part of its adUnits list
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/news/src/views/publisher-ad-quality-req.ejs#L39). The news
-page also includes the SSP tag
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/ssp-tag.js) this will;
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/1f9c6448072d922aa191f5ea2182ec92ead2fada/services/news/src/views/publisher-ad-quality-req.ejs)
+reads the excludeCreativeTag and includes it in the sellerSignalExcludeCreativeTag as part of its adUnits list
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/1f9c6448072d922aa191f5ea2182ec92ead2fada/services/news/src/views/publisher-ad-quality-req.ejs#L39).
+The news page also includes the SSP tag
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/1f9c6448072d922aa191f5ea2182ec92ead2fada/services/ad-tech/src/public/js/ssp/ssp-tag.js)
+this will;
 
-- Create the ad fenced frame
-  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/ssp-tag.js#L166-L175).
+- Create the auction iframe
+  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/ssp-tag.js#L166-L175).
 - Load run-sequential-ad-auction.html into it
-  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/ssp-tag.js#L45).
-- Send the adUnit (which contains the sellerSignals) to into the fenced frame using `iframeEl.contentWindow.postMessage`
-  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/ssp-tag.js#L186).
+  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/ssp-tag.js#L45).
+- Send the adUnit (which contains the sellerSignals) to into the iframe using `iframeEl.contentWindow.postMessage`
+  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/ssp-tag.js#L186).
 
 ##### Client side auction code
 
-The html in the fenced frame (run-sequential-ad-auction.html) loads run-sequential-ad-auction.js
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/views/ssp/run-sequential-ad-auction.ejs#L43).
+The html in the iframe (run-sequential-ad-auction.html) loads run-sequential-ad-auction.js
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/views/ssp/run-sequential-ad-auction.ejs#L43).
 The run-sequential-ad-auction.js script
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js)
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js)
 prepares the auction config for this use case by;
 
 - **Passing sellerSignalExcludeCreativeTag param**: getBidRequestUrlsWithContext
-  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L61-L76)
+  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L61-L76)
   creates URLs which contain the sellerSignalExcludeCreativeTag & call remote path /ssp/contextual-bid/ (see below). The response contains auction
   config, including the sellerSignalExcludeCreativeTag. These are later fed into executeSequentialAuction.
 - **Getting trusted scoring signals:**: Creates URLs
-  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L119-L123)
+  [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L119-L123)
   to call the remote path /ssp/realtime-signals/scoring-signal.json, (see below). These return JSON structured tags for each ad.
 
 ##### Server side auction code
 
 The file seller-contextual-bidder-router.ts handles the path /ssp/contextual-bid/ & returns sellerSignalExcludeCreativeTag in the seller signals for
 the auction config
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/routes/ssp/seller-contextual-bidder-router.ts#L46-L58).
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/routes/ssp/seller-contextual-bidder-router.ts#L46-L58).
 
 The file scoring-signals-router.ts handles the path /ssp/realtime-signals/scoring-signal.json & returns ad tags from a predefined list
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/routes/ssp/scoring-signals-router.ts#L60-L72).
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/routes/ssp/scoring-signals-router.ts#L60-L72).
 
 ##### Making a decision on a creative
 
 The auction-decision-logic.js script contains the scoreAd function. Its isCreativeBlocked function
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/unified/services/ad-tech/src/public/js/ssp/default/auction-decision-logic.js#L82)
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/default/auction-decision-logic.js#L82)
 uses trusted scoring signals for each ad & sellerSignalExcludeCreativeTag to score matched ads as 0.
 
 ### Related API documentation
