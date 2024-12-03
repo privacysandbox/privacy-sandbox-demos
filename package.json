@@ -10,7 +10,8 @@
     "docker": "docker compose build && docker compose up",
     "deploy": "./scripts/cloudrun_deploy.sh && ./scripts/firebase_deploy.sh",
     "clean": "docker compose rm -f && docker volume prune -f && docker image prune -f && docker rmi -f $(docker images -q)",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "ba-build": "./bidding-and-auction-package.sh"
   },
   "devDependencies": {
     "firebase-tools": "^11.23.0",

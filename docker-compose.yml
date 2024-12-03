@@ -291,3 +291,5 @@ networks:
   adnetwork:
     name: sandcastle-network
     driver: bridge
+    config:
+      - subnet: "172.18.0.0/16"
