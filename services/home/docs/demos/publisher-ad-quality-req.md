@@ -1,5 +1,5 @@
 ---
-title: Enforcing publisher ad requirements in PAAPI using K/V
+title: Enforcing publisher ad requirements in Protected Audience using K/V
 sidebar_position: 7
 more_data:
   - apis:
@@ -13,7 +13,7 @@ more_data:
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-# Enforcing publisher ad requirements in PAAPI using K/V
+# Enforcing publisher ad requirements in Protected Audience using K/V
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
@@ -49,9 +49,9 @@ Often publishers have requirements on the types of ads they’re willing to disp
 ### Goals
 
 In this demo, we assume a publisher would like to exclude ads with certain product types. We’ll demonstrate a publisher page calling an SSP to perform
-a PAAPI auction, supplying product tags to exclude which have been selected by the user (e.g. “redShoe”). The SSP will exclude ads by calling their
-backend K/V server with the ad urls, and receiving ad metadata as JSON (e.g. `{“product_tags”: [“redShoe”, “shortsShoe”]}`) which will be matched to
-the product tag to exclude.
+a Protected Audience auction, supplying product tags to exclude (e.g. “redShoe”). The SSP will exclude ads by calling their backend K/V server with
+the ad urls, and receiving ad metadata as JSON (e.g. `{“product_tags”: [“redShoe”, “shortsShoe”]}`) which will be matched to the product tag to
+exclude.
 
 ### Assumptions
 
@@ -65,17 +65,20 @@ the product tag to exclude.
 
 ### System Design
 
-Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. Their
-browser runs an on-device auction & bidding logic will select the winning ad which will be shown to the user. The user now presses one of several
-buttons designed to exclude ads with certain product tags. The news page is refreshed, adding a url parameter for the excluded product tags. The new
-ad auction will receive key / value meta-data from the SSP, indicating the product tags of the ad. If it matches the excluded product tag set by the
-user, the ad will be excluded from the auction, and the user will see no ad.
+Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. Before the
+auction, we establish tags used to exclude certain ads;
+
+- In a real world use case, the publisher would set ad exclusion tags in an SSPs admin UI.
+- In our demo, the user presses one of several buttons to set an exclusion tag through a url parameter.
+
+The ad auction will receive key / value meta-data from the SSP, indicating the product tags of each ad. If they match the excluded product tag, the ad
+will be excluded from the auction, and the user will see no ad.
 
 #### User Journey
 
 ```mermaid
 sequenceDiagram
-Title: Enforcing publisher ad requirements in PAAPI using K/V
+Title: Enforcing publisher ad requirements in Protected Audience using K/V
 
 
 participant Browser
