@@ -197,7 +197,7 @@ displaying the ad creative
     height="250"
     target="_blank"
     rel="noopener noreferrer"
-    attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
     href="https://privacy-sandbox-demos-shop.dev/items/1fa70"
   >
     <!-- smaller for avoid scrollbar -->
@@ -205,7 +205,7 @@ displaying the ad creative
       width="294"
       height="245"
       loading="lazy"
-      attributionsrc="https://privacy-sandbox-demos-dsp.dev/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
+      attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
       src="https://privacy-sandbox-demos-shop.dev/ads/1fa70"
     />
   </a>
@@ -214,7 +214,7 @@ displaying the ad creative
 
 The `img` tag also specifies the `attributionsrc` attribute. It means that showing this ad will register an attribution source of type `event` in the
 browser. Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with
-the value `event-source, trigger` In the HTTP response to the `/register-source` request, you will see a new header
+the value `event-source, trigger` In the HTTP response to the `/attribution/register-source` request, you will see a new header
 `Attribution-Reporting-Register-Source:` with a value that contains the attribution source parameters.
 
 ```json
@@ -237,11 +237,11 @@ Second, on the Attribution Trigger side (=Conversion) The checkout page contains
   alt=""
   width="1"
   height="1"
-  src="https://privacy-sandbox-demos-dsp.dev/register-trigger?id=1f45e&amp;category=1&amp;quantity=2&amp;size=50&amp;gross=180"
+  src="https://privacy-sandbox-demos-dsp.dev/attribution/register-trigger?id=1f45e&amp;category=1&amp;quantity=2&amp;size=50&amp;gross=180"
 />
 ```
 
-Now using the Developers Tools, look at the HTTP response to the `/register-trigger` request. You will see a new header
+Now using the Developers Tools, look at the HTTP response to the `/attribution/register-trigger` request. You will see a new header
 `Attribution-Reporting-Register-Trigger:` with a value that contains the attribution trigger parameters, including the values the advertiser would
 like to see aggregated in the summary report (in this example gross and quantities)
 

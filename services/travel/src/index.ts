@@ -16,28 +16,57 @@
 
 import express, {Application, Request, Response} from 'express';
 
-const {EXTERNAL_PORT, PORT, TRAVEL_TOKEN, TRAVEL_DETAIL, NEWS_HOST} =
-  process.env;
+const {EXTERNAL_PORT, PORT} = process.env;
+const {TRAVEL_HOST, TRAVEL_DETAIL, NEWS_HOST} = process.env;
+const {DSP_HOST, DSP_A_HOST, DSP_B_HOST} = process.env;
 
 const app: Application = express();
-
-app.use((req, res, next) => {
-  res.setHeader('Origin-Trial', TRAVEL_TOKEN as string);
-  next();
-});
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
-  const title = TRAVEL_DETAIL;
+  // Check for tags to activate.
+  const tags = [];
+  if (req.query.tag) {
+    if (Array.isArray(req.query.tag)) {
+      // Multiple tags were specified as: tag=dsp&tag=dsp-a.
+      tags.push(...req.query.tag);
+    } else {
+      // Just a single tag was specified.
+      tags.push(req.query.tag);
+    }
+  }
+  // Set URL to blank if query doesn't include DSP name.
+  const DSP_A_TAG_URL = tags.includes('dsp-a')
+    ? new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`)
+    : '';
+  const DSP_B_TAG_URL = tags.includes('dsp-b')
+    ? new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`)
+    : '';
+  // Set to blank only when some tags are specified but not this one.
+  // When no tags are specified, fallback to only activating this tag.
+  const DSP_TAG_URL =
+    tags.length == 0 || tags.includes('dsp')
+      ? new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`)
+      : '';
   const params = {
-    title,
-    TRAVEL_TOKEN,
-    NEWS_HOST,
+    title: TRAVEL_DETAIL,
+    DSP_TAG_URL,
+    DSP_A_TAG_URL,
+    DSP_B_TAG_URL,
     EXTERNAL_PORT,
+    NEWS_HOST,
+    TRAVEL_HOST,
   };
   res.render('index', params);
+});
+
+// Serves a static ad creative for all requests from ad-tech.
+app.get('/ads', async (req: Request, res: Response) => {
+  const imgPath = '/img/emoji_u1f3de.svg';
+  console.log('Travel ad redirecting to: ', imgPath);
+  res.redirect(302, imgPath);
 });
 
 app.listen(PORT, function () {
