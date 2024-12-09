@@ -33,6 +33,18 @@ app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
+app.get('/', async (req: Request, res: Response) => {
+  res.render('index', {
+    TITLE: NEWS_DETAIL,
+    TEXT_LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    AD_SERVER_TAG_URL: new URL(
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
+    ).toString(),
+  });
+});
+
 app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
     TITLE: NEWS_DETAIL,
