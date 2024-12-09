@@ -14,6 +14,7 @@ sidebar_position: 1
 |    Show Relevant Video Ads    |   [Instream VAST video ad in a Protected Audience single-seller auction](demos/vast-video-protected-audience.md)   |             Protected Audience API             |      Publisher, SSP, Advertiser, DSP       |
 | Show Relevant Content and Ads |                           [Retargeting / Remarketing](demos/retargeting-remarketing.md)                            |             Protected Audience API             |      Publisher, SSP, Advertiser, DSP       |
 |      Measure Digital Ads      |                [Single-touch conversion Attribution](demos/single-touch-conversion-attribution.md)                 | Attribution Reporting API, Aggregation Service |      Publisher, SSP, Advertiser, DSP       |
+| Bidding & Auction Services for Protected Audience| [Bidding & Auction Services](demos/bidding-and-auction.md) | Protected Audience API, Bidding & Auction Services | SSP, DSP
 
 :::info Looking for a use case not listed here ? Help us growing this repository by
 [contributing](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/CONTRIBUTING.md) or
