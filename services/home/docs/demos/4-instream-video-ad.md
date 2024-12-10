@@ -1,18 +1,6 @@
 ---
 title: Instream video ad in a Protected Audience sequential auction setup
-sidebar_position: 1
-more_data:
-  - apis:
-      - Protected Audience API
-  - parties:
-    - Advertiser
-    - Publisher
-    - Ad Server
-    - SSP-A
-    - SSP-B
-    - DSP-A
-    - DSP-B
-
+sidebar_position: 4
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';

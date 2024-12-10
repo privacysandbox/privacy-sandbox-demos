@@ -1,14 +1,6 @@
 ---
 title: VAST Video Protected Audience
-sidebar_position: 2
-more_data:
-  - apis:
-      - Protected Audience API
-  - parties:
-      - Publisher
-      - SSP
-      - Advertiser
-      - DSP
+sidebar_position: 5
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
@@ -129,7 +121,7 @@ deactivate iframe
 ### User Journey #1
 
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
-2. Click on a “shoe” product item on the shop site. Append ?adType=video to the product page url and refresh the page.
+2. Click on a "shoe" product item on the shop site. Append ?adType=video to the product page url and refresh the page.
    - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the
      browser to join an ad interest group for this product or this specific product category.
 3. [Navigate to the news site video page](https://privacy-sandbox-demos-news.dev/video-ad) (publisher)

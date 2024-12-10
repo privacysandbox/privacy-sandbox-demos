@@ -1,19 +1,11 @@
 ---
-title: Enforcing publisher ad requirements in Protected Audience using K/V
-sidebar_position: 7
-more_data:
-  - apis:
-    - Protected Audience API
-  - parties:
-    - Publisher
-    - SSP
-    - Advertiser
-    - DSP
+title: Incorporating publisher ad quality requirements in Protected Audience
+sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-# Enforcing publisher ad requirements in Protected Audience using K/V
+# Incorporating publisher ad quality requirements in Protected Audience
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
@@ -25,13 +17,15 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 Often publishers have requirements on the types of ads they’re willing to display for example:
 
 - Excluding adult only ads.
-- Including ads only for relevant product types SSPs can score ads based on quality metrics. During the Protected Audience auction, the SSP can
-  implement this behavior either by ranking ads based on DSP supplied metadata, or sending ad URLs to the SSP’s Key/Value (K/V) server to retrieve
-  ranking related metadata. This demo will focus on the K/V use case.
+- Including ads only for relevant product types based on quality metrics.
+
+During the Protected Audience auction, SSPs can implement this behavior by using a combination of DSP-supplied metadata with the bid and the SSP's own
+creative metadata stored in its Key/Value (K/V) server that the SSP might have gathered from an out-of-band review process.
 
 ### Privacy Sandbox APIs
 
 - [Protected Audience API](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
+- [Fenced Frames](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
 - [Key/Value Service](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience#key-value-service-detail)
 
 ### Related parties
@@ -48,15 +42,15 @@ Often publishers have requirements on the types of ads they’re willing to disp
 
 ### Goals
 
-In this demo, we assume a publisher would like to exclude ads with certain product types. We’ll demonstrate a publisher page calling an SSP to perform
-a Protected Audience auction, supplying product tags to exclude (e.g. “redShoe”). The SSP will exclude ads by calling their backend K/V server with
-the ad urls, and receiving ad metadata as JSON (e.g. `{“product_tags”: [“redShoe”, “shortsShoe”]}`) which will be matched to the product tag to
-exclude.
+In this demo, we explore the scenario where a publisher would like to exclude ads with certain creative tags. We’ll demonstrate the publisher page
+relying on ad sellers -- a publisher ad-server and multiple SSPs -- to execute a Protected Audience auction, supplying tags to exclude _(e.g.
+`"redShoe"`)_. The sellers will block some ads by retrieving ad metadata associated with the ad URLs from their K/V server _(e.g.
+`{"product_tags": ["redShoe", "shortsShoe"]}`)_ and matching them against the exclusion tags.
 
 ### Assumptions
 
-- The SSP has a database relating ad URLs to ad metadata & this information is available in the K/V service.
-- We assume the SSP has deployed a Key/Value service (BYOS or TEE).
+- We assume the SSP has deployed a Key/Value service, either in the Bring-Your-Own-Server (BYOS) mode or in a Trusted Execution Environment (TEE).
+- The SSP has a database relating ad `renderURL`s to ad metadata and this information is available in the K/V service.
 
 ### Key Exclusions
 
@@ -80,21 +74,16 @@ will be excluded from the auction, and the user will see no ad.
 sequenceDiagram
 Title: Enforcing publisher ad requirements in Protected Audience using K/V
 
-
 participant Browser
 participant Publisher
 participant SSP
 participant Advertiser
 participant DSP
 
-
 Browser->>Advertiser:Visits shop site and views product
 Advertiser->>Browser:Adds DSP tag on the page
 Browser->>DSP:Browser requests scripts from DSP
 DSP->>Browser:Call joinAdInterestGroup() with the config
-
-
-
 
 Browser->>Publisher:Visits news site
 note right of Browser: With optional "?excludeCreativeTag=" param, value e.g. "redShoe"
@@ -103,19 +92,14 @@ SSP->>Browser: Browser loads scripts from SSP, incl. auction config with trusted
 Browser->>Browser: Adds sellerSignals to auction config, incl. excluded product tag.
 SSP->>Browser:SSP calls runAdAuction with the config
 
-
-
-
 Browser->>SSP:Get Key/Values
 note right of Browser: Keys are ad urls
 SSP->>Browser:Returns Keys/Values
-note right of Browser: Response like: {“product_tags”: [“redShoe”, “shortsShoe”]}
-
+note right of Browser: Response like: {"product_tags": ["redShoe", "shortsShoe"]}
 
 Browser->>Browser:scoreAd(...)
 note right of Browser: Uses the product tags for the ad from the K/V signal & the excludeCreativeTag from the seller signals.
 note right of Browser: Scores 0 if ad product tags include excludeCreativeTag.
-
 
 Browser ->> Browser: Return ad in the runAdAuction call if there’s a winner
 SSP ->> Browser: Set iframe src attribute or fenced frame config property with the ad
@@ -132,15 +116,17 @@ Browser ->> Browser: Render ad
 
 ### Prerequisites
 
-- Chrome > v128 (Open chrome://version to look up your current version)
-- Enable Privacy Sandbox Protected Audience API (Open chrome://settings/adPrivacy and enable _Site-suggested ads_)
+- Latest stable version of Chrome (Open `chrome://version` to check your current version)
+- Enable Privacy Sandbox APIs (Open `chrome://settings/adPrivacy` to enable _Site-suggested ads_)
+- Clear your browsing history before you run one of the demo scenario below (Open `chrome://settings/clearBrowserData` to delete your browsing
+  history)
 
 ### User Journey
 
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
-2. Click on a “shoe” product item on the shop site. The shop (advertiser) would assume the user is interested in this type of shoe, so they would
+2. Click on any "shoe" product item on the shop site. The shop (advertiser) would assume the user is interested in this type of shoe, so they would
    leverage Protected Audience API and ask the browser to join an ad interest group for this product.
-3. [Navigate to the news site](https://privacy-sandbox-demos-news.dev/publisher-ad-quality-req) (publisher)
+3. [Navigate to this page on the news site](https://privacy-sandbox-demos-news.dev/publisher-ad-quality-req) (publisher)
 4. Observe the ad served on the news site is for the shoe product you recently browsed.
 5. Click on a button which matches your selected shoe:
    - Hide Red Shoes
@@ -148,36 +134,67 @@ Browser ->> Browser: Render ad
    - Hide Brown Shoes
    - Hide Sports Shoes
 
-The page will refresh automatically and the shoe ad won’t display, this is because;
+The page will refresh automatically and for the right combination of the shoe product you initially browsed and one of the above buttons clicked, the
+shoe ad from Protected Audience will not be delivered. Instead, the ad from the contextual auction will be delivered. This is because:
 
-- The button added the excludeCreativeTag parameter to the page url.
-- The auction requested the K/V value for the ad url from the SSP.
-- The SSP returned a list of product tags for this ad including product tag you wanted to exclude.
-- In the auction scoreAd function, the SSP marked this ad as having a score of 0 as it has a product tag which matches the one you wished to exclude
-  from the auction.
+- The button adds the `excludeCreativeTag` parameter to the page url, which in turn gets included in the publisher's ad slot configurations.
+- The ad-server tag reads these ad slot configurations provided by the publisher and shares it with the SSPs so that these exclusion tags are included
+  in `sellerSignals` of each of the component auction configurations.
+- During the Protected Audience auction, the browser retrieves creative metadata from each of the seller's K/V server. In response, SSPs return a list
+  of product tags associated with the ad referenced by the interest group `renderURL`.
+- Finally in the `scoreAd()` function, the SSP assigns the bid a desirability score of 0 if the product tags matches any of the exclusion tags
+  provided by the publisher.
 
 ### Implementation details
 
-#### How is the user added to an Interest Group based on his browsing behavior ? (see step #2 of User Journey)
-
-To add the user to an Interest Group, we reuse the implementation from the Retargeting / Remarketing use case, which is explained in
-_[Retargeting / Remarketing](https://privacy-sandbox-demos.dev/docs/demos/retargeting-remarketing) > Demo > How is the user added to an Interest Group
-based on his browsing behavior?_ Adding the browser to an interest group for a particular shoe allows us to render a winning ad in the shop site, or
-hide that ad based on the excludeCreativeTag page parameter.
-
-#### How do we serve an ad relevant to the user’s interest, or not if it was part of an excluded product tag? (see step #4 - #5 of User Journey)
-
-It’s in this part of the use case differs from the Retargeting / Remarketing & it uses a different news page.
+To add the user to an interest group, we reuse the implementation from the
+[Retargeting / Remarketing use case](https://privacy-sandbox-demos.dev/docs/demos/retargeting-remarketing). It’s in the second half -- the auction
+execution and ad delivery -- where this use case differs from the regular Retargeting / Remarketing use-case. This is also why, this use-case is on a
+different page on the news site.
 
 ##### News page & SSP tag
 
-The publisher-ad-quality-req news page
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/1f9c6448072d922aa191f5ea2182ec92ead2fada/services/news/src/views/publisher-ad-quality-req.ejs)
-reads the excludeCreativeTag and includes it in the sellerSignalExcludeCreativeTag as part of its adUnits list
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/1f9c6448072d922aa191f5ea2182ec92ead2fada/services/news/src/views/publisher-ad-quality-req.ejs#L39).
-The news page also includes the SSP tag
-[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/1f9c6448072d922aa191f5ea2182ec92ead2fada/services/ad-tech/src/public/js/ssp/ssp-tag.js)
-this will;
+The news page lists the available ad slot on the page in the
+[`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/publisher-ad-quality-req.ejs#L29)
+object. While doing so, publisher JavaScript reads the `excludeCreativeTag` URL query parameter and includes it in the ad slot configuration as
+[`sellerSignalExcludeCreativeTag`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/publisher-ad-quality-req.ejs#L26).
+
+```js title="Publisher configures ad slots on the page"
+// Find creative tags to exclude on page, and include in seller signals.
+const sellerSignalExcludeCreativeTag =
+  window.PSDemo.getQueryAsString('excludeCreativeTag');
+// Publishers configure the ad units available on the page.
+window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
+  otherSellers,
+  // Ad units to request bids for.
+  adUnits: [{
+    code: 'displayFencedFrameAdUnit',
+    auctionId: `PUB-${crypto.randomUUID()}`,
+    divId: 'display-ad--fenced-frame',
+    adType: 'DISPLAY',
+    size: [300, 250],
+    isFencedFrame: true,
+    sellerSignalExcludeCreativeTag,
+  }],
+});
+```
+
+To deliver an ad for this ad slot, the news page also includes a third-party tag:
+[ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/publisher-ad-quality-req.ejs#L43) from
+the ad-server service.
+
+```html title="Ad-server tag on publisher page: https://privacy-sandbox-demos-news.dev"
+<script
+  async
+  defer
+  src="https://privacy-sandbox-demos-ad-server.dev/js/ssp/ad-server-tag.js"
+></script>
+```
+
+. as part of its adUnits list
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/publisher-ad-quality-req.ejs#L39). The news
+page also includes the SSP tag
+[(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/ssp-tag.js) this will;
 
 - Create the auction iframe
   [(code link)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/21e23fa81783a3e7d1fac9da3e77904e893a1aee/services/ad-tech/src/public/js/ssp/ssp-tag.js#L166-L175).
@@ -219,11 +236,10 @@ uses trusted scoring signals for each ad & sellerSignalExcludeCreativeTag to sco
 
 ### Related API documentation
 
-- [Protected Audience Key/Value Server APIs Explainer](https://github.com/WICG/turtledove/blob/main/FLEDGE_Key_Value_Server_API.md)
-- [FLEDGE Key/Value service trust model](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/key_value_service_trust_model.md)
-- [Protected Audience API Overview](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-
-- [Protected Audience API: developer guide](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
+- [Protected Audience Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
+- [Protected Audience developer guide - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
+- [Key / Value Service Overview - Google Developers](https://developers.google.com/privacy-sandbox/blog/fledge-service-overview#key-value-service)
+- [Fenced Frames Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
 
 </TabItem>
 </Tabs>

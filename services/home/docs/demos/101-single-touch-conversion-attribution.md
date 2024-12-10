@@ -1,14 +1,6 @@
 ---
-title: Single-touch conversion Attribution
-sidebar_position: 49
-more_data:
-  - apis:
-      - Attribution Reporting API
-  - parties:
-      - Publisher
-      - SSP
-      - Advertiser
-      - DSP
+title: Single-touch conversion attribution
+sidebar_position: 101
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
@@ -64,7 +56,7 @@ non-encrypted) before it is sent to the aggregation service (encrypted).
 
 The user visits a news site where an ad is rendered. Using Attribution Reporting API & Summary Reports, a view-through conversion source event is
 registered. The user clicks on the ads, a click-through conversion source is registered. Then the user navigates to the advertiser page (shopping
-site), clicks “Add to cart” then “Checkout”. The browser registers a conversion trigger event and a summary report (debug report) is sent to the
+site), clicks "Add to cart" then "Checkout". The browser registers a conversion trigger event and a summary report (debug report) is sent to the
 advertiser.
 
 #### Attribution Reporting Flow
@@ -130,12 +122,12 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 - Chrome > v115 (Open chrome://version to look up your current version)
 - Enable Privacy Sandbox APIs (Open chrome://settings/adPrivacy to enable this setting)
 - Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
-- Open chrome://attribution-internals and click “Clear all attribution data”
+- Open chrome://attribution-internals and click "Clear all attribution data"
 
 ### User Journey #1
 
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
-2. Click on a “shoe” product item on the shop site.
+2. Click on a "shoe" product item on the shop site.
 
 - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the browser
   to join an ad interest group for this product or this specific product category.
@@ -143,7 +135,7 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 3. [Navigate to the news site](https://privacy-sandbox-demos-news.dev/) (publisher)
 4. Observe the ad served on the news site
 
-- If you previously browsed the “shoe” product on the shop site, you will be shown an ad for the same product.
+- If you previously browsed the "shoe" product on the shop site, you will be shown an ad for the same product.
 - Displaying the ad will also register an attribution **source** of type **event** into your browser using the **Attribution Reporting API** (used for
   view-through conversion measurement)
 
@@ -160,10 +152,10 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
   **navigation** (for click-through) This reference will be used later to attribute (match) the conversion (here the. purchase of an item on the
   **shop** site) to a previous event (here. The user saw/clicked an ad on the **news** site)
 
-7. On the product page, click “Add to cart”
-8. On the cart page, click “Checkout”
+7. On the product page, click "Add to cart"
+8. On the cart page, click "Checkout"
 
-- In this scenario the “checkout” event is the conversion event the advertiser wants to measure to evaluate the performance of their ad campaign,
+- In this scenario the "checkout" event is the conversion event the advertiser wants to measure to evaluate the performance of their ad campaign,
 - The checkout page **triggers** the conversion attribution for the `source` whose eTLD+1 matches the eTLD+1 of the site provided in `destination`
   (here privacy-sandbox-demos-shop.dev) . The **Attribution Reporting API** logic will then process the event.
 
