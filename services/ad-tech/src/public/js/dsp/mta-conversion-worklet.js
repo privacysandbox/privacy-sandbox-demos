@@ -25,7 +25,7 @@ class MultiTouchAttributionConversion {
     }
 
     // Impressions saved in the Shared Storage will have this format:
-    // "|{"publisherId":"1000","campaignId":"123","timestamp":1723061856804}|{"publisherId":"2000","publisherHostname":"privacy-sandbox-demos-travel.dev","timestamp":1723061876437}|..."
+    // "|{"publisherId":"1000","campaignId":"123","timestamp":1723061856804}|{"publisherId":"2000","campaignId":"123","timestamp":1723061876437}|..."
     // So, we need to split using the delimeter '|' after removing the first character
 
     impressions = impressions.substring(1);
