@@ -148,9 +148,9 @@ shoe ad from Protected Audience will not be delivered. Instead, the ad from the 
 ### Implementation details
 
 To add the user to an interest group, we reuse the implementation from the
-[Retargeting / Remarketing use case](https://privacy-sandbox-demos.dev/docs/demos/retargeting-remarketing). It’s in the second half -- the auction
-execution and ad delivery -- where this use case differs from the regular Retargeting / Remarketing use-case. This is also why, this use-case is on a
-different page on the news site.
+[basic retargeting / remarketing ad campaign use-case demo](retargeting-remarketing). It’s in the second half -- the auction execution and ad delivery
+-- where this use case differs from the regular Retargeting / Remarketing use-case. This is also why, this use-case is on a different page on the news
+site.
 
 ##### News page & SSP tag
 

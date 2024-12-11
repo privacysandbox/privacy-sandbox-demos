@@ -14,9 +14,15 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 ### Description
 
-Remarketing is a type of online advertising that allows you to show ads to people who have already visited your website. You can create custom
-audiences based on different criteria, such as pages visited or products added to the cart. Remarketing can help you increase brand awareness, drive
-traffic back to your website, and boost sales.
+While Protected Audience may enable the delivery of more relevant ads by considering cross-site context without relying on tracking identifiers and
+third-party cookies, publishers will continue to diversify their ad demand sources with an intention to optimize for revenue. Additionally, there is
+always a possibility that the Protected Audience auction may not return a valid result because of multiple reasons such as: no interest groups were
+eligible, all eligible ads were blocked, or a timeout was hit, etc. The publisher, regardless of the auction mechanism, would still want to fill the
+ad slot with an ad. So, we anticipate that publishers will continue to rely on their current contextual auction setup while exploring Protected
+Audience as an additional demand source that may or may not beat the contextual demand floor.
+
+For a deeper walkthrough of this sequential auction setup, see:
+[Sequential auction setup with contextual ad auction - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
 
 ### Privacy Sandbox APIs
 
@@ -26,6 +32,7 @@ traffic back to your website, and boost sales.
 ### Related parties
 
 - Publisher
+- Ad Server
 - SSP
 - Advertiser
 - DSP
@@ -37,16 +44,19 @@ traffic back to your website, and boost sales.
 
 ### Goals
 
-In this demo, we assume an advertiser would like to drive traffic back to their website. Remarketing can help an advertiser to get people who have
-already visited their website to come back for more or to complete a purchase. This can be done by showing them ads about the product they have
-previously looked at, on other websites.
+In this demo, we aim to demonstrate a basic sequential auction setup with a focus on the data flow from the perspective of the Protected Audience
+auction and abstract a lot of the technical nuance of the contextual auction. Building on the
+[basic retargeting / remarketing ad campaign use-case demo](retargeting-remarketing), this demo shows a more realistic sequential setup with multiple
+buyers and sellers participating in the ad delivery process. This demo will also demonstrate SSPs sourcing `buyerSignals` from DSPs and including them
+in the Protected Audience auction configuration.
 
 ### Assumptions
 
-This use case assumes the advertiser (shop site) can bid on the publisher (news site) inventory through an agreement between their respective DSP and
-SSP platforms.
+TODO: What are the assumptions?
 
 ### Key Exclusions
+
+This demo abstracts a lot of the complexity in the contextual auction. For starters,
 
 The demo does not integrate existing auction mechanisms (such as header bidding or Prebid). It is only scoped to the on-device auction with Protected
 Audience API. As a simple demonstration of the Protected Audience API, the auction only involves a single seller servicing a single ad slot for an
