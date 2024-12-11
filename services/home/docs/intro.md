@@ -11,12 +11,13 @@ Looking to run these demos yourself? Check our [guide](https://github.com/privac
 
 :::
 
-| **Category**        | **Use Case**                                                                                               | **Privacy Sandbox APIs**          |
-| ------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| Show relevant ads   | [Basic retargeting / remarketing campaign](demos/retargeting-remarketing.md)                               | Protected Audience, Fenced Frames |
-| Show relevant ads   | [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md) | Protected Audience                |
-| Show relevant ads   | [Video ads with Protected Audience](demos/instream-video-ad-multi-seller.md)                               | Protected Audience                |
-| Measure digital ads | [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Attribution Reporting             |
+| **Use Case**                                                                                                        | **Privacy Sandbox APIs**          |
+| ------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| [Basic retargeting / remarketing campaign](demos/retargeting-remarketing.md)                                        | Protected Audience, Fenced Frames |
+| [Sequential setup of Protected Audience with contextual auction](demos/sequential-setup-with-contextual-auction.md) | Protected Audience, Fenced Frames |
+| [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md)          | Protected Audience, Fenced Frames |
+| [Video ads with Protected Audience](demos/instream-video-ad.md)                                                     | Protected Audience                |
+| [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                                 | Attribution Reporting             |
 
 :::info
 
