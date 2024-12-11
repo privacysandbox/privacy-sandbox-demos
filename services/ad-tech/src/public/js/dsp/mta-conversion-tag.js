@@ -3,7 +3,7 @@
   const scriptSrc = document.currentScript.getAttribute('src');
   const budget = document.currentScript.getAttribute('budget');
   const mtaConversionTagURL = new URL(scriptSrc);
-  mtaConversionTagURL.pathname = '/mta-conversion.html';
+  mtaConversionTagURL.pathname = '/dsp/mta-conversion.html';
   mtaConversionTagURL.searchParams.append('budget', budget);
 
   const $iframe = document.createElement('iframe');
@@ -12,6 +12,5 @@
   $iframe.src = mtaConversionTagURL;
   $iframe.setAttribute('scrolling', 'no');
   $iframe.setAttribute('style', 'border: none');
-  $iframe.setAttribute('allow', 'attribution-reporting');
   $ins.appendChild($iframe);
 })();
