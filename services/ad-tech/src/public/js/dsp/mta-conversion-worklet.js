@@ -13,7 +13,7 @@ class MultiTouchAttributionConversion {
     // Read from Shared Storage
     const impressionContextSSKey = 'impressionContext' + campaignId;
     console.log('Reading from Shared Storage. Key: ' + impressionContextSSKey);
-    var impressions = await sharedStorage.get(impressionContextSSKey);
+    let impressions = await sharedStorage.get(impressionContextSSKey);
 
     // Do not report if there isn't any impression
     if (!impressions) {

@@ -76,19 +76,21 @@ export const getMTATemplateVariables = (
   requestQuery: any,
   requestHeaders: any,
 ) => {
-  let getPublisherId = function () {
-    const PUBLISHER_IDS: {[hostname: string]: string} = {};
-    PUBLISHER_IDS[`${NEWS_HOST}`] = '1000';
-    PUBLISHER_IDS[`${MOTO_NEWS_HOST}`] = '2000';
-    PUBLISHER_IDS[`${SOCCER_NEWS_HOST}`] = '3000';
-    PUBLISHER_IDS[`${GARDENING_NEWS_HOST}`] = '4000';
-
-    const referer = requestHeaders.referer || `https://${NEWS_HOST}/`;
-    const publisherHostname = new URL(referer.toString()).hostname || '';
-    return PUBLISHER_IDS[publisherHostname] || '9999';
+  const PUBLISHER_IDS: {[hostname: string]: string} = {
+    [`${NEWS_HOST}`]: '1000',
+    [`${MOTO_NEWS_HOST}`]: '2000',
+    [`${SOCCER_NEWS_HOST}`]: '3000',
+    [`${GARDENING_NEWS_HOST}`]: '4000',
   };
 
-  const publisherId = getPublisherId();
+  const getPublisherId = (requestHeaders: any) => {
+    const refererUrl = new URL(
+      requestHeaders.referer || `https://${NEWS_HOST}/`,
+    );
+    return PUBLISHER_IDS[refererUrl.hostname] || '9999';
+  };
+
+  const publisherId = getPublisherId(requestHeaders);
   const advertiser = SHOP_HOST;
   const destination = new URL(`https://${advertiser}:${EXTERNAL_PORT}`);
   const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}`);
