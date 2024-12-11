@@ -80,7 +80,7 @@ const runSimpleAdAuction = async () => {
   // PROTECTED AUDIENCE : RUN AD AUCTION
   // ****************************************************************
   if (!navigator.runAdAuction) {
-    return log('stopping becuase Protected Audience is not supported', {});
+    return log('stopping because Protected Audience is not supported', {});
   }
   const [adUnit] = window.PSDemo.PAGE_ADS_CONFIG.adUnits;
   const auctionConfig = await getAuctionConfig(adUnit);
