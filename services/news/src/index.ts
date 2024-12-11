@@ -25,6 +25,7 @@ import {
   PORT,
   SSP_A_ORIGIN,
   SSP_B_ORIGIN,
+  SSP_HOST,
   SSP_ORIGIN,
 } from './constants.js';
 
@@ -39,8 +40,8 @@ app.get('/', async (req: Request, res: Response) => {
     TEXT_LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
-    AD_SERVER_TAG_URL: new URL(
-      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
+    SSP_TAG_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
     ).toString(),
   });
 });
@@ -55,7 +56,7 @@ app.get('*', async (req: Request, res: Response) => {
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
     AD_SERVER_TAG_URL: new URL(
-      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ad-server-tag.js`,
     ).toString(),
   });
 });
