@@ -32,7 +32,7 @@ export const {
   NEWS_DETAIL,
   MOTO_NEWS_HOST,
   SOCCER_NEWS_HOST,
-  GARDENING_HOST,
+  GARDENING_NEWS_HOST,
 
   // Ad-techs
   DSP_HOST,

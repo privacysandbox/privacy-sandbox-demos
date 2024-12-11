@@ -18,6 +18,10 @@ import {
   PORT,
   SHOP_HOST,
   TRAVEL_HOST,
+  NEWS_HOST,
+  MOTO_NEWS_HOST,
+  SOCCER_NEWS_HOST,
+  GARDENING_NEWS_HOST,
 } from './constants.js';
 
 /** Returns template variables for the contextual advertiser. */
@@ -64,6 +68,42 @@ export const getInterestGroupAdTemplateVariables = (requestQuery: any) => {
     DESTINATION: destination,
     CREATIVE: creative,
     ATTRIBUTION_SRC: registerSourceUrl.toString(),
+  };
+};
+
+/** Returns variables for use in the MTA template. */
+export const getMTATemplateVariables = (
+  requestQuery: any,
+  requestHeaders: any,
+) => {
+  let getPublisherId = function () {
+    const PUBLISHER_IDS: {[hostname: string]: string} = {};
+    PUBLISHER_IDS[`${NEWS_HOST}`] = '1000';
+    PUBLISHER_IDS[`${MOTO_NEWS_HOST}`] = '2000';
+    PUBLISHER_IDS[`${SOCCER_NEWS_HOST}`] = '3000';
+    PUBLISHER_IDS[`${GARDENING_NEWS_HOST}`] = '4000';
+
+    const referer = requestHeaders.referer || `https://${NEWS_HOST}/`;
+    const publisherHostname = new URL(referer.toString()).hostname || '';
+    return PUBLISHER_IDS[publisherHostname] || '9999';
+  };
+
+  const publisherId = getPublisherId();
+  const advertiser = SHOP_HOST;
+  const destination = new URL(`https://${advertiser}:${EXTERNAL_PORT}`);
+  const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}`);
+  const itemId = requestQuery.itemId?.toString() || '1f45f';
+
+  // Load specific ad for SHOP advertiser.
+  destination.pathname = `/items/${itemId}`;
+  creative.pathname = `/ads/${itemId}`;
+
+  return {
+    TITLE: `Your special ads from ${advertiser}`,
+    DESTINATION: destination,
+    CREATIVE: creative,
+    PUBLISHER_ID: publisherId,
+    CAMPAIGN_ID: 1234,
   };
 };
 
