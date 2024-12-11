@@ -54,9 +54,9 @@ opportunity to deliver a display ad.
 
 ### System Design
 
-Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. There the
-browser runs an on-device Auction, bidding logic will select the winning interest group, and relevant ads will be dynamically rendered on the
-publisher page.
+When the user visits a shopping site, the browser joins an interest group using the Protected Audience API. Later the same user visits a news site. On
+this site, the browser runs an on-device auction, with ad-tech-provided scripts selecting the winning ad which will be rendered in the ad slot on the
+page.
 
 #### Protected Audience Flow
 
@@ -68,12 +68,12 @@ Below is a general introduction of Remarketing using Privacy Sandbox Protected A
 #### User Journey
 
 <!--
-![Remarketing User Journey 1](./img/retargeting-remarketing-journey-1-seq.png)
+![Remarketing User Journey](./img/retargeting-remarketing-journey-1-seq.png)
 -->
 
 ```mermaid
 sequenceDiagram
-Title: Retargeting / Remarketing - User Journey 1
+Title: Retargeting / Remarketing - User Journey
 
 participant Browser
 participant Publisher

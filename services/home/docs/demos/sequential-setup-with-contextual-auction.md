@@ -52,15 +52,13 @@ in the Protected Audience auction configuration.
 
 ### Assumptions
 
-TODO: What are the assumptions?
+???
 
 ### Key Exclusions
 
-This demo abstracts a lot of the complexity in the contextual auction. For starters,
-
-The demo does not integrate existing auction mechanisms (such as header bidding or Prebid). It is only scoped to the on-device auction with Protected
-Audience API. As a simple demonstration of the Protected Audience API, the auction only involves a single seller servicing a single ad slot for an
-opportunity to deliver a display ad.
+This demo abstracts a lot of the complexity in the contextual auction. For starters, this demo doesn't integrate with any real header bidding library.
+Additionally, this demo doesn't replicate the integration pattern between the publisher ad server and other ad sellers such as SSPs via any of the
+header bidding libraries. This demo also doesn't follow the OpenRTB spec but focuses on a few exemplary signals to capture the same idea.
 
 ### System Design
 
