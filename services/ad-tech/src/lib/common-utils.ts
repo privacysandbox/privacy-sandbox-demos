@@ -16,12 +16,10 @@ import {
   EXTERNAL_PORT,
   HOSTNAME,
   PORT,
+  NEWS_HOST,
   SHOP_HOST,
   TRAVEL_HOST,
-  NEWS_HOST,
-  MOTO_NEWS_HOST,
-  SOCCER_NEWS_HOST,
-  GARDENING_NEWS_HOST,
+  PUBLISHER_IDS,
 } from './constants.js';
 
 /** Returns template variables for the contextual advertiser. */
@@ -76,13 +74,6 @@ export const getMTATemplateVariables = (
   requestQuery: any,
   requestHeaders: any,
 ) => {
-  const PUBLISHER_IDS: {[hostname: string]: string} = {
-    [`${NEWS_HOST}`]: '1000',
-    [`${MOTO_NEWS_HOST}`]: '2000',
-    [`${SOCCER_NEWS_HOST}`]: '3000',
-    [`${GARDENING_NEWS_HOST}`]: '4000',
-  };
-
   const getPublisherId = (requestHeaders: any) => {
     const refererUrl = new URL(
       requestHeaders.referer || `https://${NEWS_HOST}/`,
@@ -90,21 +81,15 @@ export const getMTATemplateVariables = (
     return PUBLISHER_IDS[refererUrl.hostname] || '9999';
   };
 
-  const publisherId = getPublisherId(requestHeaders);
-  const advertiser = SHOP_HOST;
-  const destination = new URL(`https://${advertiser}:${EXTERNAL_PORT}`);
-  const creative = new URL(`https://${advertiser}:${EXTERNAL_PORT}`);
   const itemId = requestQuery.itemId?.toString() || '1f45f';
 
-  // Load specific ad for SHOP advertiser.
-  destination.pathname = `/items/${itemId}`;
-  creative.pathname = `/ads/${itemId}`;
-
   return {
-    TITLE: `Your special ads from ${advertiser}`,
-    DESTINATION: destination,
-    CREATIVE: creative,
-    PUBLISHER_ID: publisherId,
+    TITLE: `Your special ads from ${SHOP_HOST}`,
+    DESTINATION: new URL(
+      `https://${SHOP_HOST}:${EXTERNAL_PORT}/items/${itemId}`,
+    ),
+    CREATIVE: new URL(`https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`),
+    PUBLISHER_ID: getPublisherId(requestHeaders),
     CAMPAIGN_ID: 1234,
   };
 };

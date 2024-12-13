@@ -190,3 +190,17 @@ export const JAVASCRIPT_TEMPLATE_VARIABLES = {
   AD_SERVER_HOST,
   ADVERTISER_CONTEXTUAL,
 };
+
+// ****************************************************************************
+// PUBLISHER METADATA
+// ****************************************************************************
+/**
+ * List of publishers and their IDs for any use case that needs to identify
+ * the publisher
+ */
+export const PUBLISHER_IDS: {[hostname: string]: string} = {
+  [NEWS_HOST!]: '1000',
+  [MOTO_NEWS_HOST!]: '2000',
+  [SOCCER_NEWS_HOST!]: '3000',
+  [GARDENING_NEWS_HOST!]: '4000',
+};

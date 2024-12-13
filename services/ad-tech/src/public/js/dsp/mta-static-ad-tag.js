@@ -10,6 +10,6 @@
   $iframe.src = staticAdURL;
   $iframe.setAttribute('scrolling', 'no');
   $iframe.setAttribute('style', 'border: none');
-  $iframe.setAttribute('allow', 'attribution-reporting; run-ad-auction');
+  $iframe.setAttribute('allow', 'attribution-reporting');
   $ins.appendChild($iframe);
 })();
