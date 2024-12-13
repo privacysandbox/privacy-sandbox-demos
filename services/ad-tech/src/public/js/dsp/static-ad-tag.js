@@ -1,8 +1,8 @@
 (() => {
-  const $ins = document.querySelector('div.ad-slot');
-  const scriptSrc = document.currentScript.getAttribute('src');
+  const $script = document.currentScript;
+  const scriptSrc = $script.getAttribute('src');
   const staticAdURL = new URL(scriptSrc);
-  staticAdURL.pathname = '/ads/mta-ads';
+  staticAdURL.pathname = '/ads/static-ads';
 
   const $iframe = document.createElement('iframe');
   $iframe.width = 300;
@@ -11,5 +11,5 @@
   $iframe.setAttribute('scrolling', 'no');
   $iframe.setAttribute('style', 'border: none');
   $iframe.setAttribute('allow', 'attribution-reporting');
-  $ins.appendChild($iframe);
+  $script.parentElement.insertBefore($iframe, $script);
 })();

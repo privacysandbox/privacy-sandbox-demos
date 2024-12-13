@@ -13,7 +13,6 @@
   <link rel="icon"
         href="/img/spy.svg" />
   <script src="/js/main.js"></script>
-  <script defer src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/mta-static-ad-tag.js` %>"></script>
 </head>
 
 <body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
@@ -22,7 +21,11 @@
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
-      <%- include('components/display-ads') %>
+      <div class="w-full flex flex-row justify-center ad-row">
+        <div class="ad-slot">
+          <script defer src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/static-ad-tag.js` %>"></script>
+        </div>
+      </div>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>

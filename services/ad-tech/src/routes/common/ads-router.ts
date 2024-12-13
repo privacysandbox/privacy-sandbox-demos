@@ -54,11 +54,11 @@ AdsRouter.get('/video-ads', async (req: Request, res: Response) => {
 });
 
 /** Used as render URL for Multi Touch Attribution ads. */
-AdsRouter.get('/mta-ads', async (req: Request, res: Response) => {
+AdsRouter.get('/static-ads', async (req: Request, res: Response) => {
   console.log('Loading MTA ad', req.query);
   const templateVariables = getStaticAdTemplateVariables(
     req.query,
     req.headers,
   );
-  res.render('mta-ad-frame', templateVariables);
+  res.render('static-ad-frame', templateVariables);
 });
