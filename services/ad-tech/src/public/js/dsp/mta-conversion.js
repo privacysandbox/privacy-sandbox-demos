@@ -1,5 +1,6 @@
-const campaignId = document.currentScript.getAttribute('campaignId');
-const budget = document.currentScript.getAttribute('budget');
+const mtaConversionScript = document.querySelector('#mta-conversion');
+const campaignId = mtaConversionScript.dataset.campaignId;
+const purchaseValue = mtaConversionScript.dataset.purchaseValue;
 
 async function multiTouchAttributionConversion() {
   // Load the Shared Storage worklet
@@ -9,7 +10,7 @@ async function multiTouchAttributionConversion() {
 
   // Run the multi touch attribution logic
   await sharedStorageWorklet.run('mta-conversion', {
-    data: {campaignId: campaignId, budget: budget},
+    data: {campaignId: campaignId, purchaseValue: purchaseValue},
   });
 }
 

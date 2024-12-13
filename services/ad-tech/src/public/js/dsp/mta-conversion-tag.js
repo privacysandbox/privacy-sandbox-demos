@@ -1,10 +1,10 @@
 (() => {
   const $ins = document.querySelector('ins.mta_conversion_tag');
   const scriptSrc = document.currentScript.getAttribute('src');
-  const budget = document.currentScript.getAttribute('budget');
+  const purchaseValue = document.currentScript.getAttribute('purchaseValue');
   const mtaConversionTagURL = new URL(scriptSrc);
   mtaConversionTagURL.pathname = '/dsp/mta-conversion.html';
-  mtaConversionTagURL.searchParams.append('budget', budget);
+  mtaConversionTagURL.searchParams.append('purchaseValue', purchaseValue);
 
   const $iframe = document.createElement('iframe');
   $iframe.width = 1;

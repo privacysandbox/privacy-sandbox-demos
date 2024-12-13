@@ -122,7 +122,7 @@ const assembleTargetingContext = (query: any): TargetingContext => {
 /** Returns the updated interest group, usually daily, may be overridden. */
 BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
   const campaignId = 1234;
-  const budget = req.query.budget;
-  console.log(`Campaign Id: ${campaignId}, Budget: ${budget}`);
-  res.render('dsp/mta-conversion.ejs', {campaignId, budget});
+  const purchaseValue = req.query.purchaseValue;
+  console.log(`Campaign Id: ${campaignId}, Purchase Value: ${purchaseValue}`);
+  res.render('dsp/mta-conversion.ejs', {campaignId, purchaseValue});
 });

@@ -7,8 +7,8 @@ function generateAggregationKey(campaignId, publisherId) {
 
 class MultiTouchAttributionConversion {
   async run(data) {
-    const {campaignId, budget} = data;
-    console.log('Budget for MTA Conversion: ' + budget);
+    const {campaignId, purchaseValue} = data;
+    console.log('Purchase value for MTA Conversion: ' + purchaseValue);
 
     // Read from Shared Storage
     const impressionContextSSKey = 'impressionContext' + campaignId;
@@ -35,7 +35,7 @@ class MultiTouchAttributionConversion {
     console.log('MTA conversion - Found ' + numberImpressions + ' impressions');
 
     // Custom logic for Multi Touch Attribution
-    // In this example, we are splitting the total budget of this campaign equally between all impressions
+    // In this example, we are splitting the total purchase value of this campaign equally between all impressions
     // (which might have duplicate publishers)
 
     impressionsArray.forEach((impression) => {
@@ -46,7 +46,8 @@ class MultiTouchAttributionConversion {
         campaignId,
         impressionParsed.publisherId,
       );
-      const value = Math.floor(budget / numberImpressions) * SCALE_FACTOR;
+      const value =
+        Math.floor(purchaseValue / numberImpressions) * SCALE_FACTOR;
 
       // Send an aggregatable report via the Private Aggregation API
       console.log('contributeToHistogram ' + bucket + ' ' + value);
