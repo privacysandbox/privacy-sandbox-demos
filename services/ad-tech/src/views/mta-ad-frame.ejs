@@ -40,18 +40,7 @@
       background: white;
     }
   </style>
-  <script>
-    const impressionContextSSKey = "impressionContext<%= CAMPAIGN_ID %>";
-    const impressionContext = {
-      publisherId: "<%= PUBLISHER_ID %>",
-      campaignId: "<%= CAMPAIGN_ID %>",
-      timestamp: Date.now(),
-    }
-
-    const valueToAppend = `|${JSON.stringify(impressionContext)}`;
-    window.sharedStorage.append(impressionContextSSKey, valueToAppend);
-    console.log("Appended '" + valueToAppend + "' to SharedStorage key '" + impressionContextSSKey + "'.");
-  </script>
+  <script src="/js/dsp/write-impression-context-to-shared-storage.js" id="write-impression-context" data-campaign-id="<%= CAMPAIGN_ID %>" data-publisher-id="<%= PUBLISHER_ID %>"></script>
 </head>
 
 <body>

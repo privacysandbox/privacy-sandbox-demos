@@ -1,7 +1,7 @@
 (() => {
-  const $ins = document.querySelector('ins.mta_conversion_tag');
-  const scriptSrc = document.currentScript.getAttribute('src');
-  const purchaseValue = document.currentScript.getAttribute('purchaseValue');
+  const $script = document.currentScript;
+  const scriptSrc = $script.getAttribute('src');
+  const purchaseValue = $script.getAttribute('purchaseValue');
   const mtaConversionTagURL = new URL(scriptSrc);
   mtaConversionTagURL.pathname = '/dsp/mta-conversion.html';
   mtaConversionTagURL.searchParams.append('purchaseValue', purchaseValue);
@@ -12,5 +12,6 @@
   $iframe.src = mtaConversionTagURL;
   $iframe.setAttribute('scrolling', 'no');
   $iframe.setAttribute('style', 'border: none');
-  $ins.appendChild($iframe);
+
+  $script.parentElement.insertBefore($iframe, $script);
 })();

@@ -29,7 +29,6 @@ import {
   SSP_HOST,
   SSP_A_HOST,
   SSP_B_HOST,
-  AD_SERVER_HOST,
 } from './lib/constants.js';
 
 import {
@@ -224,7 +223,7 @@ app.get('/checkout', async (req: Request, res: Response) => {
   const shipping = 40;
 
   const MTA_CONVERSION_TAG_URL = new URL(
-    `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/dsp/mta-conversion-tag.js`,
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/mta-conversion-tag.js`,
   );
 
   await req.session.destroy(() => Promise.resolve());

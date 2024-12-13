@@ -70,7 +70,7 @@ export const getInterestGroupAdTemplateVariables = (requestQuery: any) => {
 };
 
 /** Returns variables for use in the MTA template. */
-export const getMTATemplateVariables = (
+export const getStaticAdTemplateVariables = (
   requestQuery: any,
   requestHeaders: any,
 ) => {
