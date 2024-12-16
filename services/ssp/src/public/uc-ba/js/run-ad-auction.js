@@ -15,7 +15,7 @@
  */
 import ComponentAuctionInfoCollector from './config-collector.js';
 
-const DEMO_PARTICIPANT_COUNT = 2;
+const DEMO_PARTICIPANT_COUNT = 3;
 
 class AdAuction {
   constructor() {

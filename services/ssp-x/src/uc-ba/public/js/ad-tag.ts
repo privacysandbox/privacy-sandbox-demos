@@ -46,6 +46,7 @@ class AdAuction {
           requestId,
           serverResponse: protectedAudienceAuctionResult,
           resolveToConfig: true,
+          adAuctionHeaders: true
         },
       ],
     };

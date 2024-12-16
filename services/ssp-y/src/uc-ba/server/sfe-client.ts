@@ -3,8 +3,7 @@ import path from 'path';
 import protoLoader from '@grpc/proto-loader';
 import grpc from '@grpc/grpc-js';
 
-const GRPC_SERVER_ADDRESS = '172.18.0.104:50053';
-// const GRPC_SERVER_ADDRESS = 'seller-1-non-prod.ba-seller-gtech.com'
+const GRPC_SERVER_ADDRESS = '172.18.0.204:50053';
 
 const protoPath = path.join(
   path.resolve(),
@@ -29,6 +28,6 @@ const client = new SellerFrontEnd(
   grpc.credentials.createInsecure(),
 );
 
-console.log('$$$ SFE client loaded');
+console.log('SFE client for SSP-Y loaded successfully');
 
 export default client;

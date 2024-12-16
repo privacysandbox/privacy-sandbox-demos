@@ -120,7 +120,8 @@ services:
       - ./services/dsp-x:/workspace
       - dsp_x_node_modules:/workspace/node_modules
     networks:
-      - adnetwork
+      adnetwork:
+        ipv4_address: 172.18.0.50
 
   dsp-y:
     image: gcr.io/privacy-sandbox-demos/dsp-y:latest
@@ -133,7 +134,8 @@ services:
       - ./services/dsp-y:/workspace
       - dsp_y_node_modules:/workspace/node_modules
     networks:
-      - adnetwork
+      adnetwork: 
+        ipv4_address: 172.18.0.51
 
   ssp:
     image: gcr.io/privacy-sandbox-demos/ssp:latest
@@ -185,7 +187,8 @@ services:
       - ./services/ssp-x:/workspace
       - ssp_x_node_modules:/workspace/node_modules
     networks:
-      - adnetwork
+      adnetwork:
+        ipv4_address: 172.18.0.52
 
   ssp-y:
     image: gcr.io/privacy-sandbox-demos/ssp-y:latest
@@ -198,7 +201,8 @@ services:
       - ./services/ssp-y:/workspace
       - ssp_y_node_modules:/workspace/node_modules
     networks:
-      - adnetwork
+      adnetwork:
+        ipv4_address: 172.18.0.53
 
   ad-server:
     image: gcr.io/privacy-sandbox-demos/ad-server:latest

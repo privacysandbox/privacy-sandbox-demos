@@ -28,6 +28,6 @@ const client = new SellerFrontEnd(
   grpc.credentials.createInsecure(),
 );
 
-console.log('$$$ SFE client loaded');
+console.log('SFE client for SSP-X loaded successfully');
 
 export default client;
