@@ -5,7 +5,7 @@ const lightCodeTheme = require('prism-react-renderer').themes.github;
 const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
 const host = process.env.HOME_HOST || 'UNDEFINED';
-const measurementID = process.env.HOME_MEASUREMENT_ID; // || 'G-UNDEFINED'; // if user build site without defining env vars, assign a default value.
+const measurementID = process.env.HOME_MEASUREMENT_ID || 'G-UNDEFINED'; // if user build site without defining env vars, assign a default value.
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
