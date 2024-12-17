@@ -26,9 +26,9 @@ traffic back to your website, and boost sales.
 ### Related parties
 
 - Publisher
-- SSP
+- Supply Side Platform (SSP)
 - Advertiser
-- DSP
+- Demand Side Platform (DSP)
 
 </TabItem>
 <TabItem value="scope" label="Scope">

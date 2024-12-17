@@ -5,7 +5,7 @@ sidebar_position: 2
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-# Seq
+# Sequential setup of Protected Audience with contextual ad auction
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
@@ -32,10 +32,10 @@ For a deeper walkthrough of this sequential auction setup, see:
 ### Related parties
 
 - Publisher
-- Ad Server
-- SSP
+- Publisher Ad Server
+- Supply Side Platform (SSP)
 - Advertiser
-- DSP
+- Demand Side Platform (DSP)
 
 </TabItem>
 <TabItem value="scope" label="Scope">
@@ -50,70 +50,100 @@ auction and abstract a lot of the technical nuance of the contextual auction. Bu
 buyers and sellers participating in the ad delivery process. This demo will also demonstrate SSPs sourcing `buyerSignals` from DSPs and including them
 in the Protected Audience auction configuration.
 
-### Assumptions
-
-???
-
 ### Key Exclusions
 
 This demo abstracts a lot of the complexity in the contextual auction. For starters, this demo doesn't integrate with any real header bidding library.
-Additionally, this demo doesn't replicate the integration pattern between the publisher ad server and other ad sellers such as SSPs via any of the
-header bidding libraries. This demo also doesn't follow the OpenRTB spec but focuses on a few exemplary signals to capture the same idea.
+Additionally, this demo doesn't aim to replicate the integration patterns between the publisher ad server and other ad sellers or SSPs across various
+ad delivery setups. This demo focuses on a few exemplary 'signals' as opposed to an industry spec such as OpenRTB.
 
 ### System Design
 
-Using Protected Audience API, the user visits a shopping site, and gets added to an interest group. Later the same user visits a news site. There the
-browser runs an on-device Auction, bidding logic will select the winning interest group, and relevant ads will be dynamically rendered on the
-publisher page.
+// TODO: Building on the existing single seller auction, ...
 
 #### Protected Audience Flow
 
-Below is a general introduction of Remarketing using Privacy Sandbox Protected Audience API. For further information see
-[Protected Audience API - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience).
-
-![Protected Audience Flow](./img/retargeting-remarketing-flow.png)
+![Sequential auction setup flow](./img/sequential-setup-with-contextual-auction-flow.png)
 
 #### User Journey
 
-<!--
-![Remarketing User Journey 1](./img/retargeting-remarketing-journey-1-seq.png)
--->
-
 ```mermaid
 sequenceDiagram
-Title: Retargeting / Remarketing - User Journey 1
+Title: Sequential setup of Protected Audience with contextual ad auction
 
+autonumber
+
+actor User
 participant Browser
-participant Publisher
-participant SSP
-participant Advertiser
-participant DSP
+participant Advertiser as Advetiser site
+participant Publisher as Publisher site
+box rgb(200, 220, 240) Sellers
+    participant SellerTop as Top-level seller
+    participant SellerA as Seller A
+    participant SellerB as Seller B
+end
+box rgb(220, 240, 220) Buyers
+    participant Buyers
+end
 
-Browser->>Advertiser:visits a shop site and reviews products
-Advertiser-->>Browser:return DSP tags
-Browser->>DSP:browser loads scripts from DSP
-DSP-->>Browser:returns interest group configuration
+Note right of User: Pre-auction
+User ->> Advertiser: Visit advertiser page
+Advertiser ->> Buyers: Load buyer scripts
+Buyers ->> Browser: Add user to the interest group for the site
 
-Browser-)Browser:navigator.joinAdInterestGroup(...)
+Note right of User: Top-level auction
+User ->> Publisher: Visit publisher page
+Publisher ->> SellerTop: Load top-level seller script
+activate SellerTop
+SellerTop ->> SellerA: Fetch component config
+SellerTop ->> SellerB: Fetch component config
+SellerTop ->> Browser: Start top-level auction with component configs added (runAdAuction)
+deactivate SellerTop
 
-Browser->>Publisher:visits a news  site
-Publisher-->>Browser:return SSP tags
-Browser->>SSP:browser loads scripts from SSP
-SSP-->>Browser:returns auction configuration
+    Note right of User: Seller A's auction (in parallel)
+    Browser ->> SellerA: Load Seller A's script and start component auction
+    activate SellerA
+    Browser ->> Browser: Read interest groups of all participating buyers
+    Browser ->> Buyers: Fetch bidding scripts and trusted bidding signals
+    Browser ->> Browser: Generate each bid from buyer's logic (generateBid)
+    Browser ->> SellerA: Fetch scoring script trusted scoring signals
+    Browser ->> Browser: Score each ad with seller's scoring script (scoreAd)
+    Browser ->> Browser: Choose the highest scoring ad from seller's score of each ad
+    deactivate SellerA
 
-Browser-)Browser:navigator.runAdAuction(auctionConfig)
+    Note right of User: Seller B's auction (in parallel)
+    Browser ->> SellerB: Load Seller A's script and start component auction
+    activate SellerB
+    Browser ->> Browser: Read interest groups of all participating buyers
+    Browser ->> Buyers: Fetch bidding scripts and trusted bidding signals
+    Browser ->> Browser: Generate each bid from buyer's logic (generateBid)
+    Browser ->> SellerA: Fetch scoring script trusted scoring signals
+    Browser ->> Browser: Score each ad with seller's scoring script (scoreAd)
+    Browser ->> Browser: Choose the highest scoring ad from seller's scores of each ad
+    deactivate SellerB
 
-note right of Browser:each interest group's bidding function will run
-Browser-)Browser:generateBid(...)
+Note right of User: Top-level auction continued
+Browser ->> SellerTop: Fetch top-level scoring script and trusted scoring signals
+activate SellerTop
+Browser ->> Browser: Score each component auction winning ad with top-seller's scoring script (scoreAd)
+Browser ->> Browser: Choose the highest scoring ad from top-level seller's scoreof each component ad
+deactivate SellerTop
 
-note right of Browser:for each candidate ad in the auction
-Browser-)Browser:scoreAd(...)
+Browser ->> SellerTop: Report event-level and aggregate result
+Browser ->> SellerA: Report event-level and aggregate result
+Browser ->> SellerB: Report event-level and aggregate result
 
-note right of Browser:Winning ad is displayed in a fenced-frame
-Browser->>DSP:Request ad creative
-DSP-->>Browser:Return ad creative
+Note right of User: Winner is chosen
+    Browser ->> Buyers: Report event-level win or aggregate loss result
+    Browser ->> SellerTop: Return Opaque URN or FencedFrameConfig object that contains the ad location
+    SellerTop ->> Browser: Set iframe src or fenced frame config
+    Buyers ->> Browser: Provide ad
+    Browser ->> User: Render ad (iframe or fenced frame)
 
-Note right of Browser:Winning ad is rendered
+Note right of User: No winner is chosen
+    Browser ->> Buyers: Report aggregate loss result
+    Browser ->> SellerTop: Returns 'null'
+    SellerTop ->> Browser: Set iframe src to a default or contextual ad
+    Browser ->> User: Render default or contextual ad
 
 ```
 
@@ -281,6 +311,7 @@ in the interest group.
 
 - [Protected Audience Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
 - [Protected Audience Developer Guide - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
+- [Sequential setup with contextual ad auction - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
 - [Fenced Frames Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
 
 </TabItem>
