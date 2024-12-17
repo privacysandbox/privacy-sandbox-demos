@@ -48,7 +48,6 @@ for demo in ${DEMOS}; do
 
   # deploy monitoring function
   gcloud functions deploy ${function} --gen2 --runtime=nodejs18 --region=${GCP_REGION} --source="monitoring/puppeteer-nodejs/" --entry-point=${entrypoint} --memory=2G --timeout=60 --trigger-http --ingress-settings=internal-only --no-allow-unauthenticated --set-env-vars "^@^${ENV_VARS}"
-  exit
 done
 
 
