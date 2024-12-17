@@ -21,83 +21,6 @@ steps:
       #!/usr/bin/env bash
       cp -f cicd/attestations/privacy-sandbox-attestations.json.*.${PROJECT_ENV} services/ad-tech/src/public/.well-known/
 
-  # AD-TECH
-  # Build the ad-tech image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-ad-tech
-    waitFor:
-      - copy-attestations
-    args:
-      [
-        "build",
-        "-t",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA",
-        "services/ad-tech",
-      ]
-  # Push the container image to Container Registry
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-ad-tech
-    waitFor:
-      - build-ad-tech
-    args:
-      [
-        "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA",
-      ]
-
-  # DSP
-
-  # Deploy container image to Cloud Run
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: deploy-dsp
-    waitFor:
-      - push-ad-tech
-      - read-env
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        ENV_VARS=$(cat /workspace/env_vars.txt)
-        HOSTNAME_ENV="HOSTNAME=$(grep "DSP_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
-        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
-        echo $${ENV_VARS}
-
-        gcloud run deploy dsp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
-
-  # DSP-A
-  # Deploy container image to Cloud Run
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: deploy-dsp-a
-    waitFor:
-      - push-ad-tech
-      - read-env
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        ENV_VARS=$(cat /workspace/env_vars.txt)
-        HOSTNAME_ENV="HOSTNAME=$(grep "DSP_A_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
-        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
-        echo $${ENV_VARS}
-        gcloud run deploy dsp-a --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp-a,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
-
-  # DSP-B
-  # Deploy container image to Cloud Run
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: deploy-dsp-b
-    waitFor:
-      - push-ad-tech
-      - read-env
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        ENV_VARS=$(cat /workspace/env_vars.txt)
-        HOSTNAME_ENV="HOSTNAME=$(grep "DSP_B_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
-        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
-        echo $${ENV_VARS}
-        gcloud run deploy dsp-b --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp-b,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
-
   # HOME
   # Build the HTML files with docusaurus
   - name: "node"
@@ -148,6 +71,7 @@ steps:
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
         gcloud run deploy home --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
   # NEWS
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
@@ -224,6 +148,119 @@ steps:
         echo $${ENV_VARS}
         gcloud run deploy shop --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --session-affinity --set-env-vars "^@^$${ENV_VARS}"
 
+  # TRAVEL
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-travel
+    waitFor: ["-"]
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA",
+        "services/travel",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-travel
+    waitFor:
+      - build-travel
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA",
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-travel
+    waitFor:
+      - push-travel
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        HOSTNAME_ENV="HOSTNAME=$(grep "TRAVEL_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
+        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
+        echo $${ENV_VARS}
+        gcloud run deploy travel --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # AD-TECH
+  # Build the ad-tech image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-ad-tech
+    waitFor:
+      - copy-attestations
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA",
+        "services/ad-tech",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-ad-tech
+    waitFor:
+      - build-ad-tech
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA",
+      ]
+
+  # DSP
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-dsp
+    waitFor:
+      - push-ad-tech
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        HOSTNAME_ENV="HOSTNAME=$(grep "DSP_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
+        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
+        echo $${ENV_VARS}
+        gcloud run deploy dsp --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
+
+  # DSP-A
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-dsp-a
+    waitFor:
+      - push-ad-tech
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        HOSTNAME_ENV="HOSTNAME=$(grep "DSP_A_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
+        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
+        echo $${ENV_VARS}
+        gcloud run deploy dsp-a --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp-a,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
+
+  # DSP-B
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-dsp-b
+    waitFor:
+      - push-ad-tech
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        HOSTNAME_ENV="HOSTNAME=$(grep "DSP_B_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
+        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
+        echo $${ENV_VARS}
+        gcloud run deploy dsp-b --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=dsp-b,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
+
   # SSP
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
@@ -291,44 +328,6 @@ steps:
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
         gcloud run deploy ad-server --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=ad-server,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
-
-  # TRAVEL
-  # Build the container image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-travel
-    waitFor: ["-"]
-    args:
-      [
-        "build",
-        "-t",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA",
-        "services/travel",
-      ]
-  # Push the container image to Container Registry
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-travel
-    waitFor:
-      - build-travel
-    args:
-      [
-        "push",
-        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA",
-      ]
-  # Deploy container image to Cloud Run
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: deploy-travel
-    waitFor:
-      - push-travel
-      - read-env
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        ENV_VARS=$(cat /workspace/env_vars.txt)
-        HOSTNAME_ENV="HOSTNAME=$(grep "TRAVEL_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
-        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
-        echo $${ENV_VARS}
-        gcloud run deploy travel --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
 
 images:
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA"
