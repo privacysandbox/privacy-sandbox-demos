@@ -15,6 +15,7 @@ import express, {Request, Response} from 'express';
 import {
   getContextualAdTemplateVariables,
   getInterestGroupAdTemplateVariables,
+  getStaticAdTemplateVariables,
 } from '../../lib/common-utils.js';
 
 /**
@@ -50,4 +51,14 @@ AdsRouter.get('/contextual-ads', async (req: Request, res: Response) => {
 AdsRouter.get('/video-ads', async (req: Request, res: Response) => {
   console.log('Loading video ad', req.query);
   res.render('video-ad-frame');
+});
+
+/** Used as render URL for Multi Touch Attribution ads. */
+AdsRouter.get('/static-ads', async (req: Request, res: Response) => {
+  console.log('Loading MTA ad', req.query);
+  const templateVariables = getStaticAdTemplateVariables(
+    req.query,
+    req.headers,
+  );
+  res.render('static-ad-frame', templateVariables);
 });

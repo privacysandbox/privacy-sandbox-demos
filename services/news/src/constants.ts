@@ -29,6 +29,7 @@ export const {
 
   // Ad-techs
   AD_SERVER_HOST,
+  DSP_HOST,
   SSP_HOST,
   SSP_A_HOST,
   SSP_B_HOST,

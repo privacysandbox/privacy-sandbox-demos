@@ -16,8 +16,10 @@ import {
   EXTERNAL_PORT,
   HOSTNAME,
   PORT,
+  NEWS_HOST,
   SHOP_HOST,
   TRAVEL_HOST,
+  PUBLISHER_IDS,
 } from './constants.js';
 
 /** Returns template variables for the contextual advertiser. */
@@ -64,6 +66,31 @@ export const getInterestGroupAdTemplateVariables = (requestQuery: any) => {
     DESTINATION: destination,
     CREATIVE: creative,
     ATTRIBUTION_SRC: registerSourceUrl.toString(),
+  };
+};
+
+/** Returns variables for use in the MTA template. */
+export const getStaticAdTemplateVariables = (
+  requestQuery: any,
+  requestHeaders: any,
+) => {
+  const getPublisherId = (requestHeaders: any) => {
+    const refererUrl = new URL(
+      requestHeaders.referer || `https://${NEWS_HOST}/`,
+    );
+    return PUBLISHER_IDS[refererUrl.hostname] || '9999';
+  };
+
+  const itemId = requestQuery.itemId?.toString() || '1f45f';
+
+  return {
+    TITLE: `Your special ads from ${SHOP_HOST}`,
+    DESTINATION: new URL(
+      `https://${SHOP_HOST}:${EXTERNAL_PORT}/items/${itemId}`,
+    ),
+    CREATIVE: new URL(`https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`),
+    PUBLISHER_ID: getPublisherId(requestHeaders),
+    CAMPAIGN_ID: 1234,
   };
 };
 
