@@ -6,6 +6,3 @@
 .gitignore
 
 #!include:.gitignore
-
-# include build/* files into `gcloud builds submit` command
-!build
