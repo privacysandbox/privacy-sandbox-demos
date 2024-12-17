@@ -25,6 +25,7 @@ import {
   PORT,
   SSP_A_ORIGIN,
   SSP_B_ORIGIN,
+  SSP_HOST,
   SSP_ORIGIN,
 } from './constants.js';
 
@@ -32,6 +33,18 @@ const app: Application = express();
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
+
+app.get('/', async (req: Request, res: Response) => {
+  res.render('index', {
+    TITLE: NEWS_DETAIL,
+    TEXT_LOREM,
+    EXTERNAL_PORT,
+    HOME_HOST,
+    SSP_TAG_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
+    ).toString(),
+  });
+});
 
 app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
@@ -43,7 +56,7 @@ app.get('*', async (req: Request, res: Response) => {
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
     AD_SERVER_TAG_URL: new URL(
-      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ssp-tag.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ad-server-tag.js`,
     ).toString(),
   });
 });

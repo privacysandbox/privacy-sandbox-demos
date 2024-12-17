@@ -147,7 +147,7 @@
   const deliverAds = (adUnits, otherSellers) => {
     // Iterate over adUnits and inject an ad-container iframe for each adUnit.
     // The container iframe has additional scripts to execute ad auctions for
-    // a given adUnit config. This ssp-tag will post message the adUnit config
+    // a given adUnit config. This ad-server-tag will post message the adUnit config
     // to the injected iframe once it's loaded.
     for (const adUnit of adUnits) {
       if (!isValidAdUnit(adUnit)) {

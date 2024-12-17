@@ -17,7 +17,7 @@
     // Seller acting as ad server is included implictly, and their tag is
     // included on the page directly. This configuration field should list
     // additional sellers to include in the ad auctions.
-    const otherSellers = window.PSDemo.getQueryAsArray('otherSellers') || [
+    const otherSellers = window.PSDemo.getUrlQueryAsArray('otherSellers') || [
       '<%= SSP_ORIGIN %>',
       '<%= SSP_A_ORIGIN %>',
       '<%= SSP_B_ORIGIN %>',
