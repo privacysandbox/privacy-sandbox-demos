@@ -17,15 +17,15 @@
     // Seller acting as ad server is included implictly, and their tag is
     // included on the page directly. This configuration field should list
     // additional sellers to include in the ad auctions.
-    const otherSellers = window.PSDemo.getQueryAsArray('otherSellers') || [
+    const otherSellers = window.PSDemo.getUrlQueryAsArray('otherSellers') || [
       '<%= SSP_ORIGIN %>',
       '<%= SSP_A_ORIGIN %>',
       '<%= SSP_B_ORIGIN %>',
     ];
     // If strict=true is included in URL query, then reject bids without deals.
-    const strictRejectForDeals = 'true' === window.PSDemo.getQueryAsString('strict');
+    const strictRejectForDeals = 'true' === window.PSDemo.getUrlQueryAsString('strict');
     // Optionally source deal IDs from URL query: deals=deal-1,deal-2,deal-3.
-    const availableDeals = window.PSDemo.getQueryAsArray('deals') || ['deal-1', 'deal-2'];
+    const availableDeals = window.PSDemo.getUrlQueryAsArray('deals') || ['deal-1', 'deal-2'];
     // Publishers configure the ad units available on the page.
     window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
       // Seller acting as ad server is included implictly, and their tag
