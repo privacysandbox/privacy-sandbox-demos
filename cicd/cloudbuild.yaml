@@ -28,12 +28,20 @@ steps:
     waitFor: ["-"]
     entrypoint: "npm"
     args: ["--prefix", "services/home", "install"]
+
   - name: "node"
     id: npm-run-build-home
     waitFor:
       - npm-install-home
-    entrypoint: "npm"
-    args: ["--prefix", "services/home", "run", "build"]
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        source cicd/.env.${_PROJECT_ENV}
+        export HOME_HOST
+        export HOME_MEASUREMENT_ID
+        npm --prefix services/home run build
+
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
     id: build-home
@@ -46,6 +54,7 @@ steps:
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA",
         "services/home",
       ]
+
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
     id: push-home
@@ -56,6 +65,7 @@ steps:
         "push",
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/home:$COMMIT_SHA",
       ]
+
   # Deploy container image to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
     id: deploy-home
