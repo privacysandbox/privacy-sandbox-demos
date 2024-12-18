@@ -1,13 +1,7 @@
 # ref : https://cloud.google.com/sdk/gcloud/reference/topic/gcloudignore
 
-#!include:.gitignore
-
 .gcloudignore
 .git
 .gitignore
-services/home/.docusaurus
-services/shop/.next
 
-# include services/home/build/* files into `gcloud builds submit` command
-# DEPRECATED as we now build html files with ci/cd
-# !services/home/build
+#!include:.gitignore

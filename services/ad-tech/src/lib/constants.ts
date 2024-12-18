@@ -32,7 +32,7 @@ export const {
   NEWS_DETAIL,
   MOTO_NEWS_HOST,
   SOCCER_NEWS_HOST,
-  GARDENING_HOST,
+  GARDENING_NEWS_HOST,
 
   // Ad-techs
   DSP_HOST,
@@ -190,4 +190,18 @@ export const JAVASCRIPT_TEMPLATE_VARIABLES = {
   AD_SERVER_HOST,
   ADVERTISER_CONTEXTUAL,
   HOSTNAME,
+};
+
+// ****************************************************************************
+// PUBLISHER METADATA
+// ****************************************************************************
+/**
+ * List of publishers and their IDs for any use case that needs to identify
+ * the publisher
+ */
+export const PUBLISHER_IDS: {[hostname: string]: string} = {
+  [NEWS_HOST!]: '1000',
+  [MOTO_NEWS_HOST!]: '2000',
+  [SOCCER_NEWS_HOST!]: '3000',
+  [GARDENING_NEWS_HOST!]: '4000',
 };

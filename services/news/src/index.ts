@@ -18,6 +18,7 @@ import express, {Application, Request, Response} from 'express';
 
 import {
   AD_SERVER_HOST,
+  DSP_HOST,
   EXTERNAL_PORT,
   HOME_HOST,
   TEXT_LOREM,
@@ -50,6 +51,8 @@ app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
     TITLE: NEWS_DETAIL,
     TEXT_LOREM,
+    AD_SERVER_HOST,
+    DSP_HOST,
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_ORIGIN,

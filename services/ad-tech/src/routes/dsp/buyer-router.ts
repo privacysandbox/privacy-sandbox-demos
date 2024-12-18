@@ -118,3 +118,11 @@ const assembleTargetingContext = (query: any): TargetingContext => {
   }
   return targetingContext;
 };
+
+/** Returns the updated interest group, usually daily, may be overridden. */
+BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
+  const campaignId = 1234;
+  const purchaseValue = req.query.purchaseValue;
+  console.log(`Campaign Id: ${campaignId}, Purchase Value: ${purchaseValue}`);
+  res.render('dsp/mta-conversion.ejs', {campaignId, purchaseValue});
+});
