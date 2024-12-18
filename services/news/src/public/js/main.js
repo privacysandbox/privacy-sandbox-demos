@@ -25,7 +25,7 @@
   window.PSDemo = window.PSDemo || {};
 
   /** Returns URL query param value as an array. */
-  window.PSDemo.getQueryAsArray = (key) => {
+  window.PSDemo.getUrlQueryAsArray = (key) => {
     const searchParams = new URL(location.href).searchParams;
     if (searchParams.has(key)) {
       const value = searchParams.get(key);
@@ -38,7 +38,7 @@
   };
 
   /** Returns URL query param value as text. */
-  window.PSDemo.getQueryAsString = (key) => {
+  window.PSDemo.getUrlQueryAsString = (key) => {
     const searchParams = new URL(location.href).searchParams;
     if (searchParams.has(key)) {
       return searchParams.get(key);
