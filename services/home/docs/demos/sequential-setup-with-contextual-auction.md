@@ -64,7 +64,7 @@ ad delivery setups. This demo focuses on a few exemplary 'signals' as opposed to
 
 ![Sequential auction setup flow](./img/sequential-setup-with-contextual-auction-flow.png)
 
-#### User Journey
+#### User Journey (TODO)
 
 ```mermaid
 sequenceDiagram
@@ -150,16 +150,16 @@ Note right of User: No winner is chosen
 </TabItem>
 <TabItem value="demo" label="Demo">
 
-## Demo
+## Demo (TODO)
 
-### Prerequisites
+### Prerequisites (TODO)
 
 - Latest stable version of Chrome (Open `chrome://version` to check your current version)
 - Enable Privacy Sandbox APIs (Open `chrome://settings/adPrivacy` to enable _Site-suggested ads_)
 - Clear your browsing history before you run one of the demo scenario below (Open `chrome://settings/clearBrowserData` to delete your browsing
   history)
 
-### User Journey
+### User Journey (TODO)
 
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on any "shoe" product item on the shop site.
@@ -174,74 +174,27 @@ Note right of User: No winner is chosen
 
 ### Implementation details
 
-#### How is the user added to an Interest Group based on their browsing behavior? (see step #2 of User Journey)
+The user is added to interest groups by DSPs using the same mechanism as described in the
+[basic remarketing / retargeting use-case demo](retargeting-remarketing). The incremental difference in the implementation of this demo is on the
+publisher page.
 
-The shop product page includes one or more third-party tags from the DSP services:
-[dsp-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/shop/src/views/item.ejs#L92).
+#### How does the publisher pass the ad unit configurations for a given page to the publisher ad server?
 
-```html title="DSP tag on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
-<script
-  src="https://privacy-sandbox-demos-dsp.dev/js/dsp/dsp-tag.js"
-  class="dsp_tag"
-  data-advertiser="privacy-sandbox-demos-shop.dev"
-  data-item-id="1f45e"
-></script>
-```
-
-The [dsp-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97) dynamically
-injects an iframe in the DSP's origin to the advertiser's page.
-
-```html title="DSP iframe on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
-<iframe
-  width="1"
-  height="1"
-  src="https://privacy-sandbox-demos-dsp.dev/dsp/dsp-advertiser-iframe.html?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
-  allow="join-ad-interest-group"
-></iframe>
-```
-
-This third-party DSP iframe includes a script
-[join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/join-ad-interest-group.js)
-to join an interest group using the Protected Audience API. To do so, the DSP tag retrieves the interest group object from its server from
-[https://privacy-sandbox-demos-dsp.dev/dsp/interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/dsp/buyer-router.ts#L46).
-
-```js title="Script loaded in DSP iframe: https://privacy-sandbox-demos-dsp.dev/dsp/dsp-advertiser-iframe.html"
-/** Sends first-party context to server to retrieve interest group metadata. */
-getInterestGroupFromServer = async () => {
-  const currentUrl = new URL(location.href);
-  const interestGroupUrl = new URL(location.origin);
-  interestGroupUrl.pathname = '/dsp/interest-group.json';
-  // Copy query params from current context.
-  for (const [key, value] of currentUrl.searchParams) {
-    interestGroupUrl.searchParams.append(key, value);
-  }
-  const res = await fetch(interestGroupUrl, {browsingTopics: true});
-  if (res.ok) {
-    return res.json();
-  }
-};
-
-document.addEventListener('DOMContentLoaded', async () => {
-  if (navigator.joinAdInterestGroup === undefined) {
-    console.log('[PSDemo] Protected Audience API is not supported.');
-    return;
-  }
-  const interestGroup = await getInterestGroupFromServer();
-  console.log('[PSDemo] Joining interest group: ', {interestGroup});
-  const kSecsPerDay = 3600 * 24 * 30;
-  console.log(
-    await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay),
-  );
-});
-```
-
-#### How is the relevant ad delivered to the user? (see step #4 of User Journey)
-
-The news page lists the available ad slot on the page in the
-[`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L17) object.
+The news page lists the available ad slots on the page in the
+[`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L16-38)
+object.
 
 ```js title="Publisher configures ad slots on page: https://privacy-sandbox-demos-news.dev"
+// List of additional sellers that the publisher ad server should include in the ad delivery process.
+const otherSellers = window.PSDemo.getUrlQueryAsArray('otherSellers') || [
+  'https://privacy-sandbox-demos-ssp.dev',
+  'https://privacy-sandbox-demos-ssp-a.dev',
+  'https://privacy-sandbox-demos-ssp-b.dev',
+];
+// Publishers configure the ad units available on the page.
 window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
+  otherSellers,
+  // Ad units to request bids for.
   adUnits: [{
     code: 'displayFencedFrameAdUnit',
     auctionId: `PUB-${crypto.randomUUID()}`,
@@ -254,16 +207,20 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 ```
 
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
-[run-simple-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L60) from the SSP
-service.
+[ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L39-41) from
+the publisher ad server.
 
-```html title="SSP tag on publisher page: https://privacy-sandbox-demos-news.dev"
-<script
-  async
-  defer
-  src="https://privacy-sandbox-demos-ssp.dev/js/ssp/run-simple-ad-auction.js"
+```html title="Ad server tag on publisher page: https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad"
+<script async defer
+        src="https://privacy-sandbox-demos-ad-server.dev/js/ssp/ad-server-tag.js"
 ></script>
 ```
+
+#### How does the publisher ad server initiate the contextual auction?
+
+#### How does the publisher ad server integrate the Protected Audience auction in a sequential manner?
+
+#### How is the relevant ad delivered to the user? (see step #4 of User Journey)
 
 This
 [run-simple-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js)

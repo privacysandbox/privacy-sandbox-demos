@@ -233,6 +233,8 @@ script executes a Protected Audience auction using auction configurations retrie
 
 ```js title="SSP script loaded on publisher page: https://privacy-sandbox-demos-news.dev"
 document.addEventListener("DOMContentLoaded", async (e) => {
+  // Read ad unit configurations provided by the publisher.
+  const [adUnit] = window.PSDemo.PAGE_ADS_CONFIG.adUnits;
   // Retrieve auction configuration from its own server.
   const auctionConfig = await getAuctionConfig(adUnit);
   // Execute the Protected Audience auction.
