@@ -108,7 +108,7 @@ sequenceDiagram
 git clone https://github.com/privacysandbox/bidding-auction-servers.git
 ```
 3. From the root folder of the bidding and auction services repository, build the bidding and auction services with the following command. 
-
+#TODO: add chrome step 
 ```bash
 production/packaging/build_and_test_all_in_docker \
   --service-path bidding_service \

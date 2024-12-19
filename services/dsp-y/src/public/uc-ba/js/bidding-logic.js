@@ -28,7 +28,7 @@ function generateBid(
   // console.log('$$$ browserSignals', { browserSignals })
 
   return {
-    bid: Math.floor(Math.random() * 100),
+    bid: 500,
     render:
       'https://privacy-sandbox-demos-dsp-y.dev/uc-ba/html/protected-audience-ad.html',
     allowComponentAuction: !!browserSignals.topLevelSeller,
