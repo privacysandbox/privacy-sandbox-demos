@@ -40,6 +40,7 @@ steps:
         source cicd/.env.${_PROJECT_ENV}
         export HOME_HOST
         export HOME_MEASUREMENT_ID
+        export HOME_TAG_CONTAINER_ID
         npm --prefix services/home run build
 
   # Build the container image
