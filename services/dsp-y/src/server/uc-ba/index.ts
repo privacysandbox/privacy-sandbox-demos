@@ -48,6 +48,7 @@ router.get('/interest-group.json', async (req, res) => {
     'uc-ba/html/protected-audience-ad.html',
     DSP_Y_ORIGIN,
   ).toString();
+  
   const biddingLogicUrl: string = new URL(
     `uc-ba/js/bidding-logic.js`,
     DSP_Y_ORIGIN,

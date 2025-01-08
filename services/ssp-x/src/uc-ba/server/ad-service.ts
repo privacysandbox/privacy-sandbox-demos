@@ -1,5 +1,6 @@
 import express, {Router, Request, Response} from 'express';
 import sfeClient from './sfe-client.js';
+import grpc from '@grpc/grpc-js'
 import {createHash} from 'crypto';
 
 type Origin = string;
@@ -91,13 +92,13 @@ async function runContextualAuction({buyers}: any) {
 function runProtectedAudienceAuction(
   protectedAudience: any,
   contextualAuctionResult: any,
+  metadata: any,
   res: Response,
 ) {
   const [contextualAuctionWinner] = contextualAuctionResult;
   const {auctionRequest} = protectedAudience;
 
   const perBuyerConfigs = buildPerBuyerConfigs(contextualAuctionResult);
-
   const selectAdRequest = {
     auction_config: {
       top_level_seller: SSP_ORIGIN,
@@ -122,7 +123,7 @@ function runProtectedAudienceAuction(
     protected_auction_ciphertext: decodeRequest(auctionRequest),
   };
 
-  sfeClient.selectAd(selectAdRequest, (error: any, response: any) => {
+  sfeClient.selectAd(selectAdRequest, metadata, (error: any, response: any) => {
     if (!response) {
       console.log(`No response received from SFE.  Error=${error}`);
       return;
@@ -157,8 +158,6 @@ router.get('/contextual-auction-buyers.json', (req: Request, res: Response) => {
 
 router.get('/ad-auction-data-config.json', (req: Request, res: Response) => {
   const adAuctionDataConfig = {
-    // top_level_seller: SSP_ORIGIN,
-    // top_level_seller: SSP_X_ORIGIN,
     seller: SSP_X_ORIGIN,
     requestSize: 51200,
     perBuyerConfig: {
@@ -173,8 +172,13 @@ router.get('/ad-auction-data-config.json', (req: Request, res: Response) => {
 router.post('/unified-auction', async (req: Request, res: Response) => {
   const {contextual, protectedAudience} = req.body;
 
+  const metadata = new grpc.Metadata(); 
+  metadata.add('X-Accept-Language', req.header('Accept-Language') || '');
+  metadata.add('X-User-Agent', req.header('User-Agent') || '');
+  metadata.add('X-BnA-Client-IP', req.ip || '');
+  
   const contextualAuctionResult = await runContextualAuction(contextual);
-  runProtectedAudienceAuction(protectedAudience, contextualAuctionResult, res);
+  runProtectedAudienceAuction(protectedAudience, contextualAuctionResult, metadata, res);
 });
 
 export default router;

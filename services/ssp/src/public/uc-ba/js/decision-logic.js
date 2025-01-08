@@ -35,7 +35,7 @@ function scoreAd(
       desirability = 999; 
     }
   } else {
-    if(browserSignals.componentSeller === "https://privacy-sandbox-demos-ssp-x.dev"){
+    if(browserSignals.componentSeller !== "https://privacy-sandbox-demos-ssp-x.dev"){
       desirability = 0;
     } 
   }
@@ -43,7 +43,6 @@ function scoreAd(
   return {
     desirability,
     allowComponentAuction: true,
-    // desirability: bid,
   };
 }
 

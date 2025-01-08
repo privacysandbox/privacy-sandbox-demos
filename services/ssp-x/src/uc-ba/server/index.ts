@@ -16,13 +16,6 @@ const router = Router();
 router.use(
   express.static('src/uc-ba/public', {
     setHeaders: (res, path) => {
-      // const shouldAddAuctionHeader = ['decision-logic.js'].some((fileName) =>
-      //   path.includes(fileName),
-      // );
-
-      // if (shouldAddAuctionHeader) {
-      //   return res.set('Ad-Auction-Allowed', 'true');
-      // }
       if (path.includes('decision-logic.js')) {
         res.set('Ad-Auction-Allowed', 'true');
       }
