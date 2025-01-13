@@ -9,7 +9,7 @@
     "build": "docker-compose build",
     "docker": "docker-compose build && docker-compose up",
     "deploy": "./scripts/cloudrun_deploy.sh && ./scripts/firebase_deploy.sh",
-    "clean": "docker-compose rm -f && docker volume prune -f && docker image prune -f && docker rmi -f $(docker images -q)",
+    "clean": "docker-compose rm -f && docker volume prune -f && docker image prune -f && docker rmi -f $(docker images -q) && docker-compose down -v",
     "fmt": "pre-commit run --all-files"
   },
   "devDependencies": {
