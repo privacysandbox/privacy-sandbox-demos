@@ -6,6 +6,8 @@ volumes:
   dsp_node_modules:
   dsp_a_node_modules:
   dsp_b_node_modules:
+  dsp_x_node_modules:
+  dsp_y_node_modules:
   ssp_node_modules:
   ssp_a_node_modules:
   ssp_b_node_modules:
@@ -97,6 +99,32 @@ services:
     volumes:
       - ./services/ad-tech:/workspace
       - dsp_b_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  dsp-x:
+    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
+    build: ./services/ad-tech
+    container_name: "sandcastle_dsp_x"
+    hostname: ${DSP_X_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/ad-tech:/workspace
+      - dsp_x_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  dsp-y:
+    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
+    build: ./services/ad-tech
+    container_name: "sandcastle_dsp_y"
+    hostname: ${DSP_Y_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/ad-tech:/workspace
+      - dsp_y_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
@@ -192,6 +220,8 @@ services:
       - dsp
       - dsp-a
       - dsp-b
+      - dsp-x
+      - dsp-y
       - ad-server
       - collector
 
