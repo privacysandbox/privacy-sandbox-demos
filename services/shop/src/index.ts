@@ -22,6 +22,8 @@ import {
   DSP_HOST,
   DSP_A_HOST,
   DSP_B_HOST,
+  DSP_X_HOST,
+  DSP_Y_HOST,
   EXTERNAL_PORT,
   PORT,
   SHOP_DETAIL,
@@ -131,22 +133,40 @@ app.get('/ads/:id?', async (req: Request, res: Response) => {
 app.get('/items/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   const item = await getItem(id);
-
-  const DSP_TAG_URL = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  const DSP_A_TAG_URL = new URL(
-    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  const DSP_B_TAG_URL = new URL(
-    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
+  const { auctionType } = req.query;
+  const DSP_TAG_URLS = (auctionType : string) => {
+    const urls = [];
+    if(auctionType == 'ba'){
+      urls.push(
+        new URL(
+        `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        new URL(
+        `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        new URL(
+        `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        new URL(
+        `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        new URL(
+        `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        );
+    } else {
+      urls.push(
+        new URL(
+        `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        new URL(
+        `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        new URL(
+        `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`),
+        );
+    }
+      return urls.toString();
+    }
+  const DSP_TAGS_FLAT= DSP_TAG_URLS(auctionType);
+  console.log(DSP_TAGS_FLAT);
 
   res.render('item', {
+    DSP_TAGS_FLAT,
     item,
-    DSP_TAG_URL,
-    DSP_A_TAG_URL,
-    DSP_B_TAG_URL,
     SHOP_HOST,
   });
 });
