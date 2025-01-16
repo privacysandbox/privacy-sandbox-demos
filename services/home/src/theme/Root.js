@@ -1,8 +1,5 @@
 import React from 'react';
-import CookieConsent, {
-  Cookies,
-  getCookieConsentValue,
-} from 'react-cookie-consent';
+import CookieConsent from 'react-cookie-consent';
 
 // Default implementation, that you can customize
 export default function Root({children}) {
