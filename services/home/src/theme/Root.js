@@ -9,13 +9,18 @@ export default function Root({children}) {
   return (
     <>
       <CookieConsent
+        cookieName="CookieConsent"
         location="bottom"
         visible="byCookieValue"
         hideOnAccept={true}
         buttonText="I understand"
-        debug={true}
+        debug={false}
         expire={395}
         sameSite="strict"
+        disableStyles={true}
+        containerClasses="glue-cookie-notification-bar"
+        contentClasses="glue-cookie-notification-bar__text"
+        buttonClasses="glue-cookie-notification-bar__accept"
       >
         Privacy Sandbox Demos website uses{' '}
         <a
