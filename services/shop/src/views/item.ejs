@@ -99,9 +99,15 @@
         scriptEl.dataset.itemId = '<%= item.id %>'
         return scriptEl
       }
-      document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
-      document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
-      document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+      switch ('<%= usecase %>'){
+        case 'ba':
+          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
+        default: 
+          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+      }
     </script>
   </body>
 </html>
