@@ -27,7 +27,6 @@ export class KeyValueStore {
     defaultValues: string[][] = [],
     resetIntervalInMins: number = 30,
   ) {
-    console.log('Initializing in-memory key value store.', {defaultValues});
     this.defaultData = defaultValues;
     this.rewriteDefaults();
     setInterval(this.rewriteDefaults, 1000 * 60 * resetIntervalInMins);
