@@ -228,10 +228,10 @@ This [ssp-tags.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/
 ```
 
 The iframe calls a third-party script
-[run-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp/src/public/js/run-ad-auction.js) to run an ondevice
-ad auction using Protected Audience API
+[run-simple-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js)
+to run an ondevice ad auction using Protected Audience API
 
-```js title=”https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp/src/public/js/run-ad-auction.js”
+```js title=”https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js”
 document.addEventListener("DOMContentLoaded", async (e) => {
   const auctionConfig = await getAuctionConfig()
 
