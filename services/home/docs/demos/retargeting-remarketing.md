@@ -1,11 +1,11 @@
 ---
-title: Basic retargeting / remarketing ad campaign
+title: Basic retargeting / remarketing ads
 sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-# Basic retargeting / remarketing ad campaign
+# Basic retargeting / remarketing ads
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
@@ -18,22 +18,23 @@ Remarketing is a type of online advertising that allows you to show ads to peopl
 audiences based on different criteria, such as pages visited or products added to the cart. Remarketing can help you increase brand awareness, drive
 traffic back to your website, and boost sales.
 
-### Privacy Sandbox APIs
+### Privacy Sandbox APIs and related documentation
 
-- [Protected Audience](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Fenced Frames](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
+- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
 
 ### Related parties
 
-- Publisher
+- Publisher (News site)
 - Supply Side Platform (SSP)
-- Advertiser
+- Advertiser (Shop site)
 - Demand Side Platform (DSP)
 
 </TabItem>
-<TabItem value="scope" label="Scope">
+<TabItem value="design" label="Design">
 
-## Scope
+## Design
 
 ### Goals
 
@@ -60,8 +61,7 @@ page.
 
 #### Protected Audience Flow
 
-Below is a general introduction of Remarketing using Privacy Sandbox Protected Audience API. For further information see
-[Protected Audience API - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience).
+Below is a general introduction of Remarketing using Privacy Sandbox Protected Audience API.
 
 ![Protected Audience Flow](./img/retargeting-remarketing-flow.png)
 
@@ -73,39 +73,45 @@ Below is a general introduction of Remarketing using Privacy Sandbox Protected A
 
 ```mermaid
 sequenceDiagram
-Title: Retargeting / Remarketing - User Journey
+autonumber
 
 participant Browser
-participant Publisher
+participant Publisher as Publisher Site
 participant SSP
-participant Advertiser
+participant Advertiser as Advertiser Site
 participant DSP
 
-Browser->>Advertiser:visits a shop site and reviews products
-Advertiser-->>Browser:return DSP tags
-Browser->>DSP:browser loads scripts from DSP
-DSP-->>Browser:returns interest group configuration
+Note over Browser,DSP: Pre PA auction: Join ad interest group
+Browser ->> Advertiser: Visit a product detail page on shop advertiser site
+Advertiser -->> Browser: Return shop page with DSP tags
+Browser ->> DSP: Load scripts from DSP
+DSP -->> Browser: Return scripts and interest group configuration
 
-Browser-)Browser:navigator.joinAdInterestGroup(...)
+Browser ->> Browser: navigator.joinAdInterestGroup(...)
 
-Browser->>Publisher:visits a news  site
-Publisher-->>Browser:return SSP tags
-Browser->>SSP:browser loads scripts from SSP
-SSP-->>Browser:returns auction configuration
+Note over Browser,DSP: PA Auction: Browser orchestrates on-device auction
+Browser ->> Publisher: Visit news publisher site
+Publisher -->> Browser: Return news page tagged with SSP tags
+Browser ->> SSP: Load scripts from SSP
+SSP -->> Browser: Return scripts and auction configuration
 
-Browser-)Browser:navigator.runAdAuction(auctionConfig)
+Browser ->> Browser: navigator.runAdAuction(...)
 
-note right of Browser:each interest group's bidding function will run
-Browser-)Browser:generateBid(...)
+note right of Browser: Browser invokes DSP bidding logic for all eligible interest groups
+Browser ->> DSP: Fetch bidding logic script and real-time bidding signals
+DSP ->> Browser: Return bidding logic script and real-time bidding signals
+Browser ->> Browser: generateBid(...)
 
-note right of Browser:for each candidate ad in the auction
-Browser-)Browser:scoreAd(...)
+note right of Browser: Browser invokes SSP scoring logic for all eligible interest group bids
+Browser ->> SSP: Fetch scoring logic script and scoring signals
+SSP ->> Browser: Return scoring logic script and scoring signals
+Browser ->> Browser: scoreAd(...)
 
-note right of Browser:Winning ad is displayed in a fenced-frame
-Browser->>DSP:Request ad creative
-DSP-->>Browser:Return ad creative
+note over Browser,DSP: Post PA auction: Winning ad is delivered in a fenced-frame
+Browser ->> DSP: Request ad creative
+DSP -->> Browser: Return ad creative
 
-Note right of Browser:Winning ad is rendered
+Note right of Browser: Winning ad is rendered
 
 ```
 
@@ -123,11 +129,11 @@ Note right of Browser:Winning ad is rendered
 
 ### User Journey
 
-1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
+1. [Navigate to shop site :arrow_upper_right:](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on any "shoe" product item on the shop site.
    - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the
      browser to join an ad interest group for this product or this specific product category.
-3. [Navigate to the news site](https://privacy-sandbox-demos-news.dev/) (publisher)
+3. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/) (publisher)
 4. Observe the ad served on the news site
    - If you previously browsed the "shoe" product on the shop site, you will be shown an ad for the same product.
    - When the page was loaded, Protected Audience API allowed the SSP to run an ad auction on the publisher site.
@@ -136,10 +142,10 @@ Note right of Browser:Winning ad is rendered
 
 ### Implementation details
 
-#### How is the user added to an Interest Group based on their browsing behavior? (see step #2 of User Journey)
+#### How is the user added to an interest group based on their browsing behavior? (see step #2 of user journey)
 
 The shop product page includes one or more third-party tags from the DSP services:
-[dsp-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/shop/src/views/item.ejs#L92).
+[`dsp-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/shop/src/views/item.ejs#L92).
 
 ```html title="DSP tag on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
 <script
@@ -150,8 +156,9 @@ The shop product page includes one or more third-party tags from the DSP service
 ></script>
 ```
 
-The [dsp-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97) dynamically
-injects an iframe in the DSP's origin to the advertiser's page.
+The
+[`dsp-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97)
+dynamically injects an iframe in the DSP's origin to the advertiser's page.
 
 ```html title="DSP iframe on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
 <iframe
@@ -163,9 +170,10 @@ injects an iframe in the DSP's origin to the advertiser's page.
 ```
 
 This third-party DSP iframe includes a script
-[join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/join-ad-interest-group.js)
-to join an interest group using the Protected Audience API. To do so, the DSP tag retrieves the interest group object from its server from
-[https://privacy-sandbox-demos-dsp.dev/dsp/interest-group.json](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/dsp/buyer-router.ts#L46).
+[`join-ad-interest-group.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/join-ad-interest-group.js)
+to join an interest group using the Protected Audience API. To do so, the DSP tag retrieves the interest group configurations from its own server
+from:
+[`https://privacy-sandbox-demos-dsp.dev/dsp/interest-group.json` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/dsp/buyer-router.ts#L46).
 
 ```js title="Script loaded in DSP iframe: https://privacy-sandbox-demos-dsp.dev/dsp/dsp-advertiser-iframe.html"
 /** Sends first-party context to server to retrieve interest group metadata. */
@@ -197,10 +205,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 ```
 
-#### How is the relevant ad delivered to the user? (see step #4 of User Journey)
+#### How is the relevant ad delivered to the user? (see step #4 of user journey)
 
 The news page lists the available ad slot on the page in the
-[`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L17) object.
+[`window.PSDemo.PAGE_ADS_CONFIG` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L17)
+object.
 
 ```js title="Publisher configures ad slots on page: https://privacy-sandbox-demos-news.dev"
 window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
@@ -216,8 +225,8 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 ```
 
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
-[run-simple-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L60) from the SSP
-service.
+[`run-simple-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L60)
+from the SSP service.
 
 ```html title="SSP tag on publisher page: https://privacy-sandbox-demos-news.dev"
 <script
@@ -228,7 +237,7 @@ service.
 ```
 
 This
-[run-simple-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js)
+[`run-simple-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js)
 script executes a Protected Audience auction using auction configurations retrieved from its server.
 
 ```js title="SSP script loaded on publisher page: https://privacy-sandbox-demos-news.dev"
@@ -259,8 +268,9 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
 The Protected Audience auction is orchestrated by the browser, executing bidding and decision logic provided by the ad buyer and ad seller
 respectively to arrive at the winning ad. The result of this ad auction is displayed within a Fenced Frame. This ad auction result represents the
-winning [`renderURL`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/common/ads-router.ts#L34) included
-in the interest group.
+winning
+[`renderURL` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/common/ads-router.ts#L34)
+included in the interest group.
 
 ```html title="Protected Audience auction result delivered in a fenced-frame"
 <fencedframe width="300" height="250">
@@ -270,12 +280,6 @@ in the interest group.
   </html>
 </fencedframe>
 ```
-
-## Related API documentation
-
-- [Protected Audience Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Fenced Frames Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
 
 </TabItem>
 </Tabs>

@@ -14,158 +14,157 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 ### Description
 
-While Protected Audience may enable the delivery of more relevant ads by considering cross-site context without relying on tracking identifiers and
+While Protected Audience enables the delivery of relevant ads by considering cross-site context without relying on tracking identifiers and
 third-party cookies, publishers will continue to diversify their ad demand sources with an intention to optimize for revenue. Additionally, there is
-always a possibility that the Protected Audience auction may not return a valid result because of multiple reasons such as: no interest groups were
+always a possibility that the Protected Audience auction may not return a valid result due to multiple reasons such as: no interest groups were
 eligible, all eligible ads were blocked, or a timeout was hit, etc. The publisher, regardless of the auction mechanism, would still want to fill the
 ad slot with an ad. So, we anticipate that publishers will continue to rely on their current contextual auction setup while exploring Protected
 Audience as an additional demand source that may or may not beat the contextual demand floor.
 
-For a deeper walkthrough of this sequential auction setup, see:
-[Sequential auction setup with contextual ad auction - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
+### Privacy Sandbox APIs and related documentation
 
-### Privacy Sandbox APIs
-
-- [Protected Audience](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Fenced Frames](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
+- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
+- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
 
 ### Related parties
 
-- Publisher
-- Publisher Ad Server
+- Publisher (News site)
+- Publisher Ad Server / Top-level Seller
 - Supply Side Platform (SSP)
-- Advertiser
+- Advertiser (Shop site)
 - Demand Side Platform (DSP)
 
 </TabItem>
-<TabItem value="scope" label="Scope">
+<TabItem value="design" label="Design">
 
-## Scope
+## Design
 
 ### Goals
 
 In this demo, we aim to demonstrate a basic sequential auction setup with a focus on the data flow from the perspective of the Protected Audience
-auction and abstract a lot of the technical nuance of the contextual auction. Building on the
-[basic retargeting / remarketing ad campaign use-case demo](retargeting-remarketing), this demo shows a more realistic sequential setup with multiple
-buyers and sellers participating in the ad delivery process. This demo will also demonstrate SSPs sourcing `buyerSignals` from DSPs and including them
-in the Protected Audience auction configuration.
+auction and abstract a lot of the technical nuance in the contextual auction. Building on the
+[basic retargeting / remarketing ads demo](retargeting-remarketing), this demo shows a more realistic sequential setup with multiple buyers and
+sellers participating in the ad delivery process. This demo will also demonstrate SSPs sourcing `buyerSignals` from DSPs and including them in the
+Protected Audience auction configuration.
 
 ### Key Exclusions
 
 This demo abstracts a lot of the complexity in the contextual auction. For starters, this demo doesn't integrate with any real header bidding library.
-Additionally, this demo doesn't aim to replicate the integration patterns between the publisher ad server and other ad sellers or SSPs across various
-ad delivery setups. This demo focuses on a few exemplary 'signals' as opposed to an industry spec such as OpenRTB.
+Additionally, this demo doesn't aim to replicate the existing integration patterns between the publisher ad server and other ad sellers or SSPs across
+various ad delivery setups. This demo focuses on a few exemplary _'signals'_ as opposed to an industry spec such as OpenRTB.
 
 ### System Design
 
-// TODO: Building on the existing single seller auction, ...
+Identical to the [basic retargeting / remarketing ads demo](retargeting-remarketing), the user visiting an advertiser page is added to interest groups
+by multiple DSPs. While the overall ad delvery flow on the publisher page is similar, the biggest difference in this demo is the involvement of
+multiple ad sellers. The publisher ad server starts with a simplified contextual auction with other sellers also participating to arrive at a winning
+contextual ad while also collating their auction configurations for the Protected Audience auction. The publisher ad server also initiates the
+Protected Audience auction acting as the top-level seller with all sellers including the publisher ad server conducting their individual component
+auctions.
 
 #### Protected Audience Flow
 
 ![Sequential auction setup flow](./img/sequential-setup-with-contextual-auction-flow.png)
 
-#### User Journey (TODO)
+#### User Journey
 
 ```mermaid
 sequenceDiagram
-Title: Sequential setup of Protected Audience with contextual ad auction
 
 autonumber
 
-actor User
 participant Browser
-participant Advertiser as Advetiser site
-participant Publisher as Publisher site
-box rgb(200, 220, 240) Sellers
-    participant SellerTop as Top-level seller
-    participant SellerA as Seller A
-    participant SellerB as Seller B
+participant Publisher as Publisher Site
+box rgb(200, 220, 240) Ad Sellers
+  participant Seller-Top as Publisher Ad Server
+  participant Sellers as SSP-A / SSP-B
 end
-box rgb(220, 240, 220) Buyers
-    participant Buyers
+participant Advertiser as Advertiser Site
+box rgb(220, 240, 220) Ad Buyers
+  participant Buyers as DSP-A / DSP-B
 end
 
-Note right of User: Pre-auction
-User ->> Advertiser: Visit advertiser page
-Advertiser ->> Buyers: Load buyer scripts
-Buyers ->> Browser: Add user to the interest group for the site
+Note over Browser,Buyers: Pre PA auction: Join ad interest group
+Browser ->> Advertiser: Visit a product detail page on shop advertiser site
+Advertiser -->> Browser: Return shop page with DSP tags
+Browser ->> Buyers: Load scripts from DSP
+Buyers -->> Browser: Return scripts and interest group configuration
+Browser ->> Browser: navigator.joinAdInterestGroup(...)
 
-Note right of User: Top-level auction
-User ->> Publisher: Visit publisher page
-Publisher ->> SellerTop: Load top-level seller script
-activate SellerTop
-SellerTop ->> SellerA: Fetch component config
-SellerTop ->> SellerB: Fetch component config
-SellerTop ->> Browser: Start top-level auction with component configs added (runAdAuction)
-deactivate SellerTop
+Note over Browser,Buyers: Pre PA auction: Contextual auction
+Browser ->> Publisher: Visit news publisher site
+Publisher -->> Browser: Return news page tagged by publisher ad server
+Browser ->> Seller-Top: Load ad server tags
+Seller -->> Browser: Return ad server tags
+Browser ->> Seller-Top: Publisher ad server tags send contextual bid request
+Seller-Top -->> Browser: Return contextual bid response and PA auction configuration
+Browser ->> Sellers: Publisher ad server tags send contextual bid request
+Sellers -->> Browser: Return contextual bid response and PA auction configuration
+Note right of Browser: Publisher ad server chooses winning contextual ad and initiates the PA auction
+Browser ->> Browser: navigator.runAdAuction(...)
 
-    Note right of User: Seller A's auction (in parallel)
-    Browser ->> SellerA: Load Seller A's script and start component auction
-    activate SellerA
-    Browser ->> Browser: Read interest groups of all participating buyers
-    Browser ->> Buyers: Fetch bidding scripts and trusted bidding signals
-    Browser ->> Browser: Generate each bid from buyer's logic (generateBid)
-    Browser ->> SellerA: Fetch scoring script trusted scoring signals
-    Browser ->> Browser: Score each ad with seller's scoring script (scoreAd)
-    Browser ->> Browser: Choose the highest scoring ad from seller's score of each ad
-    deactivate SellerA
+Note over Browser,Buyers: PA auction: Component auctions
+par Component auction for publisher ad server
+  Browser ->> Browser: Identify eligible interest groups for all participating buyers
+  Browser ->> Buyers: Fetch bidding logic scripts and real-time bidding signals
+  Buyers -->> Browser: Return bidding logic scripts and real-time bidding signals
+  Browser ->> Browser: generateBid(...) for each eligible interest group
+  Browser ->> Seller-Top: Fetch scoring logic scripts and real-time scoring signals
+  Seller-Top -->> Browser: Return scoring logic scripts and real-time scoring signals
+  Browser ->> Browser: scoreAd(...) for each eligible component auction bid
+  Note right of Browser: Browser picks the highest scored ad as the winner of component auction
+and Component auctions for SSP-A / SSP-B
+  Browser ->> Browser: Identify eligible interest groups for all participating buyers
+  Browser ->> Buyers: Fetch bidding logic scripts and real-time bidding signals
+  Buyers -->> Browser: Return bidding logic scripts and real-time bidding signals
+  Browser ->> Browser: generateBid(...) for each eligible interest group
+  Browser ->> Sellers: Fetch scoring logic scripts and real-time scoring signals
+  Sellers -->> Browser: Return scoring logic scripts and real-time scoring signals
+  Browser ->> Browser: scoreAd(...) for each eligible component auction bid
+  Note right of Browser: Browser picks the highest scored ad as the winner of component auction
+end
 
-    Note right of User: Seller B's auction (in parallel)
-    Browser ->> SellerB: Load Seller A's script and start component auction
-    activate SellerB
-    Browser ->> Browser: Read interest groups of all participating buyers
-    Browser ->> Buyers: Fetch bidding scripts and trusted bidding signals
-    Browser ->> Browser: Generate each bid from buyer's logic (generateBid)
-    Browser ->> SellerA: Fetch scoring script trusted scoring signals
-    Browser ->> Browser: Score each ad with seller's scoring script (scoreAd)
-    Browser ->> Browser: Choose the highest scoring ad from seller's scores of each ad
-    deactivate SellerB
+Note over Browser,Buyers: PA auction: Top-level auction
+Browser ->> Seller-Top: Fetch top-level scoring logic scripts and real-time scoring signals
+Seller-Top -->> Browser: Return scoring logic scripts and real-time scoring signals
+Browser ->> Browser: scoreAd(...) for each winning component auction bid
+Note right of Browser: Browser picks the highest scored ad as the winner of overall auction
 
-Note right of User: Top-level auction continued
-Browser ->> SellerTop: Fetch top-level scoring script and trusted scoring signals
-activate SellerTop
-Browser ->> Browser: Score each component auction winning ad with top-seller's scoring script (scoreAd)
-Browser ->> Browser: Choose the highest scoring ad from top-level seller's scoreof each component ad
-deactivate SellerTop
-
-Browser ->> SellerTop: Report event-level and aggregate result
-Browser ->> SellerA: Report event-level and aggregate result
-Browser ->> SellerB: Report event-level and aggregate result
-
-Note right of User: Winner is chosen
-    Browser ->> Buyers: Report event-level win or aggregate loss result
-    Browser ->> SellerTop: Return Opaque URN or FencedFrameConfig object that contains the ad location
-    SellerTop ->> Browser: Set iframe src or fenced frame config
-    Buyers ->> Browser: Provide ad
-    Browser ->> User: Render ad (iframe or fenced frame)
-
-Note right of User: No winner is chosen
-    Browser ->> Buyers: Report aggregate loss result
-    Browser ->> SellerTop: Returns 'null'
-    SellerTop ->> Browser: Set iframe src to a default or contextual ad
-    Browser ->> User: Render default or contextual ad
-
+note over Browser,DSP: Post PA auction: Winning ad is delivered on publisher page
+alt PA auction picks a winning ad
+  Browser ->> Browser: runAdAuction() returns a winning ad
+  Note right of Browser: Deliver winning PA ad in ad frame
+  Browser ->> Buyers: Request ad creative
+  Buyers -->> Browser: Return ad creative
+else PA auction doesn't pick a winning ad
+  Browser ->> Browser: runAdAuction() returns 'null'
+  Note right of Browser: Deliver winning contextual ad in ad frame
+  Browser ->> Buyers: Request ad creative
+  Buyers -->> Browser: Return ad creative
+end
 ```
 
 </TabItem>
 <TabItem value="demo" label="Demo">
 
-## Demo (TODO)
+## Demo
 
-### Prerequisites (TODO)
+### Prerequisites
 
 - Latest stable version of Chrome (Open `chrome://version` to check your current version)
 - Enable Privacy Sandbox APIs (Open `chrome://settings/adPrivacy` to enable _Site-suggested ads_)
 - Clear your browsing history before you run one of the demo scenario below (Open `chrome://settings/clearBrowserData` to delete your browsing
   history)
 
-### User Journey (TODO)
+### User Journey
 
-1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
+1. [Navigate to shop site :arrow_upper_right:](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on any "shoe" product item on the shop site.
    - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the
      browser to join an ad interest group for this product or this specific product category.
-3. [Navigate to the news site](https://privacy-sandbox-demos-news.dev/) (publisher)
+3. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad) (publisher)
 4. Observe the ad served on the news site
    - If you previously browsed the "shoe" product on the shop site, you will be shown an ad for the same product.
    - When the page was loaded, Protected Audience API allowed the SSP to run an ad auction on the publisher site.
@@ -181,10 +180,10 @@ publisher page.
 #### How does the publisher pass the ad unit configurations for a given page to the publisher ad server?
 
 The news page lists the available ad slots on the page in the
-[`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L16-38)
+[`window.PSDemo.PAGE_ADS_CONFIG` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L16-38)
 object.
 
-```js title="Publisher configures ad slots on page: https://privacy-sandbox-demos-news.dev"
+```js title="Publisher configures ad slots on page: https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad"
 // List of additional sellers that the publisher ad server should include in the ad delivery process.
 const otherSellers = window.PSDemo.getUrlQueryAsArray('otherSellers') || [
   'https://privacy-sandbox-demos-ssp.dev',
@@ -207,8 +206,8 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 ```
 
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
-[ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L39-41) from
-the publisher ad server.
+[`ad-server-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L39-41)
+from the publisher ad server.
 
 ```html title="Ad server tag on publisher page: https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad"
 <script async defer
@@ -216,60 +215,176 @@ the publisher ad server.
 ></script>
 ```
 
-#### How does the publisher ad server initiate the contextual auction?
-
 #### How does the publisher ad server integrate the Protected Audience auction in a sequential manner?
 
-#### How is the relevant ad delivered to the user? (see step #4 of User Journey)
+The
+[`ad-server-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/ad-server-tag.js)
+reads the ad unit configurations declared by the publisher and handles them individually.
 
-This
-[run-simple-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js)
-script executes a Protected Audience auction using auction configurations retrieved from its server.
+```js title="ad-server-tag.js iterates over ad unit configurations"
+const {adUnits, otherSellers} = window.PSDemo.PAGE_ADS_CONFIG;
+deliverAds(adUnits, otherSellers);
 
-```js title="SSP script loaded on publisher page: https://privacy-sandbox-demos-news.dev"
-document.addEventListener("DOMContentLoaded", async (e) => {
-  // Retrieve auction configuration from its own server.
-  const auctionConfig = await getAuctionConfig(adUnit);
-  // Execute the Protected Audience auction.
-  const adAuctionResult = await navigator.runAdAuction(auctionConfig);
-  // Finally handle the auction result.
-  if (!adAuctionResult) {
-    document.getElementById(adUnit.divId).innerText = 'No eligible ads';
-  } else {
-    const adFrame = document.createElement('fencedframe');
-    adFrame.config = adAuctionResult;
-    [adFrame.width, adFrame.height] = adUnit.size;
-    log('delivering ads in ', {
-      adFrame,
-      adUnit,
-      auctionConfig,
-      adAuctionResult,
-    });
-    document.getElementById(adUnit.divId).appendChild(adFrame);
+const deliverAds = (adUnits, otherSellers) => {
+  for (const adUnit of adUnits) {
+    // ...
+    // Deliver ad for adUnit.
+    // ...
   }
-});
+};
 ```
 
-The Protected Audience auction is orchestrated by the browser, executing bidding and decision logic provided by the ad buyer and ad seller
-respectively to arrive at the winning ad. The result of this ad auction is displayed within a Fenced Frame. This ad auction result represents the
-winning [`renderURL`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/common/ads-router.ts#L34) included
-in the interest group.
+More specifically, the `ad-server-tag.js` injects an iframe for each ad unit where each of theses iframe then executes a sequential contextual and
+Protected Audience auction to choose an ad. This iframe loads:
+[`https://privacy-sandbox-demos-ad-server.dev/ssp/run-sequential-ad-auction.html` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/views/ssp/run-sequential-ad-auction.ejs),
+which contains a single script:
+[`https://privacy-sandbox-demos-ad-server.dev/js/ssp/run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js).
+This iframe expects a post-message from `ad-server-tag.js` containing the ad unit configuration as well as the list of other sellers involved in the
+ad delivery process.
 
-```html title="Protected Audience auction result delivered in a fenced-frame"
-<fencedframe width="300" height="250">
-  #document (https://privacy-sandbox-demos-dsp.dev/ads/display-ads?advertiser=privacy-sandbox-demos-shop.dev&itemId=1f460)
-  <html lang="en">
-    …
-  </html>
-</fencedframe>
+```js title="run-sequential-ad-auction.js integrates the contextual and the Protected Audience auction."
+/** Executes the multi-seller ad auction for the given adUnit config. */
+const runMultiSellerAdAuction = async (message) => {
+  const [adUnit, otherSellers] = getValidatedAdUnitAndOtherSellers(message);
+  const contextualBidResponses = await getAllContextualBidResponses(
+    adUnit,
+    [location.origin, ...otherSellers], // Explicitly include self.
+  );
+  const adAuctionResult = await executeSequentialAuction(
+    adUnit,
+    contextualBidResponses,
+  );
+  let adFrame;
+  // ...
+  // Construct ad frame from adAuctionResult.
+  // ...
+  document.body.appendChild(adFrame);
+}
 ```
 
-## Related API documentation
+#### How does the simplified contextual auction work?
 
-- [Protected Audience Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Sequential setup with contextual ad auction - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
-- [Fenced Frames Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+As stated earlier, this demo implements a minimalist version of the contextual auction. The ad unit configuration is identical across the contextual
+and the Protected Audience auctions. While in real implementations, the contextual auction might consist of multiple independent auctions executed in
+a mix of sequential and parallel setups, this demo combines the header bidding auction with the publisher ad server's contextual auction into a single
+step.
+
+```js title="Ad server sends contextual bid requests to all sellers including itself"
+/** Fetches all the contextual bid responses with a timeout. */
+const getAllContextualBidResponses = async (adUnit, sellers) => {
+  const bidRequestUrls = getBidRequestUrlsWithContext(adUnit, sellers);
+  const bidResponsePromises = bidRequestUrls.map(async (bidRequestUrl) => {
+    const response = await fetch(bidRequestUrl);
+    if (response.ok) {
+      return await response.json();
+    } else {
+      return {bid: '0.0'};
+    }
+  });
+  // Use Promise.race to implement the timeout.
+  const bidResponses = await Promise.race([
+    (await Promise.allSettled(bidResponsePromises))
+      .filter((p) => p.status === 'fulfilled')
+      .map((p) => p.value),
+    new Promise((resolve) =>
+      setTimeout(() => resolve([]), CONTEXTUAL_AUCTION_TIMEOUT_MS),
+    ),
+  ]);
+  return bidResponses;
+}
+```
+
+In the above code snippet from
+[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L79-106),
+the publisher ad server's JavaScript makes contextual bid requests to all the sellers involved in the ad delivery process.
+
+```title="Contextual bid requests sent to ad sellers"
+https://privacy-sandbox-demos-ad-server.dev/ssp/contextual-bid
+https://privacy-sandbox-demos-ssp.dev/ssp/contextual-bid
+https://privacy-sandbox-demos-ssp-a.dev/ssp/contextual-bid
+https://privacy-sandbox-demos-ssp-b.dev/ssp/contextual-bid
+```
+
+To respond to these requests, the ad sellers in turn make requests to ad buyers that they integrate with. The above request to the ad seller stack is
+handled by the
+[`seller-contextual-bidder-router` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/ssp/seller-contextual-bidder-router.ts)
+module. The seller backend sends the contextual bid request to each of the ad buyers it integrates with, and assembles its final contextual bid
+response with its highest contextual bid and its component auction configuration for the Protected Audience auction.
+
+```js title="Seller backend responds to contextual bid request"
+SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
+  const auctionSignals: {[key: string]: string} = {};
+  const sellerSignals: {[key: string]: string} = {};
+  // ...
+  // Parse signals from request context.
+  // ...
+  // Run server-side contextual auction.
+  const contextualBids = await getContextualBids(
+    /* bidderHosts= */ BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST.get(HOSTNAME!)!,
+    /* signals= */ auctionSignals,
+  );
+  const [winningContextualBid] = contextualBids
+    .filter((bid) => Number(bid.bid) > 0)
+    .sort((bid1, bid2) => Number(bid2.bid!) - Number(bid1.bid!));
+  // Collect buyer signals from contextual bids.
+  const perBuyerSignals: {[key: string]: any} = {};
+  for (const contextualBid of contextualBids) {
+    if (contextualBid.buyerSignals) {
+      perBuyerSignals[contextualBid.bidderOrigin!] = contextualBid.buyerSignals;
+    }
+  }
+  const response: ContextualBidResponse = {...};
+  res.json(response);
+}
+```
+
+#### How do the additional sellers or SSPs integrate with the publisher ad server's Protected Audience auction
+
+The publisher ad servers collates the contextual bid responses from all the sellers before assembling the combined auction configuration for Protected
+Audience. In the following code snippet from
+[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L145-182),
+the winning contextual bid is chosen purely on the bid price. Along with the contextual bid response, the additional sellers or SSPs also respond with
+their Protected Audience component auction configuration. The publisher ad server also assembles the final Protected Audience auction configuration
+which includes these component auction configurations from other sellers as well as its own component auction.
+
+Since the `navigator.runAdAuction(...)` only returns the final result represented as a URN or a Fenced Frame config, the decision to choose between
+the contextual ad and Protected Audience ad has to be made within the Protected Audience. Accordingly, the `navigator.runAdAuction(...)` method will
+return a valid result when the Protected Audience ad wins the overall auction, or return `null` to indicate choosing the contextual ad.
+
+```js
+/** Executes the PAAPI auction in sequence and returns the overall result. */
+const executeSequentialAuction = async (adUnit, contextualBidResponses) => {
+  const [winningContextualBid] = contextualBidResponses
+    .filter((bid) => Number(bid.bid) > 0)
+    .sort((bid1, bid2) => Number(bid2.bid) - Number(bid1.bid));
+  const componentAuctionConfigs = contextualBidResponses.map(
+    (bidResponse) => bidResponse.componentAuctionConfig,
+  );
+  const auctionConfig = assembleAuctionConfig(
+    adUnit,
+    winningContextualBid,
+    componentAuctionConfigs,
+  );
+  const adAuctionResult = await navigator.runAdAuction(auctionConfig);
+  if (adAuctionResult) {
+    return {
+      type: 'PROTECTED_AUDIENCE',
+      value: adAuctionResult,
+    };
+  } else if (winningContextualBid) {
+    return {
+      type: 'CONTEXTUAL',
+      value: winningContextualBid.renderURL,
+    };
+  } else {
+    document.getElementById('ad-label').innerText = 'No eligible ads found.';
+    return {
+      type: 'NONE',
+    };
+  }
+};
+```
 
 </TabItem>
 </Tabs>
+```

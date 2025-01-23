@@ -19,7 +19,7 @@ purchase on the advertiser's website. Single-touch attribution models are easy t
 businesses with limited data or resources. However, they can also be inaccurate, as they do not account for the influence of other touch points on a
 conversion.
 
-### Privacy Sandbox APIs
+### Privacy Sandbox APIs and related documentation
 
 - [Attribution Reporting API](https://developer.chrome.com/en/docs/privacy-sandbox/attribution-reporting/)
 
