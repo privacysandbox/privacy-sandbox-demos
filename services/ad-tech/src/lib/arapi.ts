@@ -228,3 +228,19 @@ function test() {
 }
 
 // test();
+
+// tmp for event level report
+// assign trigger data and priority based on the conversion type
+export function getTriggerData(cvType: String) {
+  console.log('[arapi] getTriggerData: ', cvType);
+  switch (cvType) {
+    case 'click-cart-icon':
+      return ['5', '60'];
+    case 'add-to-cart':
+      return ['6', '80'];
+    case 'purchase':
+      return ['1', '100']
+    default:
+      return ['0', '0'];
+  }
+}
