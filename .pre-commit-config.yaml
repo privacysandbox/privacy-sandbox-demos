@@ -15,6 +15,15 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
+ci:
+  autofix_commit_msg: "[pre-commit.ci] auto fixes from pre-commit.com hooks"
+  autofix_prs: false
+  autoupdate_branch: "dev"
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
+  autoupdate_schedule: quarterly
+  skip: []
+  submodules: false
+
 fail_fast: true
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
@@ -36,7 +45,3 @@ repos:
     hooks:
       - id: markdownlint-cli2
         name: lint markdown
-ci:
-  autofix_prs: false
-  autoupdate_branch: dev
-  autoupdate_schedule: monthly
