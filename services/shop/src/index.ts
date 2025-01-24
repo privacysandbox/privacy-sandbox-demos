@@ -111,9 +111,7 @@ app.locals = {
     });
   },
   getEventTriggerUrl: (cvType: string) => {
-    const eventTriggerUrl = new URL(
-      `https://${DSP_HOST}:${EXTERNAL_PORT}`,
-    );
+    const eventTriggerUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
     eventTriggerUrl.pathname = '/attribution/register-event-level-trigger';
     eventTriggerUrl.searchParams.append('conversion-type', cvType);
     return eventTriggerUrl.toString();
