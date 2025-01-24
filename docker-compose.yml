@@ -11,6 +11,8 @@ volumes:
   ssp_node_modules:
   ssp_a_node_modules:
   ssp_b_node_modules:
+  ssp_x_node_modules:
+  ssp_y_node_modules:
   ad_server_node_modules:
 
 services:
@@ -164,6 +166,32 @@ services:
     volumes:
       - ./services/ad-tech:/workspace
       - ssp_b_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  ssp-x:
+    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
+    build: ./services/ad-tech
+    container_name: "sandcastle_ssp_x"
+    hostname: ${SSP_X_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/ad-tech:/workspace
+      - ssp_x_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  ssp-y:
+    image: gcr.io/privacy-sandbox-demos/ad-tech:latest
+    build: ./services/ad-tech
+    container_name: "sandcastle_ssp_y"
+    hostname: ${SSP_Y_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/ad-tech:/workspace
+      - ssp_y_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
