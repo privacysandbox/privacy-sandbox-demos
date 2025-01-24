@@ -215,7 +215,7 @@ JSON.stringify({
 
 ### Set up an endpoint
 
-All we have to do now is to create an endpoint at https://adtech.example/.well-known/attribution-reporting/report-event-attribution to receive
+All we have to do now is to create an endpoint at <https://adtech.example/.well-known/attribution-reporting/report-event-attribution> to receive
 reports.
 
 ![endpoint](./img/single-touch-event-level-report-endpoint.png)
