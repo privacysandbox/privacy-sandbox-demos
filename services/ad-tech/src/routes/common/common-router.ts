@@ -65,7 +65,7 @@ CommonRouter.get('/js/*.js', (req: Request, res: Response) => {
     res.set('X-Allow-FLEDGE', 'true');
     res.set('Ad-Auction-Allowed', 'true');
   }
-  if (filePath.endsWith('/run-ad-auction.js')) {
+  if (filePath.endsWith('/run-simple-ad-auction.js')) {
     res.set('Supports-Loading-Mode', 'fenced-frame');
     res.set('Permissions-Policy', 'run-ad-auction=(*)');
   }
