@@ -8,13 +8,24 @@ your change and/or make pull requests.
 
 The following packages must be installed
 
-- [docker](https://docs.docker.com/engine/install/)
-- [docker-compose](https://docs.docker.com/compose/install/)
+- [podman](https://podman.io/get-started). We recommend to configure podman in a
+  [rootless environment](https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md)
+- [podman-compose](https://github.com/containers/podman-compose)
 - npm
 - git
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
 ## Network Setup
+
+Allow non root services to use port 443
+
+To run the containers with podman rootless we will need to allow non-root services to use ports below 1024.
+
+Edit /etc/sysctl.conf file as root and add (e.g. : sudo nano /etc/sysctl.conf )
+
+net.ipv4.ip_unprivileged_port_start=443
+
+Then apply changes: sudo sysctl -p
 
 ### Domain Name / URL
 
@@ -167,24 +178,24 @@ npm run build
 ### Run start scripts
 
 ```sh
-# Build and run the docker containers (docker must be run with root permission) :
-sudo npm run start
+# Build and run the containers :
+npm run podman-start
 ```
 
 Open the home page: <https://privacy-sandbox-demos-home.dev>
 
 ## Stop your local development environment
 
-docker-compose can stop and remove the containers. In a new terminal run :
+podman-compose can stop and remove the containers. In a new terminal run :
 
 ```sh
-sudo npm run stop
+npm run podman-stop
 ```
 
 If for some reason you only want to stop/remove one container run :
 
 ```sh
-sudo docker-compose down <service_name>
+podman-compose down <service_name>
 ```
 
 ## Cleanup your containers images & volumes
@@ -195,10 +206,10 @@ have mounted your local file system `./services/xxx` to the container `/workspac
 Changes to static files should be immediate, however for typescript or compiled binaries you will have to restart your container or run again the
 build/start script from within the container.
 
-The easiest way is to restart the container using docker-compose and specify the services you wish to restart (dsp, ssp etc.)
+The easiest way is to restart the container using podman-compose and specify the services you wish to restart (dsp, ssp etc.)
 
 ```sh
-sudo docker-compose restart [SERVICE...]
+podman-compose restart [SERVICE...]
 ```
 
 If you have modified and added new dependencies (package.json or go.mod etc), you will also have to rebuild the container image. For
@@ -209,13 +220,16 @@ container. But as a side effect, dependencies may not be refreshed properly.
 To start again from a fresh environment, we are providing the following shortcut to cleanup all images, volumes :
 
 ```sh
-sudo npm run clean
+npm run podman-clean
 
-# equivalent of docker-compose down --volumes && docker-compose rm --volumes --force && docker volume prune --force && docker image prune -f && docker rmi -f $(docker images -q)
+# equivalent of podman-compose down --volumes && podman volume prune --force && podman image prune --all --force && podman rmi --all --force
 ```
 
 Alternatively you can run the commands below for a specific service :
 
 ```sh
-sudo docker-compose down --volumes <service_name>
+podman-compose down --volumes <service-name>
+podman volume prune --force <service-name>
+podman image prune --force <service-name>
+podman rmi --force <service-name>
 ```
