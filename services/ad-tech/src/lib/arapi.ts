@@ -231,7 +231,7 @@ function test() {
 
 // tmp for event level report
 // assign trigger data and priority based on the conversion type
-export function getTriggerData(cvType: String) {
+export function getTriggerData(cvType: string) {
   console.log('[arapi] getTriggerData: ', cvType);
   switch (cvType) {
     case 'click-cart-icon':
