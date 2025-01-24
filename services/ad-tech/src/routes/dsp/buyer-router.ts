@@ -59,10 +59,13 @@ BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
 });
 
 /** Returns the interest group to join on an advertiser page. */
-BuyerRouter.get('/interest-group-bidding-and-auction.json', async (req: Request, res: Response) => {
-  const targetingContext = assembleTargetingContext(req.query);
-  res.json(getInterestGroupBiddingAndAuction(targetingContext));
-});
+BuyerRouter.get(
+  '/interest-group-bidding-and-auction.json',
+  async (req: Request, res: Response) => {
+    const targetingContext = assembleTargetingContext(req.query);
+    res.json(getInterestGroupBiddingAndAuction(targetingContext));
+  },
+);
 
 /** Returns the updated interest group, usually daily, may be overridden. */
 BuyerRouter.get(

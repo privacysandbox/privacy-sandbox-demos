@@ -28,36 +28,35 @@
  */
 
 (() => {
-    /** Sends first-party context to server to retrieve interest group metadata. */
-    getInterestGroupFromServer = async () => {
-      const currentUrl = new URL(location.href);
-      const interestGroupUrl = new URL(location.origin);
-        interestGroupUrl.pathname = '/dsp/interest-group-bidding-and-auction.json';
-      // Copy query params from current context.
-      for (const [key, value] of currentUrl.searchParams) {
-        interestGroupUrl.searchParams.append(key, value);
-      }
-      // TODO: Consider using Topics API for choosing Ads
-      // const topics = await document.browsingTopics?
-      // console.log({ topics })
-      // interestGroupUrl.searchParams.append('topics', topics);
-      const res = await fetch(interestGroupUrl, {browsingTopics: true});
-      if (res.ok) {
-        return res.json();
-      }
-    };
-  
-    document.addEventListener('DOMContentLoaded', async () => {
-      if (navigator.joinAdInterestGroup === undefined) {
-        console.log('[PSDemo] Protected Audience API is not supported.');
-        return;
-      }
-        const interestGroup = await getInterestGroupFromServer();
-        console.log('[PSDemo] Joining interest group: ', {interestGroup});
-        const kSecsPerDay = 3600 * 24 * 30;
-        console.log(
-          await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay),
-        );
-    });
-  })();
-  
+  /** Sends first-party context to server to retrieve interest group metadata. */
+  getInterestGroupFromServer = async () => {
+    const currentUrl = new URL(location.href);
+    const interestGroupUrl = new URL(location.origin);
+    interestGroupUrl.pathname = '/dsp/interest-group-bidding-and-auction.json';
+    // Copy query params from current context.
+    for (const [key, value] of currentUrl.searchParams) {
+      interestGroupUrl.searchParams.append(key, value);
+    }
+    // TODO: Consider using Topics API for choosing Ads
+    // const topics = await document.browsingTopics?
+    // console.log({ topics })
+    // interestGroupUrl.searchParams.append('topics', topics);
+    const res = await fetch(interestGroupUrl, {browsingTopics: true});
+    if (res.ok) {
+      return res.json();
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (navigator.joinAdInterestGroup === undefined) {
+      console.log('[PSDemo] Protected Audience API is not supported.');
+      return;
+    }
+    const interestGroup = await getInterestGroupFromServer();
+    console.log('[PSDemo] Joining interest group: ', {interestGroup});
+    const kSecsPerDay = 3600 * 24 * 30;
+    console.log(
+      await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay),
+    );
+  });
+})();

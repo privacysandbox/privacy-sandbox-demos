@@ -46,7 +46,7 @@ export interface InterestGroupAd {
     adSizes?: InterestGroupAdSize[];
   };
   /** Render ID for B&A to pull creative from */
-  adRenderId?: string
+  adRenderId?: string;
   /** Associated ad size group label. */
   sizeGroup?: string;
   // [Optional] Reporting IDs
@@ -87,7 +87,7 @@ export interface InterestGroup {
   adSizes?: {[key: string]: InterestGroupAdSize};
   /** Map of ad size labels indexed by the ad size group label. */
   sizeGroups?: {[key: string]: string[]};
-  /** B&A server request flags. */
+  /** B&A server request flags. (e.g., 'omit-ads', 'omit-user-bidding-signals'). */
   auctionServerRequestFlags?: string[];
 }
 
@@ -285,10 +285,11 @@ export const getInterestGroupBiddingAndAuction = (
     trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
     updateURL: constructInterestGroupUpdateUrl(targetingContext),
     userBiddingSignals,
-    ads: [{
-      adRenderId: '1234',
-      renderURL: ''
-    }
+    ads: [
+      {
+        adRenderId: '1234',
+        renderURL: '',
+      },
     ],
     adSizes: {
       'medium-rectangle-default': {'width': '300px', 'height': '250px'},
@@ -296,8 +297,6 @@ export const getInterestGroupBiddingAndAuction = (
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
-    auctionServerRequestFlags: ['omit-ads', 'omit-user-bidding-signals']
+    auctionServerRequestFlags: ['omit-ads', 'omit-user-bidding-signals'],
   };
 };
-
-
