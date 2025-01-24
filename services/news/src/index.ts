@@ -26,6 +26,8 @@ import {
   PORT,
   SSP_A_ORIGIN,
   SSP_B_ORIGIN,
+  SSP_X_ORIGIN,
+  SSP_Y_ORIGIN,
   SSP_HOST,
   SSP_ORIGIN,
   SHOP_HOST,
@@ -60,6 +62,8 @@ app.get('*', async (req: Request, res: Response) => {
     SSP_ORIGIN,
     SSP_A_ORIGIN,
     SSP_B_ORIGIN,
+    SSP_X_ORIGIN,
+    SSP_Y_ORIGIN,
     AD_SERVER_TAG_URL: new URL(
       `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ad-server-tag.js`,
     ).toString(),

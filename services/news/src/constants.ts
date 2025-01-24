@@ -36,6 +36,8 @@ export const {
   SSP_HOST,
   SSP_A_HOST,
   SSP_B_HOST,
+  SSP_X_HOST,
+  SSP_Y_HOST,
 
   HOME_HOST,
 } = process.env;
@@ -50,6 +52,14 @@ export const SSP_A_ORIGIN = new URL(
 
 export const SSP_B_ORIGIN = new URL(
   `https://${SSP_B_HOST}:${EXTERNAL_PORT}`,
+).toString();
+
+export const SSP_X_ORIGIN = new URL(
+  `https://${SSP_X_HOST}:${EXTERNAL_PORT}`,
+).toString();
+
+export const SSP_Y_ORIGIN = new URL(
+  `https://${SSP_Y_HOST}:${EXTERNAL_PORT}`,
 ).toString();
 
 export const TEXT_LOREM =
