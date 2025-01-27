@@ -44,6 +44,8 @@ export interface InterestGroupAd {
     adType: AdType;
     /** List of compatible ad sizes. */
     adSizes?: InterestGroupAdSize[];
+    /** Field for handling unknown keys or new metadata fields not yet defined in this interface */
+    [unknownKey: string]: unknown;
   };
   /** Render ID for B&A to pull creative from */
   adRenderId?: string;
