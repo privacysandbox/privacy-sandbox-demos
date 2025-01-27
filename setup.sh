@@ -12,4 +12,4 @@ npm run build
 
 cd ../..
 
-sudo npm run start
+echo "you are ready to turn on the stack. use <npm run start> or <sudo npm run start>"
