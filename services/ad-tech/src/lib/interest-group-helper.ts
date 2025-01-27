@@ -30,13 +30,20 @@ export enum AdType {
   VIDEO = 'VIDEO',
 }
 
+export enum AuctionServerRequestFlags {
+  OMIT_ADS = 'omit-ads',
+  OMIT_USER_BIDDING_SIGNALS = 'omit-user-bidding-signals',
+}
+
 /** Interface for an interest group ad object. */
 export interface InterestGroupAd {
   // REQUIRED FIELDS
   /** Main creative URL. */
   renderURL: string;
   // OPTIONAL FIELDS
-  /** Custom ad metadata stored by ad-tech. */
+  /** Custom ad metadata stored by ad-tech.
+   * NOTE: These metadata fields are for demo purposes only.
+   * They are not required when using Protected Audience. */
   metadata?: {
     /** Hostname of the advertiser. */
     advertiser: string;
@@ -299,6 +306,9 @@ export const getInterestGroupBiddingAndAuction = (
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
-    auctionServerRequestFlags: ['omit-ads', 'omit-user-bidding-signals'],
+    auctionServerRequestFlags: [
+      AuctionServerRequestFlags.OMIT_ADS,
+      AuctionServerRequestFlags.OMIT_USER_BIDDING_SIGNALS,
+    ],
   };
 };
