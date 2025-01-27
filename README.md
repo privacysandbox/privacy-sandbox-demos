@@ -22,14 +22,18 @@ to extend and modify the code for your own needs.
 This repository contains :
 
 - A set of applications/services deployable as container images
-- Deployment scripts
-- [Instructions for deploying and running the demos in your local environment with Docker](docs/deploy-to-linux-docker.md)
-- [Instructions for deploying and running the demos on Google Cloud Platform](docs/deploy-to-gcp.md)
-- [A list of codebase dependencies to prepare for development](docs/dependencies.md)
-- Development framework to contribute to the project
+- A set of scripts and configuration files for local deployment and cloud deployment
+- Documentation :
+  - [Instructions for deploying and running the demos in your local environment with Docker](docs/deploy-to-linux-docker.md)
+  - [Instructions for deploying and running the demos in your local environment with Podman](docs/deploy-to-linux-podman.md)
+  - [Instructions for deploying and running the demos on Google Cloud Platform](docs/deploy-to-gcp.md)
+  - [A list of codebase dependencies to prepare for development](docs/dependencies.md)
 
-If you are a developer we recommend you follow the [deployment instructions](docs/deploy-to-linux-docker.md). If you are simply curious, we recommend
-you have a look at our [Google-hosted instances](https://privacy-sandbox-demos.dev) to quickly start learning and experimenting.
+If you are a developer we recommend you follow the deployment instructions either with [Docker](docs/deploy-to-linux-docker.md) or
+[Podman](docs/deploy-to-linux-podman.md).
+
+If you are simply curious, we recommend you have a look at our [Google-hosted instances](https://privacy-sandbox-demos.dev) to quickly start learning
+and experimenting.
 
 ## Use Cases
 
