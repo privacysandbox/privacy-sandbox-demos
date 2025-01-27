@@ -30,21 +30,32 @@ export enum AdType {
   VIDEO = 'VIDEO',
 }
 
+export enum AuctionServerRequestFlags {
+  OMIT_ADS = 'omit-ads',
+  OMIT_USER_BIDDING_SIGNALS = 'omit-user-bidding-signals',
+}
+
 /** Interface for an interest group ad object. */
 export interface InterestGroupAd {
   // REQUIRED FIELDS
   /** Main creative URL. */
   renderURL: string;
-  /** Custom ad metadata stored by ad-tech. */
-  metadata: {
+  // OPTIONAL FIELDS
+  /** Custom ad metadata stored by ad-tech.
+   * NOTE: These metadata fields are for demo purposes only.
+   * They are not required when using Protected Audience. */
+  metadata?: {
     /** Hostname of the advertiser. */
     advertiser: string;
     /** DSIPLAY or VIDEO */
     adType: AdType;
     /** List of compatible ad sizes. */
     adSizes?: InterestGroupAdSize[];
+    /** Field for handling unknown keys or new metadata fields not yet defined in this interface */
+    [unknownKey: string]: unknown;
   };
-  // OPTIONAL FIELDS
+  /** Render ID for B&A to pull creative from */
+  adRenderId?: string;
   /** Associated ad size group label. */
   sizeGroup?: string;
   // [Optional] Reporting IDs
@@ -68,6 +79,7 @@ export interface InterestGroup {
   name: string;
   /** Origin for the ad buyer. */
   owner: string;
+  // OPTIONAL FIELDS
   /** URL to script defining generateBid() and reportWin(). */
   biddingLogicURL?: string;
   /** Endpoint for real-time bidding signals. */
@@ -84,6 +96,8 @@ export interface InterestGroup {
   adSizes?: {[key: string]: InterestGroupAdSize};
   /** Map of ad size labels indexed by the ad size group label. */
   sizeGroups?: {[key: string]: string[]};
+  /** B&A server request flags. (e.g., 'omit-ads', 'omit-user-bidding-signals'). */
+  auctionServerRequestFlags?: string[];
 }
 
 /** Generalized interface of the interest group targeting context. */
@@ -251,5 +265,50 @@ export const getInterestGroup = (
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
+  };
+};
+
+export const getInterestGroupBiddingAndAuction = (
+  targetingContext: TargetingContext,
+): InterestGroup => {
+  const {usecase} = targetingContext;
+  const userBiddingSignals: {[key: string]: string} = {
+    'user-signal-key-1': 'user-signal-value-1',
+  };
+  if (targetingContext.additionalContext) {
+    for (const [key, values] of Object.entries(
+      targetingContext.additionalContext,
+    )) {
+      userBiddingSignals[key] = JSON.stringify(values);
+    }
+  }
+  return {
+    name: getInterestGroupName(targetingContext),
+    owner: CURRENT_ORIGIN,
+    biddingLogicURL: new URL(
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
+    ).toString(),
+    trustedBiddingSignalsURL: new URL(
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/realtime-signals/bidding-signal.json`,
+    ).toString(),
+    trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
+    updateURL: constructInterestGroupUpdateUrl(targetingContext),
+    userBiddingSignals,
+    ads: [
+      {
+        adRenderId: '1234',
+        renderURL: '',
+      },
+    ],
+    adSizes: {
+      'medium-rectangle-default': {'width': '300px', 'height': '250px'},
+    },
+    sizeGroups: {
+      'medium-rectangle': ['medium-rectangle-default'],
+    },
+    auctionServerRequestFlags: [
+      AuctionServerRequestFlags.OMIT_ADS,
+      AuctionServerRequestFlags.OMIT_USER_BIDDING_SIGNALS,
+    ],
   };
 };

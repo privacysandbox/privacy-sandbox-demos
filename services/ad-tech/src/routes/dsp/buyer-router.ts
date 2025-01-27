@@ -16,6 +16,7 @@ import {HOSTNAME} from '../../lib/constants.js';
 import {getTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
+  getInterestGroupBiddingAndAuction,
   TargetingContext,
 } from '../../lib/interest-group-helper.js';
 
@@ -41,12 +42,30 @@ BuyerRouter.get(
     );
   },
 );
+BuyerRouter.get(
+  '/dsp-advertiser-iframe-bidding-and-auction.html',
+  async (req: Request, res: Response) => {
+    res.render(
+      'dsp/usecase/bidding-and-auction/dsp-advertiser-iframe',
+      getTemplateVariables('Join Ad Interest Group'),
+    );
+  },
+);
 
 /** Returns the interest group to join on an advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   const targetingContext = assembleTargetingContext(req.query);
   res.json(getInterestGroup(targetingContext));
 });
+
+/** Returns the interest group to join on an advertiser page. */
+BuyerRouter.get(
+  '/interest-group-bidding-and-auction.json',
+  async (req: Request, res: Response) => {
+    const targetingContext = assembleTargetingContext(req.query);
+    res.json(getInterestGroupBiddingAndAuction(targetingContext));
+  },
+);
 
 /** Returns the updated interest group, usually daily, may be overridden. */
 BuyerRouter.get(

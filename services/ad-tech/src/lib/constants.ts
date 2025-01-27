@@ -47,6 +47,14 @@ export const {
   DSP_B_DETAIL,
   DSP_B_URI,
 
+  DSP_X_HOST,
+  DSP_X_DETAIL,
+  DSP_X_URI,
+
+  DSP_Y_HOST,
+  DSP_Y_DETAIL,
+  DSP_Y_URI,
+
   SSP_HOST,
   SSP_DETAIL,
   SSP_URI,

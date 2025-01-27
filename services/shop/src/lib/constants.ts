@@ -40,6 +40,12 @@ export const {
   DSP_B_HOST,
   DSP_B_DETAIL,
 
+  DSP_X_HOST,
+  DSP_X_DETAIL,
+
+  DSP_Y_HOST,
+  DSP_Y_DETAIL,
+
   SSP_HOST,
   SSP_DETAIL,
 

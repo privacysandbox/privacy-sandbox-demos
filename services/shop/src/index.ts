@@ -22,6 +22,8 @@ import {
   DSP_HOST,
   DSP_A_HOST,
   DSP_B_HOST,
+  DSP_X_HOST,
+  DSP_Y_HOST,
   EXTERNAL_PORT,
   PORT,
   SHOP_DETAIL,
@@ -97,6 +99,8 @@ app.locals = {
       new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
       new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
@@ -129,25 +133,44 @@ app.get('/ads/:id?', async (req: Request, res: Response) => {
 });
 
 app.get('/items/:id', async (req: Request, res: Response) => {
+  const {usecase} = req.query;
   const {id} = req.params;
   const item = await getItem(id);
-
-  const DSP_TAG_URL = new URL(
+  let DSP_TAG_URL = new URL(
     `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
-  const DSP_A_TAG_URL = new URL(
+  let DSP_A_TAG_URL = new URL(
     `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
-  const DSP_B_TAG_URL = new URL(
+  let DSP_B_TAG_URL = new URL(
     `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
+  let DSP_X_TAG_URL;
+  let DSP_Y_TAG_URL;
 
+  if (usecase == 'ba') {
+    DSP_A_TAG_URL = new URL(
+      `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+    );
+    DSP_B_TAG_URL = new URL(
+      `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+    );
+    DSP_X_TAG_URL = new URL(
+      `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
+    );
+    DSP_Y_TAG_URL = new URL(
+      `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
+    );
+  }
   res.render('item', {
-    item,
-    DSP_TAG_URL,
     DSP_A_TAG_URL,
     DSP_B_TAG_URL,
+    DSP_X_TAG_URL,
+    DSP_Y_TAG_URL,
+    DSP_TAG_URL,
+    item,
     SHOP_HOST,
+    usecase,
   });
 });
 
