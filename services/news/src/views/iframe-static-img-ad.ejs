@@ -21,8 +21,8 @@
       console.log('adClick navigate to the specific item: static');
       // Encode the attributionsrc URL in case it contains special characters, such as '=', that will
       // cause the parameter to be improperly parsed
-      const encoded = encodeURIComponent('https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8');
-      const url = "https://privacy-sandbox-demos-shop.dev/items/26f8";
+      const encoded = encodeURIComponent("<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8` %>");
+      const url = "<%= `https://${SHOP_HOST}:${EXTERNAL_PORT}/items/26f8` %>";
       window.open(
         url,
         "_blank",
@@ -30,7 +30,7 @@
     }
     function navigateToShop() {
       console.log('navigateToShop navigate to the shop');
-      const url = "https://privacy-sandbox-demos-shop.dev";
+      const url = "<%= `https://${SHOP_HOST}:${EXTERNAL_PORT}` %>";
       window.open(url)
     }
   </script>
