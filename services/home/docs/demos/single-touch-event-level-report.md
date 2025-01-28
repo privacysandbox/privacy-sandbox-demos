@@ -169,7 +169,7 @@ For views:
 
 For both clicks and views is to respond with the Attribution-Reporting-Register-Source header.
 
-```javascript
+```js
 res.set(
   "Attribution-Reporting-Register-Source",
   JSON.stringify({
@@ -198,7 +198,7 @@ Triggers are registered when a user converts on the advertiser's website. Here w
 
 Here, we set Attribution-Reporting-Register-Trigger on the request:
 
-```javascript
+```js
 res.set(
   "Attribution-Reporting-Register-Trigger",
 JSON.stringify({
@@ -215,7 +215,7 @@ JSON.stringify({
 
 ### Set up an endpoint
 
-All we have to do now is to create an endpoint at <https://adtech.example/.well-known/attribution-reporting/report-event-attribution> to receive
+All we have to do now is to create an endpoint at https://adtech.example/.well-known/attribution-reporting/report-event-attribution to receive
 reports.
 
 ![endpoint](./img/single-touch-event-level-report-endpoint.png)
