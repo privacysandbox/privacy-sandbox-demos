@@ -240,9 +240,9 @@ function test() {
 // @example
 // getTriggerData('purchase'); // Returns ['1', '100']
 // getTriggerData('unknown-event'); // Returns ['0', '0']
-export function getTriggerData(cvType: string) {
-  console.log(`[arapi] getTriggerData: ${cvType}`);
-  switch (cvType) {
+export function getTriggerData(conversionType: string) {
+  console.log(`[arapi] getTriggerData: ${conversionType}`);
+  switch (conversionType) {
     case `click-cart-icon`:
       return [`5`, `60`];
     case `add-to-cart`:

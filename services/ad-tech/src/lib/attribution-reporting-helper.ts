@@ -89,8 +89,8 @@ export const getAttributionTriggerHeaders = (requestQuery: {
 export const getEventLevelAttributionTriggerHeaders = (requestQuery: {
   [key: string]: string;
 }): {[key: string]: any} => {
-  const cvType: string = requestQuery['conversion-type'] as string;
-  const [_data, _priority] = getTriggerData(cvType);
+  const conversionType: string = requestQuery['conversion-type'] as string;
+  const [_data, _priority] = getTriggerData(conversionType);
   return {
     event_trigger_data: [
       {
