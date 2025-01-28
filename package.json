@@ -7,7 +7,7 @@
     "cert": "cd nginx/cert && ./mkcert.sh",
     "fmt": "pre-commit run --all-files",
     "//": "block of commands for running containers with docker & docker-compose. uncomment to use it",
-    "start": "docker docker-compose up",
+    "start": "docker-compose up",
     "stop": "docker-compose down --timeout 1",
     "build": "docker-compose build",
     "clean": "docker-compose down --volumes && docker-compose rm --volumes --force && docker volume prune --force && docker image prune -f && docker rmi -f $(docker images -q)",
