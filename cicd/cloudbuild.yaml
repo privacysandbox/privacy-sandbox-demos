@@ -369,7 +369,7 @@ steps:
       - "-c"
       - |
         ENV_VARS=$(cat /workspace/env_vars.txt)
-        HOSTNAME_ENV="HOSTNAME=$(grep "SSP_A_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
+        HOSTNAME_ENV="HOSTNAME=$(grep "SSP_X_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
         gcloud run deploy ssp-x --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=ssp-x,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
@@ -386,7 +386,7 @@ steps:
       - "-c"
       - |
         ENV_VARS=$(cat /workspace/env_vars.txt)
-        HOSTNAME_ENV="HOSTNAME=$(grep "SSP_B_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
+        HOSTNAME_ENV="HOSTNAME=$(grep "SSP_Y_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
         gcloud run deploy ssp-y --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/ad-tech:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --command npm --args=run,start,--service=ssp-y,--project_env=${_PROJECT_ENV} --set-env-vars "^@^$${ENV_VARS}"
