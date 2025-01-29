@@ -15,8 +15,8 @@
 # limitations under the License.
 
 # evaluate .env file
-source .env
 source .env.deploy
+source ${ENV_FILE}
 
 # Setup Firebase Hosting Multiple Sites
 for service in $SERVICES; do
