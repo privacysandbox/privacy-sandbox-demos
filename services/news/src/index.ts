@@ -16,66 +16,53 @@
 
 import express, {Application, Request, Response} from 'express';
 
-const {
-  EXTERNAL_PORT,
-  PORT,
-  HOME_HOST,
-  SSP_HOST,
-  SSP_A_HOST,
-  SSP_B_HOST,
+import {
   AD_SERVER_HOST,
-  NEWS_HOST,
-  NEWS_TOKEN,
-  NEWS_DETAIL,
   DSP_HOST,
-} = process.env;
+  EXTERNAL_PORT,
+  HOME_HOST,
+  TEXT_LOREM,
+  NEWS_DETAIL,
+  PORT,
+  SSP_A_ORIGIN,
+  SSP_B_ORIGIN,
+  SSP_HOST,
+  SSP_ORIGIN,
+  SHOP_HOST,
+} from './constants.js';
 
 const app: Application = express();
-
-const TITLE = NEWS_DETAIL;
-const LOREM =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-
-app.use((req, res, next) => {
-  res.setHeader('Origin-Trial', NEWS_TOKEN as string);
-  next();
-});
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
 app.get('/', async (req: Request, res: Response) => {
-  const {auctionType} = req.query;
-  const bucket = req.query.key;
-  const cloudEnv = req.query.env;
-
   res.render('index', {
-    title: TITLE,
-    lorem: LOREM,
+    TITLE: NEWS_DETAIL,
+    TEXT_LOREM,
     EXTERNAL_PORT,
     HOME_HOST,
-    NEWS_TOKEN,
-    DSP_HOST,
-    SSP_A_HOST,
-    SSP_B_HOST,
-    AD_SERVER_HOST,
-    SSP_TAG_URL: `https://${SSP_HOST}/ad-tag.js`,
-    AD_SERVER_LIB_URL: `https://${AD_SERVER_HOST}/js/ad-server-lib.js`,
-    HEADER_BIDDING_LIB_URL: `https://${NEWS_HOST}/js/header-bidding-lib.js`,
-    isMultiSeller: auctionType === 'multi',
-    bucket: bucket,
-    cloudEnv: cloudEnv,
+    SSP_TAG_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
+    ).toString(),
   });
 });
 
-app.get('/video-ad', async (req: Request, res: Response) => {
-  res.render('video-ad', {
-    title: TITLE,
-    lorem: LOREM,
+app.get('*', async (req: Request, res: Response) => {
+  res.render(req.path.substring(1), {
+    TITLE: NEWS_DETAIL,
+    TEXT_LOREM,
+    SHOP_HOST,
+    AD_SERVER_HOST,
+    DSP_HOST,
     EXTERNAL_PORT,
     HOME_HOST,
-    NEWS_TOKEN,
-    SSP_HOST,
+    SSP_ORIGIN,
+    SSP_A_ORIGIN,
+    SSP_B_ORIGIN,
+    AD_SERVER_TAG_URL: new URL(
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ad-server-tag.js`,
+    ).toString(),
   });
 });
 

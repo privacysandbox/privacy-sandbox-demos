@@ -216,7 +216,7 @@ from the SSP service. This is a third-party tag from the SSP service.
 ```html
 <div id="mainContainer">
   <div id="content">
-    <video id="contentElement">
+    <video id="videoContent">
       <source src="https://storage.googleapis.com/gvabox/media/samples/stock.mp4"></source>
     </video>
   </div>

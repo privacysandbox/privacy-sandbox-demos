@@ -14,4 +14,34 @@
  limitations under the License.
  */
 
-console.log('main.js');
+/**
+ * Where is this script used:
+ *   This script is loaded on all pages.
+ *
+ * What does this script do:
+ *   This script initializes PSDemo module as an empty namepsace.
+ */
+(() => {
+  window.PSDemo = window.PSDemo || {};
+
+  /** Returns URL query param value as an array. */
+  window.PSDemo.getUrlQueryAsArray = (key) => {
+    const searchParams = new URL(location.href).searchParams;
+    if (searchParams.has(key)) {
+      const value = searchParams.get(key);
+      if (value) {
+        return value.split(',');
+      } else {
+        return [];
+      }
+    }
+  };
+
+  /** Returns URL query param value as text. */
+  window.PSDemo.getUrlQueryAsString = (key) => {
+    const searchParams = new URL(location.href).searchParams;
+    if (searchParams.has(key)) {
+      return searchParams.get(key);
+    }
+  };
+})();

@@ -27,7 +27,10 @@ import {
   SHOP_DETAIL,
   SHOP_HOST,
   SSP_HOST,
-} from './env.js';
+  SSP_A_HOST,
+  SSP_B_HOST,
+} from './lib/constants.js';
+
 import {
   Order,
   addOrder,
@@ -88,16 +91,30 @@ app.set('views', 'src/views');
 app.locals = {
   title: SHOP_DETAIL,
   displayCategory,
-  register_trigger: (order: Order) => {
+  getTriggerUrls: (order: Order) => {
     const {item, size, quantity} = order;
-    const register_trigger = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
-    register_trigger.pathname = '/register-trigger';
-    register_trigger.searchParams.append('id', item.id);
-    register_trigger.searchParams.append('category', `${item.category}`);
-    register_trigger.searchParams.append('quantity', `${quantity}`);
-    register_trigger.searchParams.append('size', `${fromSize(size)}`);
-    register_trigger.searchParams.append('gross', `${item.price * quantity}`);
-    return register_trigger.toString();
+    return [
+      new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
+    ].map((triggerUrl) => {
+      triggerUrl.pathname = '/attribution/register-trigger';
+      triggerUrl.searchParams.append('id', item.id);
+      triggerUrl.searchParams.append('category', `${item.category}`);
+      triggerUrl.searchParams.append('quantity', `${quantity}`);
+      triggerUrl.searchParams.append('size', `${fromSize(size)}`);
+      triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
+      return triggerUrl.toString();
+    });
+  },
+  getEventTriggerUrl: (conversionType: string) => {
+    const eventTriggerUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
+    eventTriggerUrl.pathname = '/attribution/register-event-level-trigger';
+    eventTriggerUrl.searchParams.append('conversion-type', conversionType);
+    return eventTriggerUrl.toString();
   },
 };
 
@@ -109,8 +126,8 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 // serves the static ads creative from shop site (redirected from ssp)
-app.get('/ads/:id', async (req: Request, res: Response) => {
-  const id = req.params.id;
+app.get('/ads/:id?', async (req: Request, res: Response) => {
+  const id = req.params.id ? req.params.id : '1f6d2';
   const imgPath = `/image/svg/emoji_u${id}.svg`;
   //res.set("Content-Type", "image/svg+xml")
   console.log(`redirecting to /image/svg/emoji_u${id}.svg`);
@@ -120,16 +137,15 @@ app.get('/ads/:id', async (req: Request, res: Response) => {
 app.get('/items/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   const item = await getItem(id);
-  const isMultiSeller = req.query.auctionType === 'multi';
 
   const DSP_TAG_URL = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
   const DSP_A_TAG_URL = new URL(
-    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
   const DSP_B_TAG_URL = new URL(
-    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
+    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
   );
 
   res.render('item', {
@@ -138,7 +154,6 @@ app.get('/items/:id', async (req: Request, res: Response) => {
     DSP_A_TAG_URL,
     DSP_B_TAG_URL,
     SHOP_HOST,
-    isMultiSeller,
   });
 });
 
@@ -213,11 +228,16 @@ app.get('/checkout', async (req: Request, res: Response) => {
   }, 0);
   const shipping = 40;
 
+  const MTA_CONVERSION_TAG_URL = new URL(
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/mta-conversion-tag.js`,
+  );
+
   await req.session.destroy(() => Promise.resolve());
   res.render('checkout', {
     cart,
     subtotal,
     shipping,
+    MTA_CONVERSION_TAG_URL,
   });
 });
 

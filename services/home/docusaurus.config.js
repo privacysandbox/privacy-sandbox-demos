@@ -4,7 +4,9 @@
 const lightCodeTheme = require('prism-react-renderer').themes.github;
 const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
-const host = process.env.HOME_HOST;
+const host = process.env.HOME_HOST || 'UNDEFINED';
+const measurementID = process.env.HOME_MEASUREMENT_ID || 'G-UNDEFINED'; // if user build site without defining env vars, assign a default value.
+const containerID = process.env.HOME_TAG_CONTAINER_ID || 'GTM-UNDEFINED'; // if user build site without defining env vars, assign a default value.
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -49,7 +51,17 @@ const config = {
           showReadingTime: true,
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: [
+            require.resolve('./src/css/custom.css'),
+            require.resolve('./src/css/cookienotificationbar.min.css'),
+          ],
+        },
+        gtag: {
+          trackingID: measurementID,
+          anonymizeIP: true,
+        },
+        googleTagManager: {
+          containerId: containerID,
         },
       }),
     ],
@@ -115,37 +127,6 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-      },
-
-      algolia: {
-        // The application ID provided by Algolia
-        appId: 'APE6MO4ILP',
-
-        // Public API key: it is safe to commit it
-        apiKey: 'ff01a386ae243b9b46e5afeb8aa6be3f',
-
-        indexName: 'privacy-sandbox-demos-home',
-
-        // Optional: see doc section below
-        contextualSearch: true,
-
-        // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
-        // @ts-ignore for using replaceAll
-        externalUrlRegex: host?.replaceAll('.', '\\.'),
-
-        // Optional: Replace parts of the item URLs from Algolia. Useful when using the same search index for multiple deployments using a different baseUrl. You can use regexp or string in the `from` param. For example: localhost:3000 vs myCompany.com/docs
-        replaceSearchResultPathname: {
-          from: '/docs/', // or as RegExp: /\/docs\//
-          to: '/',
-        },
-
-        // Optional: Algolia search parameters
-        searchParameters: {},
-
-        // Optional: path for search page that enabled by default (`false` to disable it)
-        searchPagePath: 'search',
-
-        //... other Algolia params
       },
     }),
 };

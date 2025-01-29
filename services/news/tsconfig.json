@@ -3,6 +3,7 @@
     "target": "es2022",
     "module": "ES2022",
     "rootDir": "./src",
+    "outDir": "./build",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
