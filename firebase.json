@@ -58,6 +58,44 @@
       ]
     },
     {
+      "target": "dsp-x",
+      "public": "services/ad-tech/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "dsp-x",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "dsp-y",
+      "public": "services/ad-tech/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "dsp-y",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
       "target": "shop",
       "public": "services/shop/src/public",
       "ignore": [
@@ -147,6 +185,44 @@
           "source": "**",
           "run": {
             "serviceId": "ssp-b",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ssp-x",
+      "public": "services/ad-tech/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ssp-x",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "ssp-y",
+      "public": "services/ad-tech/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "ssp-y",
             "region": "us-central1"
           }
         }
