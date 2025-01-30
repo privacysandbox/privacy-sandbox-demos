@@ -1,0 +1,41 @@
+{
+  "privacy_sandbox_api_attestations": [
+    {
+      "attestation_parser_version": "2",
+      "attestation_version": "1",
+      "privacy_policy": [
+        "https://policies.google.com/privacy"
+      ],
+      "ownership_token": "AxksuOrSvmiSFbBMi76acdL0FzQw0vbqpKp6VIPku9oLF73yX91cxjHeqlrHgbCX",
+      "issued_seconds_since_epoch": 1727882922,
+      "enrollment_id": "V2FK9",
+      "enrollment_site": "https://privacy-sandcastle-dev-ssp-x.web.app/",
+      "platform_attestations": [
+        {
+          "platform": "chrome",
+          "attestations": {
+            "attribution_reporting_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "shared_storage_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "private_aggregation_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "topics_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            },
+            "protected_audience_api": {
+              "ServiceNotUsedForIdentifyingUserAcrossSites": true
+            }
+          }
+        },
+        {
+          "platform": "android",
+          "attestations": {}
+        }
+      ]
+    }
+  ]
+}

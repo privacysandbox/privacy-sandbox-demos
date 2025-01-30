@@ -15,8 +15,8 @@
 # limitations under the License.
 
 # evaluate .env file
-source cicd/.env.dev
 source .env.deploy
+source ${ENV_FILE}
 
 # Deploy to Firebase Hosting all sites
 for service in $SERVICES; do
