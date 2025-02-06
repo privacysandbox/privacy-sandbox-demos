@@ -151,19 +151,30 @@ To do so we need to:
 
 ### Initiatie the source registration
 
-For clicks:
-
-```html
-<a href="https://advertiser.example/landing" attributionsrc="https://adtech.example/register-source?campaign=spring&creative=banner1">
-  Click here!
-</a>
-```
-
 For views:
 
 ```html
-<img src="https://publisher.example/ad-image.jpg" attributionsrc="https://adtech.example/register-source?campaign=spring&creative=banner1">
+<img id="adImg" alt="ad image" loading="lazy"
+    onclick="adClick()"
+    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8"
+    src="https://privacy-sandbox-demos-shop.dev/image/svg/emoji_u26f8.svg" />
+
 ```
+*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-5bb02bedd9ceea45a3874a59caa25f4b9f80da3c3fe2098a88a55ea52a14dd52R4)
+
+For clicks:
+
+```js
+function adClick() {
+  const encoded = encodeURIComponent("https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8");
+  const url = "https://privacy-sandbox-demos-shop.dev/items/26f8";
+  window.open(
+    url,
+    "_blank",
+    `attributionsrc=${encoded}`);
+}
+```
+*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-27409a7640486ec4d969bbd02bd8c6e523e5ee586ac666d913a19dfe2c77837dR20)
 
 ### Complete the source registration
 
@@ -173,15 +184,16 @@ For both clicks and views is to respond with the Attribution-Reporting-Register-
 res.set(
   "Attribution-Reporting-Register-Source",
   JSON.stringify({
+    destination: "https://privacy-sandbox-demos-shop.dev";
     source_event_id: "1234",
-    destination: "https://advertiser.example",
-    // Optional fields
     expiry: "604800",
     priority: "100",
-    debug_key: "1234"
+    debug_key: "1234",
+    debug_reporting: true,
   })
 );
 ```
+*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-3e3c5e844647864b521c39ce06564f42b29325aa273ed61f4362ec498a39d6bdR99)
 
 ### Register a trigger
 
@@ -191,8 +203,21 @@ Triggers are registered when a user converts on the advertiser's website. Here w
 ### Initiate the trigger registration
 
 ```html
-<img src="https://advertiser.example/conversion-pixel" attributionsrc="https://adtech.example/register-trigger?value=VALUE">
+<button onclick="addToCart()" type="submit"...>ADD TO CART</button>
 ```
+```js
+function addToCart() {
+  const attributionReporting = {
+    eventSourceEligible: false,
+    triggerEligible: true,
+  };
+  const url = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?conversion-type=add-to-cart"
+  window.fetch(url, {
+    mode: "no-cors",  keepalive: true, attributionReporting
+  });
+}
+```
+*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-fb8d83fec20a0b18888cbc05872559dbe6e79941c7e87ac2be6b251359801f3aR76)
 
 ### Respond with a header
 
@@ -203,15 +228,15 @@ res.set(
   "Attribution-Reporting-Register-Trigger",
 JSON.stringify({
   event_trigger_data: [{
-    trigger_data: "VALUE",
-    // Optional
-    priority: "1000000000000",
-    deduplication_key: "1234"
+    trigger_data: "6",
+    priority: "80",
   }],
+  debug_reporting: true,
   debug_key: "1115698977"
 });
 );
 ```
+*Here's the [source cod](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-49482cc7257904ce6c46dbb276a02120f18bc5b9f659ebaf92f112b59de0e07fR89)
 
 ### Set up an endpoint
 
