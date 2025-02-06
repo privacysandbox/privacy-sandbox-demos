@@ -124,6 +124,15 @@ WellKnownAttributionReportingRouter.post(
   },
 );
 
-// TODO: Implement verbose debug reports for ARA.
-// WellKnownAttributionReportingRouter.post('/debug/verbose',
-//   async (req: Request, res: Response) => {});
+// temporarily console.logging verbose report
+WellKnownAttributionReportingRouter.post('/debug/verbose',
+  async (req: Request, res: Response) => {
+    const debugReport = req.body;
+    console.log(
+      '\x1b[1;31m%s\x1b[0m',
+      `Received verbose debug reports from the browser`
+    )
+    console.log('VERBOSE REPORT(S) RECEIVED:\n=== \n', debugReport, '\n=== \n')
+
+    res.sendStatus(200);
+  });
