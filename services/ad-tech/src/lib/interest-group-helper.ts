@@ -28,6 +28,7 @@ import {
 export enum AdType {
   DISPLAY = 'DISPLAY',
   VIDEO = 'VIDEO',
+  MULTIPIECE = 'MULTIPIECE',
 }
 
 export enum AuctionServerRequestFlags {
@@ -98,6 +99,8 @@ export interface InterestGroup {
   sizeGroups?: {[key: string]: string[]};
   /** B&A server request flags. (e.g., 'omit-ads', 'omit-user-bidding-signals'). */
   auctionServerRequestFlags?: string[];
+  /** All adComponets that can be used to construct "Ads Composed of Multiple Pieces"). */
+  adComponents?: InterestGroupAd[];
 }
 
 /** Generalized interface of the interest group targeting context. */
@@ -174,6 +177,62 @@ const getDisplayAdForRequest = (
     ad.selectableBuyerAndSellerReportingIds = ['deal-1', 'deal-2', 'deal-3'];
   }
   return ad;
+};
+
+/** Returns multi-piece container for a given advertiser and SSP hosts to integrate. */
+const getMultiPieceAdForRequest = (
+  targetingContext: TargetingContext,
+): InterestGroupAd => {
+  const {advertiser} = targetingContext;
+  const renderUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/multi-piece-container?`,
+  );
+  renderUrl.searchParams.append('advertiser', advertiser);
+  const ad: InterestGroupAd = {
+    renderURL: `${renderUrl.toString()}`,
+    metadata: {
+      advertiser,
+      adType: AdType.MULTIPIECE,
+    },
+    buyerReportingId: 'buyerSpecificInfo1',
+    buyerAndSellerReportingId: 'seatid-1234',
+  };
+  if (targetingContext.isUpdateRequest) {
+    // Only include deal IDs in update requests.
+    ad.selectableBuyerAndSellerReportingIds = ['deal-1', 'deal-2', 'deal-3'];
+  }
+  return ad;
+};
+
+/** Returns adComponents array for the multi-piece container. */
+const getAdComponentsForRequest = (): Array<InterestGroupAd> => {
+  const items = [
+    '1f6fc', //roller skate
+    '1f97e', //hiking boot
+    '1f45f', //running shoe
+    '1f460', //High-Heeled shoe
+    '1fa74', //Thong Sandal
+  ];
+
+  let ads: Array<InterestGroupAd> = [];
+
+  items.forEach((itemId) => {
+    const renderUrl = new URL(
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/static-ads?`,
+    );
+
+    renderUrl.searchParams.append('itemId', itemId);
+    renderUrl.searchParams.append('width', '50');
+    renderUrl.searchParams.append('height', '50');
+
+    const ad: InterestGroupAd = {
+      renderURL: `${renderUrl.toString()}`,
+    };
+
+    ads.push(ad);
+  });
+
+  return ads;
 };
 
 /** Returns the interest group name to use. */
@@ -258,6 +317,7 @@ export const getInterestGroup = (
     ads: [
       getDisplayAdForRequest(targetingContext),
       getVideoAdForRequest(targetingContext),
+      getMultiPieceAdForRequest(targetingContext),
     ],
     adSizes: {
       'medium-rectangle-default': {'width': '300px', 'height': '250px'},
@@ -265,6 +325,7 @@ export const getInterestGroup = (
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
+    adComponents: getAdComponentsForRequest(),
   };
 };
 
