@@ -127,7 +127,7 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 ### Prerequisites
 
-- Chrome > v115 (Open chrome://version to look up your current version)
+- Chrome > v132 (Open chrome://version to look up your current version)
 - Enable Privacy Sandbox APIs (Open chrome://settings/adPrivacy to enable this setting)
 - Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
 - Open chrome://attribution-internals and click “Clear all attribution data”
@@ -156,9 +156,9 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 6. Navigate to chrome://attribution-internals/ and click the `Active Sources` tab
 
 - At the bottom of the page, you will see 2 **sources** with the status `Attributable`, the `source origin` is the **news** site, the `destination` is
-  the **shop** site and the `reporting origin` is the **DSP** service. One of the `source type` is **event** (for view-through) and the other one is
-  **navigation** (for click-through) This reference will be used later to attribute (match) the conversion (here the. purchase of an item on the
-  **shop** site) to a previous event (here. The user saw/clicked an ad on the **news** site)
+  the **shop** site and the `reporting origin` is one of the **DSP** services (dsp-a, dsp-b etc.). One of the `source type` is **event** (for
+  view-through) and the other one is **navigation** (for click-through) This reference will be used later to attribute (match) the conversion (here
+  the. purchase of an item on the **shop** site) to a previous event (here. The user saw/clicked an ad on the **news** site)
 
 7. On the product page, click “Add to cart”
 8. On the cart page, click “Checkout”
@@ -169,76 +169,65 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
 
 9. Navigate to chrome://attribution-internals/ and click the `Trigger Registration` tab
 
-- At the bottom of the page, you will see 1 **trigger** . the `destination` is the **shop** site and the `reporting origin` is the **DSP** service.
-  The `Registration JSON` contains information about the conversion event. In this scenario the advertiser chose to report the gross price and the
-  quantity of the product item purchased. the `Aggregatable Status` indicates **Success: Report stored**, it means Attribution Reporting API has now
-  stored this report in the browser. It will then be scheduled for sending to the `reporting origin` at a later time.
+- You will see multiple **triggers**. Their `destination` is the **shop** site and the `reporting origin` is set to one of the **DSP** services.
+  Observe that only the trigger(s) whose `reporting origin` matches the `reporting origin` of the previously registered **source** has a status
+  `Success: Report stored` in the column `Event-Level/Aggregatable Result`. The `Registration JSON` contains information about the conversion event.
+  In this scenario the advertiser chose to report the gross price and the quantity of the product item purchased. the `Aggregatable Status` indicates
+  **Success: Report stored**, it means Attribution Reporting API has now stored this report in the browser. It will then be scheduled for sending to
+  the `reporting origin` at a later time.
 
-10. Navigate to [DSP service report visualization page](https://privacy-sandbox-demos-dsp.dev/reports)
+10. Navigate to the DSP service report visualization page https://<reporting-origin>/reporting/view-reports (replace the url with the reporting origin
+    of the **DSP** service)
 
 - on this page you can see the aggregatable report sent by the browser to the DSP. In a production environment, the aggregatable report is encrypted
   by the browser and sent to the DSP. There, they will be batched and sent to the Aggregation Service where they will be aggregated and noised to
   preserve privacy. However for development and testing purposes, you can also send an unencrypted version called **debug report**. This is what you
   are seeing now.
-- The report shows aggregation data on 2 dimensions : gross with a value of 180 and quantity with a value of 1.
+- The report shows aggregation data in 2 dimensions : 1. gross price with a value of 1120. 2.quantity with a value of 1.
 
 ### Implementation details
 
 #### how do we attribute the conversion to seeing an ad ? (see step #5 of User Journey)
 
-First on the Attribution Source registration side. Look at the
-[code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/views/ads.html.ejs#L29)
-displaying the ad creative
+First on the Attribution Source registration side. Look at the bidding logic
+javascript[code](https://github.com/Seburan/privacy-sandbox-demos/blob/c44563fd099c2ec77479d9c4b35aa5bc7cea045c/services/ad-tech/src/public/js/dsp/default/auction-bidding-logic.js#L314)
+below
 
 ```html
-<body>
-  <a
-    width="300"
-    height="250"
-    target="_blank"
-    rel="noopener noreferrer"
-    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
-    href="https://privacy-sandbox-demos-shop.dev/items/1fa70"
-  >
-    <!-- smaller for avoid scrollbar -->
-    <img
-      width="294"
-      height="245"
-      loading="lazy"
-      attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1fa70"
-      src="https://privacy-sandbox-demos-shop.dev/ads/1fa70"
-    />
-  </a>
-</body>
+ registerAdBeacon({
+    'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
+    'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
+    'reserved.top_navigation_commit': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
+  });
 ```
 
-The `img` tag also specifies the `attributionsrc` attribute. It means that showing this ad will register an attribution source of type `event` in the
-browser. Now using Developers Tools, look at the HTTP request you will see a new attribute added by the browser `Attribution-Reporting-Eligible` with
-the value `event-source, trigger` In the HTTP response to the `/attribution/register-source` request, you will see a new header
+The `impression` event will be triggered when the ad is rendered within the fenced frame and the `reserved.top_navigation_commit` will be triggered
+when clicking the ad and navigating to the advertiser site. After clicking the ad, open the Chrome Developers Tools, look at the HTTP request starting
+by `https:/<reporting-origin>/reporting?report=top_navigation_commit` you will see a new attribute added by the browser
+`Attribution-Reporting-Eligible` with the value `navigation-source` In the HTTP response to this request, you will see a new header
 `Attribution-Reporting-Register-Source:` with a value that contains the attribution source parameters.
 
 ```json
 {
   "destination": "https://privacy-sandbox-demos-shop.dev",
-  "source_event_id": "18446744073709551615",
-  "debug_key": "18446744073709551614",
-  "aggregation_keys": { "quantity": "0xc001f45e000000000000000000000000", "gross": "0xc101f45e000000000000000000000000" }
+  "source_event_id": "2510975139472269",
+  "debug_key": "2978442217652084",
+  "debug_reporting": true,
+  "aggregation_keys": {
+    "quantity": "0x0",
+    "gross": "0x0"
+  }
 }
 ```
 
 You can also refer to the
-[source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/index.js#L113) to
-see how the response header `Attribution-Reporting-Register-Source` was formed.
+[source code](https://github.com/Seburan/privacy-sandbox-demos/blob/c44563fd099c2ec77479d9c4b35aa5bc7cea045c/services/ad-tech/src/lib/attribution-reporting-helper.ts#L89)
+to see how the response header `Attribution-Reporting-Register-Source` was formed.
 
 Second, on the Attribution Trigger side (=Conversion) The checkout page contains a 1 pixel image loaded from the code
 
 ```html
-<img
-  alt=""
-  width="1"
-  height="1"
-  src="https://privacy-sandbox-demos-dsp.dev/attribution/register-trigger?id=1f45e&amp;category=1&amp;quantity=2&amp;size=50&amp;gross=180"
-/>
+<img alt="" style="display: none" width="1" height="1" src="https://privacy-sandbox-demos-dsp.dev/attribution/register-trigger?id=1f3bf&amp;category=2&amp;quantity=1&amp;size=50&amp;gross=1120">
 ```
 
 Now using the Developers Tools, look at the HTTP response to the `/attribution/register-trigger` request. You will see a new header
@@ -247,24 +236,44 @@ like to see aggregated in the summary report (in this example gross and quantiti
 
 ```json
 {
-  "aggregatable_trigger_data": [
-    { "key_piece": "0x00000000000000008001f45e32010000", "source_keys": ["quantity"] },
-    { "key_piece": "0x0000000000000000c001f45e32010000", "source_keys": ["gross"] }
+  "event_trigger_data": [
+    {
+      "trigger_data": "1",
+      "priority": "100"
+    }
   ],
-  "aggregatable_values": { "quantity": 2, "gross": 180 },
-  "debug_key": "18446744073709551614"
+  "aggregatable_trigger_data": [
+    {
+      "key_piece": "0x000000000000000032020000",
+      "source_keys": [
+        "quantity"
+      ]
+    },
+    {
+      "key_piece": "0x000000000000000032020000",
+      "source_keys": [
+        "gross"
+      ]
+    }
+  ],
+  "aggregatable_values": {
+    "quantity": 1,
+    "gross": 1120
+  },
+  "debug_key": "3092224669950736"
 }
 ```
 
 You can also refer to the
-[source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/cd28aba4e85b641d50d6ee999019d25607c439fc/services/ssp/src/index.js#L205) to
-see how the response header `aggregatable_trigger_data` was formed.
+[source code](https://github.com/Seburan/privacy-sandbox-demos/blob/c44563fd099c2ec77479d9c4b35aa5bc7cea045c/services/ad-tech/src/lib/attribution-reporting-helper.ts#L47)
+to see how the response header `aggregatable_trigger_data` was formed.
 
 ### Related API documentation
 
-- [Attribution Reporting - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/)
-- [Attribution Reporting - Developer Guide](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/developer-guide/)
-- [Set up debug reports - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting-debugging/part-2/)
+- [Attribution Reporting for Web overview | Privacy Sandbox | Google for Developers](https://developers.google.com/privacy-sandbox/private-advertising/attribution-reporting)
+- [Attribution Reporting API developer guide | Privacy Sandbox | Google for Developers](https://developers.google.com/privacy-sandbox/private-advertising/attribution-reporting/dev-guide)
+- [Introduction to Attribution Reporting debug reports | Privacy Sandbox | Google for Developers](https://developers.google.com/privacy-sandbox/private-advertising/attribution-reporting/attribution-reporting-debugging)
+- [Fenced_Frames_Ads_Reporting.md on GitHub](https://github.com/WICG/turtledove/blob/main/Fenced_Frames_Ads_Reporting.md)
 
 </TabItem>
 </Tabs>
