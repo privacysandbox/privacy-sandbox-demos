@@ -117,9 +117,9 @@ end
 
 - Demo shop site of skate shoes detail page will open
 
-4. Check Trigger Registration tab in chrome://attribution-internals
+4. Check “SourceTrigger Registration” tab in chrome://attribution-internals
 5. Go back to the shop site and click the "ADD TO CART" button
-6. Check "Event-Level Reports" tab in chrome://attribution-internals
+7. Review “Trigger Registration” and "Event-Level Reports" tab in chrome://attribution-internals
 
 ### View-Through Conversion Journey
 
@@ -132,10 +132,11 @@ end
 
 - Demo shop site will open
 
-4. Check Trigger Registration tab in chrome://attribution-internals
+4. Check “SourceTrigger Registration” tab in chrome://attribution-internals
 5. Go back to the shop site and click an item
 6. Click on the "ADD TO CART" button
-7. Check "Event-Level Reports" tab in chrome://attribution-internals
+7. Review “Trigger Registration” and "Event-Level Reports" tab in chrome://attribution-internals
+
 
 ### Implementation details
 
@@ -236,7 +237,7 @@ JSON.stringify({
 });
 );
 ```
-*Here's the [source cod](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-49482cc7257904ce6c46dbb276a02120f18bc5b9f659ebaf92f112b59de0e07fR89)
+*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-49482cc7257904ce6c46dbb276a02120f18bc5b9f659ebaf92f112b59de0e07fR89)
 
 ### Set up an endpoint
 
