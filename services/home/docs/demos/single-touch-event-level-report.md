@@ -119,7 +119,7 @@ end
 
 4. Check “SourceTrigger Registration” tab in chrome://attribution-internals
 5. Go back to the shop site and click the "ADD TO CART" button
-7. Review “Trigger Registration” and "Event-Level Reports" tab in chrome://attribution-internals
+6. Review “Trigger Registration” and "Event-Level Reports" tab in chrome://attribution-internals
 
 ### View-Through Conversion Journey
 
@@ -136,7 +136,6 @@ end
 5. Go back to the shop site and click an item
 6. Click on the "ADD TO CART" button
 7. Review “Trigger Registration” and "Event-Level Reports" tab in chrome://attribution-internals
-
 
 ### Implementation details
 
@@ -161,7 +160,9 @@ For views:
     src="https://privacy-sandbox-demos-shop.dev/image/svg/emoji_u26f8.svg" />
 
 ```
-*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-5bb02bedd9ceea45a3874a59caa25f4b9f80da3c3fe2098a88a55ea52a14dd52R4)
+
+\*Here's the
+[source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-5bb02bedd9ceea45a3874a59caa25f4b9f80da3c3fe2098a88a55ea52a14dd52R4)
 
 For clicks:
 
@@ -175,7 +176,9 @@ function adClick() {
     `attributionsrc=${encoded}`);
 }
 ```
-*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-27409a7640486ec4d969bbd02bd8c6e523e5ee586ac666d913a19dfe2c77837dR20)
+
+\*Here's the
+[source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-27409a7640486ec4d969bbd02bd8c6e523e5ee586ac666d913a19dfe2c77837dR20)
 
 ### Complete the source registration
 
@@ -194,7 +197,9 @@ res.set(
   })
 );
 ```
-*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-3e3c5e844647864b521c39ce06564f42b29325aa273ed61f4362ec498a39d6bdR99)
+
+\*Here's the
+[source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-3e3c5e844647864b521c39ce06564f42b29325aa273ed61f4362ec498a39d6bdR99)
 
 ### Register a trigger
 
@@ -206,6 +211,7 @@ Triggers are registered when a user converts on the advertiser's website. Here w
 ```html
 <button onclick="addToCart()" type="submit"...>ADD TO CART</button>
 ```
+
 ```js
 function addToCart() {
   const attributionReporting = {
@@ -218,7 +224,9 @@ function addToCart() {
   });
 }
 ```
-*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-fb8d83fec20a0b18888cbc05872559dbe6e79941c7e87ac2be6b251359801f3aR76)
+
+\*Here's the
+[source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-fb8d83fec20a0b18888cbc05872559dbe6e79941c7e87ac2be6b251359801f3aR76)
 
 ### Respond with a header
 
@@ -237,7 +245,9 @@ JSON.stringify({
 });
 );
 ```
-*Here's the [source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-49482cc7257904ce6c46dbb276a02120f18bc5b9f659ebaf92f112b59de0e07fR89)
+
+\*Here's the
+[source code](https://github.com/privacysandbox/privacy-sandbox-demos/commit/cb581cb305b17d7442d0cd71eccfe851525a0cb7#diff-49482cc7257904ce6c46dbb276a02120f18bc5b9f659ebaf92f112b59de0e07fR89)
 
 ### Set up an endpoint
 
