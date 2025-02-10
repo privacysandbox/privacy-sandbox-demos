@@ -45,7 +45,7 @@ app.get('/', async (req: Request, res: Response) => {
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_TAG_URL: new URL(
-      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
     ).toString(),
   });
 });
