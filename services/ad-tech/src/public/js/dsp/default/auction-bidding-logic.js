@@ -29,36 +29,36 @@
 CURR_HOST = '';
 AUCTION_ID = '';
 /** Logs to console. */
-function log(message, context) {
-  console.log(
-    '[PSDemo] Buyer',
-    CURR_HOST,
-    'bidding logic',
-    AUCTION_ID,
-    message,
-    JSON.stringify({context}, ' ', ' '),
-  );
-}
+// function log(message, context) {
+//   console.log(
+//     '[PSDemo] Buyer',
+//     CURR_HOST,
+//     'bidding logic',
+//     AUCTION_ID,
+//     message,
+//     JSON.stringify({context}, ' ', ' '),
+//   );
+// }
 
 /** Logs execution context for demonstrative purposes. */
 function logContextForDemo(message, context) {
-  const {
-    interestGroup,
-    auctionSignals,
-    perBuyerSignals,
-    // UNUSED trustedBiddingSignals,
-    // UNUSED browserSignals,
-    sellerSignals,
-  } = context;
-  AUCTION_ID = auctionSignals.auctionId;
-  if (interestGroup) {
-    CURR_HOST = interestGroup.owner.substring('https://'.length);
-  } else if (perBuyerSignals && perBuyerSignals.buyerHost) {
-    CURR_HOST = perBuyerSignals.buyerHost;
-  } else if (sellerSignals && sellerSignals.buyer) {
-    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
-  }
-  log(message, context);
+  // const {
+  //   interestGroup,
+  //   auctionSignals,
+  //   perBuyerSignals,
+  //   // UNUSED trustedBiddingSignals,
+  //   // UNUSED browserSignals,
+  //   sellerSignals,
+  // } = context;
+  // AUCTION_ID = auctionSignals.auctionId;
+  // if (interestGroup) {
+  //   CURR_HOST = interestGroup.owner.substring('https://'.length);
+  // } else if (perBuyerSignals && perBuyerSignals.buyerHost) {
+  //   CURR_HOST = perBuyerSignals.buyerHost;
+  // } else if (sellerSignals && sellerSignals.buyer) {
+  //   CURR_HOST = sellerSignals.buyer.substring('https://'.length);
+  // }
+  // log(message, context);
 }
 
 /** Checks whether the current ad campaign is active. */

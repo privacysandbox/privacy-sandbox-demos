@@ -12,7 +12,7 @@
  */
 
 import express, {Request, Response} from 'express';
-import {HOSTNAME} from '../../lib/constants.js';
+import {HOSTNAME, DSP_A_HOST, DSP_X_HOST} from '../../lib/constants.js';
 import {getTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
@@ -51,6 +51,25 @@ BuyerRouter.get(
     );
   },
 );
+/** Full route: /dsp/service/kv */
+BuyerRouter.get('/service/kv', (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
+
+  res.json({
+    keys: {
+      'a': 123,
+      'b': 456,
+    },
+  });
+});
+
+BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
+  res.json({
+    bid: Math.floor(Math.random() * 100),
+    renderURL: `https://${DSP_X_HOST}/html/contextual-ad.html`,
+    perBuyerSignals: {'testKey': 'dsp-x'},
+  });
+});
 
 /** Returns the interest group to join on an advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {

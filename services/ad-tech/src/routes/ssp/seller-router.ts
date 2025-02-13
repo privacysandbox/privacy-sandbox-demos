@@ -12,9 +12,17 @@
  */
 
 import express, {Request, Response} from 'express';
-import {EXTERNAL_PORT, HOSTNAME} from '../../lib/constants.js';
+import {
+  EXTERNAL_PORT,
+  HOSTNAME,
+  DSP_X_HOST,
+  DSP_Y_HOST,
+} from '../../lib/constants.js';
 import {constructAuctionConfig} from '../../lib/auction-config-helper.js';
-
+import {tlsRouter} from './usecase/bidding-and-auction/bidding-and-auction-router.js';
+import {sspYRouter} from './usecase/bidding-and-auction/bidding-and-auction-router.js';
+import {sspXRouter} from './usecase/bidding-and-auction/bidding-and-auction-router.js';
+import {sspARouter} from './usecase/bidding-and-auction/bidding-and-auction-router.js';
 /**
  * This is the main Seller router and is responsible for handling a variety of
  * requests made at the top-level path: /ssp. This includes retrieving
@@ -24,7 +32,8 @@ import {constructAuctionConfig} from '../../lib/auction-config-helper.js';
  * Path: /ssp/
  */
 export const SellerRouter = express.Router();
-
+const DSP_X_ORIGIN = new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`).origin;
+const DSP_Y_ORIGIN = new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`).origin;
 // TODO: Rename to run-single-seller-ad-auction after unified branch is merged.
 /** Iframe document used as context to run single-seller PAAPI auction. */
 SellerRouter.get(
@@ -78,3 +87,40 @@ SellerRouter.get('/vast.xml', async (req: Request, res: Response) => {
     ADVERTISER_HOST: advertiser,
   });
 });
+
+SellerRouter.get('/ssp-x/service/kv', (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
+
+  res.json({
+    renderUrls: {
+      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
+        1, 2, 3,
+      ],
+      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
+        1, 2, 3,
+      ],
+    },
+  });
+});
+
+SellerRouter.get('/ssp-y/service/kv', (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
+
+  res.json({
+    renderUrls: {
+      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
+        1, 2, 3,
+      ],
+      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
+        1, 2, 3,
+      ],
+    },
+  });
+});
+
+/** Route for Bidding & Auction Services use case
+ * There is an implied route where this route is /ssp/usecase/bidding-and-auction */
+SellerRouter.use('/usecase/bidding-and-auction', tlsRouter);
+SellerRouter.use('/usecase/bidding-and-auction/ssp-x', sspXRouter);
+SellerRouter.use('/usecase/bidding-and-auction/ssp-y', sspYRouter);
+SellerRouter.use('/usecase/bidding-and-auction/ssp-a', sspARouter);

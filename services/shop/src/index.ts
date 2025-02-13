@@ -147,7 +147,6 @@ app.get('/items/:id', async (req: Request, res: Response) => {
   );
   let DSP_X_TAG_URL;
   let DSP_Y_TAG_URL;
-
   if (usecase == 'ba') {
     DSP_A_TAG_URL = new URL(
       `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,

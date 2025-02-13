@@ -29,6 +29,7 @@
 
 (() => {
   /** Sends first-party context to server to retrieve interest group metadata. */
+  navigator.clearOriginJoinedAdInterestGroups(location.origin);
   getInterestGroupFromServer = async () => {
     const currentUrl = new URL(location.href);
     const interestGroupUrl = new URL(location.origin);
@@ -37,10 +38,6 @@
     for (const [key, value] of currentUrl.searchParams) {
       interestGroupUrl.searchParams.append(key, value);
     }
-    // TODO: Consider using Topics API for choosing Ads
-    // const topics = await document.browsingTopics?
-    // console.log({ topics })
-    // interestGroupUrl.searchParams.append('topics', topics);
     const res = await fetch(interestGroupUrl, {browsingTopics: true});
     if (res.ok) {
       return res.json();
