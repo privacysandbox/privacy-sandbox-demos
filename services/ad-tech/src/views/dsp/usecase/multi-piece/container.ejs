@@ -10,7 +10,7 @@
         width: 250px;
         overflow: hidden;
         font-family: sans-serif;
-        background: #feb;
+        background: rgb(233, 229, 216);
         text-align: center;
         margin: 0 auto;
       }
@@ -29,14 +29,6 @@
         margin-top: 50px;
         width: 100%;
         padding: 5px;
-        border: 1px solid blue;
-      }
-
-      #components-container--iframe {
-        margin-top: 20px;
-        width: 100%;
-        padding: 5px;
-        border: 1px solid red;
       }
 
       p {
@@ -49,41 +41,29 @@
   <body>
     <div id="adContainer">
       <div id="ad-label">DSP multi-piece ad</div>
-      <div id="components-container--fenced-frame">
-        <p>Fenced frame components</p>
-      </div>
-      <div id="components-container--iframe">
-        <p>Iframe components</p>
-      </div>
+      <div id="components-container--fenced-frame"></div>
     </div>
     <script>
       function renderFencedFrameAds(count) {
         const containerEl = document.getElementById('components-container--fenced-frame')
-        const componentAdConfigs = window.fence.getNestedConfigs().slice(0, count);
+        let componentAdConfigs = window.fence.getNestedConfigs().slice(0, count);
+        /**
+         * You can also use iframes instead of Fenced Frames. In this case, you can read adAuctionComponents 
+         * using the function 'navigator.adAuctionComponents()' which will return the URL of each 
+         * Ad Auction component instead of the frame config.
+         */
 
+        componentAdConfigs = componentAdConfigs.sort((a, b) => 0.5 - Math.random()); //random order
         for (const componentAdConfig of componentAdConfigs) {
           const frame = document.createElement('fencedframe')
           frame.config = componentAdConfig;
-          frame.style.height = '20px';
-          frame.style.width = '20px';
-          containerEl.appendChild(frame);
-        }
-      }
-
-      function renderIframeAds(count) {
-        const containerEl = document.getElementById('components-container--iframe');
-
-        for (const componentAd of navigator.adAuctionComponents(count)) {
-          const frame = document.createElement('iframe');
-          frame.src = componentAd;
-          frame.style.height = '20px';
-          frame.style.width = '20px';
+          frame.style.height = '75px';
+          frame.style.width = '75px';
           containerEl.appendChild(frame);
         }
       }
 
       renderFencedFrameAds(5);
-      renderIframeAds(5);
     </script>
   </body>
 </html>

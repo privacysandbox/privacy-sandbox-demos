@@ -19,6 +19,7 @@ import {
   MACRO_DISPLAY_RENDER_URL_AD_SIZE,
   MACRO_VIDEO_RENDER_URL_SSP_VAST,
   BIDDING_SIGNALS_DEALS,
+  KNOWN_SHOP_ITEM_TAGS_BY_ID,
 } from './constants.js';
 
 // ****************************************************************************
@@ -185,7 +186,7 @@ const getMultiPieceAdForRequest = (
 ): InterestGroupAd => {
   const {advertiser} = targetingContext;
   const renderUrl = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/multi-piece-container?`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/multi-piece-container`,
   );
   renderUrl.searchParams.append('advertiser', advertiser);
   const ad: InterestGroupAd = {
@@ -193,7 +194,9 @@ const getMultiPieceAdForRequest = (
     metadata: {
       advertiser,
       adType: AdType.MULTIPIECE,
+      adSizes: [{width: '300px', height: '250px'}],
     },
+    sizeGroup: 'medium-rectangle',
     buyerReportingId: 'buyerSpecificInfo1',
     buyerAndSellerReportingId: 'seatid-1234',
   };
@@ -206,13 +209,12 @@ const getMultiPieceAdForRequest = (
 
 /** Returns adComponents array for the multi-piece container. */
 const getAdComponentsForRequest = (): Array<InterestGroupAd> => {
-  const items = [
-    '1f6fc', //roller skate
-    '1f97e', //hiking boot
-    '1f45f', //running shoe
-    '1f460', //High-Heeled shoe
-    '1fa74', //Thong Sandal
-  ];
+  const numAdComponents = 5;
+
+  //get first numAdComponents IDs from KNOWN_SHOP_ITEM_TAGS_BY_ID
+  const items = Object.entries(KNOWN_SHOP_ITEM_TAGS_BY_ID)
+    .slice(0, numAdComponents)
+    .map((entry) => entry[0]);
 
   let ads: Array<InterestGroupAd> = [];
 
@@ -224,6 +226,7 @@ const getAdComponentsForRequest = (): Array<InterestGroupAd> => {
     renderUrl.searchParams.append('itemId', itemId);
     renderUrl.searchParams.append('width', '50');
     renderUrl.searchParams.append('height', '50');
+    renderUrl.searchParams.append('enableWriteImpression', 'false');
 
     const ad: InterestGroupAd = {
       renderURL: `${renderUrl.toString()}`,

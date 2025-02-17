@@ -221,19 +221,74 @@ function getBidForDisplayAd({
       adCost: optionalAdCost,
     */
     /*
-      TODO: Use-case: Ad components     
-      adComponents:[
-        {url: adComponent1, width: componentWidth1, height: componentHeight1},
-        {url: adComponent2, width: componentWidth2, height: componentHeight2},
-      ],
-      targetNumAdComponents: 3,
-      numMandatoryAdComponents: 1,
-    */
-    /*
       TODO: Use-case: Modeling signals
       modelingSignals: 123,
     */
   };
+}
+
+function getBidForMulitpieceAd({
+  interestGroup,
+  auctionSignals,
+  // UNUSED perBuyerSignals,
+  trustedBiddingSignals,
+  browserSignals,
+}) {
+  // Select an ad meeting the auction requirements.
+  const [selectedAd] = interestGroup.ads.filter(
+    (ad) => 'MULTIPIECE' === ad.metadata.adType,
+  );
+  if (!selectedAd) {
+    log("can't select multi-piece ad, no matching ad type found", {
+      interestGroup,
+    });
+    return {bid: '0.0'};
+  }
+  // Check if any deals are eligible.
+  const dealId = selectDealId(selectedAd, auctionSignals);
+
+  //get adComponents from InterstGroup
+  const {adComponents} = interestGroup;
+
+  return {
+    ad: {
+      ...selectedAd.metadata,
+      seller: browserSignals.seller,
+      topLevelSeller: browserSignals.topLevelSeller,
+    },
+    bid: calculateBidAmount(trustedBiddingSignals, dealId),
+    bidCurrency: 'USD',
+    allowComponentAuction: true,
+    render: {
+      url: selectedAd.renderURL,
+      // Specify ad size for macro replacements.
+      width: selectedAd.metadata.adSizes[0].width,
+      height: selectedAd.metadata.adSizes[0].height,
+    },
+    // Specify selected deal ID for reporting.
+    selectedBuyerAndSellerReportingId: dealId,
+
+    // Use-case: Ad components
+    adComponents: adComponents.map(({renderUrl}) => ({
+      url: renderUrl,
+      width: 50,
+      height: 50,
+    })),
+    targetNumAdComponents: 5,
+    numMandatoryAdComponents: 1,
+  };
+}
+
+function getBidByAdType(adType, biddingContext) {
+  switch (adType) {
+    case 'VIDEO':
+      return getBidForVideoAd(biddingContext);
+    case 'MULTIPIECE':
+      return getBidForMulitpieceAd(biddingContext);
+  }
+
+  //DISPLAY
+  return getBidForDisplayAd(biddingContext);
 }
 
 // ********************************************************
@@ -258,10 +313,7 @@ function generateBid(
     log('not bidding as campaign is inactive', biddingContext);
     return;
   }
-  const bid =
-    'VIDEO' === auctionSignals.adType
-      ? getBidForVideoAd(biddingContext)
-      : getBidForDisplayAd(biddingContext);
+  const bid = getBidByAdType(auctionSignals.adType, biddingContext);
   if (bid) {
     log('returning bid', {bid, biddingContext});
     return bid;
