@@ -1,7 +1,6 @@
 <%/* This is used in fenced-frames to deliver ads. */%>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
@@ -27,8 +26,6 @@
       left: 0;
       margin: 4px;
       padding: 4px;
-      background: #3f3f3f;
-      color: white;
       font-family: monospace;
     }
 
@@ -40,7 +37,10 @@
       background: white;
     }
   </style>
-  <script src="/js/dsp/write-impression-context-to-shared-storage.js" id="write-impression-context" data-campaign-id="<%= CAMPAIGN_ID %>" data-publisher-id="<%= PUBLISHER_ID %>"></script>
+
+  <% if (ENABLE_WRITE_IMPRESSION) { %>
+    <script src="/js/dsp/write-impression-context-to-shared-storage.js" id="write-impression-context" data-campaign-id="<%= CAMPAIGN_ID %>" data-publisher-id="<%= PUBLISHER_ID %>"></script>
+  <% } %>
 </head>
 
 <body>
@@ -57,5 +57,4 @@
          src="<%= CREATIVE %>">
   </a>
 </body>
-
 </html>
