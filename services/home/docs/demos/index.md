@@ -15,7 +15,7 @@ sidebar_position: 1
 | Show Relevant Content and Ads |                           [Retargeting / Remarketing](demos/retargeting-remarketing.md)                            |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
 |      Measure Digital Ads      |     [Single-touch conversion Attribution](demos/single-touch-conversion-attribution.md) <br/> (Summary Report)     |      Attribution Reporting API, Aggregation Service      |      Publisher, SSP, Advertiser, DSP       |
 |      Measure Digital Ads      |                           [Event Level Report](demos/single-touch-event-level-report.md)                           |                Attribution Reporting API                 |       Publisher, Advertiser, Ad Tech       |
-|   Attribution Reporting API   |      [Enforcing publisher ad requirements in Protected Audience using K/V](demos/publisher-ad-quality-req.md)      |                  Protected Audience API                  |               Publisher, SSP               |
+|   Use SSP Key/Value service to exclude ads   |      [Enforcing publisher ad requirements in Protected Audience using K/V](demos/publisher-ad-quality-req.md)      |                  Protected Audience API                  |               Publisher, SSP               |
 |      Measure Digital Ads      |                 [Multi-touch conversion Attribution](demos/multi-touch-conversion-attribution.md)                  | Private Aggregation, Shared Storage, Aggregation Service |         Publisher, Advertiser, DSP         |
 
 :::info Looking for a use case not listed here ? Help us growing this repository by
