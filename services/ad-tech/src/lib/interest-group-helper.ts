@@ -208,13 +208,21 @@ const getMultiPieceAdForRequest = (
 };
 
 /** Returns adComponents array for the multi-piece container. */
-const getAdComponentsForRequest = (): Array<InterestGroupAd> => {
+const getAdComponentsForRequest = (
+  targetingContext: TargetingContext,
+): Array<InterestGroupAd> => {
+  const {itemId} = targetingContext;
   const numAdComponents = 5;
 
   //get first numAdComponents IDs from KNOWN_SHOP_ITEM_TAGS_BY_ID
-  const items = Object.entries(KNOWN_SHOP_ITEM_TAGS_BY_ID)
+  let items = Object.entries(KNOWN_SHOP_ITEM_TAGS_BY_ID)
     .slice(0, numAdComponents)
     .map((entry) => entry[0]);
+
+  //if the current item is not in the default list, it is added to this list
+  if (itemId && items.indexOf(itemId) == -1) {
+    items[0] = itemId;
+  }
 
   let ads: Array<InterestGroupAd> = [];
 
@@ -328,7 +336,7 @@ export const getInterestGroup = (
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
-    adComponents: getAdComponentsForRequest(),
+    adComponents: getAdComponentsForRequest(targetingContext),
   };
 };
 

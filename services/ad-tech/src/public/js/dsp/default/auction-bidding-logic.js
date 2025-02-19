@@ -269,10 +269,10 @@ function getBidForMultipieceAd({
     selectedBuyerAndSellerReportingId: dealId,
 
     // Use-case: Ad components
-    adComponents: adComponents.map(({renderUrl}) => ({
+    adComponents: adComponents.map(({renderUrl, widht, height}) => ({
       url: renderUrl,
-      width: 50,
-      height: 50,
+      width: widht,
+      height: height,
     })),
     targetNumAdComponents: 5,
     numMandatoryAdComponents: 1,
