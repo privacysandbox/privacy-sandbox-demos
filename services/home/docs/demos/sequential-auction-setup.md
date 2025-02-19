@@ -76,15 +76,15 @@ sequenceDiagram
 autonumber
 
 participant Browser
-participant Publisher as Publisher Site
+participant Publisher
 box rgb(200, 220, 240) Ad Sellers
   participant Seller-Top as Publisher Ad Server
   participant Sellers as SSP-A / SSP-B
 end
-participant Advertiser as Advertiser Site
 box rgb(220, 240, 220) Ad Buyers
   participant Buyers as DSP-A / DSP-B
 end
+participant Advertiser
 
 Note over Browser,Buyers: Pre PA auction: Join ad interest group
 Browser ->> Advertiser: Visit a product detail page on shop advertiser site
@@ -93,15 +93,15 @@ Browser ->> Buyers: Load scripts from DSP
 Buyers -->> Browser: Return scripts and interest group configuration
 Browser ->> Browser: navigator.joinAdInterestGroup(...)
 
-Note over Browser,Buyers: Pre PA auction: Contextual auction
+Note over Browser,Buyers: Pre PA auction: Contextual ad auction
 Browser ->> Publisher: Visit news publisher site
 Publisher -->> Browser: Return news page tagged by publisher ad server
 Browser ->> Seller-Top: Load ad server tags
-Seller -->> Browser: Return ad server tags
-Browser ->> Seller-Top: Publisher ad server tags send contextual bid request
-Seller-Top -->> Browser: Return contextual bid response and PA auction configuration
-Browser ->> Sellers: Publisher ad server tags send contextual bid request
-Sellers -->> Browser: Return contextual bid response and PA auction configuration
+Sellers -->> Browser: Return ad server tags
+Browser ->> Sellers: SSPs receive contextual bid request
+Sellers -->> Browser: Return contextual bid response and PA auction config
+Browser ->> Seller-Top: Publisher ad server receives contextual bid request
+Seller-Top -->> Browser: Return contextual bid response and PA auction config
 Note right of Browser: Publisher ad server chooses winning contextual ad and initiates the PA auction
 Browser ->> Browser: navigator.runAdAuction(...)
 
@@ -132,7 +132,7 @@ Seller-Top -->> Browser: Return scoring logic scripts and real-time scoring sign
 Browser ->> Browser: scoreAd(...) for each winning component auction bid
 Note right of Browser: Browser picks the highest scored ad as the winner of overall auction
 
-note over Browser,DSP: Post PA auction: Winning ad is delivered on publisher page
+note over Browser,Buyers: Post PA auction: Winning ad is delivered on publisher page
 alt PA auction picks a winning ad
   Browser ->> Browser: runAdAuction() returns a winning ad
   Note right of Browser: Deliver winning PA ad in ad frame
@@ -167,9 +167,8 @@ end
 3. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad) (publisher)
 4. Observe the ad served on the news site
    - If you previously browsed the "shoe" product on the shop site, you will be shown an ad for the same product.
-   - When the page was loaded, Protected Audience API allowed the SSP to run an ad auction on the publisher site.
-   - The winning advertiser of this ad auction gets their ad creative to be displayed on the publisher site. In this case you have cleared the browser
-     history and only browsed 1 advertiser site page so you are only seeing 1 ad creative from the same advertiser.
+   - When the page was loaded, the publisher ad server leveraged the Protected Audience API to run an ad auction on the publisher site involving
+     multiple sellers and buyers.
 
 ### Implementation details
 

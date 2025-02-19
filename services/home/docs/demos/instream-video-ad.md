@@ -1,5 +1,5 @@
 ---
-title: Instream video ad with Protected Audience
+title: In-stream video ads with Protected Audience
 sidebar_position: 4
 ---
 
@@ -21,13 +21,10 @@ this use case.
 
 ### Description
 
-This demo expands on the demo for the [sequential setup of Protected Audience with contextual auction](sequential-setup-with-contextual-auction) to
-showcase how video ads may be served with the API. The demo uses the industry-standard VAST XMLs to deliver video ads in iframes. While this demo
-shows a pre-roll video ad, the same mechanism can be used to render other video ad types that use the VAST XML standard, such as mid-roll and
-post-roll instream video ads.
-
-Note that the technique shown in this demo does not work with [Fenced Frames](https://developers.google.com/privacy-sandbox/relevance/fenced-frame),
-but Protected Audience allows iframe usage
+This demo expands on the demo for the [sequential setup of Protected Audience with contextual auction](sequential-auction-setup) to showcase how video
+ads may be served with Protected Audience. The demo uses the industry-standard Video Ads Serving Template (VAST) XMLs to deliver video ads in iframes.
+Additionally, note that the technique shown in this demo does not work with
+[Fenced Frames](https://developers.google.com/privacy-sandbox/relevance/fenced-frame), but Protected Audience allows iframe usage
 [until at least 2026](https://developers.google.com/privacy-sandbox/relevance/protected-audience-api/feature-status#fenced_frames).
 
 ### Privacy Sandbox APIs and related documentation
@@ -39,7 +36,7 @@ but Protected Audience allows iframe usage
 ### Related parties
 
 - Publisher (News site)
-- Publisher Ad Server / Top-level Seller
+- Publisher Ad Server
 - Supply Side Platform (SSP)
 - Advertiser (Shop site)
 - Demand Side Platform (DSP)
@@ -51,216 +48,75 @@ but Protected Audience allows iframe usage
 
 ### Goals
 
-- Render a pre-roll video ad that plays before the publisher's video plays
-- The VAST of the pre-roll ad contains the SSP's VAST and DSP's VAST
-- A unique ID is appened to the reporting URLs in the VAST
+- Render a pre-roll video ad that plays before the publisher's video content
+- The final VAST of the pre-roll ad contains contributions from both the SSP and the DSP
 
 ### Assumptions
 
 This demo and the accompanying documentation assumes that the reader is familiar with the basics of the Protected Audience API, its sequential setup
-with the contextual auctions, and the VAST XML standard for serving video ads. This demo focuses on demonstrating the use of VAST XML to deliver a
-video ad, but doesn't go into details of the structure of the VAST XML itself.
+with the contextual auctions, and the VAST XML standard for serving video ads.
 
 ### Key Exclusions
 
 This demo doesn't aim to replicate the real-world integration patterns between the multiple entities involved in the ad delivery process, but rather
-focuses on the data flows necessary to enable video ads with the Protected Audience API. As an example, the demo shows the ad buyer assembling the
-final VAST XML inclusive of contents from both the ad buyer and the ad seller, although it is the seller's responsibility in the real-world
-impressions.
+focuses on the data flows necessary to enable video ads with the Protected Audience API. As instance, the demo shows the ad buyer assembling the final
+VAST XML inclusive of contents from both the ad buyer and the ad seller, although it is the seller's responsibility in the real-world impressions.
+
+This demo shows the use of VAST XML to deliver a video ad, but doesn't go into details of the structure of the VAST XML itself. Additionally, while
+this demo only shows a pre-roll video ad, the same mechanism can be used to render other video ad types that use the VAST XML standard, such as
+mid-roll and post-roll instream video ads.
+
+Finally, to focus on the data flow within Protected Audience for video ads, the demo ad buyers don't place any contextual bids for video ads. The only
+video ad bids generated are within the Protected Audience auction.
 
 ### System Design
 
-#### Protected Audience Flow
+Identical to the [sequential auction setup demo](sequential-auction-setup), the user visiting an advertiser page is added to interest groups by
+multiple DSPs. The auction orchestration on the news publisher page is also similar at a high-level. The incremental difference is in the post-auction
+rendering phase where the output of the Protected Audience auction needs to be consumed by a video player.
 
-#### User Journey
-
-The following features have been implemented:
-
-- The SSP's VAST XML wraps around the DSP's VAST URI
-- A unique ID is appended to the reporting URLs in the VAST XML
-  - This unique ID is also propagated to the header bidding auction, ad server auction, and every Protected Audience auction worklet
-- The finalized VAST is messaged out of the creative iframe to the video player
-
-### System Design
+### User Journey
 
 #### Summary
 
-- Buyer adds the render URL of the video creative in the interest group
-  - The render URL includes a macro for the VAST location of the winning component SSP (`%%SSP_VAST_URL%%`)
-- Seller adds the macro replacement configuration in the component auction config
-  - Uses `deprecatedReplaceInURN()` function which will become
-    [available for component sellers in M123](https://github.com/WICG/turtledove/issues/286#issuecomment-1910551260)
-  - Until M123, as a temporary mechanism, in this demo, the buyer adds a render URL for each SSP in the interest group
-- On an auction win, the browser replaces the `%%SSP_VAST_URL%%` macro with the SSP's VAST reporting endpoint
-- When the ad is rendered in an iframe, the creative code parses SSP's VAST URL, and makes a request with the DSP's VAST URI and the unique ID
-- On the server, the SSP wraps its own VAST around the DSP's VAST URI and appends the unique ID to the URLs in the VAST
-- The creative receives the response from the SSP's server that contains the finalized VAST XML, and post-messages it to the ad server library code on
-  the publisher's page
-- The ad server lib passes the VAST XML to the video player
+- The DSP includes a video ad in its interest group. The `renderURL` for this video ad includes a macro string (`${SSP_VAST}`) representing the SSP's
+  endpoint to wrap the DSP VAST with additional contributions from the SSP.
+- SSPs can include the value for this macro in their component auction configurations with the `deprecatedRenderURLReplacements` field.
+- With this setup, the browser will replace the macro in the winning DSP's renderURL with the value coming from the corresponding SSP's component
+  auction configuration.
+- When the winning Protected Audience ad is rendered in an iframe, JavaScript running inside the ad frame retrieves and makes a request to the SSP's
+  VAST wrapping endpoint with the DSP's VAST URI.
+- The SSP's server wraps it's own VAST around the DSP's VAST URI and returns the finalized VAST back to the creative iframe, which in turn
+  post-messages it to the ad server library code on the publisher's page.
+- Finally, this ad server library passes the VAST XML to the video player
 
-#### Interest group time
-
-This is the time period when the DSP configures the interest group, and sets the SSP VAST macro in the render URL.
+Since the overall auction orchestration for this use-case identical to that in the [sequential auction setup demo](sequential-auction-setup), we will
+skip ahead to the ad rendering phase.
 
 ```mermaid
 sequenceDiagram
 autonumber
 
-Title: Interest group time
-
-actor User
 participant Browser
+participant Publisher
+box rgb(200, 220, 240) Ad Sellers
+  participant Seller-Top as Publisher Ad Server
+  participant Seller as Winning SSP
+end
+box rgb(220, 240, 220) Ad Buyers
+  participant Buyer as Winning DSP
+end
 participant Advertiser
-participant Publisher
-participant HB as Header <br>Bidding
-participant TopLevel as Top-level seller <br>(Ad server)
-participant AS as Ad server
-participant SSPA as SSP-A
-participant SSPB as SSP-B
-participant DSPA as DSP-A
-participant DSPB as DSP-B
 
-User ->> Advertiser: Visit advertiser page
-Advertiser ->> DSPA: Load DSP-A tag
-Advertiser ->> DSPB: Load DSP-B tag
-DSPA ->> Browser: Add user to Interest Group<br>Set a render URL with SSP VAST macro (%%SSP_VAST_URL%%)
-DSPB ->> Browser: Add user to Interest Group<br>Set a render URL with SSP VAST macro (%%SSP_VAST_URL%%)
-```
-
-[Full-sized diagram](./img/instream-video-ad-ig-time.png)
-
-#### Header bidding time
-
-This is the time period when the seller defines the macro substitution in the component auction config
-
-```mermaid
-sequenceDiagram
-autonumber
-
-Title: Header bidding time
-
-actor User
-participant Browser
-participant Advertiser
-participant Publisher
-participant HB as Header <br>Bidding
-participant AS as Ad server
-participant SSPA as SSP-A
-participant SSPB as SSP-B
-participant DSPA as DSP-A
-participant DSPB as DSP-B
-
-User ->> Publisher: Visit publisher page
-Publisher ->> HB: Start header bidding auction
-HB ->> SSPA: Request header bid and component auction config<br>VAST macro replacement is defined in the component auction config<br> (deprecatedReplaceInURN())
-SSPA ->> DSPA: Request header bid and per-buyer signals
-SSPA ->> HB: Respond with the header bid and component auction config
-HB ->> SSPB: Request header bid and component auction config<br>VAST macro replacement is defined in the component auction config<br> (deprecatedReplaceInURN())
-SSPB ->> DSPB: Request header bid and per-buyer signals
-SSPB ->> HB: Respond with the header bid and component auction config
-HB ->> AS: Pass the header bidding auction result to the ad server client-side library
-```
-
-[Full-sized diagram](./img/instream-video-ad-hb-time.png)
-
-### Ad rendering time
-
-This is the time period when the VAST is transformed and passed to the creative.
-
-We will skip the ad server auction and the Protected Audience auction since they are irrelevant to the video ad rendering flow. To learn more about
-the rest of the auctions, see the
-[sequential auctions setup](https://developers.google.com/privacy-sandbox/relevance/protected-audience-api/sequential-auction-setup) article.
-
-The following sequence begins after a video ad winner has been chosen from the Protected Audience auction. Also, only the winning DSP and SSP are
-shown in the diagram, since other multi-seller auction DSPs/SSPs are no longer part of the auction.
-
-```mermaid
-sequenceDiagram
-autonumber
-
-Title: Ad rendering time
-
-participant Publisher
-participant Browser
-participant AS as Ad server lib <br>(Top-level seller)
-participant VP as Video player SDK
-participant DSP as DSP's ad iframe
-participant SSP as SSP's server
-
-Browser ->> Browser: Choose Protected Audience auction winner
-Browser ->> Browser: Substitute %%SSP_VAST_URL%% macro <br>with the value provided by the winning SSP
-Browser ->> AS: Return winning PA video ad (opaqueURN)
-AS ->> Browser: Render winning ad in an iframe
-Browser ->> DSP: Fetch video ad<br>The render URL contains the SSP VAST URL query param
-DSP ->> DSP: Inside the ad iframe, parse the SSP VAST URL query param
-DSP ->> SSP: Inside the ad iframe, a request is sent to the SSP's VAST endpoint<br>The DSP's VAST URI and unique ID are sent in the request
-SSP ->> SSP: On the server, SSP transforms the VAST<br>The VASTs are wrapped, and a unique ID is appended to the URLs in the VAST
-SSP ->> DSP: The finalized VAST is sent to the creative iframe
-DSP ->> AS: The VAST is post-messaged to the ad sever lib (top-level seller)
-AS ->> VP: The VAST is passed to the video player
-VP ->> Publisher: The instream video ad is rendered
-```
-
-[Full-sized diagram](.//img/instream-video-ad-render-time.png)
-
-## Alternative approach
-
-In another approach, the SSP can provide the render URL. The DSP sets the following render URL in the IG:
-
-```js
-const interestGroup = {
-  // ...
-  ads: [
-    {
-      renderUrl: 'https://privacy-sandbox-demos-ssp-a.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
-      metadata: {
-        seller: 'ssp-a'
-      }
-    },
-    {
-      renderUrl: 'https://privacy-sandbox-demos-ssp-b.dev/video-ad.html?dspVastUri=https://privacy-sandbox-demos-dsp-a.dev/preroll.xml',
-      metadata: {
-        seller: 'ssp-b'
-      }
-    },
-  ]
-}
-```
-
-- The render URL points to the SSP’s video ad serving endpoint, and the DSP’s VAST URI is added as query params.
-  - The SSP is now responsible for serving the actual ad that is rendered inside the iframe, and it contains the SSP VAST XML that wraps the DSP VAST
-    URI.
-  - To support multiple SSPs, the buyer adds a render URL for each SSP. During the bid generation time, the buyer can filter the ads object and return
-    a render URL for the matching seller.
-- When that ad wins the auction, the browser makes a request to the render URL which is the SSP's ad serving endpoint `/video-ad.html` with the DSP's
-  VAST URI set in the query params
-- SSP’s HTML document is rendered in the ad iframe and parses the DSP's VAST URI from the query params
-- The code inside SSP's video-ad.html wraps the DSP's VAST URI with its own VAST
-- The finalized VAST XML is post-messaged out of the creative frame to the video player
-
-### Explanation
-
-The finalized VAST XML is messaged out of the iframe to the publisher page, and that VAST is passed to the video player. The finalized VAST contains
-the DSP+SSP wrapped VAST and a unique ID appended to URLs in VAST. The server-side VAST transformation is conducted by the SSP.
-
-When the DSP adds the render URL, a query param macro is added that specifies the SSP's VAST serving endpoint (i.e.
-`https://DSP-A.com/ad.html?sspVastUrl=%%SSP_VAST_URL%%`). When the SSP constrcuts the component auction config, the macro replacement is defined
-(`deprecatedReplaceInURN: { '%%SSP_VAST_URL%%': 'https://SSP-A.com/vast' }`). When the ad is rendered, the macro is replaced by the value defined by
-the seller in the component auction config.
-
-When the ad is rendered, the creative code parses the SSP's VAST URL from the query params, and makes a request to that endpoint, with the DSP VAST
-URI and the unique ID set as query params. On the server, the SSP wraps its own VAST XML around the DSP's VAST URI, and appends the unique ID to the
-URLs in the VAST. The SSP's server responds to the creative's request with the finalized VAST. The finalized VAST is post-messaged from the iframe to
-the publisher page, and that VAST is passed to the video player.
-
-### Macro substitution for component sellers
-
-The `deprecatedReplaceInURN()` function allows macros to be replaced in the winning ad's render URL.
-
-Example:
-
-```js
-deprecatedReplaceInURN('%%SOME_MACRO%%', 'some-value')
+Note over Browser,Buyer: Post PA auction: Winning ad is delievered on the publisher page
+Browser ->> Browser: runAdAuction() returns a winning ad with macro subsitution
+Note right of Browser: Deliver winning PA ad in iframe
+Browser ->> Buyer: Request ad creative
+Buyer -->> Browser: Return ad creative
+Browser ->> Seller: JavaScript in ad frame makes a request to SSP's VAST wrapping endpoint with the DSP's VAST URI.
+Seller -->> Browser: SSP wraps the DSP's VAST URI and returns the finalized VAST
+Browser ->> Browser: The finalized VAST is post-messaged out of the ad iframe to the ad server library
+Browsr ->> Browser: Ad server library passes this finalized VAST to the video player.
 ```
 
 </TabItem>
@@ -270,174 +126,158 @@ deprecatedReplaceInURN('%%SOME_MACRO%%', 'some-value')
 
 ### Prerequisites
 
-- Chrome > v120 (Open chrome://version to look up your current version)
-- Enable Privacy Sandbox APIs (Open `chrome://settings/privacySandbox` to enable this setting)
+- Latest stable version of Chrome (Open `chrome://version` to check your current version)
+- Enable Privacy Sandbox APIs (Open `chrome://settings/adPrivacy` to enable _Site-suggested ads_)
+- Clear your browsing history before you run one of the demo scenario below (Open `chrome://settings/clearBrowserData` to delete your browsing
+  history)
 
-#### User Journey
+### User Journey
 
-The query param that enables the video ad demo on the advertiser and publisher sites is `?auctionType=multi`.
+1. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/iframe-video-ad) (publisher)
+   - Observe that this page contains some video content served by the publisher. When you click on the play button, the video content plays without
+     ads.
+   - The participating ad buyers or DSPs don't generate any contextual bids for video ads. And since we just cleared all data, there are no interest
+     groups to generate bids for video ads.
+2. [Navigate to shop site :arrow_upper_right:](https://privacy-sandbox-demos-shop.dev/) (advertiser)
+   - Click on any "shoe" product item on the shop site. DSP tags on this product detail page will leverage the Protected Audience API to join an ad
+     interest group.
+3. [Navigate to the news site again :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/iframe-video-ad) (publisher)
+   - Observe that this time when you click the play button, a pre-roll ad is played before the content. This ad was delivered using a VAST XML
+     delivered via Protected Audience.
 
-1. Navigate to advertiser site:
-   [https://privacy-sandbox-demos-shop.dev/items/1f45e?auctionType=multi](https://privacy-sandbox-demos-shop.dev/items/1f45e?auctionType=multi)
-1. Navigate to publisher site: [https://privacy-sandbox-demos-news.dev/?auctionType=multi](https://privacy-sandbox-demos-news.dev/?auctionType=multi)
-1. Click ‘Play video’ when the button is ready
+### Implementation Details
 
-#### Buyer adds the user to an interest group
+The user is added to interest groups by ad buyers or DSPs using the same high-level flow as described in the
+[basic remarketing / retargeting use-case demo](retargeting-remarketing). These interest groups contain both display and video ads, with the DSPs
+filtering for the ad type corresponding to that signalled by ad sellers or SSPs via `auctionSignals`.
 
-```js
+#### How is the video ad structured as an interest group ad?
+
+The `renderURL` video ad in the DSP's interest group includes a macro representing the SSP's VAST wrapping endpoint. The DSP constructs and retrieves
+the interest group configurations from its server, specifically assembling the video ad in
+[`interest-group-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/lib/interest-group-helper.ts).
+
+```js title="DSP adds user to interest group on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
 const interestGroup = {
   // ...
   ads: [{
-    renderUrl: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=%%SSP_VAST_URL%%'
-  }]
+    renderUrl: 'https://privacy-sandbox-demos-dsp-a.dev/ads/video-ads?sspVast=${SSP_VAST}&sspVastAlt=%%SSP_VAST%%'
+  }],
+  // ...
 }
 ```
 
-During render time, the browser replaces the `%%SSP_VAST_URL%%` macro defined in the render URL with the value that the winning SSP provides in the
-component auction config.
+While the above `renderURL` shows both styles of declaring macros -- `${MACRO}` and `%%MACRO%%` -- only one is actually used in the demo.
 
-##### Temporary mechanism until `deprecatedReplaceInURN()` becomes availble for component sellers
+#### How do ad sellers specify the macro values to be substituted in the `renderURL`?
 
-Since the component seller support for `deprecatedReplaceInURN()` won't be available until M123, we are using a temporary mechanism to pass the SSP's
-VAST URL to the creative iframe.
+Ad sellers or SSPs can use the `auctionConfig.deprecatedRenderURLReplacements` field. Similar to DSPs, SSPs also construct their auction
+configurations on the server-side, specifically in
+[`auction-config-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/lib/auction-config-helper.ts).
 
-In the interest group config, the buyer adds the render URL for each seller, and also note the seller in metadata.
+```js title="SSP specifies renderURL macro substitutions in auction config"
+const componentAuctionConfig = {
+  seller: '...',
+  // ...
+  deprecatedRenderURLReplacements: {
+    '${SSP_VAST}': 'https://privacy-sandbox-demos-ssp-a.dev/ssp/vast.xml'
+    '%%SSP_VAST%%': 'https://privacy-sandbox-demos-ssp-a.dev/ssp/vast.xml',
+  }
+  // ...
+}
+```
 
-```js
+At the end of the auction, the browser will take the macro values specified in the winning SSP's `auctionConfig` and replace it in the winning DSP's
+`renderURL`.
+
+#### How do SSPs and DSPs coordinate on the requested ad type for the opportunity?
+
+The DSP includes all supported ad types in its interest group along with some metadata to indicate the ad type. The interest group object is assembled
+on the server-side in
+[`interest-group-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/lib/interest-group-helper.ts),
+and the final interest group is structured as shown below.
+
+```js title="Structure of interest group ad metadata to indicate ad type"
 const interestGroup = {
   // ...
-  ads: [
-    {
-      renderUrl: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=https://privacy-sandbox-demos-ssp-a.dev/vast',
-      metadata: {
-        adType: 'video',
-        seller: 'https://privacy-sandbox-demos-ssp-a.dev/'
-      }
-    },
-    {
-      renderUrl: 'https://privacy-sandbox-demos-dsp-a.dev/html/video-ad-creative.html?sspVastUrl=https://privacy-sandbox-demos-ssp-b.dev/vast',
-      metadata: {
-        adType: 'video',
-        seller: 'https://privacy-sandbox-demos-ssp-b.dev/'
-      }
-    },
-  ]
-}
-```
-
-- Code: [Interest group config generation](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp-a/src/index.ts#L187)
-
-Then during bid generation the buyer filters out the render URLs that are not for the component auction seller:
-
-```js
-function generateBid(browserSignals) {
-  const {seller} = browserSignals;
-
-  return {
-    render: ads.find(ad => ad.metadata.seller.includes(seller))
-  }
-}
-```
-
-- Code: [Bid generation](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp-a/src/public/js/bidding-logic.js#L33)
-
-This is a temporary mechanism that will be replaced by `deprecatedReplaceInURN()` in M123.
-
-#### Seller defines the macro substitution in the component auction config
-
-In a sequential auction setup, the header bidding is executed first, and the sellers have the opportunity to respond to the header bidding request
-with the component auction config if they want to partcipate in the subsequent Protected Audience auction.
-
-In the component auction config, the SSP defines the macro substitution:
-
-```js
-const componentAuctionConfig = {
+  ads: [{
+    renderURL: 'https://privacy-sandbox-demos-dsp-a.dev/ads/display-ads',
+    metadata: '{"adType":"DISPLAY"}',
+  }, {
+    renderURL: 'https://privacy-sandbox-demos-dsp-a.dev/ads/video-ads?spVast=${SSP_VAST}',
+    metadata: '{"adType":"VIDEO"}',
+  }],
   // ...
-  deprecatedReplaceInURN: {
-    '%%SSP_VAST_URI%%': 'https://privacy-sandbox-demos-ssp-a.dev/vast',
+}
+```
+
+SSPs indicate the supported ad type in `auctionConfig.auctionSignals` which is made available to the DSP's `generateBid()` method at auction time.
+Using this information, DSPs can filter for the appropriate ad types in their
+[bidding logic :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/dsp/default/auction-bidding-logic.js#L261-264);
+
+#### What does the interest group ad creative do?
+
+Since the final ad is delivered in the video player on the page, the winning Protected Audience ad is essentially a transparent iframe that is
+responsible for handling the data flow surrounding the ad delivery. More specifically, this ad frame enables the wrapping of the VAST XML by multiple
+entities before delivering it to the video player. In real-world deployments today, SSPs are responsible for this wrapping process. Focusing on the
+data flow, this demo shows the DSP as the entity responsible for wrapping with the idea that the same technique may be reversed to achieve the same
+outcome.
+
+The
+[`ads-router.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/common/ads-router.ts#L51-54)
+module delivers the document rendered in the transparent iframe. This
+[document :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/views/video-ad-frame.ejs)
+includes a single
+[script :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/video-ad-frame.js)
+wrapping the VAST XML.
+
+This script starts by
+[parsing :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/video-ad-frame.js#L38-48)
+the SSP's VAST wrapping endpoint including in the URL. Then the scripts proceeds to
+[fetch the finalized VAST XML from this SSP endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/video-ad-frame.js#L51-69)
+before
+[post-messaging the XML content to the top frame :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/video-ad-frame.js#L107-115).
+
+```js title="Winning PA ad iframe assembles and post-messages the finalized VAST to the top frame"
+// ...
+const sspVast = getSspVastQueryFromCurrentUrl();
+const vastXmlText = await fetchFinalizedVastXmlFromSsp(sspVast);
+// The finalized VAST XML is messaged to the top-most frame that will pass the
+// VAST XML to the video player.
+const {0: containerFrame} = window.top.frames;
+containerFrame.top.postMessage(
+  /* message= */JSON.stringify({
+    vastXml: vastXmlText.toString(),
+  }),
+  /* targetOrigin= */'*',
+);
+// ...
+```
+
+#### How does the SSP's endpoint transform the DSP's VAST?
+
+The
+[SSP's VAST wrapping endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/ssp/seller-router.ts#L64-80)
+adds its own tracking events to the DSP's VAST and returns the
+[finalized VAST XML :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/views/ssp/vast-preroll.ejs)
+back to the client-side.
+
+#### How is the finalized VAST XML delivered to the video player?
+
+The publisher ad server, anticipating the post-message from the Protected Audience ad frame,
+[sets up an event listener :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/ad-server-tag.js#L79-98)
+in advance of kicking off the auction. In this demo, the video player is provided by the publisher who also includes a
+[helper library to integrate ads :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/public/js/video-ad-helper.js).
+This helper library exports a single method as `window.PSDemo.VideoAdHelper.setUpIMA(..)` which is used by the publisher ad server event listener.
+
+```js title="Publier ad server receives the post-message and sets up the video ad"
+window.addEventListener('message', async (event) => {
+  const {vastXml} = JSON.parse(event.data);
+  if (vastXml) {
+    window.PSDemo.VideoAdHelper.setUpIMA(vastXml);
   }
-}
-```
-
-- Code: [SSP component auction config](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp-a/src/index.js#L142)
-
-#### From the creative iframe, a request is sent to the SSP's VAST endpoint
-
-When the ad is rendered in an iframe, the creative code parses the query params, and sends a request to the SSP's VAST URL.
-
-```js
-function parseSspVastUrl() {
-  const url = new URL(window.location.href);
-  return url.searchParams.get('sspVastUrl');
-}
-
-async function fetchVastFromSsp(sspVastUrl, auctionId) {
-  const requestUrl = new URL(sspVastUrl);
-  requestUrl.searchParams.append(AUCTION_ID_QUERY_PARAM, auctionId);
-  requestUrl.searchParams.append(DSP_VAST_URI_QUERY_PARAM, encodeURIComponent(dspVastUri));
-
-  const response = await fetch(requestUrl);
-  const vastXml = await response.text();
-
-  return vastXml;
-}
-```
-
-- Code:
-  [Sending a request to the SSP's VAST endpoint](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp-a/src/public/js/video-ad-creative.js#L19)
-
-#### SSP's server transforms the VAST
-
-On the server, the SSP wraps its own VAST around the DSP's VAST URI and appends the unique ID to the URLs in the VAST
-
-```js
-function transformVast(sspVast, dspVastUri, auctionId) {
-  const vastWithDspUri = sspVast.replace('%%DSP_VAST_URI%%', decodeURIComponent(dspVastUri));
-  const vastWithAuctionId = vastWithDspUri.replaceAll('%%AUCTION_ID%%', auctionId);
-
-  return vastWithAuctionId;
-}
-
-app.get('/vast', async (req, res) => {
-  const {dspVastUri, auctionId} = req.query;
-
-  const sspVast = await readFile(path.resolve(__dirname + '/public/vast/preroll.xml'), 'utf8');
-  const finalizedVast = transformVast(sspVast, dspVastUri, auctionId);
-
-  res.type('application/xml');
-  res.send(finalizedVast);
 });
 ```
-
-- Code: [SSP server-side transformation](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp-a/src/index.js#L184)
-- Code: [SSP's VAST wrapper](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ssp-a/src/public/vast/preroll.xml)
-
-#### Finalized VAST is messaged to the top frame
-
-Once the creative receives the finalized VAST from the SSP, it is post-messaged out of the frame to the top-level frame:
-
-```js
-function sendVastToParentFrame(vastText) {
-  const {0: containerFrame} = window.top.frames;
-  containerFrame.top.postMessage(vastText, '*');
-}
-```
-
-- Code:
-  [Post-message from the creative iframe](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/dsp-a/src/public/js/video-ad-creative.js#L37)
-
-#### VAST message is received by the top frame and passed to the video player
-
-The ad server client-side library sets up an event-listener for a message from the frame, and passes the received VAST to the video player.
-
-```js
-window.addEventListener('message', ({ data }) => {{
-  setUpVideoPlayer(data);
-});
-```
-
-Code:
-[Ad server lib code (top-level seller)](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-server/src/public/js/ad-server-lib.js#L105)
 
 </TabItem>
 </Tabs>

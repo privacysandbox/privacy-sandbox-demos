@@ -14,9 +14,9 @@ Looking to run these demos yourself? Check our [guide](https://github.com/privac
 | **Use Case**                                                                                                        | **Privacy Sandbox APIs**          |
 | ------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
 | [Basic retargeting / remarketing ad campaign](demos/retargeting-remarketing.md)                                     | Protected Audience, Fenced Frames |
-| [Sequential setup of Protected Audience with contextual auction](demos/sequential-setup-with-contextual-auction.md) | Protected Audience, Fenced Frames |
+| [Sequential setup of Protected Audience with contextual auction](demos/sequential-auction-setup.md) | Protected Audience, Fenced Frames |
 | [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md)          | Protected Audience, Fenced Frames |
-| [Video ads with Protected Audience](demos/instream-video-ad.md)                                                     | Protected Audience                |
+| [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                                     | Protected Audience                |
 | [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                                 | Attribution Reporting             |
 
 :::info

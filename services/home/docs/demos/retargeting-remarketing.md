@@ -1,5 +1,5 @@
 ---
-title: Basic retargeting / remarketing ads
+title: Basic retargeting / remarketing ads with Protected Audience
 sidebar_position: 1
 ---
 
@@ -44,12 +44,11 @@ previously looked at, on other websites.
 
 ### Assumptions
 
-This use case assumes the advertiser (shop site) can bid on the publisher (news site) inventory through an agreement between their respective DSP and
-SSP platforms.
+This use case assumes the advertiser (shop site) can bid on the publisher (news site) inventory through an agreement between their respective ad-tech platforms.
 
 ### Key Exclusions
 
-The demo does not integrate existing auction mechanisms (such as header bidding or Prebid). It is only scoped to the on-device auction with Protected
+The demo does not integrate existing auction mechanisms, such as header bidding. It is only scoped to the on-device auction with Protected
 Audience API. As a simple demonstration of the Protected Audience API, the auction only involves a single seller servicing a single ad slot for an
 opportunity to deliver a display ad.
 
@@ -67,47 +66,44 @@ Below is a general introduction of Remarketing using Privacy Sandbox Protected A
 
 #### User Journey
 
-<!--
-![Remarketing User Journey](./img/retargeting-remarketing-journey-1-seq.png)
--->
-
 ```mermaid
 sequenceDiagram
 autonumber
 
 participant Browser
-participant Publisher as Publisher Site
-participant SSP
-participant Advertiser as Advertiser Site
-participant DSP
+participant Publisher
+participant SSP as Ad Seller
+participant DSP as Ad Buyer
+participant Advertiser
+
 
 Note over Browser,DSP: Pre PA auction: Join ad interest group
 Browser ->> Advertiser: Visit a product detail page on shop advertiser site
-Advertiser -->> Browser: Return shop page with DSP tags
-Browser ->> DSP: Load scripts from DSP
+Advertiser -->> Browser: Return shop page tagged by ad buyers
+Browser ->> DSP: Load scripts from ad buyer
 DSP -->> Browser: Return scripts and interest group configuration
-
 Browser ->> Browser: navigator.joinAdInterestGroup(...)
 
 Note over Browser,DSP: PA Auction: Browser orchestrates on-device auction
 Browser ->> Publisher: Visit news publisher site
-Publisher -->> Browser: Return news page tagged with SSP tags
-Browser ->> SSP: Load scripts from SSP
+Publisher -->> Browser: Return news page tagged by ad seller
+Browser ->> SSP: Load scripts from ad seller
 SSP -->> Browser: Return scripts and auction configuration
 
 Browser ->> Browser: navigator.runAdAuction(...)
 
-note right of Browser: Browser invokes DSP bidding logic for all eligible interest groups
+Note right of Browser: Browser identifies eligible interest groups for all participanting ad buyers
 Browser ->> DSP: Fetch bidding logic script and real-time bidding signals
-DSP ->> Browser: Return bidding logic script and real-time bidding signals
+DSP -->> Browser: Return bidding logic script and real-time bidding signals
 Browser ->> Browser: generateBid(...)
 
-note right of Browser: Browser invokes SSP scoring logic for all eligible interest group bids
+Note right of Browser: Browser invokes ad seller scoring logic for all eligible interest group bids
 Browser ->> SSP: Fetch scoring logic script and scoring signals
-SSP ->> Browser: Return scoring logic script and scoring signals
+SSP -->> Browser: Return scoring logic script and scoring signals
 Browser ->> Browser: scoreAd(...)
+Note right of Browser: Ad with highest score wins auction
 
-note over Browser,DSP: Post PA auction: Winning ad is delivered in a fenced-frame
+Note over Browser,DSP: Post PA auction: Winning ad is delivered in a fenced-frame
 Browser ->> DSP: Request ad creative
 DSP -->> Browser: Return ad creative
 

@@ -64,13 +64,9 @@ advertiser.
 Below is a general introduction of Single-Touch conversion Attribution using Privacy Sandbox Attribution Reporting API. For further information see
 [Attribution Reporting - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/) .
 
-![Protected Audience Flow](./img/attribution-reporting-flow.png)
+![Attribution Reporting Flow](./img/attribution-reporting-flow.png)
 
 #### User Journey #1
-
-<!--
-![Remarketing User Journey 1](./img/attribution-reporting-journey-1-seq.png)
--->
 
 ```mermaid
 
