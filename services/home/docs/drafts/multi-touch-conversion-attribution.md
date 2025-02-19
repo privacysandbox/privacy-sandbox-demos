@@ -1,15 +1,6 @@
 ---
 title: Multi-touch conversion Attribution
 sidebar_position: 50
-more_data:
-  - apis:
-      - Private Aggregation API
-      - Shared Storage API
-      - Attribution Reporting API
-  - parties:
-      - Publisher
-      - Advertiser
-      - DSP
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';

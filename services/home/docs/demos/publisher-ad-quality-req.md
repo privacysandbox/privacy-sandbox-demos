@@ -16,8 +16,8 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 Often publishers have requirements on the types of ads they’re willing to display for example:
 
-- Excluding adult only ads.
-- Including ads only for relevant product types based on quality metrics.
+- Excluding adult only ads
+- Including ads only for relevant product types
 
 During the Protected Audience auction, SSPs can implement this behavior by using a combination of DSP-supplied metadata with the bid and the SSP's own
 creative metadata stored in its Key/Value (K/V) server that the SSP might have gathered from an out-of-band review process.
@@ -36,9 +36,9 @@ creative metadata stored in its Key/Value (K/V) server that the SSP might have g
 - DSP
 
 </TabItem>
-<TabItem value="scope" label="Scope">
+<TabItem value="design" label="Design">
 
-## Scope
+## Design
 
 ### Goals
 
@@ -72,39 +72,57 @@ will be excluded from the auction, and the user will see no ad.
 
 ```mermaid
 sequenceDiagram
-Title: Enforcing publisher ad requirements in Protected Audience using K/V
+autonumber
 
 participant Browser
 participant Publisher
-participant SSP
+participant SSP as Ad Sellers
+participant DSP as Ad Buyers
 participant Advertiser
-participant DSP
 
-Browser->>Advertiser:Visits shop site and views product
-Advertiser->>Browser:Adds DSP tag on the page
-Browser->>DSP:Browser requests scripts from DSP
-DSP->>Browser:Call joinAdInterestGroup() with the config
 
-Browser->>Publisher:Visits news site
-note right of Browser: With optional "?excludeCreativeTag=" param, value e.g. "redShoe"
-Publisher->>Browser: Adds SSP tag on the page
-SSP->>Browser: Browser loads scripts from SSP, incl. auction config with trustedScoringSignalsURL
-Browser->>Browser: Adds sellerSignals to auction config, incl. excluded product tag.
-SSP->>Browser:SSP calls runAdAuction with the config
+Note over Browser,DSP: Pre PA auction: Join ad interest group
+Browser ->> Advertiser: Visit a product detail page on shop advertiser site
+Advertiser -->> Browser: Return shop page with DSP tags
+Browser ->> DSP: Load scripts from DSP
+DSP -->> Browser: Return scripts and interest group configuration
+Browser ->> Browser: navigator.joinAdInterestGroup(...)
 
-Browser->>SSP:Get Key/Values
-note right of Browser: Keys are ad urls
-SSP->>Browser:Returns Keys/Values
-note right of Browser: Response like: {"product_tags": ["redShoe", "shortsShoe"]}
+Note over Browser,DSP: Pre PA Auction: Contextual ad auction
+Browser ->> Publisher: Visit news publisher site
+note right of Browser: With optional "?excludeCreativeTag=redShoe" param, for example
+Publisher -->> Browser: Return news page tagged by publisher ad server
+Browser ->> SSP: Load ad server tags
+SSP -->> Browser: Return ad server tags
+Browser ->> SSP: SSPs receive contextual bid request with exclusion tags
+SSP -->> Browser: Return contextual bid response and PA auction config with exclusion tags
+Note right of Browser: Publisher ad server chooses winning contextual ad and initiates the PA auction
+Browser ->> Browser: navigator.runAdAuction(...)
 
-Browser->>Browser:scoreAd(...)
-note right of Browser: Uses the product tags for the ad from the K/V signal & the excludeCreativeTag from the seller signals.
-note right of Browser: Scores 0 if ad product tags include excludeCreativeTag.
+Note over Browser,DSP: PA auction: Component auctions
+par Component auction for publisher ad server and SSPs
+  Browser ->> Browser: Identify eligible interest groups for all participating buyers
+  Browser ->> DSP: Fetch bidding logic scripts and real-time bidding signals
+  DSP -->> Browser: Return bidding logic scripts and real-time bidding signals
+  Browser ->> Browser: generateBid(...) for each eligible interest group
+  Browser ->> SSP: Fetch scoring logic scripts and real-time scoring signals
+  SSP -->> Browser: Return scoring logic scripts and real-time scoring signals
+  Note right of Browser: Response like: {"product_tags": ["redShoe", "shortsShoe"]}
+  Browser ->> Browser: scoreAd(...) for each eligible component auction bid
+  Note right of Browser: Scores 0 if real-time creative signals include the exclusion tags.
+  Note right of Browser: Browser picks the highest scored ad as the winner of component auction
+end
 
+Note over Browser,DSP: PA auction: Top-level auction
+Browser ->> SSP: Fetch top-level scoring logic scripts and real-time scoring signals
+SSP -->> Browser: Return scoring logic scripts and real-time scoring signals
+Browser ->> Browser: scoreAd(...) for each winning component auction bid
+Note right of Browser: Browser picks the highest scored ad as the winner of overall auction
+
+note over Browser,DSP: Post PA auction: Winning ad is delivered on publisher page
 Browser ->> Browser: Return ad in the runAdAuction call if there’s a winner
-SSP ->> Browser: Set iframe src attribute or fenced frame config property with the ad
-Browser ->> DSP: Fetch ad
-Browser ->> Browser: Render ad
+Browser ->> DSP: Request ad creative
+DSP -->> Browser: Return ad creative
 ```
 
 [Full-sized diagram](./img/publisher-ad-quality-req-flow.png)

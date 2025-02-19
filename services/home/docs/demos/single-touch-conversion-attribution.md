@@ -19,7 +19,7 @@ purchase on the advertiser's website. Single-touch attribution models are easy t
 businesses with limited data or resources. However, they can also be inaccurate, as they do not account for the influence of other touch points on a
 conversion.
 
-### Privacy Sandbox APIs
+### Privacy Sandbox APIs and related documentation
 
 - [Attribution Reporting API](https://developer.chrome.com/en/docs/privacy-sandbox/attribution-reporting/)
 
@@ -64,13 +64,9 @@ advertiser.
 Below is a general introduction of Single-Touch conversion Attribution using Privacy Sandbox Attribution Reporting API. For further information see
 [Attribution Reporting - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/) .
 
-![Protected Audience Flow](./img/attribution-reporting-flow.png)
+![Attribution Reporting Flow](./img/attribution-reporting-flow.png)
 
 #### User Journey #1
-
-<!--
-![Remarketing User Journey 1](./img/attribution-reporting-journey-1-seq.png)
--->
 
 ```mermaid
 
