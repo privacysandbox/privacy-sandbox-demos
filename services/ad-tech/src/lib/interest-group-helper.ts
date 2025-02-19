@@ -100,7 +100,7 @@ export interface InterestGroup {
   sizeGroups?: {[key: string]: string[]};
   /** B&A server request flags. (e.g., 'omit-ads', 'omit-user-bidding-signals'). */
   auctionServerRequestFlags?: string[];
-  /** All adComponets that can be used to construct "Ads Composed of Multiple Pieces"). */
+  /** All adComponents that can be used to construct "Ads Composed of Multiple Pieces"). These are the individual ads that make up the multi-piece ad. */
   adComponents?: InterestGroupAd[];
 }
 

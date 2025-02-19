@@ -227,7 +227,7 @@ function getBidForDisplayAd({
   };
 }
 
-function getBidForMulitpieceAd({
+function getBidForMultipieceAd({
   interestGroup,
   auctionSignals,
   // UNUSED perBuyerSignals,
@@ -284,7 +284,7 @@ function getBidByAdType(adType, biddingContext) {
     case 'VIDEO':
       return getBidForVideoAd(biddingContext);
     case 'MULTIPIECE':
-      return getBidForMulitpieceAd(biddingContext);
+      return getBidForMultipieceAd(biddingContext);
   }
 
   //DISPLAY

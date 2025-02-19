@@ -86,8 +86,8 @@ export const getStaticAdTemplateVariables = (
   const width = requestQuery.width?.toString() || 300;
   const height = requestQuery.height?.toString() || 250;
 
-  let enableWriteImpression = requestQuery.enableWriteImpression?.toString();
-  enableWriteImpression = enableWriteImpression != 'false';
+  const enableWriteImpression =
+    requestQuery.enableWriteImpression?.toString() != 'false';
 
   return {
     TITLE: `Your special ads from ${SHOP_HOST}`,
