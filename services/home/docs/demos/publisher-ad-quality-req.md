@@ -171,9 +171,9 @@ To add the user to an interest group, we reuse the implementation from the
 site.
 
 The news page lists the available ad slot on the page in the
-[`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/publisher-ad-quality-req.ejs#L29)
+[`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L29)
 object. While doing so, publisher JavaScript reads the `excludeCreativeTag` URL query parameter and includes it in the ad slot configuration as
-[`sellerSignalExcludeCreativeTag`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/publisher-ad-quality-req.ejs#L26).
+[`sellerSignalExcludeCreativeTag`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L26).
 
 ```js title="Publisher configures ad slots on the page"
 // Find creative tags to exclude on page, and include in seller signals.
@@ -196,7 +196,7 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 ```
 
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
-[ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/publisher-ad-quality-req.ejs#L43) from
+[ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L43) from
 the ad-server service. This ad server tag reads the ad slot configurations and proceeds to execute a sequential contextual + Protected Audience
 auction as described in the [sequential setup of Protected Audience with contextual ad auction demo](sequential-auction-setup).
 
@@ -210,16 +210,16 @@ auction as described in the [sequential setup of Protected Audience with context
 
 The ad slot configurations with the exclusion tags are included in the contextual auction request to all ad sellers -- the publisher ad server and the
 SSPs -- who in turn include these
-[exclusion tags in the component auction configurations for Protected Audience](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/ssp/seller-contextual-bidder-router.ts).
+[exclusion tags in the component auction configurations for Protected Audience](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/routes/ssp/seller-contextual-bidder-router.ts).
 
 After a buyer places a bid in the Protected Audience auction, the (component) sellers' Key/Value server is queried for signals keyed to the
 `renderURL` returned along with the bid. This browser-constructed request URL for one of the ad sellers, as an example, looks like:
 `https://privacy-sandbox-demos-ssp.dev/ssp/realtime-signals/scoring-signal.json?hostname=privacy-sandbox-demos-news.dev&renderUrls=...`. On the
 server-side, the demo currently uses a BYOS implementation of the Key/Value server which already has some
-[example tags associated with each of the products in the shopping demo site](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/ssp/scoring-signals-router.ts).
+[example tags associated with each of the products in the shopping demo site](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/routes/ssp/scoring-signals-router.ts).
 
 Finally, all of this comes together during the scoring phase of the Protected Audience auction. The following is the
-[decision logic script](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/default/auction-decision-logic.js)
+[decision logic script](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/ssp/default/auction-decision-logic.js)
 provided by the seller.
 
 ```js title="Seller decision logic to take exclusion tags into account"

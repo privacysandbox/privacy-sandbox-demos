@@ -142,7 +142,7 @@ Note right of Browser: Winning ad is rendered
 #### How is the user added to an interest group based on their browsing behavior? (see step #2 of user journey)
 
 The shop product page includes one or more third-party tags from the DSP services:
-[`dsp-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/shop/src/views/item.ejs#L92).
+[`dsp-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/shop/src/views/item.ejs#L92).
 
 ```html title="DSP tag on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
 <script
@@ -154,7 +154,7 @@ The shop product page includes one or more third-party tags from the DSP service
 ```
 
 The
-[`dsp-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97)
+[`dsp-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97)
 dynamically injects an iframe in the DSP's origin to the advertiser's page.
 
 ```html title="DSP iframe on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
@@ -167,10 +167,10 @@ dynamically injects an iframe in the DSP's origin to the advertiser's page.
 ```
 
 This third-party DSP iframe includes a script
-[`join-ad-interest-group.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/dsp/join-ad-interest-group.js)
+[`join-ad-interest-group.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/dsp/join-ad-interest-group.js)
 to join an interest group using the Protected Audience API. To do so, the DSP tag retrieves the interest group configurations from its own server
 from:
-[`https://privacy-sandbox-demos-dsp.dev/dsp/interest-group.json` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/dsp/buyer-router.ts#L46).
+[`https://privacy-sandbox-demos-dsp.dev/dsp/interest-group.json` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/routes/dsp/buyer-router.ts#L46).
 
 ```js title="Script loaded in DSP iframe: https://privacy-sandbox-demos-dsp.dev/dsp/dsp-advertiser-iframe.html"
 /** Sends first-party context to server to retrieve interest group metadata. */
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 #### How is the relevant ad delivered to the user? (see step #4 of user journey)
 
 The news page lists the available ad slot on the page in the
-[`window.PSDemo.PAGE_ADS_CONFIG` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L17)
+[`window.PSDemo.PAGE_ADS_CONFIG` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/index.ejs#L17)
 object.
 
 ```js title="Publisher configures ad slots on page: https://privacy-sandbox-demos-news.dev"
@@ -222,7 +222,7 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 ```
 
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
-[`run-simple-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/index.ejs#L60)
+[`run-simple-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/index.ejs#L60)
 from the SSP service.
 
 ```html title="SSP tag on publisher page: https://privacy-sandbox-demos-news.dev"
@@ -234,7 +234,7 @@ from the SSP service.
 ```
 
 This
-[`run-simple-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js)
+[`run-simple-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/ssp/run-simple-ad-auction.js)
 script executes a Protected Audience auction using auction configurations retrieved from its server.
 
 ```js title="SSP script loaded on publisher page: https://privacy-sandbox-demos-news.dev"
@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 The Protected Audience auction is orchestrated by the browser, executing bidding and decision logic provided by the ad buyer and ad seller
 respectively to arrive at the winning ad. The result of this ad auction is displayed within a Fenced Frame. This ad auction result represents the
 winning
-[`renderURL` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/common/ads-router.ts#L34)
+[`renderURL` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/routes/common/ads-router.ts#L34)
 included in the interest group.
 
 ```html title="Protected Audience auction result delivered in a fenced-frame"

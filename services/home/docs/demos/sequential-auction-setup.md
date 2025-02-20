@@ -179,7 +179,7 @@ publisher page.
 #### How does the publisher pass the ad unit configurations for a given page to the publisher ad server?
 
 The news page lists the available ad slots on the page in the
-[`window.PSDemo.PAGE_ADS_CONFIG` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L16-38)
+[`window.PSDemo.PAGE_ADS_CONFIG` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/fenced-frame-display-ad.ejs#L16-38)
 object.
 
 ```js title="Publisher configures ad slots on page: https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad"
@@ -205,7 +205,7 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 ```
 
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
-[`ad-server-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/views/fenced-frame-display-ad.ejs#L39-41)
+[`ad-server-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/fenced-frame-display-ad.ejs#L39-41)
 from the publisher ad server.
 
 ```html title="Ad server tag on publisher page: https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad"
@@ -217,7 +217,7 @@ from the publisher ad server.
 #### How does the publisher ad server integrate the Protected Audience auction in a sequential manner?
 
 The
-[`ad-server-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/ad-server-tag.js)
+[`ad-server-tag.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/ssp/ad-server-tag.js)
 reads the ad unit configurations declared by the publisher and handles them individually.
 
 ```js title="ad-server-tag.js iterates over ad unit configurations"
@@ -235,7 +235,7 @@ const deliverAds = (adUnits, otherSellers) => {
 
 More specifically, the `ad-server-tag.js` injects an iframe for each ad unit where each of theses iframe then executes a sequential contextual and
 Protected Audience auction to choose an ad. This iframe loads:
-[`https://privacy-sandbox-demos-ad-server.dev/ssp/run-sequential-ad-auction.html` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/views/ssp/run-sequential-ad-auction.ejs),
+[`https://privacy-sandbox-demos-ad-server.dev/ssp/run-sequential-ad-auction.html` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/views/ssp/run-sequential-ad-auction.ejs),
 which contains a single script:
 [`https://privacy-sandbox-demos-ad-server.dev/js/ssp/run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js).
 This iframe expects a post-message from `ad-server-tag.js` containing the ad unit configuration as well as the list of other sellers involved in the
@@ -294,7 +294,7 @@ const getAllContextualBidResponses = async (adUnit, sellers) => {
 ```
 
 In the above code snippet from
-[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L79-106),
+[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L79-106),
 the publisher ad server's JavaScript makes contextual bid requests to all the sellers involved in the ad delivery process.
 
 ```title="Contextual bid requests sent to ad sellers"
@@ -306,7 +306,7 @@ https://privacy-sandbox-demos-ssp-b.dev/ssp/contextual-bid
 
 To respond to these requests, the ad sellers in turn make requests to ad buyers that they integrate with. The above request to the ad seller stack is
 handled by the
-[`seller-contextual-bidder-router` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/ssp/seller-contextual-bidder-router.ts)
+[`seller-contextual-bidder-router` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/routes/ssp/seller-contextual-bidder-router.ts)
 module. The seller backend sends the contextual bid request to each of the ad buyers it integrates with, and assembles its final contextual bid
 response with its highest contextual bid and its component auction configuration for the Protected Audience auction.
 

@@ -155,7 +155,7 @@ filtering for the ad type corresponding to that signalled by ad sellers or SSPs 
 
 The `renderURL` video ad in the DSP's interest group includes a macro representing the SSP's VAST wrapping endpoint. The DSP constructs and retrieves
 the interest group configurations from its server, specifically assembling the video ad in
-[`interest-group-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/lib/interest-group-helper.ts).
+[`interest-group-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/lib/interest-group-helper.ts).
 
 ```js title="DSP adds user to interest group on advertiser page: https://privacy-sandbox-demos-shop.dev/items/1f45e"
 const interestGroup = {
@@ -173,7 +173,7 @@ While the above `renderURL` shows both styles of declaring macros -- `${MACRO}` 
 
 Ad sellers or SSPs can use the `auctionConfig.deprecatedRenderURLReplacements` field. Similar to DSPs, SSPs also construct their auction
 configurations on the server-side, specifically in
-[`auction-config-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/lib/auction-config-helper.ts).
+[`auction-config-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/lib/auction-config-helper.ts).
 
 ```js title="SSP specifies renderURL macro substitutions in auction config"
 const componentAuctionConfig = {
@@ -194,7 +194,7 @@ At the end of the auction, the browser will take the macro values specified in t
 
 The DSP includes all supported ad types in its interest group along with some metadata to indicate the ad type. The interest group object is assembled
 on the server-side in
-[`interest-group-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/lib/interest-group-helper.ts),
+[`interest-group-helper.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/lib/interest-group-helper.ts),
 and the final interest group is structured as shown below.
 
 ```js title="Structure of interest group ad metadata to indicate ad type"
@@ -224,17 +224,17 @@ data flow, this demo shows the DSP as the entity responsible for wrapping with t
 outcome.
 
 The
-[`ads-router.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/common/ads-router.ts#L51-54)
+[`ads-router.ts` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/routes/common/ads-router.ts#L51-54)
 module delivers the document rendered in the transparent iframe. This
-[document :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/views/video-ad-frame.ejs)
+[document :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/views/video-ad-frame.ejs)
 includes a single
-[script :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/video-ad-frame.js)
+[script :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/video-ad-frame.js)
 wrapping the VAST XML.
 
 This script starts by
-[parsing :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/video-ad-frame.js#L38-48)
+[parsing :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/video-ad-frame.js#L38-48)
 the SSP's VAST wrapping endpoint including in the URL. Then the scripts proceeds to
-[fetch the finalized VAST XML from this SSP endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/video-ad-frame.js#L51-69)
+[fetch the finalized VAST XML from this SSP endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/video-ad-frame.js#L51-69)
 before
 [post-messaging the XML content to the top frame :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/video-ad-frame.js#L107-115).
 
@@ -257,17 +257,17 @@ containerFrame.top.postMessage(
 #### How does the SSP's endpoint transform the DSP's VAST?
 
 The
-[SSP's VAST wrapping endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/routes/ssp/seller-router.ts#L64-80)
+[SSP's VAST wrapping endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/routes/ssp/seller-router.ts#L64-80)
 adds its own tracking events to the DSP's VAST and returns the
-[finalized VAST XML :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/views/ssp/vast-preroll.ejs)
+[finalized VAST XML :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/views/ssp/vast-preroll.ejs)
 back to the client-side.
 
 #### How is the finalized VAST XML delivered to the video player?
 
 The publisher ad server, anticipating the post-message from the Protected Audience ad frame,
-[sets up an event listener :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/ad-tech/src/public/js/ssp/ad-server-tag.js#L79-98)
+[sets up an event listener :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/ssp/ad-server-tag.js#L79-98)
 in advance of kicking off the auction. In this demo, the video player is provided by the publisher who also includes a
-[helper library to integrate ads :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/services/news/src/public/js/video-ad-helper.js).
+[helper library to integrate ads :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/public/js/video-ad-helper.js).
 This helper library exports a single method as `window.PSDemo.VideoAdHelper.setUpIMA(..)` which is used by the publisher ad server event listener.
 
 ```js title="Publier ad server receives the post-message and sets up the video ad"
