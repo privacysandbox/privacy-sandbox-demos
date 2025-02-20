@@ -1,11 +1,11 @@
 ---
-title: Single-touch conversion Attribution
+title: Single-touch conversion attribution
 sidebar_position: 101
 ---
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-# Single-touch conversion Attribution
+# Single-touch Conversion Attribution
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
@@ -19,7 +19,7 @@ purchase on the advertiser's website. Single-touch attribution models are easy t
 businesses with limited data or resources. However, they can also be inaccurate, as they do not account for the influence of other touch points on a
 conversion.
 
-### Privacy Sandbox APIs
+### Privacy Sandbox APIs and related documentation
 
 - [Attribution Reporting API](https://developer.chrome.com/en/docs/privacy-sandbox/attribution-reporting/)
 
@@ -67,10 +67,6 @@ Below is a general introduction of Single-Touch conversion Attribution using Pri
 ![Attribution Reporting Flow](./img/attribution-reporting-flow.png)
 
 #### User Journey #1
-
-<!--
-![Remarketing User Journey 1](./img/attribution-reporting-journey-1-seq.png)
--->
 
 ```mermaid
 

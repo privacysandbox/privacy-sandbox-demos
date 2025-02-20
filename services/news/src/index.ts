@@ -30,6 +30,7 @@ import {
   SSP_Y_ORIGIN,
   SSP_HOST,
   SSP_ORIGIN,
+  SHOP_HOST,
 } from './constants.js';
 
 const app: Application = express();
@@ -53,6 +54,7 @@ app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
     TITLE: NEWS_DETAIL,
     TEXT_LOREM,
+    SHOP_HOST,
     AD_SERVER_HOST,
     DSP_HOST,
     EXTERNAL_PORT,
