@@ -165,8 +165,8 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
   **Success: Report stored**, it means Attribution Reporting API has now stored this report in the browser. It will then be scheduled for sending to
   the `reporting origin` at a later time.
 
-10. Navigate to the DSP service report visualization page https://${reporting-origin}/reporting/view-reports (replace the url with the reporting origin
-    of the **DSP** service)
+10. Navigate to the DSP service report visualization page https://${reporting-origin}/reporting/view-reports (replace the url with the reporting
+    origin of the **DSP** service)
 
 - on this page you can see the aggregatable report sent by the browser to the DSP. In a production environment, the aggregatable report is encrypted
   by the browser and sent to the DSP. There, they will be batched and sent to the Aggregation Service where they will be aggregated and noised to
