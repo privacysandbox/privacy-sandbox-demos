@@ -196,8 +196,8 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 ```
 
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
-[ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L43) from
-the ad-server service. This ad server tag reads the ad slot configurations and proceeds to execute a sequential contextual + Protected Audience
+[ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L43)
+from the ad-server service. This ad server tag reads the ad slot configurations and proceeds to execute a sequential contextual + Protected Audience
 auction as described in the [sequential setup of Protected Audience with contextual ad auction demo](sequential-auction-setup).
 
 ```html title="Ad-server tag on publisher page: https://privacy-sandbox-demos-news.dev"
