@@ -28,16 +28,19 @@
 // ********************************************************
 CURR_HOST = '';
 AUCTION_ID = '';
+ENABLE_LOGGING = false;
 /** Logs to console. */
 function log(message, context) {
-  console.log(
-    '[PSDemo] Buyer',
-    CURR_HOST,
-    'bidding logic',
-    AUCTION_ID,
-    message,
-    JSON.stringify({context}, ' ', ' '),
-  );
+  if (ENABLE_LOGGING) {
+    console.log(
+      '[PSDemo] Buyer',
+      CURR_HOST,
+      'bidding logic',
+      AUCTION_ID,
+      message,
+      JSON.stringify({context}, ' ', ' '),
+    );
+  }
 }
 
 /** Logs execution context for demonstrative purposes. */
@@ -188,11 +191,15 @@ function getBidForDisplayAd({
   // UNUSED perBuyerSignals,
   trustedBiddingSignals,
   browserSignals,
+  reachMeasurment = false,
 }) {
   // Select an ad meeting the auction requirements.
   const [selectedAd] = interestGroup.ads.filter(
     (ad) => 'DISPLAY' === ad.metadata.adType,
   );
+
+  log('DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD');
+
   if (!selectedAd) {
     log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
@@ -313,7 +320,30 @@ function generateBid(
     log('not bidding as campaign is inactive', biddingContext);
     return;
   }
+// <<<<<<< HEAD
   const bid = getBidByAdType(auctionSignals.adType, biddingContext);
+// =======
+
+//   console.log(' @@ auctionSignals.adType @@  ' + auctionSignals.adType);
+
+//   // const bid =
+//   //   'VIDEO' === auctionSignals.adType
+//   //     ? getBidForVideoAd(biddingContext)
+//   //     : getBidForDisplayAd(biddingContext);
+
+//   const bid = (() => {
+//     switch (auctionSignals.adType) {
+//       case 'VIDEO':
+//         return getBidForVideoAd(biddingContext);
+//       case 'REACH':
+//         //return getBidForDisplayReachAd(biddingContext);
+//         return getBidForDisplayAd(biddingContext);
+//       default: // Assuming anything other than 'VIDEO' is display
+//         return getBidForDisplayAd(biddingContext);
+//     }
+//   })();
+
+// >>>>>>> 5517075 (Reach measurement 1.0 TODO clean kruft)
   if (bid) {
     log('returning bid', {bid, biddingContext});
     return bid;

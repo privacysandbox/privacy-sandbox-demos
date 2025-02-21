@@ -128,7 +128,8 @@
       log('did not find adType in adUnit', {adUnit});
       return false;
     }
-    if (!['DISPLAY', 'VIDEO', 'MULTIPIECE'].includes(adType)) {
+    if (!['DISPLAY', 'VIDEO', 'MULTIPIECE', 'REACH'].includes(adType)) {
+
       log('found unsupported adType', {adUnit});
       return false;
     }

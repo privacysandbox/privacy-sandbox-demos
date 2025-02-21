@@ -30,6 +30,7 @@ export enum AdType {
   DISPLAY = 'DISPLAY',
   VIDEO = 'VIDEO',
   MULTIPIECE = 'MULTIPIECE',
+  REACH = 'REACH',
 }
 
 export enum AuctionServerRequestFlags {
