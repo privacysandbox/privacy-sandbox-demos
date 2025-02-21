@@ -1,0 +1,48 @@
+<%/* This is used in iframes to run Protected Audience auctions. */%>
+<%/* TODO: Rename to run-single-seller-ad-auction after unified branch is merged. */%>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1" />
+  <link rel="icon"
+        href="" />
+  <title></title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #ad-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 0px;
+      padding: 4px;
+      font-family: monospace;
+    }
+
+    fencedframe {
+      border: none;
+      width: 100vw;
+      height: 100vh;
+      background-color: aliceblue;
+    }
+  </style>
+  <script src="/js/ssp/run-simple-ad-auction.js"></script>
+</head>
+
+<body>
+  <p id="ad-label"></p>
+</body>
+
+</html>

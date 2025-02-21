@@ -22,12 +22,17 @@ import {
   DSP_HOST,
   DSP_A_HOST,
   DSP_B_HOST,
+  DSP_X_HOST,
+  DSP_Y_HOST,
   EXTERNAL_PORT,
   PORT,
   SHOP_DETAIL,
   SHOP_HOST,
   SSP_HOST,
-} from './env.js';
+  SSP_A_HOST,
+  SSP_B_HOST,
+} from './lib/constants.js';
+
 import {
   Order,
   addOrder,
@@ -88,16 +93,32 @@ app.set('views', 'src/views');
 app.locals = {
   title: SHOP_DETAIL,
   displayCategory,
-  register_trigger: (order: Order) => {
+  getTriggerUrls: (order: Order) => {
     const {item, size, quantity} = order;
-    const register_trigger = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
-    register_trigger.pathname = '/register-trigger';
-    register_trigger.searchParams.append('id', item.id);
-    register_trigger.searchParams.append('category', `${item.category}`);
-    register_trigger.searchParams.append('quantity', `${quantity}`);
-    register_trigger.searchParams.append('size', `${fromSize(size)}`);
-    register_trigger.searchParams.append('gross', `${item.price * quantity}`);
-    return register_trigger.toString();
+    return [
+      new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
+      new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
+    ].map((triggerUrl) => {
+      triggerUrl.pathname = '/attribution/register-trigger';
+      triggerUrl.searchParams.append('id', item.id);
+      triggerUrl.searchParams.append('category', `${item.category}`);
+      triggerUrl.searchParams.append('quantity', `${quantity}`);
+      triggerUrl.searchParams.append('size', `${fromSize(size)}`);
+      triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
+      return triggerUrl.toString();
+    });
+  },
+  getEventTriggerUrl: (conversionType: string) => {
+    const eventTriggerUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
+    eventTriggerUrl.pathname = '/attribution/register-event-level-trigger';
+    eventTriggerUrl.searchParams.append('conversion-type', conversionType);
+    return eventTriggerUrl.toString();
   },
 };
 
@@ -109,8 +130,8 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 // serves the static ads creative from shop site (redirected from ssp)
-app.get('/ads/:id', async (req: Request, res: Response) => {
-  const id = req.params.id;
+app.get('/ads/:id?', async (req: Request, res: Response) => {
+  const id = req.params.id ? req.params.id : '1f6d2';
   const imgPath = `/image/svg/emoji_u${id}.svg`;
   //res.set("Content-Type", "image/svg+xml")
   console.log(`redirecting to /image/svg/emoji_u${id}.svg`);
@@ -118,27 +139,44 @@ app.get('/ads/:id', async (req: Request, res: Response) => {
 });
 
 app.get('/items/:id', async (req: Request, res: Response) => {
+  const {usecase} = req.query;
   const {id} = req.params;
   const item = await getItem(id);
-  const isMultiSeller = req.query.auctionType === 'multi';
+  let DSP_TAG_URL = new URL(
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  );
+  let DSP_A_TAG_URL = new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  );
+  let DSP_B_TAG_URL = new URL(
+    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  );
+  let DSP_X_TAG_URL;
+  let DSP_Y_TAG_URL;
 
-  const DSP_TAG_URL = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
-  );
-  const DSP_A_TAG_URL = new URL(
-    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
-  );
-  const DSP_B_TAG_URL = new URL(
-    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/dsp-tag.js`,
-  );
-
+  if (usecase == 'ba') {
+    DSP_A_TAG_URL = new URL(
+      `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+    );
+    DSP_B_TAG_URL = new URL(
+      `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+    );
+    DSP_X_TAG_URL = new URL(
+      `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
+    );
+    DSP_Y_TAG_URL = new URL(
+      `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
+    );
+  }
   res.render('item', {
-    item,
-    DSP_TAG_URL,
     DSP_A_TAG_URL,
     DSP_B_TAG_URL,
+    DSP_X_TAG_URL,
+    DSP_Y_TAG_URL,
+    DSP_TAG_URL,
+    item,
     SHOP_HOST,
-    isMultiSeller,
+    usecase,
   });
 });
 
@@ -213,11 +251,16 @@ app.get('/checkout', async (req: Request, res: Response) => {
   }, 0);
   const shipping = 40;
 
+  const MTA_CONVERSION_TAG_URL = new URL(
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/mta-conversion-tag.js`,
+  );
+
   await req.session.destroy(() => Promise.resolve());
   res.render('checkout', {
     cart,
     subtotal,
     shipping,
+    MTA_CONVERSION_TAG_URL,
   });
 });
 

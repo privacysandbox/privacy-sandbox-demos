@@ -1,6 +1,6 @@
 # Privacy Sandbox Demos
 
-A use case demo library for [Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) on the web.
+A use case demo library for the [Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) on the web.
 
 ## Motivation
 
@@ -22,24 +22,30 @@ to extend and modify the code for your own needs.
 This repository contains :
 
 - A set of applications/services deployable as container images
-- Deployment scripts
-- [Instructions for deploying and running the demos in your local environment with Docker](docs/deploy-to-linux-docker.md)
-- [Instructions for deploying and running the demos on Google Cloud Platform](docs/deploy-to-gcp.md)
-- Development framework to contribute to the project
+- A set of scripts and configuration files for local deployment and cloud deployment
+- Documentation :
+  - [Instructions for deploying and running the demos in your local environment with Docker](docs/deploy-to-linux-docker.md)
+  - [Instructions for deploying and running the demos in your local environment with Podman](docs/deploy-to-linux-podman.md)
+  - [Instructions for deploying and running the demos on Google Cloud Platform](docs/deploy-to-gcp.md)
+  - [A list of codebase dependencies to prepare for development](docs/dependencies.md)
 
-If you are a developer we recommend you follow the [deployment instructions](docs/deploy-to-linux-docker.md). If you are simply curious, we recommend
-you have a look at our [Google-hosted instances](https://privacy-sandbox-demos.dev) to quickly start learning and experimenting.
+If you are a developer we recommend you follow the deployment instructions either with [Docker](docs/deploy-to-linux-docker.md) or
+[Podman](docs/deploy-to-linux-podman.md).
+
+If you are simply curious, we recommend you have a look at our [Google-hosted instances](https://privacy-sandbox-demos.dev) to quickly start learning
+and experimenting.
 
 ## Use Cases
 
 The current release supports the following use cases:
 
-|         **Category**          |                                                           **Use Case**                                                            |            **Privacy Sandbox APIs**            |              **Relevant for**              |
-| :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------: | :----------------------------------------: |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience multi-seller auction](services/home/docs/demos/instream-video-ad-multi-seller.md) |             Protected Audience API             | Publisher, Ad Server, SSP, Advertiser, DSP |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience single-seller auction](services/home/docs/demos/vast-video-protected-audience.md) |             Protected Audience API             |      Publisher, SSP, Advertiser, DSP       |
-| Show Relevant Content and Ads |                         [Retargeting / Remarketing](services/home/docs/demos/retargeting-remarketing.md)                          |             Protected Audience API             |      Publisher, SSP, Advertiser, DSP       |
-|      Measure Digital Ads      |              [Single-touch conversion Attribution](services/home/docs/demos/single-touch-conversion-attribution.md)               | Attribution Reporting API, Aggregation Service |      Publisher, SSP, Advertiser, DSP       |
+|         **Category**          |                                                           **Use Case**                                                            |                 **Privacy Sandbox APIs**                 |              **Relevant for**              |
+| :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------: |
+|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience multi-seller auction](services/home/docs/demos/instream-video-ad-multi-seller.md) |                  Protected Audience API                  | Publisher, Ad Server, SSP, Advertiser, DSP |
+|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience single-seller auction](services/home/docs/demos/vast-video-protected-audience.md) |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
+| Show Relevant Content and Ads |                         [Retargeting / Remarketing](services/home/docs/demos/retargeting-remarketing.md)                          |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
+|      Measure Digital Ads      |              [Single-touch conversion Attribution](services/home/docs/demos/single-touch-conversion-attribution.md)               |      Attribution Reporting API, Aggregation Service      |      Publisher, SSP, Advertiser, DSP       |
+|      Measure Digital Ads      |               [Multi-touch conversion Attribution](services/home/docs/demos/multi-touch-conversion-attribution.md)                | Private Aggregation, Shared Storage, Aggregation Service |         Publisher, Advertiser, DSP         |
 
 These use cases are based on a set of demo apps and services that we have developed to simulate the actors in the ad tech ecosystem :
 

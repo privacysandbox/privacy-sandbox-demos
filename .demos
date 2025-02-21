@@ -1,0 +1,16 @@
+# list of use case demos
+DEMOS=("uc-single-touch-conversion" "uc-remarketing" "uc-vast-video-paapi" "uc-video-multi-seller-seq-auction-paapi")
+
+# For each use case we need their Cloud Function Entry Point
+typeset -A DEMO_MONITORING_ENTRYPOINT
+DEMO_MONITORING_ENTRYPOINT[uc-single-touch-conversion]=MonitorUcSingleTouchConversion
+DEMO_MONITORING_ENTRYPOINT[uc-remarketing]=MonitorUcRemarketing
+DEMO_MONITORING_ENTRYPOINT[uc-vast-video-paapi]=MonitorUcVastVideoPaapi
+DEMO_MONITORING_ENTRYPOINT[uc-video-multi-seller-seq-auction-paapi]=MonitorUcVideoMultiSellerSeqAuctionPaapi
+
+# For each use case we need to define the Synethtic Monitor Title
+typeset -A DEMO_TITLE
+DEMO_TITLE[uc-single-touch-conversion]="Single-touch conversion Attribution"
+DEMO_TITLE[uc-remarketing]="Remarketing"
+DEMO_TITLE[uc-vast-video-paapi]="Instream VAST video ad in a Protected Audience single-seller auction"
+DEMO_TITLE[uc-video-multi-seller-seq-auction-paapi]="Instream video ad in a Protected Audience multi-seller sequential auction setup"

@@ -22,7 +22,7 @@ gcloud config set project $GCP_PROJECT_NAME
 gcloud config get-value project
 
 # Enable Cloud Run API
-gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com cloudfunctions.googleapis.com logging.googleapis.com pubsub.googleapis.com run.googleapis.com
 
 # make the default region us-central1
 gcloud config set run/region us-central1

@@ -10,7 +10,6 @@ The following packages must be installed
 
 - [docker](https://docs.docker.com/engine/install/)
 - [docker-compose](https://docs.docker.com/compose/install/)
-- [nodejs v18](https://nodejs.org/)
 - npm
 - git
 - [mkcert](https://github.com/FiloSottile/mkcert)
@@ -169,120 +168,54 @@ npm run build
 
 ```sh
 # Build and run the docker containers (docker must be run with root permission) :
-$ sudo npm run start
+sudo npm run start
 ```
 
 Open the home page: <https://privacy-sandbox-demos-home.dev>
 
 ## Stop your local development environment
 
-To stop your development environment, you will need to stop each container :
-
-Docker-compose can do that in 1 command. In a new terminal run :
+docker-compose can stop and remove the containers. In a new terminal run :
 
 ```sh
-sudo docker-compose stop
+sudo npm run stop
 ```
 
-If for some reason it's not working, you can stop each container manually
+If for some reason you only want to stop/remove one container run :
 
 ```sh
-# stop containers
-sudo docker container stop sandcastle_travel
-sudo docker container stop sandcastle_dsp
-sudo docker container stop sandcastle_dsp-a
-sudo docker container stop sandcastle_dsp-b
-sudo docker container stop sandcastle_home
-sudo docker container stop sandcastle_ssp-a
-sudo docker container stop sandcastle_ssp-b
-sudo docker container stop sandcastle_ad-server
-sudo docker container stop sandcastle_news
-sudo docker container stop sandcastle_proxy
-sudo docker container stop sandcastle_shop
-sudo docker container stop sandcastle_collector
+sudo docker-compose down <service_name>
 ```
 
-If you want to clean (remove) the container image in your local registry you can do so by running the command :
+## Cleanup your containers images & volumes
+
+Once you have updated the code in your development environment, you should be able to see the result immediately in the running container because we
+have mounted your local file system `./services/xxx` to the container `/workspace`.
+
+Changes to static files should be immediate, however for typescript or compiled binaries you will have to restart your container or run again the
+build/start script from within the container.
+
+The easiest way is to restart the container using docker-compose and specify the services you wish to restart (dsp, ssp etc.)
 
 ```sh
-sudo docker-compose rm
+sudo docker-compose restart [SERVICE...]
 ```
 
-If for some reason it's not working, you can remove each container image manually
+If you have modified and added new dependencies (package.json or go.mod etc), you will also have to rebuild the container image. For
+`node:20-alpine3.17` based image, we are running `npm install` at container build time, and installing the `node_modules` in a separate volume
+attached to the container. This makes rebuilding the container faster as it does not require to re-install the dependencies every time you build the
+container. But as a side effect, dependencies may not be refreshed properly.
+
+To start again from a fresh environment, we are providing the following shortcut to cleanup all images, volumes :
 
 ```sh
-# stop containers
-sudo docker container rm sandcastle_travel
-sudo docker container rm sandcastle_dsp
-sudo docker container rm sandcastle_dsp-a
-sudo docker container rm sandcastle_dsp-b
-sudo docker container rm sandcastle_home
-sudo docker container rm sandcastle_ssp
-sudo docker container rm sandcastle_ssp-a
-sudo docker container rm sandcastle_ssp-b
-sudo docker container rm sandcastle_ad-server
-sudo docker container rm sandcastle_news
-sudo docker container rm sandcastle_proxy
-sudo docker container rm sandcastle_shop
-sudo docker container rm sandcastle_collector
-```
-
-## Clean your docker images & containers
-
-After node dependency updates or major updates, you will need to clean your container images and volumes. There might be some situation where your
-local image registry is corrupted, inconsistent, or has accumulated too many unused images. You can take a fresh start by cleaning your local images.
-
-Execute the following commands from the project root directory :
-
-```sh
-# prune docker images and volumes
 sudo npm run clean
+
+# equivalent of docker-compose down --volumes && docker-compose rm --volumes --force && docker volume prune --force && docker image prune -f && docker rmi -f $(docker images -q)
 ```
 
-if it does not work, you can troubleshoot by running the following commands one at a time.
-
-Remove any stopped containers and all unused images (not just dangling images) :
+Alternatively you can run the commands below for a specific service :
 
 ```sh
-# Remove any stopped containers and all unused images
-sudo docker system prune -a
-```
-
-Stop running containers
-
-```sh
-# show running containers
-sudo docker ps -a
-
-# stop all running containers
-sudo docker stop $(sudo docker ps -a -q)
-```
-
-Remove one or more specific containers
-
-```sh
-# Use the docker ps command with the -a flag to locate
-# the name or ID of the containers you want to remove:
-sudo docker ps -a
-
-# remove the container
-sudo docker container ID_or_Name
-
-# Remove all exited containers
-sudo docker rm $(sudo docker ps -a -f status=exited -q)
-```
-
-Remove one or more specific images
-
-```sh
-# to locate the ID of the images you want to remove.
-# This will show you every image, including intermediate image layers
-sudo docker images -a
-
-# When you’ve located the images you want to delete,
-# you can pass their ID or tag to docker rmi:
-sudo docker image rm [image_id]
-
-# Remove all images
-sudo docker rmi $(sudo docker images -a -q)
+sudo docker-compose down --volumes <service_name>
 ```

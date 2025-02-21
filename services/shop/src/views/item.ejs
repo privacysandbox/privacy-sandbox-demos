@@ -73,7 +73,7 @@
               </p>
             </section>
             <section class="flex justify-center">
-              <button type="submit" class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white">ADD TO CART</button>
+              <button onclick="addToCart()" type="submit" class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white">ADD TO CART</button>
             </section>
           </form>
         </section>
@@ -81,28 +81,32 @@
       <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
     </div>
     <script>
-      function buildDspScriptTag(tagUrl, tagClass) {
+      function addToCart() {
+        const attributionReporting = {
+          eventSourceEligible: false,
+          triggerEligible: true,
+        };
+        const url = '<%= getEventTriggerUrl("add-to-cart") %>'
+        window.fetch(url, {
+          mode: "no-cors",  keepalive: true, attributionReporting
+        });
+      }
+      function buildDspScriptTag(tagUrl) {
         const scriptEl = document.createElement('script')
-        scriptEl.className = tagClass
+        scriptEl.className = 'dsp_tag'
         scriptEl.src = tagUrl
         scriptEl.dataset.advertiser = '<%= SHOP_HOST %>'
-        scriptEl.dataset.id = '<%= item.id %>'
-
+        scriptEl.dataset.itemId = '<%= item.id %>'
         return scriptEl
       }
-
-      const DSP_A_TAG_URL = '<%= DSP_A_TAG_URL %>'
-      const DSP_B_TAG_URL = '<%= DSP_B_TAG_URL %>'
-
-      if ('<%= isMultiSeller %>' === 'true') {
-        const dspAScript = buildDspScriptTag(`${DSP_A_TAG_URL}`, 'dsp_a_tag')
-        document.body.appendChild(dspAScript);
-
-        const dspBScript = buildDspScriptTag(`${DSP_B_TAG_URL}`, 'dsp_b_tag')
-        document.body.appendChild(dspBScript);
-      } else {
-        const dspScript = buildDspScriptTag('<%= DSP_TAG_URL %>', 'dsp_tag')
-        document.body.appendChild(dspScript);
+      switch ('<%= usecase %>'){
+        case 'ba':
+          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
+        default: 
+          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
       }
     </script>
   </body>

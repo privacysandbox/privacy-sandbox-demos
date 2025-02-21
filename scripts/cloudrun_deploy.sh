@@ -16,6 +16,7 @@
 
 # load env vars
 source .env.deploy
+source ${ENV_FILE}
 
 # setup Google Cloud SDK project
 gcloud config set project $GCP_PROJECT_NAME

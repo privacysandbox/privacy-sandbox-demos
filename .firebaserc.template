@@ -17,6 +17,12 @@
         "dsp-b": [
           "privacy-sandbox-demos-dsp-b"
         ],
+        "dsp-x": [
+          "privacy-sandbox-demos-dsp-x"
+        ],
+        "dsp-y": [
+          "privacy-sandbox-demos-dsp-y"
+        ],
         "shop": [
           "privacy-sandbox-demos-shop"
         ],
@@ -28,6 +34,12 @@
         ],
         "ssp-b": [
           "privacy-sandbox-demos-ssp-b"
+        ],
+        "ssp-x": [
+          "privacy-sandbox-demos-ssp-x"
+        ],
+        "ssp-y": [
+          "privacy-sandbox-demos-ssp-y"
         ],
         "news": [
           "privacy-sandbox-demos-news"

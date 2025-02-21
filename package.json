@@ -4,13 +4,18 @@
   "license": "apache-2.0",
   "description": "Privacy Sandbox Demos: Mixed demo of Privacy Sandbox APIs",
   "scripts": {
-    "start": "npm run docker",
     "cert": "cd nginx/cert && ./mkcert.sh",
+    "fmt": "pre-commit run --all-files",
+    "//": "block of commands for running containers with docker & docker-compose. uncomment to use it",
+    "start": "docker-compose up",
+    "stop": "docker-compose down --timeout 1",
     "build": "docker-compose build",
-    "docker": "docker-compose build && docker-compose up",
-    "deploy": "./scripts/cloudrun_deploy.sh && ./scripts/firebase_deploy.sh",
-    "clean": "docker-compose rm -f && docker volume prune -f && docker image prune -f && docker rmi -f $(docker images -q)",
-    "fmt": "prettier --write ."
+    "clean": "docker-compose down --volumes && docker-compose rm --volumes --force && docker volume prune --force && docker image prune -f && docker rmi -f $(docker images -q)",
+    "//": "block of commands for running containers with podman & podman-compose",
+    "podman-start": "podman-compose up",
+    "podman-stop": "podman-compose down --timeout 1",
+    "podman-build": "podman-compose build",
+    "podman-clean": "podman-compose down --volumes && podman volume prune --force && podman image prune --all --force && podman rmi --all --force"
   },
   "devDependencies": {
     "firebase-tools": "^11.23.0",
