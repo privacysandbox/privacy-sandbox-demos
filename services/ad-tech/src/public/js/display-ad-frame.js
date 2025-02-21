@@ -61,32 +61,3 @@
     triggerAdBeacons();
   })();
 })();
-
-// console.log("Loading  REACH Measurment . . . services/ad-tech/src/public/js/display-ad-frame.js")
-
-// async function measureUniqueReach() {
-//   // Load the Shared Storage worklet
-//   await window.sharedStorage.worklet.addModule('/js/reach-measurement-worklet.js');
-
-//   // Run the reach measurement operation
-//   await window.sharedStorage.run('reach-measurement', {
-//     data: {
-//       contentId: Date.now(),
-//       geo: 'san jose',
-//       creativeId: '55'
-//     }
-//   });
-
-// }
-// measureUniqueReach();
-
-// /** Adds a description for demonstrative purposes. */
-// const addDescriptionToAdContainer = () => {
-//   const host = new URL(document.currentScript.src).hostname;
-//   document.addEventListener('DOMContentLoaded', async (e) => {
-//     const $adLabel = document.getElementById('ad-label');
-//     if ($adLabel) {
-//       $adLabel.innerText = `Reach Measurment ad from ${host}`;
-//     }
-//   });
-// };
