@@ -43,11 +43,11 @@ AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
 /** Used as render URL for contextual ads or static ads. */
 AdsRouter.get('/contextual-ads', async (req: Request, res: Response) => {
   const templateVariables = getContextualAdTemplateVariables();
-  console.log('Loading contextual ad', templateVariables);
+  console.log('Loading contextual ad ROUTES', templateVariables);
   res.render('contextual-ad-frame', templateVariables);
 });
 
-/** Used as render URL for REACH measurment static ads. */
+/** Used as render URL for REACH measurment ads or static ads. */
 AdsRouter.get('/reach-ads', async (req: Request, res: Response) => {
   const templateVariables = getContextualAdTemplateVariables();
   console.log('Loading REACH Measurment ad ROUTES', templateVariables);

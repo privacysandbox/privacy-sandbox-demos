@@ -69,9 +69,19 @@ BuyerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
   }
   // Assemble render URL query parameters.
   const renderUrlQuery = `advertiser=${ADVERTISER_CONTEXTUAL}&auctionId=${auctionId}`;
+
+  // /********* SERNA TODO we need a different renderURL for REACH measurment  */
+
+  console.log('Responding to contextual XXXXXXX ad request');
+
+  // const renderURL = new URL(
+  //   `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/contextual-ads?{renderUrlQuery}`,
+  // ).toString();
+
   const renderURL = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/contextual-ads?${renderUrlQuery}`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/reach-ads?SERNA=FOO&${renderUrlQuery}`,
   ).toString();
+
   const bid = getContextualBidPrice();
   /** Return contextual bid with buyer signals. */
   const bidResponse: ContextualBidResponse = {
