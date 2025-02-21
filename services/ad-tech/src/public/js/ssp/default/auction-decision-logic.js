@@ -28,20 +28,16 @@
 // ********************************************************
 CURR_HOST = '';
 AUCTION_ID = '';
-ENABLE_LOGGING = false;
-
 /** Logs to console. */
 function log(message, context) {
-  if (ENABLE_LOGGING) {
-    console.log(
-      '[PSDemo] Seller',
-      CURR_HOST,
-      'decision logic',
-      AUCTION_ID,
-      message,
-      JSON.stringify({context}, ' ', ' '),
-    );
-  }
+  console.log(
+    '[PSDemo] Seller',
+    CURR_HOST,
+    'decision logic',
+    AUCTION_ID,
+    message,
+    JSON.stringify({context}, ' ', ' '),
+  );
 }
 
 /** Logs execution context for demonstrative purposes. */
