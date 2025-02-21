@@ -28,21 +28,17 @@
 // ********************************************************
 CURR_HOST = '';
 AUCTION_ID = '';
-ENABLE_LOGGING = false;
 /** Logs to console. */
 function log(message, context) {
-  if (ENABLE_LOGGING) {
-    console.log(
-      '[PSDemo] Buyer',
-      CURR_HOST,
-      'bidding logic',
-      AUCTION_ID,
-      message,
-      JSON.stringify({context}, ' ', ' '),
-    );
-  }
+  console.log(
+    '[PSDemo] Buyer dd',
+    CURR_HOST,
+    'decision logic',
+    AUCTION_ID,
+    message,
+    JSON.stringify({context}, ' ', ' '),
+  );
 }
-
 /** Logs execution context for demonstrative purposes. */
 function logContextForDemo(message, context) {
   const {
@@ -198,12 +194,11 @@ function getBidForDisplayAd({
     (ad) => 'DISPLAY' === ad.metadata.adType,
   );
 
-  log('DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD');
-
   if (!selectedAd) {
     log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
   }
+  log('dddddasasdasdasDASDASDQWDfcsdjknjnsadjnasdnasnvoiwjeo[ijso');
   // Check if any deals are eligible.
   const dealId = selectDealId(selectedAd, auctionSignals);
   return {
