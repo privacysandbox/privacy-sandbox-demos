@@ -16,6 +16,7 @@ import {decodeDict} from 'structured-field-values';
 import {
   getAttributionSourceHeaders,
   getAttributionTriggerHeaders,
+  getEventLevelAttributionTriggerHeaders,
   getAttributionRedirectUrl,
 } from '../../lib/attribution-reporting-helper.js';
 import {getStructuredObject} from '../../lib/common-utils.js';
@@ -87,6 +88,19 @@ AttributionReportingRouter.get(
   async (req: Request, res: Response) => {
     const queryParams = getStructuredObject(req.query);
     const triggerHeaders = getAttributionTriggerHeaders(queryParams);
+    res.setHeader(
+      'Attribution-Reporting-Register-Trigger',
+      JSON.stringify(triggerHeaders),
+    );
+    res.sendStatus(200);
+  },
+);
+/** Registers an attribution trigger (event) without aggr report. */
+AttributionReportingRouter.get(
+  '/register-event-level-trigger',
+  async (req: Request, res: Response) => {
+    const queryParams = getStructuredObject(req.query);
+    const triggerHeaders = getEventLevelAttributionTriggerHeaders(queryParams);
     res.setHeader(
       'Attribution-Reporting-Register-Trigger',
       JSON.stringify(triggerHeaders),

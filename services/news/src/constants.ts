@@ -20,6 +20,9 @@ export const {
   EXTERNAL_PORT,
   HOSTNAME,
 
+  // Advertisers
+  SHOP_HOST,
+
   // Publishers
   NEWS_HOST,
   NEWS_DETAIL,
