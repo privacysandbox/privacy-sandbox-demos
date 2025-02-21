@@ -1,7 +1,6 @@
 <%/* This is used in fenced-frames to deliver ads. */%>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
@@ -27,8 +26,6 @@
       left: 0;
       margin: 4px;
       padding: 4px;
-      background: #3f3f3f;
-      color: white;
       font-family: monospace;
     }
 
@@ -40,22 +37,24 @@
       background: white;
     }
   </style>
-  <script src="/js/dsp/write-impression-context-to-shared-storage.js" id="write-impression-context" data-campaign-id="<%= CAMPAIGN_ID %>" data-publisher-id="<%= PUBLISHER_ID %>"></script>
+
+  <% if (ENABLE_WRITE_IMPRESSION) { %>
+    <script src="/js/dsp/write-impression-context-to-shared-storage.js" id="write-impression-context" data-campaign-id="<%= CAMPAIGN_ID %>" data-publisher-id="<%= PUBLISHER_ID %>"></script>
+  <% } %>
 </head>
 
 <body>
   <p id="ad-label"></p>
-  <a width="300"
-     height="250"
+  <a width="<%= WIDTH %>"
+     height="<%= HEIGHT %>"
      target="_blank"
      rel="noopener noreferrer"
      href="<%= DESTINATION %>">
     <!-- Smaller to avoid scrollbar -->
-    <img width="294"
-         height="245"
+    <img width="<%= WIDTH * 0.98 %>"
+         height="<%= HEIGHT * 0.98 %>"
          loading="lazy"
          src="<%= CREATIVE %>">
   </a>
 </body>
-
 </html>

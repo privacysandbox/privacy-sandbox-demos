@@ -62,3 +62,9 @@ AdsRouter.get('/static-ads', async (req: Request, res: Response) => {
   );
   res.render('static-ad-frame', templateVariables);
 });
+
+/** Used as render URL in interest groups for multi piece ads. */
+AdsRouter.get('/multi-piece-ads', async (req: Request, res: Response) => {
+  console.log('Loading Container - Multi Piece Ads', req.query);
+  res.render('dsp/usecase/multi-piece/container');
+});

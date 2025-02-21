@@ -83,6 +83,12 @@ export const getStaticAdTemplateVariables = (
 
   const itemId = requestQuery.itemId?.toString() || '1f45f';
 
+  const width = requestQuery.width?.toString() || 300;
+  const height = requestQuery.height?.toString() || 250;
+
+  const enableWriteImpression =
+    requestQuery.enableWriteImpression?.toString() != 'false';
+
   return {
     TITLE: `Your special ads from ${SHOP_HOST}`,
     DESTINATION: new URL(
@@ -91,6 +97,9 @@ export const getStaticAdTemplateVariables = (
     CREATIVE: new URL(`https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`),
     PUBLISHER_ID: getPublisherId(requestHeaders),
     CAMPAIGN_ID: 1234,
+    WIDTH: width,
+    HEIGHT: height,
+    ENABLE_WRITE_IMPRESSION: enableWriteImpression,
   };
 };
 
