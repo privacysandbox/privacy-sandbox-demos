@@ -1,7 +1,28 @@
 
 <B>DISPLAY ADS WITH REACH COMPONENT</B>
 
-<div class="w-full flex flex-row justify-center ad-row">
+<!-- <div class="w-full flex flex-row justify-center ad-row">
     <div id="display-ad--fenced-frame" class="ad-slot"></div>
 </div>
-  
+   -->
+
+
+
+
+
+
+
+
+<div class="w-full flex flex-row justify-center ad-row">
+<div class="ad-slot">
+    <script defer src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/reach-ad-tag.js` %>"></script>
+</div>
+</div>
+    
+
+
+
+
+<!-- <pre>
+https://privacy-sandbox-demos-dsp-b.dev/ads/reach-ads?SERNA=FOO&advertiser=ContextNext&auctionId=PUB-c18ba1f5-389f-4496-8ed7-e4db1eaa01ac
+</pre> -->https://privacy-sandbox-demos-dsp.dev/ads/display-ads?advertiser=privacy-sandbox-demos-shop.dev&itemId=1f45e&adSize1={%AD_WIDTH%}x{%AD_HEIGHT%}&adSize2=${AD_WIDTH}x${AD_HEIGHT

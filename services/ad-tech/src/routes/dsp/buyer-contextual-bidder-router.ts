@@ -22,7 +22,7 @@ import {
 } from '../../lib/constants.js';
 import {AdType} from '../../lib/interest-group-helper.js';
 import {ContextualBidResponse} from '../../lib/contextual-auction-helper.js';
-
+console.log('Responding to contextual video ad request', {AdType});
 /**
  * This router is responsible for handling requests related to contextual
  * auctions as an ad buyer.
@@ -70,16 +70,8 @@ BuyerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
   // Assemble render URL query parameters.
   const renderUrlQuery = `advertiser=${ADVERTISER_CONTEXTUAL}&auctionId=${auctionId}`;
 
-  // /********* SERNA TODO we need a different renderURL for REACH measurment  */
-
-  console.log('Responding to contextual XXXXXXX ad request');
-
-  // const renderURL = new URL(
-  //   `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/contextual-ads?{renderUrlQuery}`,
-  // ).toString();
-
   const renderURL = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/reach-ads?SERNA=FOO&${renderUrlQuery}`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/contextual-ads?{renderUrlQuery}`,
   ).toString();
 
   const bid = getContextualBidPrice();
