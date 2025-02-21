@@ -40,18 +40,18 @@
       background: white;
     }
   </style>
-  <script src="/js/dsp/write-impression-context-to-shared-storage.js" id="write-impression-context" data-campaign-id="<%= CAMPAIGN_ID %>" data-publisher-id="<%= PUBLISHER_ID %>"></script>
+  <script src="/js/display-ad-with-reach.js"></script>
 </head>
 
 <body>
-  <!-- static-ad-frame.ejs-->
+  <!-- display-ad-frame-with-reach.ejs-->
   <p id="ad-label"></p>
   <a width="300"
      height="250"
      target="_blank"
      rel="noopener noreferrer"
      href="<%= DESTINATION %>">
-    <!-- Smaller to avoid scrollbar --> 
+    <!-- Smaller to avoid scrollbar -->
     <img width="294"
          height="245"
          loading="lazy"

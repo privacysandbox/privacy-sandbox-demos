@@ -28,6 +28,7 @@ import {
 export enum AdType {
   DISPLAY = 'DISPLAY',
   VIDEO = 'VIDEO',
+  REACH = 'REACH',
 }
 
 /** Interface for an interest group ad object. */
