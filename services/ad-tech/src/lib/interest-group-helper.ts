@@ -186,11 +186,11 @@ const getMultiPieceAdForRequest = (
 ): InterestGroupAd => {
   const {advertiser} = targetingContext;
   const renderUrl = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/multi-piece-container`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/multi-piece-ads`,
   );
   renderUrl.searchParams.append('advertiser', advertiser);
   const ad: InterestGroupAd = {
-    renderURL: `${renderUrl.toString()}`,
+    renderURL: renderUrl.toString(),
     metadata: {
       advertiser,
       adType: AdType.MULTIPIECE,
