@@ -41,7 +41,7 @@ repos:
           - yaml
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.17.1
+    rev: v0.17.2
     hooks:
       - id: markdownlint-cli2
         name: lint markdown
