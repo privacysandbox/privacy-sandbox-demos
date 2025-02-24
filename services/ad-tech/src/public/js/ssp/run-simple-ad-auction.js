@@ -103,7 +103,6 @@ const runSimpleAdAuction = async () => {
       auctionConfig,
       adAuctionResult,
     });
-
     document.getElementById(adUnit.divId).appendChild(adFrame);
   }
 };
