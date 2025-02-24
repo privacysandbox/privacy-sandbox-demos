@@ -315,30 +315,30 @@ function generateBid(
     log('not bidding as campaign is inactive', biddingContext);
     return;
   }
-// <<<<<<< HEAD
+  // <<<<<<< HEAD
   const bid = getBidByAdType(auctionSignals.adType, biddingContext);
-// =======
+  // =======
 
-//   console.log(' @@ auctionSignals.adType @@  ' + auctionSignals.adType);
+  //   console.log(' @@ auctionSignals.adType @@  ' + auctionSignals.adType);
 
-//   // const bid =
-//   //   'VIDEO' === auctionSignals.adType
-//   //     ? getBidForVideoAd(biddingContext)
-//   //     : getBidForDisplayAd(biddingContext);
+  //   // const bid =
+  //   //   'VIDEO' === auctionSignals.adType
+  //   //     ? getBidForVideoAd(biddingContext)
+  //   //     : getBidForDisplayAd(biddingContext);
 
-//   const bid = (() => {
-//     switch (auctionSignals.adType) {
-//       case 'VIDEO':
-//         return getBidForVideoAd(biddingContext);
-//       case 'REACH':
-//         //return getBidForDisplayReachAd(biddingContext);
-//         return getBidForDisplayAd(biddingContext);
-//       default: // Assuming anything other than 'VIDEO' is display
-//         return getBidForDisplayAd(biddingContext);
-//     }
-//   })();
+  //   const bid = (() => {
+  //     switch (auctionSignals.adType) {
+  //       case 'VIDEO':
+  //         return getBidForVideoAd(biddingContext);
+  //       case 'REACH':
+  //         //return getBidForDisplayReachAd(biddingContext);
+  //         return getBidForDisplayAd(biddingContext);
+  //       default: // Assuming anything other than 'VIDEO' is display
+  //         return getBidForDisplayAd(biddingContext);
+  //     }
+  //   })();
 
-// >>>>>>> 5517075 (Reach measurement 1.0 TODO clean kruft)
+  // >>>>>>> 5517075 (Reach measurement 1.0 TODO clean kruft)
   if (bid) {
     log('returning bid', {bid, biddingContext});
     return bid;

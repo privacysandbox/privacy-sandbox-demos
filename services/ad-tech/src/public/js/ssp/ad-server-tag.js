@@ -129,7 +129,6 @@
       return false;
     }
     if (!['DISPLAY', 'VIDEO', 'MULTIPIECE', 'REACH'].includes(adType)) {
-
       log('found unsupported adType', {adUnit});
       return false;
     }
