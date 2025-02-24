@@ -31,14 +31,15 @@ AUCTION_ID = '';
 /** Logs to console. */
 function log(message, context) {
   console.log(
-    '[PSDemo] Buyer dd',
+    '[PSDemo] Buyer',
     CURR_HOST,
-    'decision logic',
+    'bidding logic',
     AUCTION_ID,
     message,
     JSON.stringify({context}, ' ', ' '),
   );
 }
+
 /** Logs execution context for demonstrative purposes. */
 function logContextForDemo(message, context) {
   const {
@@ -187,7 +188,6 @@ function getBidForDisplayAd({
   // UNUSED perBuyerSignals,
   trustedBiddingSignals,
   browserSignals,
-  reachMeasurment = false,
 }) {
   // Select an ad meeting the auction requirements.
   const [selectedAd] = interestGroup.ads.filter(
@@ -198,7 +198,7 @@ function getBidForDisplayAd({
     log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
   }
-  log('dddddasasdasdasDASDASDQWDfcsdjknjnsadjnasdnasnvoiwjeo[ijso');
+
   // Check if any deals are eligible.
   const dealId = selectDealId(selectedAd, auctionSignals);
   return {
