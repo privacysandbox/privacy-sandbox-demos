@@ -193,12 +193,10 @@ function getBidForDisplayAd({
   const [selectedAd] = interestGroup.ads.filter(
     (ad) => 'DISPLAY' === ad.metadata.adType,
   );
-
   if (!selectedAd) {
     log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
   }
-
   // Check if any deals are eligible.
   const dealId = selectDealId(selectedAd, auctionSignals);
   return {
@@ -315,9 +313,7 @@ function generateBid(
     log('not bidding as campaign is inactive', biddingContext);
     return;
   }
-
   const bid = getBidByAdType(auctionSignals.adType, biddingContext);
-
   if (bid) {
     log('returning bid', {bid, biddingContext});
     return bid;
