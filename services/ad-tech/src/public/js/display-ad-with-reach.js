@@ -24,7 +24,7 @@
  */
 
 console.log(
-  'Loading . . . services/ad-tech/src/public/js/displayad-ad-with-reach.js',
+  'Loading . . . services/ad-tech/src/public/js/display-ad-with-reach.js',
 );
 
 async function measureUniqueReach() {
@@ -50,7 +50,7 @@ const addDescriptionToAdContainer = () => {
   document.addEventListener('DOMContentLoaded', async (e) => {
     const $adLabel = document.getElementById('ad-label');
     if ($adLabel) {
-      $adLabel.innerText = `Reach Measurment ad from ${host}`;
+      $adLabel.innerText = `Reach Measurement ad from ${host}`;
     }
   });
 };
