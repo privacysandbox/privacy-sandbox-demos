@@ -1,3 +1,32 @@
+/*
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+/**
+ * Where is this script used:
+ *   This script is included in Shared Storage Reach Measurment, and is executed
+ *   when an ad is delivered by this ad-tech on a publisher page.
+ *
+ * What does this script do:
+ *
+ * This script utilizes the shared storage key "has-reported-content" to identify
+ * browsers that have previously contributed to Aggrigations reports for the given contentId.
+ *
+ * If the browser has NOT previously contributed to the Aggregation report,  the "privateAggregation.contributeToHistogram" functun is called.
+ */
+
 console.log(
   'Loading . . . services/ad-tech/src/public/js/reach-measurment-worklet.js',
 );
@@ -22,9 +51,6 @@ class ReachMeasurementOperation {
       console.log('Content ID already seen:  ' + key);
       return;
     }
-
-    // console.log('contentId:');
-    // console.log(contentId);
 
     // Generate the aggregation key and the aggregatable value
     const bucket = convertContentIdToBucket(contentId);
