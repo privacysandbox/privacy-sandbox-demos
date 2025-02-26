@@ -20,21 +20,16 @@
   <%- include('components/header') %>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
-      <hr>AD WITH REACH MEASURMENT<hr> 
       <p><%= TEXT_LOREM %></p>
-      
-
-        <B>REACH MEASURMENT WITH STATIC AD</B>
-
+        <B>REACH MEASURMENT & SHARED STORAGE</B>
         <div class="w-full flex flex-row justify-center ad-row">
         <div class="ad-slot">
             <script >
-                const staticAdURL = '<%= `https://${DSP_HOST}/ads/reach-ads?advertiser=${SHOP_HOST}&itemId=1f45e`%>' ;
+                const staticAdURL = '<%= `https://${DSP_HOST}/ads/static-ads-with-reach?advertiser=${SHOP_HOST}&itemId=1f45e`%>' ;
             </script>
-            <script defer src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/reach-ad-tag.js` %>"></script>
+            <script defer src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/static-ads-with-reach-tag.js` %>"></script>
         </div>
         </div>
-
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>

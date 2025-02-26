@@ -24,7 +24,7 @@
  */
 
 console.log(
-  'Loading . . . services/ad-tech/src/public/js/display-ad-with-reach.js',
+  'Loading . . . services/ad-tech/src/public/js/static-ad-with-reach.js',
 );
 
 async function measureUniqueReach() {

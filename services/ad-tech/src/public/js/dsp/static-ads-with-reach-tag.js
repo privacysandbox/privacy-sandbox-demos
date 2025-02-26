@@ -27,7 +27,7 @@
   const $script = document.currentScript;
   const scriptSrc = $script.getAttribute('src');
 
-  staticAdURL.pathname = '/ads/static-ads';
+  staticAdURL.pathname = '/ads/static-ads-with-reach';
 
   const $iframe = document.createElement('iframe');
   $iframe.width = 300;
