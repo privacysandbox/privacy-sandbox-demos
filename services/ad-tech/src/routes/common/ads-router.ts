@@ -47,6 +47,13 @@ AdsRouter.get('/contextual-ads', async (req: Request, res: Response) => {
   res.render('contextual-ad-frame', templateVariables);
 });
 
+/** Used as render URL for REACH measurement static ads. */
+AdsRouter.get('/static-ads-with-reach', async (req: Request, res: Response) => {
+  const templateVariables = getContextualAdTemplateVariables();
+  console.log('Loading REACH measurement ad ROUTES', templateVariables);
+  res.render('static-ad-with-reach', templateVariables);
+});
+
 /** Used as render URL in interest groups for video ads. */
 AdsRouter.get('/video-ads', async (req: Request, res: Response) => {
   console.log('Loading video ad', req.query);
