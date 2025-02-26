@@ -16,7 +16,7 @@
 
 /**
  * Where is this script used:
- *   This script is included in Shared Storage Reach Measurment, and is executed
+ *   This script is included in Shared Storage Reach Measurement, and is executed
  *   when an ad is delivered by this ad-tech on a publisher page.
  *
  * What does this script do:
@@ -28,7 +28,7 @@
  */
 
 console.log(
-  'Loading . . . services/ad-tech/src/public/js/reach-measurment-worklet.js',
+  'Loading . . . services/ad-tech/src/public/js/reach-measurement-worklet.js',
 );
 
 // Learn more about noise and scaling from the Private Aggregation fundamentals
@@ -56,8 +56,7 @@ class ReachMeasurementOperation {
     const bucket = convertContentIdToBucket(contentId);
     const value = 1 * SCALE_FACTOR;
 
-    console.log('bucket:');
-    console.log(bucket);
+    console.log('bucket:', bucket);
 
     // Send an aggregatable report via the Private Aggregation API
     console.log('contributeToHistogram:');

@@ -35,6 +35,5 @@
   $iframe.src = staticAdURL;
   $iframe.setAttribute('scrolling', 'no');
   $iframe.setAttribute('style', 'border: none');
-  $iframe.setAttribute('allow', 'attribution-reporting');
   $script.parentElement.insertBefore($iframe, $script);
 })();
