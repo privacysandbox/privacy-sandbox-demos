@@ -1,3 +1,4 @@
+// TODO(sidsahoo): Deprecate
 (() => {
   const $script = document.currentScript;
   const scriptSrc = $script.getAttribute('src');
