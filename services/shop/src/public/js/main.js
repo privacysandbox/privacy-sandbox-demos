@@ -14,4 +14,3 @@
  limitations under the License.
  */
 console.log('main.js');
-console.log('hello');

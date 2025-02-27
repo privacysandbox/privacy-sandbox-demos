@@ -16,20 +16,16 @@
  *
  * What does this script do: TODO(sidneyzanetti)
  */
-(() => {
-  const $script = document.currentScript;
-  const scriptSrc = $script.getAttribute('src');
-  const purchaseValue = $script.getAttribute('purchaseValue');
-  const mtaConversionTagURL = new URL(scriptSrc);
-  mtaConversionTagURL.pathname = '/dsp/mta-conversion.html';
-  mtaConversionTagURL.searchParams.append('purchaseValue', purchaseValue);
-
-  const $iframe = document.createElement('iframe');
-  $iframe.width = 1;
-  $iframe.height = 1;
-  $iframe.src = mtaConversionTagURL;
-  $iframe.setAttribute('scrolling', 'no');
-  $iframe.setAttribute('style', 'border: none');
-
-  $script.parentElement.insertBefore($iframe, $script);
-})();
+const {campaignId, publisherId} = document.currentScript.dataset;
+const impressionContext = {
+  publisherId,
+  campaignId,
+  timestamp: Date.now(),
+};
+const impressionContextSSKey = `impressionContext${campaignId}`;
+const valueToAppend = JSON.stringify(impressionContext);
+window.sharedStorage.append(impressionContextSSKey, valueToAppend);
+console.info('[PSDemo] Appended value to SharedStorage for MTA', {
+  impressionContextSSKey,
+  valueToAppend,
+});

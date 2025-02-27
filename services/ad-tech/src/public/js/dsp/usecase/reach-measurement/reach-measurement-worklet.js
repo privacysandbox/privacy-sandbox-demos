@@ -26,13 +26,6 @@
  *
  * If the browser has NOT previously contributed to the Aggregation report,  the "privateAggregation.contributeToHistogram" functun is called.
  */
-
-console.log(
-  'Loading . . . services/ad-tech/src/public/js/reach-measurement-worklet.js',
-);
-
-// Learn more about noise and scaling from the Private Aggregation fundamentals
-// documentation on Chrome blog
 const SCALE_FACTOR = 65536;
 function convertContentIdToBucket(contentId) {
   return BigInt(contentId);

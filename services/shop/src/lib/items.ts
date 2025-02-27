@@ -30,6 +30,7 @@ const items: Item[] = [
 ];
 
 export const CATEGORIES = ['sale', 'luxury', 'sports'];
+export const SHIPPING_FEE = 40;
 
 export type Order = {
   item: Item;
@@ -95,4 +96,14 @@ export const updateOrder = (order: Order, state: Order[]) => {
     }
     return [...acc, o];
   }, []);
+};
+
+export const getCartSubtotal = (cart: Order[]) => {
+  return cart.reduce((sum, {item, quantity}) => {
+    return sum + item.price * quantity;
+  }, 0);
+};
+
+export const getCartTotal = (cart: Order[]) => {
+  return getCartSubtotal(cart) + SHIPPING_FEE;
 };

@@ -42,7 +42,7 @@
       </div>
     </dl>
     <% if (checkout) { %>
-      <% getTriggerUrls({item, size, quantity}).forEach((triggerUrl) => { %>
+      <% getConversionTriggerUrls({item, size, quantity}).forEach((triggerUrl) => { %>
         <img
           alt=""
           style="display: none"

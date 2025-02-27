@@ -19,12 +19,10 @@
   <%- include('components/header') %>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
+      <b>Use-case: Multi-touch attribution</b>
       <p><%= TEXT_LOREM %></p>
-      <p><%= TEXT_LOREM %></p>
-      <div class="w-full flex flex-row justify-center ad-row">
-        <div class="ad-slot">
-          <script defer src="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/static-ad-tag.js` %>"></script>
-        </div>
+      <div class="w-full flex flex-row justify-center ad-row ad-slot">
+        <iframe src="<%= `https://${DSP_HOST}/ads/static-ads-for-mta?advertiser=${SHOP_HOST}&itemId=1f45e`%>"></iframe>
       </div>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>

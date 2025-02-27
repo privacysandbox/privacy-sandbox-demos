@@ -30,9 +30,9 @@ import {
 export const BuyerRouter = express.Router();
 
 // ************************************************************************
-// HTTP handlers
+// HTTP handlers for iframe documents
 // ************************************************************************
-/** Iframe document used as context to join interest group. */
+/** Iframe document loaded by dsp-tag.js to join ad interest group. */
 BuyerRouter.get(
   '/dsp-advertiser-iframe.html',
   async (req: Request, res: Response) => {
@@ -42,42 +42,8 @@ BuyerRouter.get(
     );
   },
 );
-BuyerRouter.get(
-  '/dsp-advertiser-iframe-bidding-and-auction.html',
-  async (req: Request, res: Response) => {
-    res.render(
-      'dsp/usecase/bidding-and-auction/dsp-advertiser-iframe',
-      getTemplateVariables('Join Ad Interest Group'),
-    );
-  },
-);
 
-/** Returns the interest group to join on an advertiser page. */
-BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
-  const targetingContext = assembleTargetingContext(req.query);
-  res.json(getInterestGroup(targetingContext));
-});
-
-/** Returns the interest group to join on an advertiser page. */
-BuyerRouter.get(
-  '/interest-group-bidding-and-auction.json',
-  async (req: Request, res: Response) => {
-    const targetingContext = assembleTargetingContext(req.query);
-    res.json(getInterestGroupBiddingAndAuction(targetingContext));
-  },
-);
-
-/** Returns the updated interest group, usually daily, may be overridden. */
-BuyerRouter.get(
-  '/interest-group-update.json',
-  async (req: Request, res: Response) => {
-    const targetingContext = assembleTargetingContext(req.query);
-    targetingContext.isUpdateRequest = true;
-    res.json(getInterestGroup(targetingContext));
-  },
-);
-
-/** Iframe document used as context to test Private Aggregation. */
+/** Iframe document loaded by dsp-tag.js to test Private Aggregation. */
 BuyerRouter.get(
   '/test-private-aggregation.html',
   async (req: Request, res: Response) => {
@@ -91,6 +57,41 @@ BuyerRouter.get(
   },
 );
 
+/** Iframe document loaded on conversion to trigger multi-touch attribution. */
+BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
+  const campaignId = 1234;
+  const purchaseValue = req.query.purchaseValue;
+  console.log(`Campaign Id: ${campaignId}, Purchase Value: ${purchaseValue}`);
+  res.render('dsp/mta-conversion', {campaignId, purchaseValue});
+});
+
+// ************************************************************************
+// HTTP handlers with JSON responses
+// ************************************************************************
+/** Returns the interest group to join on an advertiser page. */
+BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
+  const targetingContext = assembleTargetingContext(req.query);
+  // TODO: Generalize to accommodate additional use cases.
+  if ('mixedmode' === targetingContext.usecase) {
+    res.json(getInterestGroupBiddingAndAuction(targetingContext));
+  } else {
+    res.json(getInterestGroup(targetingContext));
+  }
+});
+
+/** Returns the updated interest group, usually daily, may be overridden. */
+BuyerRouter.get(
+  '/interest-group-update.json',
+  async (req: Request, res: Response) => {
+    const targetingContext = assembleTargetingContext(req.query);
+    targetingContext.isUpdateRequest = true;
+    res.json(getInterestGroup(targetingContext));
+  },
+);
+
+// ************************************************************************
+// Helper methods
+// ************************************************************************
 const KNOWN_TARGETING_CONTEXT_KEYS = [
   'advertiser',
   'usecase',
@@ -137,11 +138,3 @@ const assembleTargetingContext = (query: any): TargetingContext => {
   }
   return targetingContext;
 };
-
-/** Returns the updated interest group, usually daily, may be overridden. */
-BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
-  const campaignId = 1234;
-  const purchaseValue = req.query.purchaseValue;
-  console.log(`Campaign Id: ${campaignId}, Purchase Value: ${purchaseValue}`);
-  res.render('dsp/mta-conversion.ejs', {campaignId, purchaseValue});
-});

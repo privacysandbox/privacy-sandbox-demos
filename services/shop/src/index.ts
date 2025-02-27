@@ -38,9 +38,12 @@ import {
   addOrder,
   displayCategory,
   fromSize,
+  getCartSubtotal,
+  getCartTotal,
   getItem,
   getItems,
   removeOrder,
+  SHIPPING_FEE,
   updateOrder,
 } from './lib/items.js';
 
@@ -89,37 +92,50 @@ app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
+/** Template for DSP tag script URL. */
+const constructDspTagUrl = (host: string) =>
+  new URL(`https://${host}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`);
+
+const getConversionTriggerUrls = (order: Order) => {
+  const {item, size, quantity} = order;
+  return [
+    new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
+    new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
+    new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
+    new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`),
+    new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`),
+    new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
+    new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
+    new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
+  ].map((triggerUrl) => {
+    triggerUrl.pathname = '/attribution/register-trigger';
+    triggerUrl.searchParams.append('id', item.id);
+    triggerUrl.searchParams.append('category', `${item.category}`);
+    triggerUrl.searchParams.append('quantity', `${quantity}`);
+    triggerUrl.searchParams.append('size', `${fromSize(size)}`);
+    triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
+    return triggerUrl.toString();
+  });
+};
+
+const getEventTriggerUrl = (conversionType: string) => {
+  const eventTriggerUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
+  eventTriggerUrl.pathname = '/attribution/register-event-level-trigger';
+  eventTriggerUrl.searchParams.append('conversion-type', conversionType);
+  return eventTriggerUrl.toString();
+};
+
 // view helper
 app.locals = {
   title: SHOP_DETAIL,
   displayCategory,
-  getTriggerUrls: (order: Order) => {
-    const {item, size, quantity} = order;
-    return [
-      new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
-      new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
-      new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
-      new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`),
-      new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`),
-      new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
-      new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
-      new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
-    ].map((triggerUrl) => {
-      triggerUrl.pathname = '/attribution/register-trigger';
-      triggerUrl.searchParams.append('id', item.id);
-      triggerUrl.searchParams.append('category', `${item.category}`);
-      triggerUrl.searchParams.append('quantity', `${quantity}`);
-      triggerUrl.searchParams.append('size', `${fromSize(size)}`);
-      triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
-      return triggerUrl.toString();
-    });
-  },
-  getEventTriggerUrl: (conversionType: string) => {
-    const eventTriggerUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
-    eventTriggerUrl.pathname = '/attribution/register-event-level-trigger';
-    eventTriggerUrl.searchParams.append('conversion-type', conversionType);
-    return eventTriggerUrl.toString();
-  },
+  DSP_TAG_URL: constructDspTagUrl(DSP_HOST!),
+  DSP_A_TAG_URL: constructDspTagUrl(DSP_A_HOST!),
+  DSP_B_TAG_URL: constructDspTagUrl(DSP_B_HOST!),
+  DSP_X_TAG_URL: constructDspTagUrl(DSP_X_HOST!),
+  DSP_Y_TAG_URL: constructDspTagUrl(DSP_Y_HOST!),
+  getConversionTriggerUrls,
+  getEventTriggerUrl,
 };
 
 app.get('/', async (req: Request, res: Response) => {
@@ -129,7 +145,7 @@ app.get('/', async (req: Request, res: Response) => {
   });
 });
 
-// serves the static ads creative from shop site (redirected from ssp)
+// serves the static image creative from shop site (redirected from ad-tech)
 app.get('/ads/:id?', async (req: Request, res: Response) => {
   const id = req.params.id ? req.params.id : '1f6d2';
   const imgPath = `/image/svg/emoji_u${id}.svg`;
@@ -142,38 +158,7 @@ app.get('/items/:id', async (req: Request, res: Response) => {
   const {usecase} = req.query;
   const {id} = req.params;
   const item = await getItem(id);
-  let DSP_TAG_URL = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  let DSP_A_TAG_URL = new URL(
-    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  let DSP_B_TAG_URL = new URL(
-    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  let DSP_X_TAG_URL;
-  let DSP_Y_TAG_URL;
-
-  if (usecase == 'ba') {
-    DSP_A_TAG_URL = new URL(
-      `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-    );
-    DSP_B_TAG_URL = new URL(
-      `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-    );
-    DSP_X_TAG_URL = new URL(
-      `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
-    );
-    DSP_Y_TAG_URL = new URL(
-      `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
-    );
-  }
   res.render('item', {
-    DSP_A_TAG_URL,
-    DSP_B_TAG_URL,
-    DSP_X_TAG_URL,
-    DSP_Y_TAG_URL,
-    DSP_TAG_URL,
     item,
     SHOP_HOST,
     usecase,
@@ -190,23 +175,17 @@ app.post('/cart', async (req: Request, res: Response, next: NextFunction) => {
   // load does not happen before session is saved
   req.session.save(function (err: Error) {
     if (err) return next(err);
-    // console.log("Save session before redirect")
-    // console.log(req.session)
     res.redirect(303, '/cart');
   });
-  //res.redirect(303, "/cart")
 });
 
 app.get('/cart', async (req: Request, res: Response) => {
   const cart = req.session.cart as Order[];
-  const subtotal = cart.reduce((sum, {item, quantity}) => {
-    return sum + item.price * quantity;
-  }, 0);
-  const shipping = 40;
   res.render('cart', {
     cart,
-    subtotal,
-    shipping,
+    shipping: SHIPPING_FEE,
+    subtotal: getCartSubtotal(cart),
+    total: getCartTotal(cart),
   });
 });
 
@@ -240,26 +219,20 @@ app.delete('/cart/:name', async (req: Request, res: Response) => {
 });
 
 app.post('/checkout', async (req: Request, res: Response) => {
-  const body = req.body;
   res.redirect(303, '/checkout');
 });
 
 app.get('/checkout', async (req: Request, res: Response) => {
   const cart = req.session.cart as Order[];
-  const subtotal = cart.reduce((sum, {item, quantity}) => {
-    return sum + item.price * quantity;
-  }, 0);
-  const shipping = 40;
-
   const MTA_CONVERSION_TAG_URL = new URL(
     `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/mta-conversion-tag.js`,
   );
-
-  await req.session.destroy(() => Promise.resolve());
+  req.session.destroy(() => Promise.resolve());
   res.render('checkout', {
     cart,
-    subtotal,
-    shipping,
+    shipping: SHIPPING_FEE,
+    subtotal: getCartSubtotal(cart),
+    total: getCartTotal(cart),
     MTA_CONVERSION_TAG_URL,
   });
 });
