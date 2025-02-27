@@ -29,7 +29,7 @@ import {
 export const AdsRouter = express.Router();
 
 // ************************************************************************
-// HTTP handlers
+// HTTP handlers for Protected Audience ads
 // ************************************************************************
 /** Used as render URL in interest groups for display ads. */
 AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
@@ -37,41 +37,44 @@ AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
   console.log('Loading interest group ad', templateVariables);
   res
     .set('Allow-Fenced-Frame-Automatic-Beacons', 'true')
-    .render('display-ad-frame', templateVariables);
+    .render('display-ads', templateVariables);
 });
 
 /** Used as render URL for contextual ads or static ads. */
 AdsRouter.get('/contextual-ads', async (req: Request, res: Response) => {
   const templateVariables = getContextualAdTemplateVariables();
   console.log('Loading contextual ad', templateVariables);
-  res.render('contextual-ad-frame', templateVariables);
-});
-
-/** Used as render URL for REACH measurement static ads. */
-AdsRouter.get('/static-ads-with-reach', async (req: Request, res: Response) => {
-  const templateVariables = getContextualAdTemplateVariables();
-  console.log('Loading REACH measurement ad ROUTES', templateVariables);
-  res.render('static-ad-with-reach', templateVariables);
+  res.render('contextual-ads', templateVariables);
 });
 
 /** Used as render URL in interest groups for video ads. */
 AdsRouter.get('/video-ads', async (req: Request, res: Response) => {
   console.log('Loading video ad', req.query);
-  res.render('video-ad-frame');
-});
-
-/** Used as render URL for Multi Touch Attribution ads. */
-AdsRouter.get('/static-ads', async (req: Request, res: Response) => {
-  console.log('Loading MTA ad', req.query);
-  const templateVariables = getStaticAdTemplateVariables(
-    req.query,
-    req.headers,
-  );
-  res.render('static-ad-frame', templateVariables);
+  res.render('video-ads');
 });
 
 /** Used as render URL in interest groups for multi piece ads. */
 AdsRouter.get('/multi-piece-ads', async (req: Request, res: Response) => {
   console.log('Loading Container - Multi Piece Ads', req.query);
   res.render('dsp/usecase/multi-piece/container');
+});
+
+// ************************************************************************
+// HTTP handlers for static ads
+// ************************************************************************
+/** Delivers a static ad for reach measurement. */
+AdsRouter.get('/static-ads-for-reach', async (req: Request, res: Response) => {
+  const templateVariables = getContextualAdTemplateVariables();
+  console.log('Loading REACH measurement ad ROUTES', templateVariables);
+  res.render('static-ads-for-reach', templateVariables);
+});
+
+/** Used as render URL for Multi Touch Attribution ads. */
+AdsRouter.get('/static-ads-for-mta', async (req: Request, res: Response) => {
+  console.log('Loading MTA ad', req.query);
+  const templateVariables = getStaticAdTemplateVariables(
+    req.query,
+    req.headers,
+  );
+  res.render('static-ads-for-mta', templateVariables);
 });

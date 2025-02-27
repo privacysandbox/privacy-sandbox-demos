@@ -80,15 +80,11 @@ export const getStaticAdTemplateVariables = (
     );
     return PUBLISHER_IDS[refererUrl.hostname] || '9999';
   };
-
   const itemId = requestQuery.itemId?.toString() || '1f45f';
-
   const width = requestQuery.width?.toString() || 300;
   const height = requestQuery.height?.toString() || 250;
-
   const enableWriteImpression =
     requestQuery.enableWriteImpression?.toString() != 'false';
-
   return {
     TITLE: `Your special ads from ${SHOP_HOST}`,
     DESTINATION: new URL(
