@@ -36,6 +36,7 @@ import {
 import {
   Order,
   addOrder,
+  constructOrder,
   displayCategory,
   fromSize,
   getCartSubtotal,
@@ -96,25 +97,40 @@ app.set('views', 'src/views');
 const constructDspTagUrl = (host: string) =>
   new URL(`https://${host}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`);
 
-const getConversionTriggerUrls = (order: Order) => {
+const AD_TECHS_TO_TAG_FOR_CONVERSIONS = [
+  DSP_A_HOST!,
+  DSP_B_HOST!,
+  DSP_HOST!,
+  DSP_X_HOST!,
+  DSP_Y_HOST!,
+  SSP_A_HOST!,
+  SSP_B_HOST!,
+  SSP_HOST!,
+];
+
+const constructConversionTriggerUrl = (
+  host: string,
+  pathname: string,
+  order: Order,
+): URL => {
+  const triggerUrl = new URL(`https://${host}:${EXTERNAL_PORT}`);
+  triggerUrl.pathname = pathname;
   const {item, size, quantity} = order;
-  return [
-    new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`),
-    new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`),
-    new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`),
-    new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`),
-    new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`),
-    new URL(`https://${SSP_HOST}:${EXTERNAL_PORT}`),
-    new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`),
-    new URL(`https://${SSP_B_HOST}:${EXTERNAL_PORT}`),
-  ].map((triggerUrl) => {
-    triggerUrl.pathname = '/attribution/register-trigger';
-    triggerUrl.searchParams.append('id', item.id);
-    triggerUrl.searchParams.append('category', `${item.category}`);
-    triggerUrl.searchParams.append('quantity', `${quantity}`);
-    triggerUrl.searchParams.append('size', `${fromSize(size)}`);
-    triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
-    return triggerUrl.toString();
+  triggerUrl.searchParams.append('itemId', item.id);
+  triggerUrl.searchParams.append('category', `${item.category}`);
+  triggerUrl.searchParams.append('quantity', `${quantity}`);
+  triggerUrl.searchParams.append('size', `${fromSize(size)}`);
+  triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
+  return triggerUrl;
+};
+
+const getConversionTriggerUrls = (order: Order) => {
+  return AD_TECHS_TO_TAG_FOR_CONVERSIONS.map((host) => {
+    return constructConversionTriggerUrl(
+      host,
+      '/attribution/register-trigger',
+      order,
+    ).toString();
   });
 };
 
@@ -134,14 +150,17 @@ app.locals = {
   DSP_B_TAG_URL: constructDspTagUrl(DSP_B_HOST!),
   DSP_X_TAG_URL: constructDspTagUrl(DSP_X_HOST!),
   DSP_Y_TAG_URL: constructDspTagUrl(DSP_Y_HOST!),
+  MTA_CONVERSION_TAG_URL: new URL(
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/multi-touch-attribution/mta-conversion-tag.js`,
+  ).toString(),
+  getCartTotal,
   getConversionTriggerUrls,
   getEventTriggerUrl,
 };
 
 app.get('/', async (req: Request, res: Response) => {
-  const items = await getItems();
   res.render('index', {
-    items,
+    items: getItems(),
   });
 });
 
@@ -157,9 +176,8 @@ app.get('/ads/:id?', async (req: Request, res: Response) => {
 app.get('/items/:id', async (req: Request, res: Response) => {
   const {usecase} = req.query;
   const {id} = req.params;
-  const item = await getItem(id);
   res.render('item', {
-    item,
+    item: getItem(id),
     SHOP_HOST,
     usecase,
   });
@@ -167,9 +185,8 @@ app.get('/items/:id', async (req: Request, res: Response) => {
 
 app.post('/cart', async (req: Request, res: Response, next: NextFunction) => {
   const {id, size, quantity} = req.body;
-  const item = await getItem(id);
-  const order: Order = {item, size, quantity};
-  const cart = addOrder(order, req.session.cart as Order[]);
+  const order = constructOrder(id, size, quantity);
+  const cart = addOrder(order, req.session.cart!);
   req.session.cart = cart;
   // save the session before redirection to ensure page
   // load does not happen before session is saved
@@ -180,7 +197,7 @@ app.post('/cart', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get('/cart', async (req: Request, res: Response) => {
-  const cart = req.session.cart as Order[];
+  const cart = req.session.cart!;
   res.render('cart', {
     cart,
     shipping: SHIPPING_FEE,
@@ -193,12 +210,7 @@ app.put('/cart/:name', async (req: Request, res: Response) => {
   const {name} = req.params;
   const {quantity} = req.body;
   const [id, size] = name.split(':');
-  const item = await getItem(id as string);
-  const order: Order = {
-    item,
-    size,
-    quantity,
-  };
+  const order = constructOrder(id, size, quantity);
   const cart = updateOrder(order, req.session.cart as Order[]);
   req.session.cart = cart;
   res.status(204).end();
@@ -207,13 +219,8 @@ app.put('/cart/:name', async (req: Request, res: Response) => {
 app.delete('/cart/:name', async (req: Request, res: Response) => {
   const {name} = req.params;
   const [id, size] = name.split(':');
-  const item = await getItem(id as string);
-  const order: Order = {
-    item,
-    size: size as string,
-    quantity: 0,
-  };
-  const cart = removeOrder(order, req.session.cart as Order[]);
+  const order = constructOrder(id, size, /* quantity= */ 0);
+  const cart = removeOrder(order, req.session.cart!);
   req.session.cart = cart;
   res.status(204).end();
 });
@@ -223,17 +230,13 @@ app.post('/checkout', async (req: Request, res: Response) => {
 });
 
 app.get('/checkout', async (req: Request, res: Response) => {
-  const cart = req.session.cart as Order[];
-  const MTA_CONVERSION_TAG_URL = new URL(
-    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/mta-conversion-tag.js`,
-  );
+  const cart = req.session.cart!;
   req.session.destroy(() => Promise.resolve());
   res.render('checkout', {
     cart,
     shipping: SHIPPING_FEE,
     subtotal: getCartSubtotal(cart),
     total: getCartTotal(cart),
-    MTA_CONVERSION_TAG_URL,
   });
 });
 

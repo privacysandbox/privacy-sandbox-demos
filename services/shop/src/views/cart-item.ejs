@@ -25,9 +25,11 @@
         <dd><%= size %>.0</dd>
       </div>
       <div class="flex gap-2">
-        <dt class="w-16 font-bold"><label for="<%= item.id %>:<%= size %>">qty:</label></dt>
+        <dt class="w-16 font-bold">
+          <label for="<%= item.id %>:<%= size %>">qty:</label>
+        </dt>
         <dd>
-          <% if (checkout) { %>
+          <% if (onCheckoutPage) { %>
           <%= quantity %>
           <% } else { %>
           <select id="<%= item.id %>:<%= size %>" name="<%= item.id %>:<%= size %>" class="text-slate-800 update-qty">
@@ -41,7 +43,8 @@
         </dd>
       </div>
     </dl>
-    <% if (checkout) { %>
+    <% if (onCheckoutPage) { %>
+      <!-- Single-touch attribution trigger -->
       <% getConversionTriggerUrls({item, size, quantity}).forEach((triggerUrl) => { %>
         <img
           alt=""
@@ -51,6 +54,7 @@
           src="<%= triggerUrl %>"
         />
       <% }) %>
+      <!-- TODO(sinnew): Add trigger for conversion-type = purchase -->
     <% } else { %>
     <div class="absolute top-0 right-0">
       <button

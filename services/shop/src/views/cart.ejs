@@ -22,7 +22,7 @@
       <form class="flex flex-col gap-6" action="/checkout" method="POST">
         <ul class="flex flex-col gap-6">
           <% cart.forEach(({item, size, quantity}) => { %>
-            <%- include("cart-item", { item, size, quantity, checkout: false }) %>
+            <%- include("cart-item", { item, size, quantity, onCheckoutPage: false }) %>
           <% }) %>
         </ul>
         <dl class="flex flex-col">
@@ -49,7 +49,11 @@
           </button>
         </section>
       </form>
-      <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
+      <footer class="border-t-2 py-4">
+        <a class="underline before:content-['<<']" href="/">
+          continue shopping
+        </a>
+      </footer>
     </div>
   </body>
 </html>
