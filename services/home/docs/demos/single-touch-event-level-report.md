@@ -218,7 +218,7 @@ function addToCart() {
     eventSourceEligible: false,
     triggerEligible: true,
   };
-  const url = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?conversion-type=add-to-cart"
+  const url = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?conversionType=add-to-cart"
   window.fetch(url, {
     mode: "no-cors",  keepalive: true, attributionReporting
   });

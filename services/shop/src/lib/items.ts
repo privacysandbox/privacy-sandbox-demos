@@ -60,14 +60,6 @@ export const displayCategory = (id: number): string => {
   return CATEGORIES.at(id) || 'N/A';
 };
 
-export const toSize = (num: number): string => {
-  return `${num / 10 + 20}`;
-};
-
-export const fromSize = (size: string): number => {
-  return (Number(size) - 20) * 10;
-};
-
 export const addOrder = (order: Order, state: Order[]) => {
   const index = state.findIndex(({item, size}) => {
     return order.item.id === item.id && order.size === size;

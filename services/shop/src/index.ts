@@ -19,6 +19,7 @@ import session from 'express-session';
 import MemoryStoreFactory from 'memorystore';
 
 import {
+  AD_TECHS_TO_TAG_FOR_CONVERSIONS,
   DSP_HOST,
   DSP_A_HOST,
   DSP_B_HOST,
@@ -28,21 +29,16 @@ import {
   PORT,
   SHOP_DETAIL,
   SHOP_HOST,
-  SSP_HOST,
-  SSP_A_HOST,
-  SSP_B_HOST,
 } from './lib/constants.js';
-
 import {
-  Order,
   addOrder,
   constructOrder,
   displayCategory,
-  fromSize,
   getCartSubtotal,
   getCartTotal,
   getItem,
   getItems,
+  Order,
   removeOrder,
   SHIPPING_FEE,
   updateOrder,
@@ -88,6 +84,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
@@ -97,47 +94,31 @@ app.set('views', 'src/views');
 const constructDspTagUrl = (host: string) =>
   new URL(`https://${host}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`);
 
-const AD_TECHS_TO_TAG_FOR_CONVERSIONS = [
-  DSP_A_HOST!,
-  DSP_B_HOST!,
-  DSP_HOST!,
-  DSP_X_HOST!,
-  DSP_Y_HOST!,
-  SSP_A_HOST!,
-  SSP_B_HOST!,
-  SSP_HOST!,
-];
-
-const constructConversionTriggerUrl = (
-  host: string,
-  pathname: string,
-  order: Order,
-): URL => {
+/** Assembles an attribution trigger URL with conversion context. */
+const constructConversionTriggerUrl = (host: string, order: Order): string => {
   const triggerUrl = new URL(`https://${host}:${EXTERNAL_PORT}`);
-  triggerUrl.pathname = pathname;
+  triggerUrl.pathname = '/attribution/register-trigger';
   const {item, size, quantity} = order;
+  triggerUrl.searchParams.append('conversionType', 'purchase');
   triggerUrl.searchParams.append('itemId', item.id);
   triggerUrl.searchParams.append('category', `${item.category}`);
   triggerUrl.searchParams.append('quantity', `${quantity}`);
-  triggerUrl.searchParams.append('size', `${fromSize(size)}`);
+  triggerUrl.searchParams.append('price', `${item.price}`);
+  triggerUrl.searchParams.append('size', size);
   triggerUrl.searchParams.append('gross', `${item.price * quantity}`);
-  return triggerUrl;
+  return triggerUrl.toString();
 };
 
-const getConversionTriggerUrls = (order: Order) => {
-  return AD_TECHS_TO_TAG_FOR_CONVERSIONS.map((host) => {
-    return constructConversionTriggerUrl(
-      host,
-      '/attribution/register-trigger',
-      order,
-    ).toString();
-  });
-};
-
-const getEventTriggerUrl = (conversionType: string) => {
+// TODO(sinnew): This logic of separating event-level and summary reports
+// should be handled on the ad-tech server, not on the advertiser site.
+const getEventTriggerUrl = (itemId: string, conversionType: string) => {
+  const item = getItem(itemId);
   const eventTriggerUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
   eventTriggerUrl.pathname = '/attribution/register-event-level-trigger';
-  eventTriggerUrl.searchParams.append('conversion-type', conversionType);
+  eventTriggerUrl.searchParams.append('conversionType', conversionType);
+  eventTriggerUrl.searchParams.append('itemId', item.id);
+  eventTriggerUrl.searchParams.append('category', `${item.category}`);
+  eventTriggerUrl.searchParams.append('price', `${item.price}`);
   return eventTriggerUrl.toString();
 };
 
@@ -154,25 +135,29 @@ app.locals = {
     `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/multi-touch-attribution/mta-conversion-tag.js`,
   ).toString(),
   getCartTotal,
-  getConversionTriggerUrls,
+  getConversionTriggerUrls: (order: Order) =>
+    AD_TECHS_TO_TAG_FOR_CONVERSIONS.map((host) =>
+      constructConversionTriggerUrl(host, order),
+    ),
   getEventTriggerUrl,
 };
 
+/** Serves the main index page with all products listed. */
 app.get('/', async (req: Request, res: Response) => {
   res.render('index', {
     items: getItems(),
   });
 });
 
-// serves the static image creative from shop site (redirected from ad-tech)
+/** Serves the image creative from shop site (redirected from ad-tech). */
 app.get('/ads/:id?', async (req: Request, res: Response) => {
   const id = req.params.id ? req.params.id : '1f6d2';
   const imgPath = `/image/svg/emoji_u${id}.svg`;
-  //res.set("Content-Type", "image/svg+xml")
   console.log(`redirecting to /image/svg/emoji_u${id}.svg`);
   res.redirect(301, imgPath);
 });
 
+/** Serves the item detail page. */
 app.get('/items/:id', async (req: Request, res: Response) => {
   const {usecase} = req.query;
   const {id} = req.params;
@@ -183,19 +168,21 @@ app.get('/items/:id', async (req: Request, res: Response) => {
   });
 });
 
+/** Serves the cart page after user adds an item to cart. */
 app.post('/cart', async (req: Request, res: Response, next: NextFunction) => {
   const {id, size, quantity} = req.body;
   const order = constructOrder(id, size, quantity);
   const cart = addOrder(order, req.session.cart!);
   req.session.cart = cart;
-  // save the session before redirection to ensure page
-  // load does not happen before session is saved
+  // Save the session before redirection to ensure page load does not happen
+  // before session is saved.
   req.session.save(function (err: Error) {
     if (err) return next(err);
     res.redirect(303, '/cart');
   });
 });
 
+/** Renders the cart page. */
 app.get('/cart', async (req: Request, res: Response) => {
   const cart = req.session.cart!;
   res.render('cart', {
@@ -206,6 +193,7 @@ app.get('/cart', async (req: Request, res: Response) => {
   });
 });
 
+/** Updates the cart in the session without a page reload. */
 app.put('/cart/:name', async (req: Request, res: Response) => {
   const {name} = req.params;
   const {quantity} = req.body;
@@ -216,6 +204,7 @@ app.put('/cart/:name', async (req: Request, res: Response) => {
   res.status(204).end();
 });
 
+/** Deletes an item from the cart in the session without a page reload. */
 app.delete('/cart/:name', async (req: Request, res: Response) => {
   const {name} = req.params;
   const [id, size] = name.split(':');
@@ -225,10 +214,12 @@ app.delete('/cart/:name', async (req: Request, res: Response) => {
   res.status(204).end();
 });
 
+/** Redirects checkout form submit from the cart page. */
 app.post('/checkout', async (req: Request, res: Response) => {
   res.redirect(303, '/checkout');
 });
 
+/** Renders the checkout page. */
 app.get('/checkout', async (req: Request, res: Response) => {
   const cart = req.session.cart!;
   req.session.destroy(() => Promise.resolve());

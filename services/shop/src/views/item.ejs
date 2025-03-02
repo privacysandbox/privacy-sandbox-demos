@@ -92,7 +92,7 @@
             <section class="flex justify-center">
               <button type="submit"
                       class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white"
-                      onclick="addToCart({itemSize: size.value, itemQuantity: quantity.value})"
+                      onclick="addToCart({size: size.value, quantity: quantity.value})"
               >ADD TO CART</button>
             </section>
           </form>
@@ -101,10 +101,12 @@
       <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
     </div>
     <script>
-      function addToCart({itemSize, itemQuantity}) {
-        const itemId = '<%= item.id %>';
-        // TODO(sidsahoo): What's going on here?
-        const url = getEventTriggerUrl(itemId, itemSize, itemQuantity, "add-to-cart")
+      function addToCart({size, quantity}) {
+        const url = new URL('<%- getEventTriggerUrl(item.id, "add-to-cart") %>')
+        url.searchParams.append('size', size)
+        url.searchParams.append('quantity', quantity)
+        const itemPrice = url.searchParams.get('price')
+        url.searchParams.append('gross', itemPrice * quantity)
         window.fetch(url, {
           mode: "no-cors",
           keepalive: true,
@@ -112,7 +114,7 @@
             eventSourceEligible: false,
             triggerEligible: true,
           },
-        });
+        })
       }
       function buildDspScriptTag(tagUrl) {
         const scriptEl = document.createElement('script')
@@ -123,14 +125,14 @@
         return scriptEl
       }
       // Inject DSP script tags for audience targeting.
-      switch ('<%= usecase %>'){
+      switch ('<%= usecase %>') {
         case 'mixedmode':
-          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'))
         default: 
-          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'))
       }
     </script>
   </body>
