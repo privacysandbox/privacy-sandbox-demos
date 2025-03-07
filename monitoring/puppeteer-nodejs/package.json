@@ -11,7 +11,7 @@
   "dependencies": {
     "@google-cloud/functions-framework": "^3.4.2",
     "@google-cloud/synthetics-sdk-api": "^0.6.0",
-    "axios": "^1.7.7",
+    "axios": "^1.8.2",
     "puppeteer": "^23.7.1"
   },
   "license": "Apache-2.0",
