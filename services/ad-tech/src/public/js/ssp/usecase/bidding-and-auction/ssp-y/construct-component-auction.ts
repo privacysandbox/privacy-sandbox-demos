@@ -47,6 +47,7 @@ class AdAuction {
           seller: adAuctionDataConfig.seller,
           requestId,
           serverResponse: protectedAudienceAuctionResult,
+          resolveToConfig: true,
           adAuctionHeaders: true,
         },
         {

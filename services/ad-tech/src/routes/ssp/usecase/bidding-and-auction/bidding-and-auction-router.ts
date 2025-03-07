@@ -132,7 +132,7 @@ sspARouter.get('/service/ad/auction-config.json', async (req, res) => {
       SSP_A_ORIGIN,
     ),
     trustedScoringSignalsURL: new URL(
-      'ssp/usecase/bidding-and-auction/service/kv',
+      'ssp/usecase/bidding-and-auction/ssp-a/service/kv',
       SSP_A_ORIGIN,
     ),
     resolveToConfig: true,

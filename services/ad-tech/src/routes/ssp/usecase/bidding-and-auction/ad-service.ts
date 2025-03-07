@@ -140,7 +140,7 @@ function runProtectedAudienceAuction(
           .digest('base64url');
 
         res.set('Ad-Auction-Result', ciphertextShaHash);
-        console.log('Ad-Auction-Reslt: ' + ciphertextShaHash);
+        console.log('Ad-Auction-Result: ' + ciphertextShaHash);
         res.json({
           contextualAuctionWinner,
           protectedAudienceAuctionCiphertext: encodeResponse(
@@ -187,6 +187,7 @@ function runProtectedAudienceAuction(
           .digest('base64url');
 
         res.set('Ad-Auction-Result', ciphertextShaHash);
+        console.log('Ad-Auction-Result: ' + ciphertextShaHash);
         res.json({
           contextualAuctionWinner,
           protectedAudienceAuctionCiphertext: encodeResponse(

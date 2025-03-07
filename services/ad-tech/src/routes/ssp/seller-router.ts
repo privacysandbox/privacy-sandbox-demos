@@ -15,6 +15,8 @@ import express, {Request, Response} from 'express';
 import {
   EXTERNAL_PORT,
   HOSTNAME,
+  DSP_A_HOST,
+  DSP_B_HOST,
   DSP_X_HOST,
   DSP_Y_HOST,
 } from '../../lib/constants.js';
@@ -32,6 +34,8 @@ import {sspARouter} from './usecase/bidding-and-auction/bidding-and-auction-rout
  * Path: /ssp/
  */
 export const SellerRouter = express.Router();
+const DSP_A_ORIGIN = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`).origin;
+const DSP_B_ORIGIN = new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`).origin;
 const DSP_X_ORIGIN = new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`).origin;
 const DSP_Y_ORIGIN = new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`).origin;
 // TODO: Rename to run-single-seller-ad-auction after unified branch is merged.
@@ -108,11 +112,17 @@ SellerRouter.get('/ssp-y/service/kv', (req, res) => {
 
   res.json({
     renderUrls: {
+      [new URL('/html/protected-audience-ad.html', DSP_A_ORIGIN).toString()]: [
+        1, 2,
+      ],
+      [new URL('/html/protected-audience-ad.html', DSP_B_ORIGIN).toString()]: [
+        1, 2,
+      ],
       [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
-        1, 2, 3,
+        1, 2,
       ],
       [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
-        1, 2, 3,
+        1, 2,
       ],
     },
   });

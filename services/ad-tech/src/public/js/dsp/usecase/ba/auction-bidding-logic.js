@@ -14,18 +14,19 @@
  limitations under the License.
  */
 
-function scoreAd(
-  adMetadata,
-  bid,
-  auctionConfig,
-  trustedScoringSignals,
+function generateBid(
+  interestGroup,
+  auctionSignals,
+  perBuyerSignals,
+  trustedBiddingSignals,
   browserSignals,
 ) {
   return {
-    desirability: bid,
-    allowComponentAuction: true,
-    ad: 'some-ad-metadata',
+    bid: Math.ceil(Math.random() * 100),
+    render:
+      'https://privacy-sandbox-demos-dsp-x.dev/html/protected-audience-ad.html',
+    allowComponentAuction: !!browserSignals.topLevelSeller,
   };
 }
 
-function reportResult(auctionConfig, browserSignals) {}
+function reportWin() {}

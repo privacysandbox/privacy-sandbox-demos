@@ -15,7 +15,7 @@
  */
 import ComponentAuctionInfoCollector from './config-collector.js';
 
-const DEMO_PARTICIPANT_COUNT = 2;
+const DEMO_PARTICIPANT_COUNT = 3;
 
 class AdAuction {
   constructor() {
@@ -30,16 +30,15 @@ class AdAuction {
     const url = new URL(location.origin);
     url.pathname = '/ssp/usecase/bidding-and-auction/auction-config.json';
     const response = await fetch(url);
-    console.log('GET TLS AUCTION CONFIG: ' + JSON.stringify(response));
     return response.json();
   }
 
   async run(componentAuctionInfo) {
     this.auctionConfig.componentAuctions =
       this.#getComponentAuctionConfigs(componentAuctionInfo);
-    console.log('GET TLS AUCTION CONFIG: ' + this.auctionConfig);
+    console.log(this.auctionConfig);
     const adAuctionResult = await navigator.runAdAuction(this.auctionConfig);
-    console.log('[TLS SSP] Auction result: ' + {adAuctionResult});
+    console.log('[TLS SSP] Auction result generated');
 
     if (adAuctionResult) {
       this.#renderProtectedAudienceAd(adAuctionResult);

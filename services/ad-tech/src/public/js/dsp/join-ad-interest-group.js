@@ -30,6 +30,7 @@
 (() => {
   /** Sends first-party context to server to retrieve interest group metadata. */
   getInterestGroupFromServer = async () => {
+    navigator.clearOriginJoinedAdInterestGroups(location.origin);
     const currentUrl = new URL(location.href);
     const interestGroupUrl = new URL(location.origin);
     interestGroupUrl.pathname = '/dsp/interest-group.json';
