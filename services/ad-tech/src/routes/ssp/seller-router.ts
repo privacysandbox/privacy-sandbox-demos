@@ -92,42 +92,6 @@ SellerRouter.get('/vast.xml', async (req: Request, res: Response) => {
   });
 });
 
-SellerRouter.get('/ssp-x/service/kv', (req, res) => {
-  res.setHeader('Ad-Auction-Allowed', 'true');
-
-  res.json({
-    renderUrls: {
-      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
-        1, 2, 3,
-      ],
-      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
-        1, 2, 3,
-      ],
-    },
-  });
-});
-
-SellerRouter.get('/ssp-y/service/kv', (req, res) => {
-  res.setHeader('Ad-Auction-Allowed', 'true');
-
-  res.json({
-    renderUrls: {
-      [new URL('/html/protected-audience-ad.html', DSP_A_ORIGIN).toString()]: [
-        1, 2,
-      ],
-      [new URL('/html/protected-audience-ad.html', DSP_B_ORIGIN).toString()]: [
-        1, 2,
-      ],
-      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
-        1, 2,
-      ],
-      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
-        1, 2,
-      ],
-    },
-  });
-});
-
 /** Route for Bidding & Auction Services use case
  * There is an implied route where this route is /ssp/usecase/bidding-and-auction */
 SellerRouter.use('/usecase/bidding-and-auction', tlsRouter);

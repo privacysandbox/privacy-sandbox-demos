@@ -211,16 +211,20 @@ sspXRouter.use(
 /** Full route: /ssp/usecase/bidding-and-auction/service/ad */
 sspXRouter.use('/service/ad', adService);
 
-// sspXRouter.get('/service/kv', (req, res) => {
-//   res.setHeader('Ad-Auction-Allowed', 'true');
+sspXRouter.get('/service/kv', (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
 
-//   res.json({
-//     renderUrls: {
-//       [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN,).toString()]: [1, 2],
-//       [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN,).toString()]: [1, 2],
-//     },
-//   })
-// });
+  res.json({
+    renderUrls: {
+      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
+        1, 2,
+      ],
+      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
+        1, 2,
+      ],
+    },
+  });
+});
 
 sspXRouter.get('/construct-component-auction.js', async (req, res) => {
   console.log('[B&A] Construct component auction for SSP X.');
@@ -263,22 +267,25 @@ sspYRouter.use(
 sspYRouter.use('/service/ad', adService);
 
 /** Full route: /ssp/usecase/bidding-and-auction/ssp-y/service/kv */
-// sspYRouter.get('/service/kv', (req, res) => {
-//   res.setHeader('Ad-Auction-Allowed', 'true');
-
-//   res.json({
-//     renderUrls: {
-//       [new URL(
-//         '/html/protected-audience-ad.html',
-//         DSP_X_ORIGIN,
-//       ).toString()]: [1, 2],
-//       [new URL(
-//         '/html/protected-audience-ad.html',
-//         DSP_Y_ORIGIN,
-//       ).toString()]: [1, 2],
-//     },
-//   });
-// });
+sspYRouter.get('/service/kv', (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
+  res.json({
+    renderUrls: {
+      [new URL('/html/protected-audience-ad.html', DSP_A_ORIGIN).toString()]: [
+        1, 2,
+      ],
+      [new URL('/html/protected-audience-ad.html', DSP_B_ORIGIN).toString()]: [
+        1, 2,
+      ],
+      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
+        1, 2,
+      ],
+      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
+        1, 2,
+      ],
+    },
+  });
+});
 
 /** Full route: /ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction */
 sspYRouter.get('/construct-component-auction.js', async (req, res) => {

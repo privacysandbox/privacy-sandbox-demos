@@ -199,7 +199,7 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.18.0.104  --network=privacy-sandbox-demos_adnetwork" \
 SELLER_ORIGIN_DOMAIN="https://privacy-sandbox-demos-ssp-x.dev" \
 AUCTION_SERVER_ADDR=172.18.0.103:50061 \
-KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-x.dev:8080/ssp/ssp-x/service/kv" \
+KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-x.dev:8080/ssp/usecase/bidding-and-auction/ssp-x/service/kv" \
 BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.18.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.18.0.202:50051","cloudPlatform":"LOCAL"}}' \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_sfe
@@ -220,7 +220,7 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.18.0.204  --network=privacy-sandbox-demos_adnetwork" \
 SELLER_ORIGIN_DOMAIN="https://privacy-sandbox-demos-ssp-y.dev" \
 AUCTION_SERVER_ADDR=172.18.0.203:50061 \
-KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-y.dev:8080/ssp/ssp-y/service/kv" \
+KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-y.dev:8080/ssp/usecase/bidding-and-auction/ssp-y/service/kv" \
 BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.18.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.18.0.202:50051","cloudPlatform":"LOCAL"}}' \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_sfe
@@ -275,3 +275,5 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
    - Query string: `https://privacy-sandbox-demos-news.dev/uc-ba?demo=true`
 
 ## **Implementation details**
+
+1. The entrypoint to the B&A demo is handled through a query parameter `/bidding-and-auction`.
