@@ -26,18 +26,18 @@ function generateAggregationKey(campaignId, publisherId) {
 class MultiTouchAttributionConversion {
   async run(data) {
     const {campaignId, purchaseValue} = data;
-    console.log('Purchase value for MTA Conversion: ' + purchaseValue);
+    console.log('[PSDemo] Purchase value for MTA Conversion', purchaseValue);
 
     // Read from Shared Storage
     const impressionContextSSKey = 'impressionContext' + campaignId;
-    console.log('Reading from Shared Storage. Key: ' + impressionContextSSKey);
+    console.log('[PSDemo] Reading from Shared Storage', impressionContextSSKey);
     let impressions = await sharedStorage.get(impressionContextSSKey);
 
     // Do not report if there isn't any impression
     if (!impressions) {
       console.log(
-        "Couldn't find impressions in Shared Storage. Key: " +
-          impressionContextSSKey,
+        "[PSDemo] Couldn't find impressions in Shared Storage",
+        impressionContextSSKey,
       );
       return;
     }
@@ -50,11 +50,12 @@ class MultiTouchAttributionConversion {
     const impressionsArray = impressions.split('|');
     const numberImpressions = impressionsArray.length;
 
-    console.log('MTA conversion - Found ' + numberImpressions + ' impressions');
+    console.log('[PSDemo] Found impressions', numberImpressions);
 
     // Custom logic for Multi Touch Attribution
-    // In this example, we are splitting the total purchase value of this campaign equally between all impressions
-    // (which might have duplicate publishers)
+    // In this example, we are splitting the total purchase value of this
+    // campaign equally between all impressions (which might have duplicate
+    // publishers)
 
     impressionsArray.forEach((impression) => {
       let impressionParsed = JSON.parse(impression);
@@ -68,13 +69,13 @@ class MultiTouchAttributionConversion {
         Math.floor(purchaseValue / numberImpressions) * SCALE_FACTOR;
 
       // Send an aggregatable report via the Private Aggregation API
-      console.log('contributeToHistogram ' + bucket + ' ' + value);
+      console.log('[PSDemo] contributeToHistogram', {bucket, value});
       privateAggregation.contributeToHistogram({bucket, value});
     });
 
     // Delete these impressions after the conversion and reporting
     await sharedStorage.delete(impressionContextSSKey);
-    console.log('Deleted Shared Storage. Key: ' + impressionContextSSKey);
+    console.log('[PSDemo] Deleted Shared Storage key', impressionContextSSKey);
   }
 }
 

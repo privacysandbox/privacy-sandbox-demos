@@ -36,12 +36,14 @@ class ReachMeasurementOperation {
     const {contentId} = data;
 
     // Read from Shared Storage
-    const key = 'has-reported-content: ' + contentId;
-    const hasReportedContent = (await sharedStorage.get(key)) === 'true';
+    const ssKey = `has-reported-content:${contentId}`;
+    const hasReportedContent = (await sharedStorage.get(ssKey)) === 'true';
 
     // Do not report if a report has been sent already
     if (hasReportedContent) {
-      console.log('Content ID already seen:  ' + key);
+      console.log('[PSDemo] Content ID already seen, not reporting', {
+        key: ssKey,
+      });
       return;
     }
 
@@ -49,14 +51,11 @@ class ReachMeasurementOperation {
     const bucket = convertContentIdToBucket(contentId);
     const value = 1 * SCALE_FACTOR;
 
-    console.log('bucket:', bucket);
-
     // Send an aggregatable report via the Private Aggregation API
-    console.log('contributeToHistogram:');
+    console.log('[PSDemo] Contributed to histogram', {bucket, value, ssKey});
     privateAggregation.contributeToHistogram({bucket, value});
     // Set the report submission status flag
-    console.log('Shared Storage key ' + key + ' stored');
-    await sharedStorage.set(key, true);
+    await sharedStorage.set(ssKey, true);
   }
 }
 
