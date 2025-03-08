@@ -1,6 +1,7 @@
 <%/* This is used to deliver a static ad for the multi-touch attribution use-case. */%>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
@@ -23,16 +24,17 @@
 
 <body>
   <p id="ad-label"></p>
-  <a width="<%= WIDTH %>"
-     height="<%= HEIGHT %>"
+  <a width="300"
+     height="250"
      target="_blank"
      rel="noopener noreferrer"
      href="<%= DESTINATION %>">
     <!-- Smaller to avoid scrollbar -->
-    <img width="<%= WIDTH * 0.98 %>"
-         height="<%= HEIGHT * 0.98 %>"
+    <img width="294"
+         height="245"
          loading="lazy"
          src="<%= CREATIVE %>">
   </a>
 </body>
+
 </html>

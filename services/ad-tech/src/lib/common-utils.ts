@@ -74,21 +74,20 @@ export const getStaticAdTemplateVariables = (
   requestQuery: any,
   requestHeaders: any,
 ) => {
-  const advertiser = requestQuery.advertiser?.toString() || HOSTNAME!;
+  // Default to blue running shoe ad, unless overriden in URL query.
+  const advertiser = requestQuery.advertiser?.toString() || SHOP_HOST!;
   const itemId = requestQuery.itemId?.toString() || '1f45f';
-  const width = requestQuery.width?.toString() || 300;
-  const height = requestQuery.height?.toString() || 250;
+  const registerSourceUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source`,
+  );
+  registerSourceUrl.searchParams.append('itemId', itemId);
+  registerSourceUrl.searchParams.append('advertiser', advertiser);
   /** TODO(sidsahoo): When and why does this need to be set to false? */
   const enableWriteImpression =
     requestQuery.enableWriteImpression?.toString() != 'false';
   const publisherHost = requestHeaders.referer
     ? new URL(requestHeaders.referer).hostname
     : NEWS_HOST!;
-  const registerSourceUrl = new URL(
-    `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source`,
-  );
-  registerSourceUrl.searchParams.append('itemId', itemId);
-  registerSourceUrl.searchParams.append('advertiser', advertiser);
   return {
     TITLE: `Your special ads from ${SHOP_HOST}`,
     DESTINATION: new URL(
@@ -98,8 +97,6 @@ export const getStaticAdTemplateVariables = (
     ATTRIBUTION_SRC: registerSourceUrl.toString(),
     PUBLISHER_ID: PUBLISHER_IDS[publisherHost] || '9999',
     CAMPAIGN_ID: 1234,
-    WIDTH: width,
-    HEIGHT: height,
     ENABLE_WRITE_IMPRESSION: enableWriteImpression,
   };
 };
