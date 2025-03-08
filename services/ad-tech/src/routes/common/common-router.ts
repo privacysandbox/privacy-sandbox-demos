@@ -17,7 +17,7 @@ import {
   DEMO_HOST_PREFIX,
   JAVASCRIPT_TEMPLATE_VARIABLES,
 } from '../../lib/constants.js';
-import {getTemplateVariables} from '../../lib/common-utils.js';
+import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 
 /**
  * This router is responsible for registering HTTP headers, preflight requests,
@@ -105,5 +105,5 @@ CommonRouter.options('*', (req: Request, res: Response) => {
 
 /** Index page, not commonly used in tests. */
 CommonRouter.get('/', async (req: Request, res: Response) => {
-  res.render('index', getTemplateVariables());
+  res.render('index', getEjsTemplateVariables());
 });

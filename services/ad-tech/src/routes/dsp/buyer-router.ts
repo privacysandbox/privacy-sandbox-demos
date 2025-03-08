@@ -13,7 +13,7 @@
 
 import express, {Request, Response} from 'express';
 import {HOSTNAME} from '../../lib/constants.js';
-import {getTemplateVariables} from '../../lib/common-utils.js';
+import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
   getInterestGroupBiddingAndAuction,
@@ -38,7 +38,7 @@ BuyerRouter.get(
   async (req: Request, res: Response) => {
     res.render(
       'dsp/dsp-advertiser-iframe',
-      getTemplateVariables('Join Ad Interest Group'),
+      getEjsTemplateVariables(/* title= */ 'Join Ad Interest Group'),
     );
   },
 );

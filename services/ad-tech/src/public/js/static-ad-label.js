@@ -12,14 +12,12 @@
  */
 
 /**
- * Where is this script used: This script is loaded inside the static ad frame
- * used in the single-touch attribution use-case demo.
+ * Where is this script used: This script is loaded inside static ad frames.
  *
  * What does this script do: This script adds a descriptive label to the ad
  * frame for demonstrative purposes.
  */
 (() => {
-  /** Adds a description for demonstrative purposes. */
   const addDescriptionToAdContainer = () => {
     const host = new URL(document.currentScript.src).hostname;
     document.addEventListener('DOMContentLoaded', async (e) => {
@@ -30,7 +28,7 @@
     });
   };
 
-  /** Main function */
+  /** Main function. */
   (() => {
     addDescriptionToAdContainer();
   })();

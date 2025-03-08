@@ -92,3 +92,16 @@ AdsRouter.get('/static-ads-for-mta', async (req: Request, res: Response) => {
   );
   res.render('dsp/static-ads-for-mta', templateVariables);
 });
+
+AdsRouter.get('/static-ads-for-ara', async (req: Request, res: Response) => {
+  const templateVariables = getStaticAdTemplateVariables(
+    req.query,
+    req.headers,
+  );
+  console.log(
+    '[AdsRouter] Loading static ad for ARA',
+    req.query,
+    templateVariables,
+  );
+  res.render('dsp/static-ads-for-ara', templateVariables);
+});

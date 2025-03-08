@@ -39,20 +39,8 @@
     });
   };
 
-  /** Adds a description for demonstrative purposes. */
-  const addDescriptionToAdContainer = () => {
-    const host = new URL(document.currentScript.src).hostname;
-    document.addEventListener('DOMContentLoaded', async (e) => {
-      const $adLabel = document.getElementById('ad-label');
-      if ($adLabel) {
-        $adLabel.innerText = `Static ad from ${host}`;
-      }
-    });
-  };
-
   /** Main function */
   (() => {
-    addDescriptionToAdContainer();
     measureUniqueReach();
   })();
 })();
