@@ -30,6 +30,4 @@ function scoreAd(
   };
 }
 
-function reportResult(auctionConfig, browserSignals) {
-  // sendReportTo(auctionConfig.seller + '/reporting?report=result');
-}
+function reportResult(auctionConfig, browserSignals) {}

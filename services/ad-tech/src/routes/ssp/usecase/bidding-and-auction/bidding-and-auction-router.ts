@@ -216,12 +216,10 @@ sspXRouter.get('/service/kv', (req, res) => {
 
   res.json({
     renderUrls: {
-      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
-        1, 2,
-      ],
-      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
-        1, 2,
-      ],
+      [new URL('/html/protected-audience-ad-x.html', DSP_X_ORIGIN).toString()]:
+        [1, 2],
+      [new URL('/html/protected-audience-ad-y.html', DSP_Y_ORIGIN).toString()]:
+        [1, 2],
     },
   });
 });
@@ -277,12 +275,10 @@ sspYRouter.get('/service/kv', (req, res) => {
       [new URL('/html/protected-audience-ad.html', DSP_B_ORIGIN).toString()]: [
         1, 2,
       ],
-      [new URL('/html/protected-audience-ad.html', DSP_X_ORIGIN).toString()]: [
-        1, 2,
-      ],
-      [new URL('/html/protected-audience-ad.html', DSP_Y_ORIGIN).toString()]: [
-        1, 2,
-      ],
+      [new URL('/html/protected-audience-ad-x.html', DSP_X_ORIGIN).toString()]:
+        [1, 2],
+      [new URL('/html/protected-audience-ad-y.html', DSP_Y_ORIGIN).toString()]:
+        [1, 2],
     },
   });
 });

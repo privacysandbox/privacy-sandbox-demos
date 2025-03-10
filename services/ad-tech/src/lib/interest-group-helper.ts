@@ -271,29 +271,16 @@ export const getInterestGroup = (
 export const getInterestGroupBiddingAndAuction = (
   targetingContext: TargetingContext,
 ): InterestGroup => {
-  const creative: string = new URL(
-    `html/protected-audience-ad.html`,
-    `https://${HOSTNAME}:${EXTERNAL_PORT}`,
-  ).toString();
-  const userBiddingSignals: {[key: string]: string} = {
-    'user-signal-key-1': 'user-signal-value-1',
-  };
   const hostString: string = HOSTNAME ?? 'dsp-x';
-  const dspName: string = extractDspPart(hostString);
-  if (targetingContext.additionalContext) {
-    for (const [key, values] of Object.entries(
-      targetingContext.additionalContext,
-    )) {
-      userBiddingSignals[key] = JSON.stringify(values);
-    }
-  }
+  const dspName: string = extractDspName(hostString);
+  const creative: string = buildCreativeURL(hostString);
   return {
     name: `${dspName}-ig`,
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
       `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/bidding-logic.js`,
     ).toString(),
-    trustedBiddingSignalsKeys: ['a', 'b'],
+    trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
     updateURL: constructInterestGroupUpdateUrl(targetingContext),
     ads: [
       {
@@ -314,10 +301,29 @@ export const getInterestGroupBiddingAndAuction = (
   };
 };
 
-function extractDspPart(str: string): string {
+function extractDspName(str: string): string {
   const match = str.match(/([^-]+-[a-z])\.dev$/); // Matches "dsp-x.dev", "dsp-y.dev", etc.
   if (match) {
     return match[1];
   }
   return ''; // Return null if no match is found
+}
+
+function buildCreativeURL(hostname: string) {
+  if (extractDspName(hostname).includes('x')) {
+    return new URL(
+      `html/protected-audience-ad-x.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  } else if (extractDspName(hostname).includes('y')) {
+    return new URL(
+      `html/protected-audience-ad-y.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  } else {
+    return new URL(
+      `html/protected-audience-ad.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  }
 }

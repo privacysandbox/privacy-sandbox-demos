@@ -24,7 +24,7 @@ function generateBid(
   return {
     bid: Math.ceil(Math.random() * 100),
     render:
-      'https://privacy-sandbox-demos-dsp-x.dev/html/protected-audience-ad.html',
+      'https://privacy-sandbox-demos-dsp-a.dev/html/protected-audience-ad.html',
     allowComponentAuction: !!browserSignals.topLevelSeller,
   };
 }

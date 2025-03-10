@@ -57,8 +57,10 @@ BuyerRouter.get('/service/kv', (req, res) => {
 
   res.json({
     keys: {
-      'a': 123,
-      'b': 456,
+      'isActive': 0,
+      'minBid': 1,
+      'maxBid': 100,
+      'multiplier': 0,
     },
   });
 });
