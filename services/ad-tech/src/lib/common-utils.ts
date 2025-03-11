@@ -74,14 +74,16 @@ export const getStaticAdTemplateVariables = (
   requestQuery: any,
   requestHeaders: any,
 ) => {
-  // Default to blue running shoe ad, unless overriden in URL query.
-  const advertiser = requestQuery.advertiser?.toString() || SHOP_HOST!;
-  const itemId = requestQuery.itemId?.toString() || '1f45f';
+  // Assemble URL for registering attribution source with ARA, and include all
+  // query parameters from the ad URL in source registration context.
   const registerSourceUrl = new URL(
     `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source`,
   );
-  registerSourceUrl.searchParams.append('itemId', itemId);
-  registerSourceUrl.searchParams.append('advertiser', advertiser);
+  for (const [key, value] of Object.entries(requestQuery)) {
+    registerSourceUrl.searchParams.append(key, value as string);
+  }
+  // Default to blue running shoe ad, unless overriden in URL query.
+  const itemId = requestQuery.itemId?.toString() || '1f45f';
   /** TODO(sidsahoo): When and why does this need to be set to false? */
   const enableWriteImpression =
     requestQuery.enableWriteImpression?.toString() != 'false';

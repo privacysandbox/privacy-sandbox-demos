@@ -90,10 +90,6 @@ app.use(express.static('src/public'));
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
-/** Template for DSP tag script URL. */
-const constructDspTagUrl = (host: string) =>
-  new URL(`https://${host}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`);
-
 /** Assembles an attribution trigger URL with conversion context. */
 const constructConversionTriggerUrl = (host: string, order: Order): string => {
   const triggerUrl = new URL(`https://${host}:${EXTERNAL_PORT}`);
@@ -109,8 +105,7 @@ const constructConversionTriggerUrl = (host: string, order: Order): string => {
   return triggerUrl.toString();
 };
 
-// TODO(sinnew): This logic of separating event-level and summary reports
-// should be handled on the ad-tech server, not on the advertiser site.
+// TODO(sidsahoo): Discuss use-case design for Attribution Reporting.
 const getEventTriggerUrl = (itemId: string, conversionType: string) => {
   const item = getItem(itemId);
   const eventTriggerUrl = new URL(`https://${DSP_HOST}:${EXTERNAL_PORT}`);
@@ -126,11 +121,21 @@ const getEventTriggerUrl = (itemId: string, conversionType: string) => {
 app.locals = {
   title: SHOP_DETAIL,
   displayCategory,
-  DSP_TAG_URL: constructDspTagUrl(DSP_HOST!),
-  DSP_A_TAG_URL: constructDspTagUrl(DSP_A_HOST!),
-  DSP_B_TAG_URL: constructDspTagUrl(DSP_B_HOST!),
-  DSP_X_TAG_URL: constructDspTagUrl(DSP_X_HOST!),
-  DSP_Y_TAG_URL: constructDspTagUrl(DSP_Y_HOST!),
+  DSP_TAG_URL: new URL(
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  ),
+  DSP_A_TAG_URL: new URL(
+    `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  ),
+  DSP_B_TAG_URL: new URL(
+    `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  ),
+  DSP_X_TAG_URL: new URL(
+    `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  ),
+  DSP_Y_TAG_URL: new URL(
+    `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  ),
   MTA_CONVERSION_TAG_URL: new URL(
     `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/multi-touch-attribution/mta-conversion-tag.js`,
   ).toString(),

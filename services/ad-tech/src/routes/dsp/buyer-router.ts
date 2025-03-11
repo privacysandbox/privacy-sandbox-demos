@@ -34,10 +34,10 @@ export const BuyerRouter = express.Router();
 // ************************************************************************
 /** Iframe document loaded by dsp-tag.js to join ad interest group. */
 BuyerRouter.get(
-  '/dsp-advertiser-iframe.html',
+  '/join-ad-interest-group.html',
   async (req: Request, res: Response) => {
     res.render(
-      'dsp/dsp-advertiser-iframe',
+      'dsp/join-ad-interest-group',
       getEjsTemplateVariables(/* title= */ 'Join Ad Interest Group'),
     );
   },

@@ -102,12 +102,12 @@
     </div>
     <script>
       function addToCart({size, quantity}) {
-        const url = new URL('<%- getEventTriggerUrl(item.id, "add-to-cart") %>')
-        url.searchParams.append('size', size)
-        url.searchParams.append('quantity', quantity)
-        const itemPrice = url.searchParams.get('price')
-        url.searchParams.append('gross', itemPrice * quantity)
-        window.fetch(url, {
+        const registerSourceUrl = new URL('<%- getEventTriggerUrl(item.id, "add-to-cart") %>')
+        registerSourceUrl.searchParams.append('size', size)
+        registerSourceUrl.searchParams.append('quantity', quantity)
+        const itemPrice = registerSourceUrl.searchParams.get('price')
+        registerSourceUrl.searchParams.append('gross', itemPrice * quantity)
+        window.fetch(registerSourceUrl, {
           mode: "no-cors",
           keepalive: true,
           attributionReporting: {

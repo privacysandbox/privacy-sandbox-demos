@@ -76,7 +76,7 @@
       // Manually attach advertiser if missing.
       src.searchParams.append('advertiser', location.hostname);
     }
-    // Append query params from page URL.
+    // Append query params from page URL, may override 'advertiser'.
     const currentUrl = new URL(location.href);
     for (const [key, value] of currentUrl.searchParams) {
       src.searchParams.append(key, value);
@@ -96,7 +96,7 @@
      */
     injectIframe(
       /* src= */ getServerUrlWithPageContext(
-        /* pathname= */ 'dsp/dsp-advertiser-iframe.html',
+        /* pathname= */ 'dsp/join-ad-interest-group.html',
       ),
       /* options= */ {
         allow: 'join-ad-interest-group',

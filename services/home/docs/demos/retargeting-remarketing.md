@@ -161,7 +161,7 @@ dynamically injects an iframe in the DSP's origin to the advertiser's page.
 <iframe
   width="1"
   height="1"
-  src="https://privacy-sandbox-demos-dsp.dev/dsp/dsp-advertiser-iframe.html?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
+  src="https://privacy-sandbox-demos-dsp.dev/dsp/join-ad-interest-group.html?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
   allow="join-ad-interest-group"
 ></iframe>
 ```
