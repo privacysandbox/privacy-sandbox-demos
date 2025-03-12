@@ -59,8 +59,24 @@ AdsRouter.get('/video-ads', async (req: Request, res: Response) => {
 /** Used as render URL in interest groups for multi piece ads. */
 AdsRouter.get('/multi-piece-ads', async (req: Request, res: Response) => {
   console.log('[AdsRouter] Loading multi piece ad', req.query);
-  res.render('dsp/usecase/multi-piece/container');
+  res.render('multi-piece-ads');
 });
+
+AdsRouter.get(
+  '/component-ads-for-multi-piece',
+  async (req: Request, res: Response) => {
+    const templateVariables = getStaticAdTemplateVariables(
+      req.query,
+      req.headers,
+    );
+    console.log(
+      '[AdsRouter] Loading component ad for multi-piece',
+      req.query,
+      templateVariables,
+    );
+    res.render('component-ads-for-multi-piece', templateVariables);
+  },
+);
 
 // ************************************************************************
 // HTTP handlers for static ads

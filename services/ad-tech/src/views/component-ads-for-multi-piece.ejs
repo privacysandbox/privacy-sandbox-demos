@@ -1,4 +1,4 @@
-<%/* This is used to deliver a static ad for the multi-touch attribution use-case. */%>
+<%/* This is used in fenced-frames to deliver a single component ad of multi-piece ads. */%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,23 +13,17 @@
         href="/css/ad-frame.css" />
   <link rel="stylesheet"
         href="/css/ad-label.css" />
-  <script src="/js/dsp/static-ad-label.js"></script>
-  <script src="/js/dsp/usecase/multi-touch-attribution/write-impression-context-to-shared-storage.js"
-          data-campaign-id="<%= CAMPAIGN_ID %>"
-          data-publisher-id="<%= PUBLISHER_ID %>"
-  ></script>
 </head>
 
 <body>
-  <p id="ad-label"></p>
-  <a width="300"
-     height="250"
+  <a width="60"
+     height="50"
      target="_blank"
      rel="noopener noreferrer"
      href="<%= DESTINATION %>">
     <!-- Smaller to avoid scrollbar -->
-    <img width="294"
-         height="245"
+    <img width="59"
+         height="49"
          loading="lazy"
          src="<%= CREATIVE %>">
   </a>

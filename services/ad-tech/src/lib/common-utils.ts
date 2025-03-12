@@ -84,9 +84,6 @@ export const getStaticAdTemplateVariables = (
   }
   // Default to blue running shoe ad, unless overriden in URL query.
   const itemId = requestQuery.itemId?.toString() || '1f45f';
-  /** TODO(sidsahoo): When and why does this need to be set to false? */
-  const enableWriteImpression =
-    requestQuery.enableWriteImpression?.toString() != 'false';
   const publisherHost = requestHeaders.referer
     ? new URL(requestHeaders.referer).hostname
     : NEWS_HOST!;
@@ -99,7 +96,6 @@ export const getStaticAdTemplateVariables = (
     ATTRIBUTION_SRC: registerSourceUrl.toString(),
     PUBLISHER_ID: PUBLISHER_IDS[publisherHost] || '9999',
     CAMPAIGN_ID: 1234,
-    ENABLE_WRITE_IMPRESSION: enableWriteImpression,
   };
 };
 
