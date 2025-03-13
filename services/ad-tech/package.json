@@ -6,12 +6,15 @@
   "type": "module",
   "scripts": {
     "start": "npm run attestation && npm run build && node ./build/main.js",
-    "build": "tsc && cp -r src/views build/",
+    "build": "tsc && cp -r src/views build/ && npm run copy-proto",
     "ncu": "npx npm-check-updates -u",
     "fmt": "pre-commit run --all-files",
-    "attestation": "if [[ -z \"$npm_config_service\" || -z \"$npm_config_project_env\" ]]; then echo \"Warning: npm_config_service and npm_config_project_env not set. Skipping attestation file copy.\"; else cp -f src/public/.well-known/privacy-sandbox-attestations.json.\"$npm_config_service\".\"$npm_config_project_env\" src/public/.well-known/privacy-sandbox-attestations.json; fi"
+    "attestation": "if [[ -z \"$npm_config_service\" || -z \"$npm_config_project_env\" ]]; then echo \"Warning: npm_config_service and npm_config_project_env not set. Skipping attestation file copy.\"; else cp -f src/public/.well-known/privacy-sandbox-attestations.json.\"$npm_config_service\".\"$npm_config_project_env\" src/public/.well-known/privacy-sandbox-attestations.json; fi",
+    "copy-proto": "mkdir -p build/routes/ssp/usecase/bidding-and-auction/server/proto; cp -r src/routes/ssp/usecase/bidding-and-auction/server/proto/*.proto build/routes/ssp/usecase/bidding-and-auction/server/proto"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.12.0",
+    "@grpc/proto-loader": "^0.7.13",
     "cbor": "^9.0.2",
     "cors": "^2.8.5",
     "ejs": "^3.1.9",

@@ -51,7 +51,7 @@ BiddingSignalsRouter.get(
     const signalsFromKeyValueStore = trustedBiddingSignalStore.getMultiple(
       queryKeys!,
     );
-    // Return perInterestGroupData for requested interes groups.
+    // Return perInterestGroupData for requested interest groups.
     const interestGroupNames = req.query
       .interestGroupNames!.toString()
       .split(',');

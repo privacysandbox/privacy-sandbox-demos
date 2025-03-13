@@ -103,17 +103,5 @@
         browsingTopics: '',
       },
     );
-
-    /** Additional iframes to be injected go here... */
-
-    /** Test only */
-    if (false) {
-      // Private Aggregation test
-      injectIframe(
-        /* src= */ getServerUrlWithPageContext(
-          /* pathname= */ 'dsp/test-private-aggregation.html',
-        ),
-      );
-    }
   })();
 })();
