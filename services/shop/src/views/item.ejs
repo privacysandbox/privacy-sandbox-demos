@@ -126,7 +126,7 @@
       }
       // Inject DSP script tags for audience targeting.
       switch ('<%= usecase %>') {
-        case 'mixedmode':
+        case 'bidding-and-auction':
           document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'))
           document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'))
         default: 

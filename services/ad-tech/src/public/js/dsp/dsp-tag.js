@@ -76,7 +76,7 @@
       // Manually attach advertiser if missing.
       src.searchParams.append('advertiser', location.hostname);
     }
-    // Append query params from page URL, may override 'advertiser'.
+    // Append query params from page URL.
     const currentUrl = new URL(location.href);
     for (const [key, value] of currentUrl.searchParams) {
       src.searchParams.append(key, value);

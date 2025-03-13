@@ -194,10 +194,12 @@ export const BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST = new Map([
 // ****************************************************************************
 /** Variables referenced in static JavaScript template files. */
 export const JAVASCRIPT_TEMPLATE_VARIABLES = {
-  DEMO_HOST_PREFIX,
   AD_SERVER_HOST,
   ADVERTISER_CONTEXTUAL,
+  DEMO_HOST_PREFIX,
+  EXTERNAL_PORT,
   HOSTNAME,
+  SHOP_HOST,
 };
 
 // ****************************************************************************

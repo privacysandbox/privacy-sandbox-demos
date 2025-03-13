@@ -72,7 +72,7 @@ BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   const targetingContext = assembleTargetingContext(req.query);
   // TODO: Generalize to accommodate additional use cases.
-  if ('mixedmode' === targetingContext.usecase) {
+  if ('bidding-and-auction' === targetingContext.usecase) {
     res.json(getInterestGroupBiddingAndAuction(targetingContext));
   } else {
     res.json(getInterestGroup(targetingContext));

@@ -81,8 +81,8 @@ AdsRouter.get(
 // ************************************************************************
 // HTTP handlers for static ads
 // ************************************************************************
-/** Delivers a static ad for reach measurement. */
-AdsRouter.get('/static-ads-for-reach', async (req: Request, res: Response) => {
+/** Delivers a static ad. */
+AdsRouter.get('/static-ads-*', async (req: Request, res: Response) => {
   const templateVariables = getStaticAdTemplateVariables(
     req.query,
     req.headers,
@@ -92,32 +92,5 @@ AdsRouter.get('/static-ads-for-reach', async (req: Request, res: Response) => {
     req.query,
     templateVariables,
   );
-  res.render('dsp/static-ads-for-reach', templateVariables);
-});
-
-/** Used as render URL for Multi Touch Attribution ads. */
-AdsRouter.get('/static-ads-for-mta', async (req: Request, res: Response) => {
-  const templateVariables = getStaticAdTemplateVariables(
-    req.query,
-    req.headers,
-  );
-  console.log(
-    '[AdsRouter] Loading static ad for multi-touch attribution',
-    req.query,
-    templateVariables,
-  );
-  res.render('dsp/static-ads-for-mta', templateVariables);
-});
-
-AdsRouter.get('/static-ads-for-ara', async (req: Request, res: Response) => {
-  const templateVariables = getStaticAdTemplateVariables(
-    req.query,
-    req.headers,
-  );
-  console.log(
-    '[AdsRouter] Loading static ad for ARA',
-    req.query,
-    templateVariables,
-  );
-  res.render('dsp/static-ads-for-ara', templateVariables);
+  res.render(`dsp${req.path}`, templateVariables);
 });

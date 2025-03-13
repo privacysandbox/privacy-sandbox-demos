@@ -91,8 +91,10 @@ export const getStaticAdTemplateVariables = (
     TITLE: `Your special ads from ${SHOP_HOST}`,
     DESTINATION: new URL(
       `https://${SHOP_HOST}:${EXTERNAL_PORT}/items/${itemId}`,
-    ),
-    CREATIVE: new URL(`https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`),
+    ).toString(),
+    CREATIVE: new URL(
+      `https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`,
+    ).toString(),
     ATTRIBUTION_SRC: registerSourceUrl.toString(),
     PUBLISHER_ID: PUBLISHER_IDS[publisherHost] || '9999',
     CAMPAIGN_ID: 1234,
