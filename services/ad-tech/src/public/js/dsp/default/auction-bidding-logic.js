@@ -29,16 +29,16 @@
 CURR_HOST = '';
 AUCTION_ID = '';
 /** Logs to console. */
-// function log(message, context) {
-//   console.log(
-//     '[PSDemo] Buyer',
-//     CURR_HOST,
-//     'bidding logic',
-//     AUCTION_ID,
-//     message,
-//     JSON.stringify({context}, ' ', ' '),
-//   );
-// }
+function log(message, context) {
+  console.log(
+    '[PSDemo] Buyer',
+    CURR_HOST,
+    'bidding logic',
+    AUCTION_ID,
+    message,
+    JSON.stringify({context}, ' ', ' '),
+  );
+}
 
 /** Logs execution context for demonstrative purposes. */
 function logContextForDemo(message, context) {
