@@ -148,12 +148,6 @@ app.get('/items/:id', async (req: Request, res: Response) => {
   let DSP_X_TAG_URL;
   let DSP_Y_TAG_URL;
   if (usecase == 'bidding-and-auction') {
-    DSP_A_TAG_URL = new URL(
-      `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-    );
-    DSP_B_TAG_URL = new URL(
-      `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-    );
     DSP_X_TAG_URL = new URL(
       `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
     );

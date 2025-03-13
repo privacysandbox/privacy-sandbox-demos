@@ -300,7 +300,7 @@ export const getInterestGroupBiddingAndAuction = (
     ],
   };
 };
-
+// Regex function to identify which DSP is the origin to set the owner properly
 function extractDspName(str: string): string {
   const match = str.match(/([^-]+-[a-z])\.dev$/); // Matches "dsp-x.dev", "dsp-y.dev", etc.
   if (match) {
@@ -309,6 +309,8 @@ function extractDspName(str: string): string {
   return ''; // Return null if no match is found
 }
 
+// Function to set the creative URL to the correct DSP
+//TODO: Pull from KV
 function buildCreativeURL(hostname: string) {
   if (extractDspName(hostname).includes('x')) {
     return new URL(
