@@ -109,7 +109,7 @@ end
 ### Click-Through Conversion Journey
 
 1. Clear attribution data in chrome://attribution-internals/
-2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/iframe-static-img-ad)
+2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/single-touch-attribution-html)
 
 - ice skate shoes image will be displayed
 
@@ -124,7 +124,7 @@ end
 ### View-Through Conversion Journey
 
 1. Clear attribution data in chrome://attribution-internals/
-2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/iframe-static-img-ad)
+2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/single-touch-attribution-html)
 
 - ice skate shoes image will be displayed
 
@@ -218,7 +218,7 @@ function addToCart() {
     eventSourceEligible: false,
     triggerEligible: true,
   };
-  const url = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?conversion-type=add-to-cart"
+  const url = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?conversionType=add-to-cart"
   window.fetch(url, {
     mode: "no-cors",  keepalive: true, attributionReporting
   });

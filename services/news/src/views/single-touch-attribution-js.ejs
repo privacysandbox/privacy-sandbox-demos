@@ -13,35 +13,18 @@
   <link rel="icon"
         href="/img/spy.svg" />
   <script src="/js/main.js"></script>
-  <script src="/js/main.js"></script>
-  <script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"
-  ></script>
-  <script>
-    function adClick() {
-      console.log('adClick navigate to the specific item: static');
-      // Encode the attributionsrc URL in case it contains special characters, such as '=', that will
-      // cause the parameter to be improperly parsed
-      const encoded = encodeURIComponent("<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/attribution/register-source?advertiser=${SHOP_HOST}&amp;id=u26f8` %>");
-      const url = "<%= `https://${SHOP_HOST}:${EXTERNAL_PORT}/items/26f8` %>";
-      window.open(
-        url,
-        "_blank",
-        `attributionsrc=${encoded}`);
-    }
-    function navigateToShop() {
-      console.log('navigateToShop navigate to the shop');
-      const url = "<%= `https://${SHOP_HOST}:${EXTERNAL_PORT}` %>";
-      window.open(url)
-    }
-  </script>
 </head>
 
 <body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-3/5 bg-slate-50 pt-8">
   <%- include('components/header') %>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
+      <b>Use-case: Single-touch attribution</b>
       <p><%= TEXT_LOREM %></p>
-      <%- include('components/static-img-ad') %>
+      <div class="w-full flex flex-row justify-center ad-row ad-slot">
+        <iframe src="<%= `https://${DSP_HOST}/ads/static-ads-for-ara-js?advertiser=${SHOP_HOST}&itemId=1f45e`%>"></iframe>
+      </div>
+      <a href="<%= `https://${SHOP_HOST}:${EXTERNAL_PORT}` %>">Navigate to the shop page without ad click</a>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>

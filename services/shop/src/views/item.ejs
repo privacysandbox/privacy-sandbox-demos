@@ -13,24 +13,39 @@
   <body>
     <header class="flex flex-col">
       <nav class="flex justify-between lg:py-6 py-2 border-b-2">
-        <h1 class="text-slate-800 text-4xl font-bold"><a href="/">Shopping DEMO</a></h1>
+        <h1 class="text-slate-800 text-4xl font-bold">
+          <a href="/">Shopping DEMO</a>
+        </h1>
         <a class="text-4xl px-2" href="/cart">🛒</a>
       </nav>
     </header>
     <div class="flex flex-col gap-6">
       <main class="grid lg:grid-cols-2">
         <section class="">
-          <img alt="<%= item.name %>" fetchpriority="high" width="500" height="500" src="/image/svg/emoji_u<%= item.id %>.svg" />
+          <img alt="<%= item.name %>"
+               fetchpriority="high"
+               width="500"
+               height="500"
+               src="/image/svg/emoji_u<%= item.id %>.svg"
+          />
         </section>
         <section class="">
           <h2 class="text-2xl font-bold text-slate-800"><%= item.name %></h2>
           <div class="flex gap-4 text-slate-500 border-b py-4">
-            <span>$<%= item.price %>.00</span><span>/</span><span><%= displayCategory(item.category) %></span>
+            <span>$<%= item.price %>.00</span>
+            <span>/</span>
+            <span><%= displayCategory(item.category) %></span>
           </div>
           <form method="post" action="/cart" class="flex flex-col gap-4">
             <section class="flex border-b py-4">
-              <input type="hidden" value="<%= item.id %>" name="id" /><label for="size" class="basis-1/6 text-slate-500">Size</label
-              ><select id="size" name="size" class="basis-5/6 text-slate-800">
+              <input type="hidden"
+                     value="<%= item.id %>"
+                     name="id"
+              />
+              <label for="size"
+                     class="basis-1/6 text-slate-500"
+              >Size</label>
+              <select id="size" name="size" class="basis-5/6 text-slate-800">
                 <option value="22.0">22.0cm</option>
                 <option value="22.5">22.5cm</option>
                 <option value="23.0">23.0cm</option>
@@ -48,8 +63,10 @@
               </select>
             </section>
             <section class="flex border-b py-4">
-              <label for="quantity" class="basis-1/6 text-slate-500">Quantity</label
-              ><select id="quantity" name="quantity" class="basis-5/6 text-slate-800">
+              <label for="quantity"
+                     class="basis-1/6 text-slate-500"
+              >Quantity</label>
+              <select id="quantity" name="quantity" class="basis-5/6 text-slate-800">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -73,7 +90,10 @@
               </p>
             </section>
             <section class="flex justify-center">
-              <button onclick="addToCart()" type="submit" class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white">ADD TO CART</button>
+              <button type="submit"
+                      class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white"
+                      onclick="addToCart({size: size.value, quantity: quantity.value})"
+              >ADD TO CART</button>
             </section>
           </form>
         </section>
@@ -81,15 +101,20 @@
       <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
     </div>
     <script>
-      function addToCart() {
-        const attributionReporting = {
-          eventSourceEligible: false,
-          triggerEligible: true,
-        };
-        const url = '<%= getEventTriggerUrl("add-to-cart") %>'
-        window.fetch(url, {
-          mode: "no-cors",  keepalive: true, attributionReporting
-        });
+      function addToCart({size, quantity}) {
+        const registerSourceUrl = new URL('<%- getEventTriggerUrl(item.id, "add-to-cart") %>')
+        registerSourceUrl.searchParams.append('size', size)
+        registerSourceUrl.searchParams.append('quantity', quantity)
+        const itemPrice = registerSourceUrl.searchParams.get('price')
+        registerSourceUrl.searchParams.append('gross', itemPrice * quantity)
+        window.fetch(registerSourceUrl, {
+          mode: "no-cors",
+          keepalive: true,
+          attributionReporting: {
+            eventSourceEligible: false,
+            triggerEligible: true,
+          },
+        })
       }
       function buildDspScriptTag(tagUrl) {
         const scriptEl = document.createElement('script')
@@ -99,14 +124,15 @@
         scriptEl.dataset.itemId = '<%= item.id %>'
         return scriptEl
       }
-      switch ('<%= usecase %>'){
-        case 'ba':
-          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
+      // Inject DSP script tags for audience targeting.
+      switch ('<%= usecase %>') {
+        case 'bidding-and-auction':
+          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'))
         default: 
-          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'))
       }
     </script>
   </body>

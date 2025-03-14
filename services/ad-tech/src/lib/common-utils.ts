@@ -69,42 +69,40 @@ export const getInterestGroupAdTemplateVariables = (requestQuery: any) => {
   };
 };
 
-/** Returns variables for use in the MTA template. */
+/** Returns variables for use in the static ad templates. */
 export const getStaticAdTemplateVariables = (
   requestQuery: any,
   requestHeaders: any,
 ) => {
-  const getPublisherId = (requestHeaders: any) => {
-    const refererUrl = new URL(
-      requestHeaders.referer || `https://${NEWS_HOST}/`,
-    );
-    return PUBLISHER_IDS[refererUrl.hostname] || '9999';
-  };
-
+  // Assemble URL for registering attribution source with ARA, and include all
+  // query parameters from the ad URL in source registration context.
+  const registerSourceUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source`,
+  );
+  for (const [key, value] of Object.entries(requestQuery)) {
+    registerSourceUrl.searchParams.append(key, value as string);
+  }
+  // Default to blue running shoe ad, unless overriden in URL query.
   const itemId = requestQuery.itemId?.toString() || '1f45f';
-
-  const width = requestQuery.width?.toString() || 300;
-  const height = requestQuery.height?.toString() || 250;
-
-  const enableWriteImpression =
-    requestQuery.enableWriteImpression?.toString() != 'false';
-
+  const publisherHost = requestHeaders.referer
+    ? new URL(requestHeaders.referer).hostname
+    : NEWS_HOST!;
   return {
     TITLE: `Your special ads from ${SHOP_HOST}`,
     DESTINATION: new URL(
       `https://${SHOP_HOST}:${EXTERNAL_PORT}/items/${itemId}`,
-    ),
-    CREATIVE: new URL(`https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`),
-    PUBLISHER_ID: getPublisherId(requestHeaders),
+    ).toString(),
+    CREATIVE: new URL(
+      `https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`,
+    ).toString(),
+    ATTRIBUTION_SRC: registerSourceUrl.toString(),
+    PUBLISHER_ID: PUBLISHER_IDS[publisherHost] || '9999',
     CAMPAIGN_ID: 1234,
-    WIDTH: width,
-    HEIGHT: height,
-    ENABLE_WRITE_IMPRESSION: enableWriteImpression,
   };
 };
 
 /** Returns EJS template variables for EJS files. */
-export const getTemplateVariables = (titleMessage: string = '') => {
+export const getEjsTemplateVariables = (titleMessage: string = '') => {
   const hostDetails = {
     HOSTNAME,
     EXTERNAL_PORT,

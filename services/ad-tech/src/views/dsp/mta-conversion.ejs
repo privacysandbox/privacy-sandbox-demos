@@ -1,5 +1,13 @@
-<html></html>
-    <header>
-        <script src="/js/dsp/mta-conversion.js" id="mta-conversion" data-campaign-id="<%= `${campaignId}` %>" data-purchase-value="<%= `${purchaseValue}` %>"></script>
-    </header>
+<%/* This is used in buyer iframes to trigger multi-touch attribution. */%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="/js/dsp/usecase/multi-touch-attribution/mta-conversion.js"
+          id="mta-conversion"
+          data-campaign-id="<%= `${campaignId}` %>"
+          data-purchase-value="<%= `${purchaseValue}` %>"
+  ></script>
+</head>
+
 </html>

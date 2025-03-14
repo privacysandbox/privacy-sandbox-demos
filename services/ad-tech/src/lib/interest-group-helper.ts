@@ -210,39 +210,29 @@ const getMultiPieceAdForRequest = (
 /** Returns adComponents array for the multi-piece container. */
 const getAdComponentsForRequest = (
   targetingContext: TargetingContext,
-): Array<InterestGroupAd> => {
-  const {itemId} = targetingContext;
+): InterestGroupAd[] => {
+  const itemId = targetingContext.itemId || '1f45f';
   const numAdComponents = 5;
-
-  //get first numAdComponents IDs from KNOWN_SHOP_ITEM_TAGS_BY_ID
-  let items = Object.entries(KNOWN_SHOP_ITEM_TAGS_BY_ID)
-    .slice(0, numAdComponents)
-    .map((entry) => entry[0]);
-
-  //if the current item is not in the default list, it is added to this list
-  if (itemId && items.indexOf(itemId) == -1) {
-    items[0] = itemId;
+  const knownItemIds = Object.keys(KNOWN_SHOP_ITEM_TAGS_BY_ID);
+  const items = [itemId];
+  while (items.length < numAdComponents) {
+    const randomIndex = Math.floor(Math.random() * knownItemIds.length);
+    const randomItem = knownItemIds[randomIndex];
+    if (items.includes(randomItem)) {
+      continue;
+    } else {
+      items.push(randomItem);
+    }
   }
-
-  let ads: Array<InterestGroupAd> = [];
-
-  items.forEach((itemId) => {
-    const renderUrl = new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/static-ads?`,
-    );
-
-    renderUrl.searchParams.append('itemId', itemId);
-    renderUrl.searchParams.append('width', '50');
-    renderUrl.searchParams.append('height', '50');
-    renderUrl.searchParams.append('enableWriteImpression', 'false');
-
-    const ad: InterestGroupAd = {
-      renderURL: `${renderUrl.toString()}`,
-    };
-
-    ads.push(ad);
-  });
-
+  const ads: InterestGroupAd[] = [];
+  for (const item of items) {
+    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`);
+    renderUrl.pathname = '/ads/component-ads-for-multi-piece';
+    renderUrl.searchParams.append('itemId', item);
+    ads.push({
+      renderURL: renderUrl.toString(),
+    });
+  }
   return ads;
 };
 

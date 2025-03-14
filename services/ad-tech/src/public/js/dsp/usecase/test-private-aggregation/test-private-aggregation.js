@@ -16,14 +16,13 @@
  */
 
 /**
- * This script needs to be refacted into a specific use-case.
+ * TODO: This script needs to be refactored into a specific use-case.
  *
  * This is a simple script to test aggregate reporting with Shared Storage and
  * Private Aggregation. This script is loaded inside the
  * dsp/test-private-aggregation.html iframe, and invokes a Shared Storage
  * worklet.
  */
-
 (async () => {
   let bucket = document.currentScript.getAttribute('bucket');
   let cloudEnv = document.currentScript.getAttribute('cloudenv');
@@ -41,7 +40,7 @@
   };
 
   await window.sharedStorage.worklet.addModule(
-    '/js/dsp/private-aggregation-worklet.js',
+    '/js/dsp/usecase/test-private-aggregation/private-aggregation-worklet.js',
   );
   await window.sharedStorage.run('test-private-aggregation', privateAggCloud);
 })();

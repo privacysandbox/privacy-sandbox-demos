@@ -13,30 +13,17 @@
   <link rel="icon"
         href="/img/spy.svg" />
   <script src="/js/main.js"></script>
-  <script>
-    // Publishers configure the ad units available on the page.
-    window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
-      adUnits: [{
-        code: 'displayFencedFrameAdUnit',
-        auctionId: `PUB-${crypto.randomUUID()}`,
-        divId: 'display-ad--fenced-frame',
-        adType: 'DISPLAY',
-        size: [300, 250],
-        isFencedFrame: true,
-      }],
-    });
-  </script>
-  <script async defer
-          src="<%= SSP_TAG_URL %>"
-  ></script>
+</head>
 
 <body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
   <%- include('components/header') %>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
-      <b>Use-case: Basic usage of Protected Audience</b>
+      <b>Use-case: Multi-touch attribution</b>
       <p><%= TEXT_LOREM %></p>
-      <%- include('components/display-ads') %>
+      <div class="w-full flex flex-row justify-center ad-row ad-slot">
+        <iframe src="<%= `https://${DSP_HOST}/ads/static-ads-for-mta?advertiser=${SHOP_HOST}&itemId=1f45e`%>"></iframe>
+      </div>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
       <p><%= TEXT_LOREM %></p>
