@@ -24,7 +24,7 @@ function generateBid(
   return {
     bid: 500,
     render:
-      'https://privacy-sandbox-demos-dsp-y.dev/html/protected-audience-ad-y.html',
+      '<%= https://${DSP_Y_HOST}:${EXTERNAL_PORT}/html/protected-audience-ad-y.html%>',
     allowComponentAuction: !!browserSignals.topLevelSeller,
   };
 }

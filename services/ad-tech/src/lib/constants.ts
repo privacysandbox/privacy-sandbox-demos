@@ -206,6 +206,8 @@ export const JAVASCRIPT_TEMPLATE_VARIABLES = {
   AD_SERVER_HOST,
   ADVERTISER_CONTEXTUAL,
   HOSTNAME,
+  DSP_Y_HOST,
+  DSP_X_HOST,
 };
 
 // ****************************************************************************
