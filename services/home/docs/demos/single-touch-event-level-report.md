@@ -109,7 +109,7 @@ end
 ### Click-Through Conversion Journey
 
 1. Clear attribution data in chrome://attribution-internals/
-2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/single-touch-attribution)
+2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/single-touch-attribution-html)
 
 - ice skate shoes image will be displayed
 
@@ -124,7 +124,7 @@ end
 ### View-Through Conversion Journey
 
 1. Clear attribution data in chrome://attribution-internals/
-2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/single-touch-attribution)
+2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/single-touch-attribution-html)
 
 - ice skate shoes image will be displayed
 
