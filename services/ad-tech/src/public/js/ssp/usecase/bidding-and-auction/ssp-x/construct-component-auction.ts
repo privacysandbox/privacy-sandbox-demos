@@ -15,18 +15,6 @@
  */
 const SSP_X_ORIGIN = '<%= SSP_X_ORIGIN %>';
 
-type ComponentAuctionResult = {
-  protectedAudienceAuctionResult: Uint8Array;
-  contextualAuctionWinner: ContextualAuctionWinner;
-  onDeviceAuctionConfig: any;
-};
-
-type ContextualAuctionWinner = {
-  bid?: number;
-  renderURL?: string;
-  perBuyerSignals?: {[key: string]: string};
-};
-
 class AdAuction {
   constructor() {}
 

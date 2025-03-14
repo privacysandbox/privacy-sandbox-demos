@@ -57,7 +57,7 @@ tlsRouter.get('/', (req, res) => {
 
 /** Full route: /ssp/usecase/bidding-and-auction/auction-config.json */
 tlsRouter.get('/auction-config.json', (req, res) => {
-  console.log('Route invoked /auction-config.json');
+  console.log('[B&A] Orchestration seller returning auction config.');
   res.json({
     seller: SSP_ORIGIN,
     decisionLogicURL: new URL(
@@ -123,7 +123,7 @@ sspARouter.use(
 );
 
 sspARouter.get('/service/ad/auction-config.json', async (req, res) => {
-  console.log('[B&A SSP-A] Return auction config.');
+  console.log('[B&A] SSP-A returning auction config.');
   res.json({
     seller: SSP_A_ORIGIN,
     interestGroupBuyers: [DSP_A_ORIGIN, DSP_B_ORIGIN],
@@ -140,7 +140,9 @@ sspARouter.get('/service/ad/auction-config.json', async (req, res) => {
 });
 
 sspARouter.get('/service/ad/contextual-auction', async (req, res) => {
-  console.log('[B&A SSP-A] Running contextual auction with DSP-A as buyer.');
+  console.log(
+    '[B&A] SSP-A running contextual auction with DSP-A and DSP-B as buyers.',
+  );
   const buyers = {
     [DSP_A_ORIGIN]: {
       bidUrl: new URL('/dsp/contextual-bid', DSP_A_URI).toString(),

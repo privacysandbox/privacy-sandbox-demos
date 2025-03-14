@@ -2,8 +2,9 @@
 import path from 'path';
 import protoLoader from '@grpc/proto-loader';
 import grpc from '@grpc/grpc-js';
-
-const GRPC_SERVER_ADDRESS = '172.18.0.104:50053';
+import {SSP_X_GRPC} from '../../../../../lib/constants.js';
+//TODO: Change for cloud deployment
+const GRPC_SERVER_ADDRESS = '172.16.0.104:50053';
 
 const protoPath = path.join(
   path.resolve(),

@@ -150,7 +150,7 @@ production/packaging/build_and_test_all_in_docker \
 
 ```bash
 ## DSP-X Bidding Service ##
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.101 --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.101 --network=privacy-sandbox-demos_adnetwork" \
 BIDDING_JS_URL="http://privacy-sandbox-demos-dsp-x.dev:8080/js/dsp/usecase/bidding-and-auction/bidding-logic-dsp-x.js" \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bidding
@@ -158,9 +158,9 @@ SKIP_TLS_VERIFICATION=true \
 
 ```bash
 ## DSP-X Buyer Frontend Service ##
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.102 --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.102 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-x.dev:8080/dsp/service/kv" \
-BIDDING_SERVER_ADDR=172.18.0.101:50057 \
+BIDDING_SERVER_ADDR=172.16.0.101:50057 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe
 ```
@@ -169,7 +169,7 @@ SKIP_TLS_VERIFICATION=true \
 
 ```bash
 ## DSP-Y Bidding Service ##
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.201 --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.201 --network=privacy-sandbox-demos_adnetwork" \
 BIDDING_JS_URL="http://privacy-sandbox-demos-dsp-y.dev:8080/js/dsp/usecase/bidding-and-auction/bidding-logic-dsp-y.js" \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bidding
@@ -177,9 +177,9 @@ SKIP_TLS_VERIFICATION=true \
 
 ```bash
 ## DSP-Y Buyer Frontend Service ##
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.202 --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.202 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-y.dev:8080/dsp/service/kv" \
-BIDDING_SERVER_ADDR=172.18.0.201:50057 \
+BIDDING_SERVER_ADDR=172.16.0.201:50057 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe
 ```
@@ -188,7 +188,7 @@ SKIP_TLS_VERIFICATION=true \
 
 ```bash
 ## SSP-X Auction Service ##
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.103 --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.103 --network=privacy-sandbox-demos_adnetwork" \
 AUCTION_JS_URL="http://privacy-sandbox-demos-ssp-x.dev:8080/js/ssp/usecase/bidding-and-auction/ssp-x/decision-logic.js" \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_auction
@@ -196,11 +196,11 @@ SKIP_TLS_VERIFICATION=true \
 
 ```bash
 ## SSP-X Seller Frontend Service
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.104  --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.104  --network=privacy-sandbox-demos_adnetwork" \
 SELLER_ORIGIN_DOMAIN="https://privacy-sandbox-demos-ssp-x.dev" \
-AUCTION_SERVER_ADDR=172.18.0.103:50061 \
+AUCTION_SERVER_ADDR=172.16.0.103:50061 \
 KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-x.dev:8080/ssp/usecase/bidding-and-auction/ssp-x/service/kv" \
-BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.18.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.18.0.202:50051","cloudPlatform":"LOCAL"}}' \
+BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.16.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.16.0.202:50051","cloudPlatform":"LOCAL"}}' \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_sfe
 ```
@@ -209,7 +209,7 @@ SKIP_TLS_VERIFICATION=true \
 
 ```bash
 ## SSP-Y Auction Service ##
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.203 --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.203 --network=privacy-sandbox-demos_adnetwork" \
 AUCTION_JS_URL="http://privacy-sandbox-demos-ssp-y.dev:8080/js/ssp/usecase/bidding-and-auction/ssp-y/decision-logic.js" \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_auction
@@ -217,11 +217,11 @@ SKIP_TLS_VERIFICATION=true \
 
 ```bash
 ## SSP-Y Seller Frontend Service
-DOCKER_RUN_ARGS_STRING="--ip=172.18.0.204  --network=privacy-sandbox-demos_adnetwork" \
+DOCKER_RUN_ARGS_STRING="--ip=172.16.0.204  --network=privacy-sandbox-demos_adnetwork" \
 SELLER_ORIGIN_DOMAIN="https://privacy-sandbox-demos-ssp-y.dev" \
-AUCTION_SERVER_ADDR=172.18.0.203:50061 \
+AUCTION_SERVER_ADDR=172.16.0.203:50061 \
 KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-y.dev:8080/ssp/usecase/bidding-and-auction/ssp-y/service/kv" \
-BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.18.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.18.0.202:50051","cloudPlatform":"LOCAL"}}' \
+BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.16.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.16.0.202:50051","cloudPlatform":"LOCAL"}}' \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_sfe
 ```
@@ -465,3 +465,7 @@ export const getInterestGroupBiddingAndAuction = (
   };
 };
 ```
+
+### Seller Details
+
+1.

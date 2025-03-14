@@ -102,6 +102,7 @@ function runProtectedAudienceAuction(
   const [contextualAuctionWinner] = contextualAuctionResult;
   const {auctionRequest} = protectedAudience;
   const perBuyerConfigs = buildPerBuyerConfigs(contextualAuctionResult);
+  //TODO: simplify to an SSPConfig interface/object
   if (host.includes(SSP_X_HOST)) {
     const selectAdRequest = {
       auction_config: {
@@ -264,7 +265,7 @@ router.post('/unified-auction', async (req: Request, res: Response) => {
     host,
     res,
   );
-  console.log('UNIFIED AUCTION COMPLETE');
+  console.log('[B&A Demo] Unified Auction is complete. ');
 });
 
 export default router;
