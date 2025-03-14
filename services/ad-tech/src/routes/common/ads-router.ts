@@ -34,7 +34,7 @@ export const AdsRouter = express.Router();
 /** Used as render URL in interest groups for display ads. */
 AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
   const templateVariables = getInterestGroupAdTemplateVariables(req.query);
-  console.log(
+  console.debug(
     '[AdsRouter] Loading interest group display ad',
     templateVariables,
   );
@@ -46,19 +46,19 @@ AdsRouter.get('/display-ads', async (req: Request, res: Response) => {
 /** Used as render URL for contextual ads or static ads. */
 AdsRouter.get('/contextual-ads', async (req: Request, res: Response) => {
   const templateVariables = getContextualAdTemplateVariables();
-  console.log('[AdsRouter] Loading contextual ad', templateVariables);
+  console.debug('[AdsRouter] Loading contextual ad', templateVariables);
   res.render('contextual-ads', templateVariables);
 });
 
 /** Used as render URL in interest groups for video ads. */
 AdsRouter.get('/video-ads', async (req: Request, res: Response) => {
-  console.log('[AdsRouter] Loading video ad', req.query);
+  console.debug('[AdsRouter] Loading video ad', req.query);
   res.render('video-ads');
 });
 
 /** Used as render URL in interest groups for multi piece ads. */
 AdsRouter.get('/multi-piece-ads', async (req: Request, res: Response) => {
-  console.log('[AdsRouter] Loading multi piece ad', req.query);
+  console.debug('[AdsRouter] Loading multi piece ad', req.query);
   res.render('multi-piece-ads');
 });
 
@@ -69,7 +69,7 @@ AdsRouter.get(
       req.query,
       req.headers,
     );
-    console.log(
+    console.debug(
       '[AdsRouter] Loading component ad for multi-piece',
       req.query,
       templateVariables,
@@ -88,7 +88,8 @@ AdsRouter.get('/static-ads-*', async (req: Request, res: Response) => {
     req.headers,
   );
   console.debug(
-    '[AdsRouter] Loading static ad for reach measurement',
+    '[AdsRouter] Loading static ad',
+    req.path,
     req.query,
     templateVariables,
   );
