@@ -20,10 +20,11 @@
 (() => {
   const addDescriptionToAdContainer = () => {
     const host = new URL(document.currentScript.src).hostname;
+    const pathname = document.location.pathname.substring('/ads/'.length);
     document.addEventListener('DOMContentLoaded', async (e) => {
       const $adLabel = document.getElementById('ad-label');
       if ($adLabel) {
-        $adLabel.innerText = `Static ad from ${host}`;
+        $adLabel.innerText = `${pathname} from ${host}`;
       }
     });
   };
