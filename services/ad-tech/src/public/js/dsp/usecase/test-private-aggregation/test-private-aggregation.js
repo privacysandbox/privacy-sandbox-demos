@@ -33,21 +33,24 @@
   for (const [key, value] of urlSearchParams.entries()) {
     data[key] = value;
   }
-  // Optional: Specify
+  // Optional: Specify coordinator origin.
   if (urlSearchParams.has('cloudEnv')) {
     const cloudEnv = urlSearchParams.get('cloudEnv');
     privateAggregationConfig.aggregationCoordinatorOrigin = new URL(
       `https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`,
     ).toString();
   }
+  // Use a placeholder bucket key if not specified.
   if (!urlSearchParams.has('bucketKey')) {
     data.bucketKey = '1234567890';
   }
   // sharedStorage.set('bucketKey', `${data.bucketKey}`);
+  // Optional: Use contextId to opt-in for instant reports.
+  privateAggregationConfig.contextId = `contextId-${crypto.randomUUID()}`;
+  // Finally, create and invoke worklet.
   const worklet = await window.sharedStorage.createWorklet(
     '/js/dsp/usecase/test-private-aggregation/test-private-aggregation-worklet.js',
   );
-  privateAggregationConfig.contextId = `contextId-${crypto.randomUUID()}`;
   await worklet.run('test-private-aggregation', {
     data,
     privateAggregationConfig,

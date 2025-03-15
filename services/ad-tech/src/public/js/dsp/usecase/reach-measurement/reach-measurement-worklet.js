@@ -40,14 +40,12 @@ class ReachMeasurementOperation {
     const hasReportedContent = (await sharedStorage.get(ssKey)) === 'true';
 
     // Do not report if a report has been sent already
-    /*
     if (hasReportedContent) {
       console.log('[PSDemo] Content ID already seen, not reporting', {
         key: ssKey,
       });
       return;
     }
-    */
 
     // Generate the aggregation key and the aggregatable value
     const bucket = convertContentIdToBucket(contentId);
