@@ -35,23 +35,26 @@ export const BuyerRouter = express.Router();
  */
 BuyerRouter.get('*.html', async (req: Request, res: Response) => {
   // Pass URL query parameters as EJS template variables.
-  const additionalContext: {[key: string]: string} = {};
+  const urlQueryParams: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(req.query)) {
     if (value) {
-      additionalContext[key] = value.toString();
+      urlQueryParams[key] = value.toString();
     }
   }
   console.debug(
     '[BuyerRouter] Rendering HTML document',
     req.path,
-    additionalContext,
+    urlQueryParams,
   );
-  // Translate req.path to 'view' path to EJS template.
-  // req.path example: '/join-ad-interest-group.html'
+  // Translate req.path to 'view' path for EJS template.
+  // E.g. req.path = '/join-ad-interest-group.html'
   // view = 'dsp/join-ad-interest-group' ('.ejs' is implied.)
   res.render(
     /* view= */ `dsp${req.path.replace('.html', '')}`,
-    getEjsTemplateVariables(/* titleMessage= */ req.path, additionalContext),
+    getEjsTemplateVariables(
+      /* titleMessage= */ req.path,
+      /* additionalTemplateVariables= */ urlQueryParams,
+    ),
   );
 });
 

@@ -32,23 +32,26 @@ export const SellerRouter = express.Router();
  */
 SellerRouter.get('*.html', async (req: Request, res: Response) => {
   // Pass URL query parameters as EJS template variables.
-  const additionalContext: {[key: string]: string} = {};
+  const urlQueryParams: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(req.query)) {
     if (value) {
-      additionalContext[key] = value.toString();
+      urlQueryParams[key] = value.toString();
     }
   }
   console.debug(
     '[SellerRouter] Rendering HTML document',
     req.path,
-    additionalContext,
+    urlQueryParams,
   );
-  // Translate req.path to 'view' path to EJS template.
-  // req.path example: '/run-ad-auction.html'
+  // Translate req.path to 'view' path for EJS template.
+  // E.g. req.path = '/run-ad-auction.html'
   // view = 'ssp/run-ad-auction' ('.ejs' is implied.)
   res.render(
     /* view= */ `ssp${req.path.replace('.html', '')}`,
-    getEjsTemplateVariables(/* titleMessage= */ req.path, additionalContext),
+    getEjsTemplateVariables(
+      /* titleMessage= */ req.path,
+      /* additionalTemplateVariables= */ urlQueryParams,
+    ),
   );
 });
 
