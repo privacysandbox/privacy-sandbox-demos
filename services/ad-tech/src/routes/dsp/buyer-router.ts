@@ -29,10 +29,12 @@ import {
  */
 export const BuyerRouter = express.Router();
 
-// ************************************************************************
-// HTTP handlers for iframe documents
-// ************************************************************************
+/**
+ * Generic handler for iframe HTML documents served by ad buyer.
+ * This matches paths like: /dsp/...*.html
+ */
 BuyerRouter.get('*.html', async (req: Request, res: Response) => {
+  // Pass URL query parameters as EJS template variables.
   const additionalContext: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(req.query)) {
     if (value) {
@@ -44,8 +46,11 @@ BuyerRouter.get('*.html', async (req: Request, res: Response) => {
     req.path,
     additionalContext,
   );
+  // Translate req.path to 'view' path to EJS template.
+  // req.path example: '/join-ad-interest-group.html'
+  // view = 'dsp/join-ad-interest-group' ('.ejs' is implied.)
   res.render(
-    `dsp${req.path.replace('.html', '')}`,
+    /* view= */ `dsp${req.path.replace('.html', '')}`,
     getEjsTemplateVariables(/* titleMessage= */ req.path, additionalContext),
   );
 });
