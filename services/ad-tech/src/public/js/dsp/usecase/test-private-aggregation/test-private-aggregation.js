@@ -29,19 +29,19 @@
   /** Additional data to pass to the worklet. */
   const data = {};
   // Include all query parameters from the URL.
-  const urlSearchParams = new URLSearchParams(window.location.search);
-  for (const [key, value] of urlSearchParams.entries()) {
+  const urlQueryParams = new URLSearchParams(window.location.search);
+  for (const [key, value] of urlQueryParams.entries()) {
     data[key] = value;
   }
   // Optional: Specify coordinator origin.
-  if (urlSearchParams.has('cloudEnv')) {
-    const cloudEnv = urlSearchParams.get('cloudEnv');
+  if (urlQueryParams.has('cloudEnv')) {
+    const cloudEnv = urlQueryParams.get('cloudEnv');
     privateAggregationConfig.aggregationCoordinatorOrigin = new URL(
       `https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`,
     ).toString();
   }
   // Use a placeholder bucket key if not specified.
-  if (!urlSearchParams.has('bucketKey')) {
+  if (!urlQueryParams.has('bucketKey')) {
     data.bucketKey = '1234567890';
   }
   // sharedStorage.set('bucketKey', `${data.bucketKey}`);
