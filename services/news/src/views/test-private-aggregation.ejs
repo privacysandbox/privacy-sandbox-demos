@@ -19,14 +19,14 @@
   <%- include('components/header') %>
   <main class="flex flex-col lg:flex-row justify-between gap-6">
     <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
-      <b>Use-case: Reach Measurement</b>
+      <b>Use-case: Test Private Aggregation</b>
       <p><%= TEXT_LOREM %></p>
       <div class="w-full flex flex-row justify-center ad-row ad-slot">
         <!-- Specify cloud environment with cloudEnv.
-        <iframe src="<%= `https://${DSP_HOST}/dsp/test-private-aggregation.html?cloudEnv=gcp&bucketKey=12345` %>"
+        <iframe src="<%= `https://${DSP_HOST}/dsp/test-private-aggregation.html?cloudEnv=gcp` %>"
         ></iframe>
         -->
-        <iframe src="<%= `https://${DSP_HOST}/dsp/test-private-aggregation.html?bucketKey=` %>"
+        <iframe src="<%= `https://${DSP_HOST}/dsp/test-private-aggregation.html?bucketKey=12345` %>"
         ></iframe>
       </div>
       <p><%= TEXT_LOREM %></p>
