@@ -32,37 +32,22 @@ export const BuyerRouter = express.Router();
 // ************************************************************************
 // HTTP handlers for iframe documents
 // ************************************************************************
-/** Iframe document loaded by dsp-tag.js to join ad interest group. */
-BuyerRouter.get(
-  '/join-ad-interest-group.html',
-  async (req: Request, res: Response) => {
-    res.render(
-      'dsp/join-ad-interest-group',
-      getEjsTemplateVariables(/* title= */ 'Join Ad Interest Group'),
-    );
-  },
-);
-
-/** Iframe document loaded by dsp-tag.js to test Private Aggregation. */
-BuyerRouter.get(
-  '/test-private-aggregation.html',
-  async (req: Request, res: Response) => {
-    const bucket = req.query.bucket;
-    const cloudEnv = req.query.cloudEnv;
-    console.log(`${bucket}, ${cloudEnv}`);
-    res.render('dsp/test-private-aggregation', {
-      bucket: bucket,
-      cloudEnv: cloudEnv,
-    });
-  },
-);
-
-/** Iframe document loaded on conversion to trigger multi-touch attribution. */
-BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
-  const campaignId = 1234;
-  const purchaseValue = req.query.purchaseValue;
-  console.log(`Campaign Id: ${campaignId}, Purchase Value: ${purchaseValue}`);
-  res.render('dsp/mta-conversion', {campaignId, purchaseValue});
+BuyerRouter.get('*.html', async (req: Request, res: Response) => {
+  const additionalContext: {[key: string]: string} = {};
+  for (const [key, value] of Object.entries(req.query)) {
+    if (value) {
+      additionalContext[key] = value.toString();
+    }
+  }
+  console.debug(
+    '[BuyerRouter] Rendering HTML document',
+    req.path,
+    additionalContext,
+  );
+  res.render(
+    `dsp${req.path.replace('.html', '')}`,
+    getEjsTemplateVariables(/* titleMessage= */ req.path, additionalContext),
+  );
 });
 
 // ************************************************************************

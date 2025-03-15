@@ -138,11 +138,11 @@ Browser-)DSP:Browser sends aggregatable report (Live Report is deferred)
 
 ### User Journey #1
 
-1. [Navigate to main news site](https://privacy-sandbox-demos-news.dev/multi-touch-attribution) (Publisher 1) and observe the ad served on the news
-   site
+1. [Navigate to main news site](https://privacy-sandbox-demos-news.dev/mmt-multi-touch-attribution) (Publisher 1) and observe the ad served on the
+   news site
 
-2. [Navigate to the soccer news site](https://soccer.privacy-sandbox-demos-news.dev/multi-touch-attribution) (Publisher 2) and observe the ad served
-   on the soccer site
+2. [Navigate to the soccer news site](https://soccer.privacy-sandbox-demos-news.dev/mmt-multi-touch-attribution) (Publisher 2) and observe the ad
+   served on the soccer site
 
 3. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (Advertiser), select a shoe, add to cart and click on the checkout button
 

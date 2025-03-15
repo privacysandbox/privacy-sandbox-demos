@@ -24,23 +24,32 @@
  * worklet.
  */
 (async () => {
-  let bucket = document.currentScript.getAttribute('bucket');
-  let cloudEnv = document.currentScript.getAttribute('cloudenv');
-
-  sharedStorage.set('bucket', `${bucket}`);
-  sharedStorage.set('cloudenv', `${cloudEnv}`);
-  console.log(
-    `https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`,
+  /** Configurations for Private Aggregation API invocation. */
+  const privateAggregationConfig = {};
+  /** Additional data to pass to the worklet. */
+  const data = {};
+  // Include all query parameters from the URL.
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  for (const [key, value] of urlSearchParams.entries()) {
+    data[key] = value;
+  }
+  // Optional: Specify
+  if (urlSearchParams.has('cloudEnv')) {
+    const cloudEnv = urlSearchParams.get('cloudEnv');
+    privateAggregationConfig.aggregationCoordinatorOrigin = new URL(
+      `https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`,
+    ).toString();
+  }
+  if (!urlSearchParams.has('bucketKey')) {
+    data.bucketKey = '1234567890';
+  }
+  // sharedStorage.set('bucketKey', `${data.bucketKey}`);
+  const worklet = await window.sharedStorage.createWorklet(
+    '/js/dsp/usecase/test-private-aggregation/test-private-aggregation-worklet.js',
   );
-
-  const privateAggCloud = {
-    'privateAggregationConfig': {
-      'aggregationCoordinatorOrigin': `https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`,
-    },
-  };
-
-  await window.sharedStorage.worklet.addModule(
-    '/js/dsp/usecase/test-private-aggregation/private-aggregation-worklet.js',
-  );
-  await window.sharedStorage.run('test-private-aggregation', privateAggCloud);
+  privateAggregationConfig.contextId = `contextId-${crypto.randomUUID()}`;
+  await worklet.run('test-private-aggregation', {
+    data,
+    privateAggregationConfig,
+  });
 })();
