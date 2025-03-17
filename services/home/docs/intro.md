@@ -19,11 +19,10 @@ Looking to run these demos yourself? Check our [guide](https://github.com/privac
 | [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                  | Protected Audience                                       |
 | [Event-level reports for single touch attribution](demos/single-touch-event-level-report.md)               | Attribution Reporting                                    |
 | [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Protected Audience, Fenced Frames, Attribution Reporting |
+| [Reach Measurement with Shared Storage](demos/reach-measurement-with-shared-storage.md)                    | Shared Storage, Private Aggregation                      |
 
 :::info
 
 Looking for a use-case not listed here? Help us grow this repository by
 [contributing](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/CONTRIBUTING.md) or
 [sharing feedback](https://github.com/privacysandbox/privacy-sandbox-demos/issues).
-
-:::
