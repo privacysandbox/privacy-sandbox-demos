@@ -2,22 +2,23 @@
 
 ## v3.0.0 (2025/3/14)
 
-* **New Use Cases:**
-    * **Reach Measurement with Shared Storage (Static Ads):** Added demonstration of reach measurement using Shared Storage. (PR #573)
-    * **Multi-piece Ads with Protected Audience:** Introduced demo showcasing multi-piece ads/Protected Audience ad components. (PR #560)
+- **New Use Cases:**
 
-* **Fixes and Improvements:**
-    * **Infrastructure Updates/Fixes:**
-        * Fixed documentation index page to include missing demos.
-        * Corrected firebase deployment script with missing project setting command.
-        * Updated release notes for v2.0.0. (PR #570)
+  - **Reach Measurement with Shared Storage:** Added demonstration of reach measurement using Shared Storage. (PR #573)
+  - **Multi-piece Ads with Protected Audience:** Introduced demo showcasing multi-piece ads/Protected Audience ad components. (PR #560)
 
-* **Refactoring:**
-    * Significant code refactoring for improved efficiency and future development.
-      
-* **Others:**
-    * Stay updated with what's new with Privacy Sandbox Demos by joining our group here: https://groups.google.com/a/google.com/g/PS-demos-updates-external
+- **Fixes and Improvements:**
 
+  - **Infrastructure Updates/Fixes:**
+    - Fixed documentation index page to include missing demos.
+    - Corrected firebase deployment script with missing project setting command.
+    - Updated release notes for v2.0.0. (PR #570)
+
+- **Refactoring:**
+  - Significant code refactoring for improved efficiency and future development.
+- **Others:**
+  - Stay updated with what's new with Privacy Sandbox Demos by joining our group here:
+    <https://groups.google.com/a/google.com/g/PS-demos-updates-external>
 
 ## v2.0.0 (2025/2/21)
 
