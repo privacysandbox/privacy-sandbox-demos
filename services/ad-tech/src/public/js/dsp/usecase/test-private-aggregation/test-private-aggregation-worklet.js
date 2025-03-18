@@ -24,27 +24,24 @@
  */
 class TestPrivateAggregation {
   async run(data) {
-    let cloudEnv = await sharedStorage.get('cloudenv');
-    console.log(`Enabling ${cloudEnv} Private Aggregation Debug Mode`);
-    privateAggregation.enableDebugMode({debugKey: 1234n});
-    let bucketKey = await sharedStorage.get('bucket');
-    if (!bucketKey) {
-      console.log(
-        '[PSDemo] No bucket key found for client. ',
-        'Adding default bucketKey 1234567890.',
-      );
-      bucketKey = '1234567890';
-      sharedStorage.set('bucketKey', bucketKey);
-    } else {
-      console.log('[PSDemo] Bucket Key found: ', {bucketKey});
-    }
-    function convertToBucket(bucketId) {
+    /** Helper method to encode bucket key. */
+    const convertToBucket = (bucketId) => {
+      // TODO: Implement
       return BigInt(bucketId);
+    };
+    // Enable debug mode.
+    privateAggregation.enableDebugMode({debugKey: 1234n});
+    // Assemble aggregate contribution bucket key.
+    let {bucketKey} = data;
+    if (!bucketKey) {
+      bucketKey = '1234567890';
     }
-    const bucket = convertToBucket(bucketKey);
-    const value = 128;
-    privateAggregation.contributeToHistogram({bucket, value});
-    sharedStorage.clear();
+    // Finally, contribute to aggregate histogram.
+    privateAggregation.contributeToHistogram({
+      bucket: convertToBucket(bucketKey),
+      value: 1,
+    });
+    // sharedStorage.clear();
   }
 }
 

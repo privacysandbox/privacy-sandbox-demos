@@ -102,13 +102,17 @@ export const getStaticAdTemplateVariables = (
 };
 
 /** Returns EJS template variables for EJS files. */
-export const getEjsTemplateVariables = (titleMessage: string = '') => {
+export const getEjsTemplateVariables = (
+  titleMessage: string = '',
+  additionalTemplateVariables: {[key: string]: string} = {},
+) => {
   const hostDetails = {
     HOSTNAME,
     EXTERNAL_PORT,
     PORT,
     SHOP_HOST,
     TITLE: `${HOSTNAME} - ${titleMessage}`,
+    ...additionalTemplateVariables,
   };
   console.log('Built template context: ', hostDetails);
   return hostDetails;

@@ -12,8 +12,9 @@
  */
 
 import express, {Request, Response} from 'express';
-import {EXTERNAL_PORT, HOSTNAME} from '../../lib/constants.js';
 import {constructAuctionConfig} from '../../lib/auction-config-helper.js';
+import {getEjsTemplateVariables} from '../../lib/common-utils.js';
+import {EXTERNAL_PORT, HOSTNAME} from '../../lib/constants.js';
 
 /**
  * This is the main Seller router and is responsible for handling a variety of
@@ -25,22 +26,34 @@ import {constructAuctionConfig} from '../../lib/auction-config-helper.js';
  */
 export const SellerRouter = express.Router();
 
-// TODO: Rename to run-single-seller-ad-auction after unified branch is merged.
-/** Iframe document used as context to run single-seller PAAPI auction. */
-SellerRouter.get(
-  '/run-ad-auction.html',
-  async (req: Request, res: Response) => {
-    res.render('ssp/run-ad-auction');
-  },
-);
-
-/** Iframe document used as context to run multi-seller PAAPI auction. */
-SellerRouter.get(
-  '/run-sequential-ad-auction.html',
-  async (req: Request, res: Response) => {
-    res.render('ssp/run-sequential-ad-auction');
-  },
-);
+/**
+ * Generic handler for iframe HTML documents served by ad seller.
+ * This matches paths like: /ssp/...*.html
+ */
+SellerRouter.get('*.html', async (req: Request, res: Response) => {
+  // Pass URL query parameters as EJS template variables.
+  const urlQueryParams: {[key: string]: string} = {};
+  for (const [key, value] of Object.entries(req.query)) {
+    if (value) {
+      urlQueryParams[key] = value.toString();
+    }
+  }
+  console.debug(
+    '[SellerRouter] Rendering HTML document',
+    req.path,
+    urlQueryParams,
+  );
+  // Translate req.path to 'view' path for EJS template.
+  // E.g. req.path = '/run-ad-auction.html'
+  // view = 'ssp/run-ad-auction' ('.ejs' is implied.)
+  res.render(
+    /* view= */ `ssp${req.path.replace('.html', '')}`,
+    getEjsTemplateVariables(
+      /* titleMessage= */ req.path,
+      /* additionalTemplateVariables= */ urlQueryParams,
+    ),
+  );
+});
 
 /** Returns the PAAPI auction config. */
 SellerRouter.get(

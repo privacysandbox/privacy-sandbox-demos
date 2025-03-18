@@ -29,40 +29,33 @@ import {
  */
 export const BuyerRouter = express.Router();
 
-// ************************************************************************
-// HTTP handlers for iframe documents
-// ************************************************************************
-/** Iframe document loaded by dsp-tag.js to join ad interest group. */
-BuyerRouter.get(
-  '/join-ad-interest-group.html',
-  async (req: Request, res: Response) => {
-    res.render(
-      'dsp/join-ad-interest-group',
-      getEjsTemplateVariables(/* title= */ 'Join Ad Interest Group'),
-    );
-  },
-);
-
-/** Iframe document loaded by dsp-tag.js to test Private Aggregation. */
-BuyerRouter.get(
-  '/test-private-aggregation.html',
-  async (req: Request, res: Response) => {
-    const bucket = req.query.bucket;
-    const cloudEnv = req.query.cloudEnv;
-    console.log(`${bucket}, ${cloudEnv}`);
-    res.render('dsp/test-private-aggregation', {
-      bucket: bucket,
-      cloudEnv: cloudEnv,
-    });
-  },
-);
-
-/** Iframe document loaded on conversion to trigger multi-touch attribution. */
-BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
-  const campaignId = 1234;
-  const purchaseValue = req.query.purchaseValue;
-  console.log(`Campaign Id: ${campaignId}, Purchase Value: ${purchaseValue}`);
-  res.render('dsp/mta-conversion', {campaignId, purchaseValue});
+/**
+ * Generic handler for iframe HTML documents served by ad buyer.
+ * This matches paths like: /dsp/...*.html
+ */
+BuyerRouter.get('*.html', async (req: Request, res: Response) => {
+  // Pass URL query parameters as EJS template variables.
+  const urlQueryParams: {[key: string]: string} = {};
+  for (const [key, value] of Object.entries(req.query)) {
+    if (value) {
+      urlQueryParams[key] = value.toString();
+    }
+  }
+  console.debug(
+    '[BuyerRouter] Rendering HTML document',
+    req.path,
+    urlQueryParams,
+  );
+  // Translate req.path to 'view' path for EJS template.
+  // E.g. req.path = '/join-ad-interest-group.html'
+  // view = 'dsp/join-ad-interest-group' ('.ejs' is implied.)
+  res.render(
+    /* view= */ `dsp${req.path.replace('.html', '')}`,
+    getEjsTemplateVariables(
+      /* titleMessage= */ req.path,
+      /* additionalTemplateVariables= */ urlQueryParams,
+    ),
+  );
 });
 
 // ************************************************************************

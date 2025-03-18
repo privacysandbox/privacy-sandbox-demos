@@ -22,6 +22,7 @@
   mtaIframeUrl.pathname = '/dsp/mta-conversion.html';
   const {purchaseValue} = $script.dataset;
   mtaIframeUrl.searchParams.append('purchaseValue', purchaseValue);
+  mtaIframeUrl.searchParams.append('campaignId', 1234);
   const $iframe = document.createElement('iframe');
   $iframe.width = 1;
   $iframe.height = 1;
