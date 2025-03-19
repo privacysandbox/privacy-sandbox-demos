@@ -307,17 +307,19 @@ function generateBid(
   browserSignals,
 ) {
   // contribute to histogram if worklet execution takes longer than X ms
-  realTimeReporting.contributeToHistogram(
-    { bucket: BUCKET_SLOW_EXECUTION,
-      priorityWeight: WEIGHT_SLOW_EXECUTION,
-      latencyThreshold: 100}); // In milliseconds
+  realTimeReporting.contributeToHistogram({
+    bucket: BUCKET_SLOW_EXECUTION,
+    priorityWeight: WEIGHT_SLOW_EXECUTION,
+    latencyThreshold: 100,
+  }); // In milliseconds
   // contribute to histogram if worklet execution takes longer than X ms
   // Note that the WEIGHT_TOO_SLOW_EXECUTION in this case is higher than the
   // previous WEIGHT_SLOW_EXECUTION.
-  realTimeReporting.contributeToHistogram(
-    { bucket: BUCKET_TOO_SLOW_EXECUTION,
-      priorityWeight: WEIGHT_TOO_SLOW_EXECUTION,
-      latencyThreshold: 300}); // In milliseconds
+  realTimeReporting.contributeToHistogram({
+    bucket: BUCKET_TOO_SLOW_EXECUTION,
+    priorityWeight: WEIGHT_TOO_SLOW_EXECUTION,
+    latencyThreshold: 300,
+  }); // In milliseconds
 
   const biddingContext = {
     interestGroup,

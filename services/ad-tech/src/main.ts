@@ -48,7 +48,10 @@ app.use(
   WellKnownAttributionReportingRouter,
 );
 app.use('/.well-known/private-aggregation', WellKnownPrivateAggregationRouter);
-app.use('/.well-known/interest-group/real-time-report', WellKnownRealtimeMonitoringRouter);
+app.use(
+  '/.well-known/interest-group/real-time-report',
+  WellKnownRealtimeMonitoringRouter,
+);
 
 app.use('/dsp', BuyerRouter);
 app.use('/dsp/contextual-bid', BuyerContextualBidderRouter);

@@ -28,9 +28,7 @@ export const WellKnownRealtimeMonitoringRouter = express.Router();
 WellKnownRealtimeMonitoringRouter.post(
   '/',
   async (req: Request, res: Response) => {
-    console.log(
-      '[RTM] Received realtime monitoring data - Starting ',
-    );
+    console.log('[RTM] Received realtime monitoring data - Starting ');
     try {
       // Read the raw request body as a Buffer
       const rawData = await new Promise<Buffer>((resolve, reject) => {
@@ -48,13 +46,20 @@ WellKnownRealtimeMonitoringRouter.post(
       const decodedData = cbor.decode(rawData);
       console.log('Decoded RTM CBOR data:', decodedData);
 
-
-      if (!decodedData || !decodedData.histogram || !decodedData.histogram.buckets) {
+      if (
+        !decodedData ||
+        !decodedData.histogram ||
+        !decodedData.histogram.buckets
+      ) {
         console.error('No histogram in CBOR data: ', decodedData);
         res.status(500).send('No histogram in CBOR data');
         return;
       }
-      if (!decodedData || !decodedData.platformHistogram || !decodedData.platformHistogram.buckets) {
+      if (
+        !decodedData ||
+        !decodedData.platformHistogram ||
+        !decodedData.platformHistogram.buckets
+      ) {
         console.error('No platformHistogram in CBOR data: ', decodedData);
         res.status(500).send('No platformHistogram in CBOR data');
         return;
@@ -70,7 +75,10 @@ WellKnownRealtimeMonitoringRouter.post(
           decodedPlatformHistogramBuckets.push(parseInt(bit, 10));
         }
       }
-      const finalPlatformHistogram = decodedPlatformHistogramBuckets.slice(0, decodedData.platformHistogram.length);
+      const finalPlatformHistogram = decodedPlatformHistogramBuckets.slice(
+        0,
+        decodedData.platformHistogram.length,
+      );
       console.log('Platform Histogram Bucket:', finalPlatformHistogram);
       ReportStore.addReport({
         category: ReportCategory.RTM_PLATFORM,
@@ -89,7 +97,10 @@ WellKnownRealtimeMonitoringRouter.post(
           decodedHistogramBuckets.push(parseInt(bit, 10));
         }
       }
-      const finalHistogram = decodedHistogramBuckets.slice(0, decodedData.histogram.length);
+      const finalHistogram = decodedHistogramBuckets.slice(
+        0,
+        decodedData.histogram.length,
+      );
       console.log('Histogram Bucket:', decodedHistogramBuckets);
       ReportStore.addReport({
         category: ReportCategory.RTM_HISTOGRAM,
