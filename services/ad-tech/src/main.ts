@@ -24,6 +24,7 @@ import {SellerContextualBidderRouter} from './routes/ssp/seller-contextual-bidde
 import {SellerRouter} from './routes/ssp/seller-router.js';
 import {WellKnownAttributionReportingRouter} from './routes/well-known/well-known-attribution-reporting-router.js';
 import {WellKnownPrivateAggregationRouter} from './routes/well-known/well-known-private-aggregation-router.js';
+import {WellKnownRealtimeMonitoringRouter} from './routes/well-known/well-known-realtime-monitoring-router.js';
 import {AdsRouter} from './routes/common/ads-router.js';
 import {ReportRouter} from './routes/common/report-router.js';
 import {AttributionReportingRouter} from './routes/common/attribution-reporting-router.js';
@@ -47,6 +48,7 @@ app.use(
   WellKnownAttributionReportingRouter,
 );
 app.use('/.well-known/private-aggregation', WellKnownPrivateAggregationRouter);
+app.use('/.well-known/interest-group/real-time-report', WellKnownRealtimeMonitoringRouter);
 
 app.use('/dsp', BuyerRouter);
 app.use('/dsp/contextual-bid', BuyerContextualBidderRouter);

@@ -291,6 +291,11 @@ function getBidByAdType(adType, biddingContext) {
   return getBidForDisplayAd(biddingContext);
 }
 
+const BUCKET_SLOW_EXECUTION = 125;
+const WEIGHT_SLOW_EXECUTION = 0.1;
+const BUCKET_TOO_SLOW_EXECUTION = 126;
+const WEIGHT_TOO_SLOW_EXECUTION = 0.2;
+
 // ********************************************************
 // Top-level Protected Audience functions
 // ********************************************************
@@ -301,6 +306,19 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
+  // contribute to histogram if worklet execution takes longer than X ms
+  realTimeReporting.contributeToHistogram(
+    { bucket: BUCKET_SLOW_EXECUTION,
+      priorityWeight: WEIGHT_SLOW_EXECUTION,
+      latencyThreshold: 100}); // In milliseconds
+  // contribute to histogram if worklet execution takes longer than X ms
+  // Note that the WEIGHT_TOO_SLOW_EXECUTION in this case is higher than the
+  // previous WEIGHT_SLOW_EXECUTION.
+  realTimeReporting.contributeToHistogram(
+    { bucket: BUCKET_TOO_SLOW_EXECUTION,
+      priorityWeight: WEIGHT_TOO_SLOW_EXECUTION,
+      latencyThreshold: 300}); // In milliseconds
+
   const biddingContext = {
     interestGroup,
     auctionSignals,
