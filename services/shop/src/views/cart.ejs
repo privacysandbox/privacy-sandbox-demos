@@ -42,7 +42,7 @@
         </div>
       </dl>
       <section class="flex justify-center">
-        <button type="submit" <%=cart.length===0 ? "disabled" : "" %>
+        <button id="checkout-button" type="submit" <%=cart.length===0 ? "disabled" : "" %>
           class="w-60 border border-slate-600 text-slate-600 enabled:hover:bg-slate-400 enabled:hover:text-white
           disabled:opacity-40"
           >
@@ -62,7 +62,13 @@
           let fencedframe = document.createElement('fencedframe');
 
           fencedframe.addEventListener('fencedtreeclick', () => {
-            window.open('https://privacy-sandbox-demos-services.dev/popup')
+            var height = 500;
+            var width = 600;
+            var left = (screen.width/2)-(width/2);
+            var top = (screen.height/2)-(height/2);
+            let params = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
+          
+            window.open('https://privacy-sandbox-demos-services.dev/popup', 'example-pay-popup', params)
           });
 
           try {
@@ -73,8 +79,10 @@
             fencedframe.style.border = '0px';
             fencedframe.style.borderRadius = '25px';
 
+            let checkoutButton = document.getElementById('checkout-button');
+            checkoutButton.style.display = 'none';
             document.getElementById('button-holder').appendChild(fencedframe);
-          } catch(e) {
+          } catch (e) {
             console.log('Cannot provide personalized button.')
           }
         }
