@@ -118,6 +118,10 @@ button {
   height: 75px;
   font-size: 17px;
   margin: 0;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 .demo-button:hover {
