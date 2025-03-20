@@ -3,6 +3,7 @@ volumes:
   news_node_modules:
   shop_node_modules:
   travel_node_modules:
+  service_provider_node_modules:
   dsp_node_modules:
   dsp_a_node_modules:
   dsp_b_node_modules:
@@ -62,6 +63,19 @@ services:
     volumes:
       - ./services/travel:/workspace
       - travel_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
+  service-provider:
+    image: gcr.io/privacy-sandbox-demos/service-provider:latest
+    build: ./services/service-provider
+    container_name: "sandcastle_service_provider"
+    hostname: ${SERVICE_PROVIDER_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/service-provider:/workspace
+      - service_provider_node_modules:/workspace/node_modules
     networks:
       - adnetwork
 
