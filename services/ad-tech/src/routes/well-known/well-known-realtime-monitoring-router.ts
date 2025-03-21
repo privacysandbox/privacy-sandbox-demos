@@ -65,47 +65,26 @@ WellKnownRealtimeMonitoringRouter.post(
         return;
       }
       // Process Platform Buckets
-      const decodedPlatformHistogramBuckets: number[] = [];
-      for (const byte of decodedData.platformHistogram.buckets) {
-        // Convert each byte to its binary representation (as a string)
-        const binaryString = byte.toString(2).padStart(8, '0'); // Pad with leading zeros
-
-        // Convert each bit in the binary string to a number (0 or 1)
-        for (const bit of binaryString) {
-          decodedPlatformHistogramBuckets.push(parseInt(bit, 10));
-        }
-      }
-      const finalPlatformHistogram = decodedPlatformHistogramBuckets.slice(
-        0,
-        decodedData.platformHistogram.length,
+      const decodedPlatformHistogramBuckets = processBucketData(
+        decodedData.platformHistogram,
       );
-      console.log('Platform Histogram Bucket:', finalPlatformHistogram);
+      console.log(
+        'Platform Histogram Buckets:',
+        decodedPlatformHistogramBuckets,
+      );
       ReportStore.addReport({
         category: ReportCategory.RTM_PLATFORM,
         timestamp: Date.now().toString(),
-        data: finalPlatformHistogram,
+        data: decodedPlatformHistogramBuckets,
       });
 
       // Process Histogram Buckets
-      const decodedHistogramBuckets: number[] = [];
-      for (const byte of decodedData.histogram.buckets) {
-        // Convert each byte to its binary representation (as a string)
-        const binaryString = byte.toString(2).padStart(8, '0'); // Pad with leading zeros
-
-        // Convert each bit in the binary string to a number (0 or 1)
-        for (const bit of binaryString) {
-          decodedHistogramBuckets.push(parseInt(bit, 10));
-        }
-      }
-      const finalHistogram = decodedHistogramBuckets.slice(
-        0,
-        decodedData.histogram.length,
-      );
-      console.log('Histogram Bucket:', decodedHistogramBuckets);
+      const decodedHistogramBuckets = processBucketData(decodedData.histogram);
+      console.log('Histogram Buckets:', decodedHistogramBuckets);
       ReportStore.addReport({
         category: ReportCategory.RTM_HISTOGRAM,
         timestamp: Date.now().toString(),
-        data: finalHistogram,
+        data: decodedHistogramBuckets,
       });
     } catch (error) {
       console.error('Error processing CBOR data:', error);
@@ -115,3 +94,21 @@ WellKnownRealtimeMonitoringRouter.post(
     res.sendStatus(200);
   },
 );
+
+function processBucketData(jsonDecodedHistogramData: any): number[] {
+  const decodedHistogramBuckets: number[] = [];
+  for (const byte of jsonDecodedHistogramData.buckets) {
+    // Convert each byte to its binary representation (as a string)
+    const binaryString = byte.toString(2).padStart(8, '0'); // Pad with leading zeros
+
+    // Convert each bit in the binary string to a number (0 or 1)
+    for (const bit of binaryString) {
+      decodedHistogramBuckets.push(parseInt(bit, 10));
+    }
+  }
+  const finalHistogram = decodedHistogramBuckets.slice(
+    0,
+    jsonDecodedHistogramData.length,
+  );
+  return finalHistogram;
+}
