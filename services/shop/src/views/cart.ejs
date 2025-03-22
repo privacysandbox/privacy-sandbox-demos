@@ -62,10 +62,10 @@
           let fencedframe = document.createElement('fencedframe');
 
           fencedframe.addEventListener('fencedtreeclick', () => {
-            var height = 500;
-            var width = 600;
-            var left = (screen.width/2)-(width/2);
-            var top = (screen.height/2)-(height/2);
+            let height = 500;
+            let width = 600;
+            let left = (screen.width/2) - (width/2);
+            let top = (screen.height/2) - (height/2);
             let params = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
           
             window.open('https://privacy-sandbox-demos-services.dev/popup', 'example-pay-popup', params)
@@ -79,8 +79,6 @@
             fencedframe.style.border = '0px';
             fencedframe.style.borderRadius = '25px';
 
-            let checkoutButton = document.getElementById('checkout-button');
-            checkoutButton.style.display = 'none';
             document.getElementById('button-holder').appendChild(fencedframe);
           } catch (e) {
             console.log('Cannot provide personalized button.')
