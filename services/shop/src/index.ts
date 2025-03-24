@@ -29,6 +29,10 @@ import {
   PORT,
   SHOP_DETAIL,
   SHOP_HOST,
+  SSP_HOST,
+  SSP_A_HOST,
+  SSP_B_HOST,
+  SERVICE_PROVIDER_HOST,
 } from './lib/constants.js';
 import {
   addOrder,

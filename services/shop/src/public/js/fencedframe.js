@@ -1,6 +1,10 @@
 function createFencedFrame() {
   let fencedframe = document.createElement('fencedframe');
 
+  let $script = document.currentScript;
+  let hostUrl = $script.dataset.hostUrl;
+  let shopUrl = $script.dataset.shopUrl;
+
   fencedframe.addEventListener('fencedtreeclick', () => {
     let height = 500;
     let width = 600;
@@ -9,21 +13,15 @@ function createFencedFrame() {
     let params =
       'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
 
-    window.open(
-      'https://privacy-sandbox-demos-services.dev/popup',
-      'example-pay-popup',
-      params,
-    );
+    window.open(`${hostUrl}popup`, 'example-pay-popup', params);
 
     window.setTimeout(function () {
-      window.location.href = 'https://privacy-sandbox-demos-shop.dev/checkout';
+      window.location.href = `${shopUrl}checkout`;
     }, 3000);
   });
 
   try {
-    fencedframe.config = new FencedFrameConfig(
-      'https://privacy-sandbox-demos-services.dev/button',
-    );
+    fencedframe.config = new FencedFrameConfig(`${hostUrl}button`);
 
     fencedframe.height = '75px';
     fencedframe.width = '250px';
