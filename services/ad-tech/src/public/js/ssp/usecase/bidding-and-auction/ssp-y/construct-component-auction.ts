@@ -14,6 +14,8 @@
  limitations under the License.
  */
 const SSP_Y_ORIGIN = '<%= SSP_Y_ORIGIN %>';
+const DSP_X_ORIGIN = '<%= DSP_X_ORIGIN %>';
+const DSP_Y_ORIGIN = '<%= DSP_Y_ORIGIN %>';
 
 type ComponentAuctionResult = {
   protectedAudienceAuctionResult: Uint8Array;
@@ -31,7 +33,14 @@ class AdAuction {
   constructor() {}
 
   async getAuctionInfo() {
-    const adAuctionDataConfig = await this.#fetchAdAuctionDataConfig();
+    const adAuctionDataConfig = {
+      seller: SSP_Y_ORIGIN,
+      requestSize: 51200,
+      perBuyerConfig: {
+        [DSP_X_ORIGIN]: {targetSize: 8192},
+        [DSP_Y_ORIGIN]: {targetSize: 8192},
+      },
+    };
     const {requestId, request} =
       await navigator.getInterestGroupAdAuctionData(adAuctionDataConfig);
     const {
@@ -61,15 +70,6 @@ class AdAuction {
         },
       ],
     };
-  }
-
-  async #fetchAdAuctionDataConfig() {
-    const adAuctionDataConfigUrl = new URL(
-      'ssp/usecase/bidding-and-auction/service/ad/ad-auction-data-config.json',
-      SSP_Y_ORIGIN,
-    );
-    const response = await fetch(adAuctionDataConfigUrl);
-    return response.json();
   }
 
   async #fetchContextualAuctionBuyers() {
@@ -132,7 +132,7 @@ async function runComponentAuction() {
   const componentAuction = new AdAuction();
   const componentAuctionInfo = await componentAuction.getAuctionInfo();
 
-  console.log('[SSP-Y] Component auction config - ', componentAuctionInfo);
+  console.log('[SSP-Y] Component auction config ', componentAuctionInfo);
 
   window.auctionInfoCollector.push(componentAuctionInfo);
 }

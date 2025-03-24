@@ -57,7 +57,7 @@ tlsRouter.get('/', (req, res) => {
 
 /** Full route: /ssp/usecase/bidding-and-auction/auction-config.json */
 tlsRouter.get('/auction-config.json', (req, res) => {
-  console.log('[B&A] Orchestration seller returning auction config.');
+  console.log('[B&A] Top seller returning auction config.');
   res.json({
     seller: SSP_ORIGIN,
     decisionLogicURL: new URL(
@@ -235,7 +235,7 @@ sspXRouter.get('/construct-component-auction.js', async (req, res) => {
   );
   const file = await readFile(filePath, {encoding: 'utf8'});
   const compiledFile = await ejs.compile(file);
-  const fileContent = compiledFile({SSP_X_ORIGIN});
+  const fileContent = compiledFile({SSP_X_ORIGIN, DSP_X_ORIGIN, DSP_Y_ORIGIN});
 
   res.set('content-type', 'text/javascript');
 
@@ -263,7 +263,6 @@ sspYRouter.use(
 );
 
 /** Full route: /ssp/usecase/bidding-and-auction/ssp-y/service/ad */
-
 sspYRouter.use('/service/ad', adService);
 
 /** Full route: /ssp/usecase/bidding-and-auction/ssp-y/service/kv */
@@ -294,7 +293,7 @@ sspYRouter.get('/construct-component-auction.js', async (req, res) => {
   );
   const file = await readFile(filePath, {encoding: 'utf8'});
   const compiledFile = await ejs.compile(file);
-  const fileContent = compiledFile({SSP_Y_ORIGIN});
+  const fileContent = compiledFile({SSP_Y_ORIGIN, DSP_X_ORIGIN, DSP_Y_ORIGIN});
 
   res.set('content-type', 'text/javascript');
 

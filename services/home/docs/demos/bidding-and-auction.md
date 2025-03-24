@@ -280,6 +280,11 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 - Expanding the log for the `SSP-X` auction will show the auction config for a B&A only auction.
 - Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode auction. Within the mixed mode auction you will see two
   component auctions, one being an on-device auction and the other being a B&A auction.
+- Expanding the log for the `TLS SSP` will show four component auctions.
+  - On-device only with `SSP-A`
+  - B&A only with `SSP-X`
+  - On-device component of mixed mode with `SSP-Y`
+  - B&A component of mixed mode with `SSP-Y`
 
 ## **Implementation details**
 
@@ -468,4 +473,144 @@ export const getInterestGroupBiddingAndAuction = (
 
 ### Seller Details
 
-1.
+1. When the user visits the news website using the `/bidding-and-auction` query parameter, the router will render the bidding and auction EJS file and
+   inject the following variables. This logic is handled in the [index.ts](../../../news/src/index.ts) file.
+
+```javascript
+app.get('/bidding-and-auction', async (req: Request, res: Response) => {
+  res.render('bidding-and-auction', {
+    TITLE: NEWS_DETAIL,
+    TEXT_LOREM,
+    BIDDING_AND_AUCTION_SSP_TAG_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/usecase/bidding-and-auction/ad-tag.js`,
+    ).toString(),
+  });
+});
+```
+
+2. When the EJS file renders, it will inject `BIDDING_AND_AUCTION_SSP_TAG_URL` and this URL will be executed as a script.
+
+```html
+<ins class="ads"><script class="ssp_tag" src="<%= BIDDING_AND_AUCTION_SSP_TAG_URL %>"></script></ins>
+```
+
+3. The script that's executed includes logic to create an iframe. This will send a request to this path
+   `/ssp/usecase/bidding-and-auction/ad-tag.html`.
+
+```javascript
+(async () => {
+  const containerEl = document.querySelector('ins.ads');
+  const tagEl = document.querySelector('.ssp_tag');
+
+  const src = new URL(tagEl.src);
+  src.pathname = '/ssp/usecase/bidding-and-auction/ad-tag.html';
+
+  const iframeEl = document.createElement('iframe');
+  iframeEl.width = 300;
+  iframeEl.height = 250;
+  iframeEl.src = src;
+  iframeEl.setAttribute('scrolling', 'no');
+  iframeEl.setAttribute('style', 'border: none');
+  iframeEl.setAttribute('allow', 'attribution-reporting; run-ad-auction');
+  containerEl.appendChild(iframeEl);
+})();
+```
+
+4. Before rendering, this request is caught by the router. This handler will render the`ad-tag` EJS file and insert the following variables. These
+   variables are the tags that will be used to initiate the execution of component auctions for SSP-A, SSP-X, and SSP-Y.
+   - **NOTE**: Each of these tags will execute a component auction. This demo will follow the flow of `SSP-Y` to show how mixed mode is implemented.
+
+```javascript
+
+/** Full route: /ssp/usecase/bidding-and-auction/ad-tag.html */
+tlsRouter.get('/ad-tag.html', async (req, res) => {
+  res.render('ssp/usecase/bidding-and-auction/ad-tag', {
+    BIDDING_AND_AUCTION_SSP_A_TAG_URL: new URL(
+      '/ssp/usecase/bidding-and-auction/ssp-a/construct-component-auction.js',
+      SSP_A_ORIGIN,
+    ),
+    BIDDING_AND_AUCTION_SSP_X_TAG_URL: new URL(
+      '/ssp/usecase/bidding-and-auction/ssp-x/construct-component-auction.js',
+      SSP_X_ORIGIN,
+    ),
+    BIDDING_AND_AUCTION_SSP_Y_TAG_URL: new URL(
+      '/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.js',
+      SSP_Y_ORIGIN,
+    ),
+  });
+});
+```
+
+5. Once this variable is injected and the EJS file renders, it will execute the URL as a script. It will be caught by the router for `SSP-Y` and will
+   generate the [construct-component-auction.js](../../../ad-tech/src/public/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.ts)
+   file.
+
+```javascript
+sspYRouter.get('/construct-component-auction.js', async (req, res) => {
+  let filePath;
+  filePath = path.join(
+    path.resolve(),
+    '/build/public/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.js',
+  );
+  const file = await readFile(filePath, {encoding: 'utf8'});
+  const compiledFile = await ejs.compile(file);
+  const fileContent = compiledFile({SSP_Y_ORIGIN});
+
+  res.set('content-type', 'text/javascript');
+
+  res.send(fileContent);
+});
+```
+
+6. The entrypoint to this file is the `runComponentAuction` function call. This function will first create a new `AdAuction` object. Then the function
+   will call the method to retreive the auction info for SSP-Y.
+
+```typescript
+async function runComponentAuction() {
+  const componentAuction = new AdAuction();
+  const componentAuctionInfo = await componentAuction.getAuctionInfo();
+
+  console.log('[SSP-Y] Component auction config ', componentAuctionInfo);
+
+  window.auctionInfoCollector.push(componentAuctionInfo);
+}
+```
+
+7. Within the `componentAuction.getAuctionInfo()` call, there are many requests to retrieve information. The first one is to fetch the ad auction
+   config.
+
+```typescript
+//This occurs within the function call
+const adAuctionDataConfig = await this.#fetchAdAuctionDataConfig();
+```
+
+- This call will handled by the [ad-service.ts](../../../ad-tech/src/routes/ssp/usecase/bidding-and-auction/ad-service.ts) file.
+
+```typescript
+  async #fetchAdAuctionDataConfig() {
+    const adAuctionDataConfigUrl = new URL(
+      'ssp/usecase/bidding-and-auction/service/ad/ad-auction-data-config.json',
+      SSP_Y_ORIGIN,
+    );
+    const response = await fetch(adAuctionDataConfigUrl);
+    return response.json();
+  }
+```
+
+8.
+
+```typescript
+router.get('/ad-auction-data-config.json', (req: Request, res: Response) => {
+  const host: any = req.headers.host;
+    const adAuctionDataConfig = {
+      seller: SSP_Y_ORIGIN,
+      requestSize: 51200,
+      perBuyerConfig: {
+        [DSP_X_ORIGIN]: {targetSize: 8192},
+        [DSP_Y_ORIGIN]: {targetSize: 8192},
+      },
+    };
+    res.json(adAuctionDataConfig);
+  }
+);
+```

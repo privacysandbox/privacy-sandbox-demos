@@ -35,7 +35,6 @@ class AdAuction {
 
   async getAuctionInfo() {
     const componentAuctionConfig = await this.#fetchComponentAuctionConfig();
-    console.log('Component auction complete for SSP A');
     const contextualAuctionResult = await this.#fetchContextualAuctionResult();
     const [contextualAuctionWinner] = contextualAuctionResult;
 
@@ -95,7 +94,7 @@ async function runComponentAuction() {
   const componentAuction = new AdAuction();
   const componentAuctionInfo = await componentAuction.getAuctionInfo();
 
-  console.log('[SSP-A] Component auction config - ', componentAuctionInfo);
+  console.log('[SSP-A] Component auction config ', componentAuctionInfo);
 
   window.auctionInfoCollector.push(componentAuctionInfo);
 }

@@ -36,9 +36,12 @@ class AdAuction {
   async run(componentAuctionInfo) {
     this.auctionConfig.componentAuctions =
       this.#getComponentAuctionConfigs(componentAuctionInfo);
-    console.log(this.auctionConfig);
+    console.log(
+      '[TLS SSP] Top Protected Audience auction config ',
+      this.auctionConfig,
+    );
     const adAuctionResult = await navigator.runAdAuction(this.auctionConfig);
-    console.log('[TLS SSP] Auction result generated');
+    console.log('[TLS SSP] Auction result generated, runAdAuction complete.');
 
     if (adAuctionResult) {
       this.#renderProtectedAudienceAd(adAuctionResult);

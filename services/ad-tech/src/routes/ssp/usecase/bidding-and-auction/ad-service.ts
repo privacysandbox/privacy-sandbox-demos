@@ -222,32 +222,6 @@ router.get('/contextual-auction-buyers.json', (req: Request, res: Response) => {
   });
 });
 
-router.get('/ad-auction-data-config.json', (req: Request, res: Response) => {
-  const host: any = req.headers.host;
-  console.log('SSP HOST: ' + host);
-  if (host.includes(SSP_X_HOST)) {
-    const adAuctionDataConfig = {
-      seller: SSP_X_ORIGIN,
-      requestSize: 51200,
-      perBuyerConfig: {
-        [DSP_X_ORIGIN]: {targetSize: 8192},
-        [DSP_Y_ORIGIN]: {targetSize: 8192},
-      },
-    };
-    res.json(adAuctionDataConfig);
-  } else if (host.includes(SSP_Y_HOST)) {
-    const adAuctionDataConfig = {
-      seller: SSP_Y_ORIGIN,
-      requestSize: 51200,
-      perBuyerConfig: {
-        [DSP_X_ORIGIN]: {targetSize: 8192},
-        [DSP_Y_ORIGIN]: {targetSize: 8192},
-      },
-    };
-    res.json(adAuctionDataConfig);
-  }
-});
-
 router.post('/unified-auction', async (req: Request, res: Response) => {
   const {contextual, protectedAudience} = req.body;
   const host = req.headers.host;
