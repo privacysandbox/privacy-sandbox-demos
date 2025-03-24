@@ -1,10 +1,4 @@
 function createFencedFrame() {
-  //   let cartLength = <%=cart.length%>;
-
-  //   if (cartLength === 0) {
-  //     return;
-  //   }
-
   let fencedframe = document.createElement('fencedframe');
 
   fencedframe.addEventListener('fencedtreeclick', () => {
