@@ -1,9 +1,9 @@
 function createFencedFrame() {
   let fencedframe = document.createElement('fencedframe');
 
-  let $script = document.currentScript;
-  let hostUrl = $script.dataset.hostUrl;
-  let shopUrl = $script.dataset.shopUrl;
+  let serviceProviderHost = '<%= SERVICE_PROVIDER_HOST %>';
+  let shopHost = '<%= SHOP_HOST %>';
+  let externalPort = '<%= EXTERNAL_PORT %>';
 
   fencedframe.addEventListener('fencedtreeclick', () => {
     let height = 500;
@@ -13,16 +13,21 @@ function createFencedFrame() {
     let params =
       'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
 
-    window.open(`${hostUrl}popup`, 'example-pay-popup', params);
+    window.open(
+      `https://${serviceProviderHost}:${externalPort}/popup`,
+      'example-pay-popup',
+      params,
+    );
 
     window.setTimeout(function () {
-      window.location.href = `${shopUrl}checkout`;
+      window.location.href = `https://${shopHost}:${externalPort}/checkout`;
     }, 3000);
   });
 
   try {
-    fencedframe.config = new FencedFrameConfig(`${hostUrl}button`);
-
+    fencedframe.config = new FencedFrameConfig(
+      `https://${serviceProviderHost}:${externalPort}/button`,
+    );
     fencedframe.height = '75px';
     fencedframe.width = '250px';
     fencedframe.style.border = '0px';
@@ -30,7 +35,7 @@ function createFencedFrame() {
 
     document.getElementById('button-holder').appendChild(fencedframe);
   } catch (e) {
-    console.log('Cannot provide personalized button.');
+    console.log('Cannot provide personalized button: ' + e);
   }
 }
 

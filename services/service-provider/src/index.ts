@@ -16,9 +16,7 @@
 
 import express, {Application, Request, Response} from 'express';
 
-const {EXTERNAL_PORT, PORT} = process.env;
-//  const {EXTERNAL_PORT} = process.env;
-const {SERVICE_PROVIDER_HOST, SERVICE_PROVIDER_DETAIL} = process.env;
+const {PORT} = process.env;
 
 const app: Application = express();
 app.use(express.static('src/public'));
