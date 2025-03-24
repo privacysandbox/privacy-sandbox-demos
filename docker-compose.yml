@@ -267,6 +267,7 @@ services:
       - dsp-x
       - dsp-y
       - ad-server
+      - service-provider
       - collector
 
 networks:
