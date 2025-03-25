@@ -52,7 +52,7 @@ the Aggregation Service nor noised aggregation reports.
 
 ### System Design
 
-- The user visits the [news site](https://privacy-sandbox-demos-news.dev/static-ad-with-reach) where an ad is rendered.
+- The user visits the [news site](https://privacy-sandbox-demos-news.dev/basic-reach-mmt) where an ad is rendered.
 - Using the shares storage `sharedStorage.get(*some_key*)` method, the browser queries for previous views of the ad.
 - If the browser has not previously displayed the ad, a private aggregatable report is generated and sent to the `.well-known` endpoint via the
   `privateAggregation.contributeToHistogram()` method.
@@ -109,7 +109,7 @@ Browser-)DSP: View atributable reports delivered to .well-known endpoint (https:
 
 ### User Journey #1
 
-1. [Navigate to news site](https://privacy-sandbox-demos-news.dev/) (a publisher)
+1. [Navigate to news site](https://privacy-sandbox-demos-news.dev/basic-reach-mmt) (a publisher)
 2. Open Chrome DevToolsS
 3. View Application > Shared storage - verify has-reported-content has a single entry ![Shared Storage](./img/reach-measurement-shared-storage1.png)
 4. Reload the page
