@@ -19,6 +19,7 @@ import {
   sourceEventId,
   sourceKeyPiece,
   triggerKeyPiece,
+  getTriggerData,
   ADVERTISER,
   PUBLISHER,
   DIMENSION,
@@ -82,6 +83,23 @@ export const getAttributionTriggerHeaders = (requestQuery: {
       gross: Number(requestQuery.gross),
     },
     debug_key: debugKey(),
+  };
+};
+/** Returns ARA trigger registration headers for event level. */
+export const getEventLevelAttributionTriggerHeaders = (requestQuery: {
+  [key: string]: string;
+}): {[key: string]: any} => {
+  const conversionType: string = requestQuery['conversionType'] as string;
+  const [_data, _priority] = getTriggerData(conversionType);
+  return {
+    event_trigger_data: [
+      {
+        trigger_data: _data,
+        priority: _priority,
+      },
+    ],
+    debug_key: debugKey(),
+    debug_reporting: true,
   };
 };
 

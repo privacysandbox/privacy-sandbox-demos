@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.0.0 (2025/2/21)
+
+- added framework skeleton for synthetic monitoring (see monitoring/puppeteer-nodejs/ folder)
+- added support for Google Analytics in **home** service including consent banner
+- added configuration for .github/github-repo-stats.yml
+- Updated infrastructure to support additional dsp-x, dsp-y, ssp-y, ssp-y services
+- Added deployment instructions and scripts to support Podman on top of Docker. docs/deploy-to-linux-podman.md
+- Refactored the adtech services code into 1 services/adtech/ codebase. Removing code duplication and improving maintainability. Now dsp, ssp and
+  other adtech services can be instantiated (containerized) from the same code base.
+- Added new use case demos and refactored/updated existing ones.
+- Added new capabilities to the framework to enable new demos :
+  - support for buyerAndSellerReportingId in PAAPI auctions
+  - support for deals in PAAPI auctions
+  - support for multi-sellers, multi-buyers
+  - support for video ads in iframe using SSP macros
+  - publisher page (news site) to support multiple scenarios
+  - fenced frames ads reporting
+
 ## v1.3.0 (2024/2/6)
 
 ### Enhancements

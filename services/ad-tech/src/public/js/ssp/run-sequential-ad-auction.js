@@ -16,6 +16,7 @@
 
 (() => {
   const CURR_SCRIPT_URL = new URL(document.currentScript.src);
+  const CONTEXTUAL_AUCTION_TIMEOUT_MS = 5000;
   let CURR_AUCTION_ID = '';
   // ****************************************************************
   // HELPER FUNCTIONS

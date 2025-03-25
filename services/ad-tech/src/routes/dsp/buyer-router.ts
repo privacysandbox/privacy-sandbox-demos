@@ -13,7 +13,7 @@
 
 import express, {Request, Response} from 'express';
 import {HOSTNAME, DSP_A_HOST, DSP_X_HOST} from '../../lib/constants.js';
-import {getTemplateVariables} from '../../lib/common-utils.js';
+import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
   getInterestGroupBiddingAndAuction,
@@ -29,8 +29,37 @@ import {
  */
 export const BuyerRouter = express.Router();
 
+/**
+ * Generic handler for iframe HTML documents served by ad buyer.
+ * This matches paths like: /dsp/...*.html
+ */
+BuyerRouter.get('*.html', async (req: Request, res: Response) => {
+  // Pass URL query parameters as EJS template variables.
+  const urlQueryParams: {[key: string]: string} = {};
+  for (const [key, value] of Object.entries(req.query)) {
+    if (value) {
+      urlQueryParams[key] = value.toString();
+    }
+  }
+  console.debug(
+    '[BuyerRouter] Rendering HTML document',
+    req.path,
+    urlQueryParams,
+  );
+  // Translate req.path to 'view' path for EJS template.
+  // E.g. req.path = '/join-ad-interest-group.html'
+  // view = 'dsp/join-ad-interest-group' ('.ejs' is implied.)
+  res.render(
+    /* view= */ `dsp${req.path.replace('.html', '')}`,
+    getEjsTemplateVariables(
+      /* titleMessage= */ req.path,
+      /* additionalTemplateVariables= */ urlQueryParams,
+    ),
+  );
+});
+
 // ************************************************************************
-// HTTP handlers
+// HTTP handlers with JSON responses
 // ************************************************************************
 /** Iframe document used as context to join interest group. */
 BuyerRouter.get(
@@ -76,17 +105,13 @@ BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
 /** Returns the interest group to join on an advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   const targetingContext = assembleTargetingContext(req.query);
-  res.json(getInterestGroup(targetingContext));
-});
-
-/** Returns the interest group to join on an advertiser page. */
-BuyerRouter.get(
-  '/interest-group-bidding-and-auction.json',
-  async (req: Request, res: Response) => {
-    const targetingContext = assembleTargetingContext(req.query);
+  // TODO: Generalize to accommodate additional use cases.
+  if ('bidding-and-auction' === targetingContext.usecase) {
     res.json(getInterestGroupBiddingAndAuction(targetingContext));
-  },
-);
+  } else {
+    res.json(getInterestGroup(targetingContext));
+  }
+});
 
 /** Returns the updated interest group, usually daily, may be overridden. */
 BuyerRouter.get(
@@ -98,20 +123,9 @@ BuyerRouter.get(
   },
 );
 
-/** Iframe document used as context to test Private Aggregation. */
-BuyerRouter.get(
-  '/test-private-aggregation.html',
-  async (req: Request, res: Response) => {
-    const bucket = req.query.bucket;
-    const cloudEnv = req.query.cloudEnv;
-    console.log(`${bucket}, ${cloudEnv}`);
-    res.render('dsp/test-private-aggregation', {
-      bucket: bucket,
-      cloudEnv: cloudEnv,
-    });
-  },
-);
-
+// ************************************************************************
+// Helper methods
+// ************************************************************************
 const KNOWN_TARGETING_CONTEXT_KEYS = [
   'advertiser',
   'usecase',
@@ -158,11 +172,3 @@ const assembleTargetingContext = (query: any): TargetingContext => {
   }
   return targetingContext;
 };
-
-/** Returns the updated interest group, usually daily, may be overridden. */
-BuyerRouter.get('/mta-conversion.html', async (req: Request, res: Response) => {
-  const campaignId = 1234;
-  const purchaseValue = req.query.purchaseValue;
-  console.log(`Campaign Id: ${campaignId}, Purchase Value: ${purchaseValue}`);
-  res.render('dsp/mta-conversion.ejs', {campaignId, purchaseValue});
-});

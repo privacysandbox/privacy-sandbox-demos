@@ -25,6 +25,8 @@ import {tlsRouter} from './usecase/bidding-and-auction/bidding-and-auction-route
 import {sspYRouter} from './usecase/bidding-and-auction/bidding-and-auction-router.js';
 import {sspXRouter} from './usecase/bidding-and-auction/bidding-and-auction-router.js';
 import {sspARouter} from './usecase/bidding-and-auction/bidding-and-auction-router.js';
+import {getEjsTemplateVariables} from '../../lib/common-utils.js';
+
 /**
  * This is the main Seller router and is responsible for handling a variety of
  * requests made at the top-level path: /ssp. This includes retrieving
@@ -38,22 +40,34 @@ const DSP_A_ORIGIN = new URL(`https://${DSP_A_HOST}:${EXTERNAL_PORT}`).origin;
 const DSP_B_ORIGIN = new URL(`https://${DSP_B_HOST}:${EXTERNAL_PORT}`).origin;
 const DSP_X_ORIGIN = new URL(`https://${DSP_X_HOST}:${EXTERNAL_PORT}`).origin;
 const DSP_Y_ORIGIN = new URL(`https://${DSP_Y_HOST}:${EXTERNAL_PORT}`).origin;
-// TODO: Rename to run-single-seller-ad-auction after unified branch is merged.
-/** Iframe document used as context to run single-seller PAAPI auction. */
-SellerRouter.get(
-  '/run-ad-auction.html',
-  async (req: Request, res: Response) => {
-    res.render('ssp/run-ad-auction');
-  },
-);
-
-/** Iframe document used as context to run multi-seller PAAPI auction. */
-SellerRouter.get(
-  '/run-sequential-ad-auction.html',
-  async (req: Request, res: Response) => {
-    res.render('ssp/run-sequential-ad-auction');
-  },
-);
+/**
+ * Generic handler for iframe HTML documents served by ad seller.
+ * This matches paths like: /ssp/...*.html
+ */
+SellerRouter.get('*.html', async (req: Request, res: Response) => {
+  // Pass URL query parameters as EJS template variables.
+  const urlQueryParams: {[key: string]: string} = {};
+  for (const [key, value] of Object.entries(req.query)) {
+    if (value) {
+      urlQueryParams[key] = value.toString();
+    }
+  }
+  console.debug(
+    '[SellerRouter] Rendering HTML document',
+    req.path,
+    urlQueryParams,
+  );
+  // Translate req.path to 'view' path for EJS template.
+  // E.g. req.path = '/run-ad-auction.html'
+  // view = 'ssp/run-ad-auction' ('.ejs' is implied.)
+  res.render(
+    /* view= */ `ssp${req.path.replace('.html', '')}`,
+    getEjsTemplateVariables(
+      /* titleMessage= */ req.path,
+      /* additionalTemplateVariables= */ urlQueryParams,
+    ),
+  );
+});
 
 /** Returns the PAAPI auction config. */
 SellerRouter.get(

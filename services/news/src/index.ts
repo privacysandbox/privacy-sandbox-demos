@@ -30,6 +30,7 @@ import {
   SSP_Y_ORIGIN,
   SSP_HOST,
   SSP_ORIGIN,
+  SHOP_HOST,
 } from './constants.js';
 
 const app: Application = express();
@@ -44,7 +45,7 @@ app.get('/', async (req: Request, res: Response) => {
     EXTERNAL_PORT,
     HOME_HOST,
     SSP_TAG_URL: new URL(
-      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
+      `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
     ).toString(),
   });
 });
@@ -63,6 +64,7 @@ app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
     TITLE: NEWS_DETAIL,
     TEXT_LOREM,
+    SHOP_HOST,
     AD_SERVER_HOST,
     DSP_HOST,
     EXTERNAL_PORT,

@@ -19,6 +19,7 @@ import {
   MACRO_DISPLAY_RENDER_URL_AD_SIZE,
   MACRO_VIDEO_RENDER_URL_SSP_VAST,
   BIDDING_SIGNALS_DEALS,
+  KNOWN_SHOP_ITEM_TAGS_BY_ID,
 } from './constants.js';
 
 // ****************************************************************************
@@ -28,6 +29,7 @@ import {
 export enum AdType {
   DISPLAY = 'DISPLAY',
   VIDEO = 'VIDEO',
+  MULTIPIECE = 'MULTIPIECE',
 }
 
 export enum AuctionServerRequestFlags {
@@ -98,6 +100,8 @@ export interface InterestGroup {
   sizeGroups?: {[key: string]: string[]};
   /** B&A server request flags. (e.g., 'omit-ads', 'omit-user-bidding-signals'). */
   auctionServerRequestFlags?: string[];
+  /** All adComponents that can be used to construct "Ads Composed of Multiple Pieces"). These are the individual ads that make up the multi-piece ad. */
+  adComponents?: InterestGroupAd[];
 }
 
 /** Generalized interface of the interest group targeting context. */
@@ -174,6 +178,62 @@ const getDisplayAdForRequest = (
     ad.selectableBuyerAndSellerReportingIds = ['deal-1', 'deal-2', 'deal-3'];
   }
   return ad;
+};
+
+/** Returns multi-piece container for a given advertiser and SSP hosts to integrate. */
+const getMultiPieceAdForRequest = (
+  targetingContext: TargetingContext,
+): InterestGroupAd => {
+  const {advertiser} = targetingContext;
+  const renderUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/multi-piece-ads`,
+  );
+  renderUrl.searchParams.append('advertiser', advertiser);
+  const ad: InterestGroupAd = {
+    renderURL: renderUrl.toString(),
+    metadata: {
+      advertiser,
+      adType: AdType.MULTIPIECE,
+      adSizes: [{width: '300px', height: '250px'}],
+    },
+    sizeGroup: 'medium-rectangle',
+    buyerReportingId: 'buyerSpecificInfo1',
+    buyerAndSellerReportingId: 'seatid-1234',
+  };
+  if (targetingContext.isUpdateRequest) {
+    // Only include deal IDs in update requests.
+    ad.selectableBuyerAndSellerReportingIds = ['deal-1', 'deal-2', 'deal-3'];
+  }
+  return ad;
+};
+
+/** Returns adComponents array for the multi-piece container. */
+const getAdComponentsForRequest = (
+  targetingContext: TargetingContext,
+): InterestGroupAd[] => {
+  const itemId = targetingContext.itemId || '1f45f';
+  const numAdComponents = 5;
+  const knownItemIds = Object.keys(KNOWN_SHOP_ITEM_TAGS_BY_ID);
+  const items = [itemId];
+  while (items.length < numAdComponents) {
+    const randomIndex = Math.floor(Math.random() * knownItemIds.length);
+    const randomItem = knownItemIds[randomIndex];
+    if (items.includes(randomItem)) {
+      continue;
+    } else {
+      items.push(randomItem);
+    }
+  }
+  const ads: InterestGroupAd[] = [];
+  for (const item of items) {
+    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`);
+    renderUrl.pathname = '/ads/component-ads-for-multi-piece';
+    renderUrl.searchParams.append('itemId', item);
+    ads.push({
+      renderURL: renderUrl.toString(),
+    });
+  }
+  return ads;
 };
 
 /** Returns the interest group name to use. */
@@ -258,6 +318,7 @@ export const getInterestGroup = (
     ads: [
       getDisplayAdForRequest(targetingContext),
       getVideoAdForRequest(targetingContext),
+      getMultiPieceAdForRequest(targetingContext),
     ],
     adSizes: {
       'medium-rectangle-default': {'width': '300px', 'height': '250px'},
@@ -265,6 +326,7 @@ export const getInterestGroup = (
     sizeGroups: {
       'medium-rectangle': ['medium-rectangle-default'],
     },
+    adComponents: getAdComponentsForRequest(targetingContext),
   };
 };
 

@@ -96,7 +96,7 @@
      */
     injectIframe(
       /* src= */ getServerUrlWithPageContext(
-        /* pathname= */ 'dsp/dsp-advertiser-iframe.html',
+        /* pathname= */ 'dsp/join-ad-interest-group.html',
       ),
       /* options= */ {
         allow: 'join-ad-interest-group',

@@ -17,7 +17,7 @@ import {
   DEMO_HOST_PREFIX,
   JAVASCRIPT_TEMPLATE_VARIABLES,
 } from '../../lib/constants.js';
-import {getTemplateVariables} from '../../lib/common-utils.js';
+import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 
 /**
  * This router is responsible for registering HTTP headers, preflight requests,
@@ -65,7 +65,7 @@ CommonRouter.get('/js/*.js', (req: Request, res: Response) => {
     res.set('X-Allow-FLEDGE', 'true');
     res.set('Ad-Auction-Allowed', 'true');
   }
-  if (filePath.endsWith('/run-ad-auction.js')) {
+  if (filePath.endsWith('/run-simple-ad-auction.js')) {
     res.set('Supports-Loading-Mode', 'fenced-frame');
     res.set('Permissions-Policy', 'run-ad-auction=(*)');
   }
@@ -105,5 +105,5 @@ CommonRouter.options('*', (req: Request, res: Response) => {
 
 /** Index page, not commonly used in tests. */
 CommonRouter.get('/', async (req: Request, res: Response) => {
-  res.render('index', getTemplateVariables());
+  res.render('index', getEjsTemplateVariables());
 });

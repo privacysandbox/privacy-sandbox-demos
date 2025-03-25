@@ -2,12 +2,8 @@
   "position": 2,
   "label": "Use Cases Demos",
   "collapsible": true,
-  "collapsed": true,
+  "collapsed": false,
   "className": "red",
-  "link": {
-    "type": "doc",
-    "id": "demos/index"
-  },
   "customProps": {
     "description": "Contains the documentation for each use case demo"
   }

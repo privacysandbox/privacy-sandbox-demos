@@ -228,3 +228,28 @@ function test() {
 }
 
 // test();
+
+// tmp for event level report
+// Retrieves trigger data and priority based on the provided conversion type.
+// This function maps conversion types to corresponding trigger data and priority values
+// * trigger data is the metadata value representing the conversion
+// used for event-level reporting.  The trigger data and priority are returned as an array.
+// @param conversionType The conversion type string (e.g., 'click-cart-icon', 'add-to-cart', 'purchase').
+// @returns An array containing the trigger data (string) and priority (string),
+//          or `['0', '0']` for unknown conversion types.
+// @example
+// getTriggerData('purchase'); // Returns ['1', '100']
+// getTriggerData('unknown-event'); // Returns ['0', '0']
+export function getTriggerData(conversionType: string) {
+  console.log(`[arapi] getTriggerData: ${conversionType}`);
+  switch (conversionType) {
+    case `click-cart-icon`:
+      return [`5`, `60`];
+    case `add-to-cart`:
+      return [`6`, `80`];
+    case `purchase`:
+      return [`1`, `100`];
+    default:
+      return ['0', '0'];
+  }
+}
