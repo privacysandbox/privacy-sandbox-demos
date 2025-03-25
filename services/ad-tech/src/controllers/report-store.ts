@@ -56,7 +56,7 @@ export const ReportStore = (() => {
   };
 
   /** Delete all reports from in-memory storage. */
-  const cleanReports = (): Report[] => {
+  const clearReports = (): Report[] => {
     Reports.flushAll();
     console.log('keys flushed');
     return Reports.keys().map((key) => Reports.get(key) as Report);
@@ -65,6 +65,6 @@ export const ReportStore = (() => {
   return {
     addReport,
     getAllReports,
-    cleanReports,
+    clearReports,
   };
 })();
