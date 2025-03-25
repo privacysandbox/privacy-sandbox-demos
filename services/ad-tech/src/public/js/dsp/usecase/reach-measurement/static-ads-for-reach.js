@@ -32,7 +32,7 @@
     // Run the reach measurement operation
     await window.sharedStorage.run('reach-measurement', {
       data: {
-        contentId: Date.now(),
+        contentId: 99,
         geo: 'san jose',
         creativeId: '55',
       },
