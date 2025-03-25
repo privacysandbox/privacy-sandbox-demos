@@ -36,7 +36,7 @@ direct method.
 
 ### Goals
 
-In this demo, we assume an advertiser would like to measure the reach of marketing campaigns. By using a combination of Shares Storage and Private
+In this demo, we assume an advertiser would like to measure the reach of marketing campaigns. By using a combination of Shared Storage and Private
 Aggregation APIs, will demonstrate an effective method for reach measurement available within Privacy Sandbox.
 
 ### Assumptions
@@ -53,7 +53,7 @@ the Aggregation Service nor noised aggregation reports.
 ### System Design
 
 - The user visits the [news site](https://privacy-sandbox-demos-news.dev/basic-reach-mmt) where an ad is rendered.
-- Using the shares storage `sharedStorage.get(*some_key*)` method, the browser queries for previous views of the ad.
+- Using the shared storage `sharedStorage.get(*some_key*)` method, the browser queries for previous views of the ad.
 - If the browser has not previously displayed the ad, a private aggregatable report is generated and sent to the `.well-known` endpoint via the
   `privateAggregation.contributeToHistogram()` method.
 - The browser shared storage value is set to a value indicating _viewed_ .
