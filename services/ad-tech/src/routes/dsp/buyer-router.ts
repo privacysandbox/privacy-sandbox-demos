@@ -62,24 +62,6 @@ BuyerRouter.get('*.html', async (req: Request, res: Response) => {
 // HTTP handlers with JSON responses
 // ************************************************************************
 /** Iframe document used as context to join interest group. */
-BuyerRouter.get(
-  '/dsp-advertiser-iframe.html',
-  async (req: Request, res: Response) => {
-    res.render(
-      'dsp/dsp-advertiser-iframe',
-      getEjsTemplateVariables('Join Ad Interest Group'),
-    );
-  },
-);
-BuyerRouter.get(
-  '/dsp-advertiser-iframe-bidding-and-auction.html',
-  async (req: Request, res: Response) => {
-    res.render(
-      'dsp/usecase/bidding-and-auction/dsp-advertiser-iframe',
-      getEjsTemplateVariables('Join Ad Interest Group'),
-    );
-  },
-);
 /** Full route: /dsp/service/kv */
 BuyerRouter.get('/service/kv', (req, res) => {
   res.setHeader('Ad-Auction-Allowed', 'true');
@@ -94,6 +76,7 @@ BuyerRouter.get('/service/kv', (req, res) => {
   });
 });
 
+//TODO: Replace this with the buyer-contextual-bidder-router endpoint
 BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
   res.json({
     bid: Math.floor(Math.random() * 100),
