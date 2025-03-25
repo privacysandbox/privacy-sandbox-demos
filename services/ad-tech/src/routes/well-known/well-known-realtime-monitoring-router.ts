@@ -49,19 +49,19 @@ WellKnownRealtimeMonitoringRouter.post(
       if (
         !decodedData ||
         !decodedData.histogram ||
-        !decodedData.histogram.buckets
+        !Buffer.isBuffer(decodedData.histogram.buckets)
       ) {
-        console.error('No histogram in CBOR data: ', decodedData);
-        res.status(500).send('No histogram in CBOR data');
+        console.error('Invalid histogram data: ', decodedData);
+        res.status(500).send('Invalid histogram data');
         return;
       }
       if (
         !decodedData ||
         !decodedData.platformHistogram ||
-        !decodedData.platformHistogram.buckets
+        !Buffer.isBuffer(decodedData.platformHistogram.buckets)
       ) {
-        console.error('No platformHistogram in CBOR data: ', decodedData);
-        res.status(500).send('No platformHistogram in CBOR data');
+        console.error('Invalid platformHistogram data: ', decodedData);
+        res.status(500).send('Invalid platformHistogram data');
         return;
       }
       // Process Platform Buckets
@@ -96,14 +96,21 @@ WellKnownRealtimeMonitoringRouter.post(
 );
 
 function processBucketData(jsonDecodedHistogramData: any): number[] {
+  if (!Buffer.isBuffer(jsonDecodedHistogramData.buckets)) {
+    console.error('Invalid buckets data:', jsonDecodedHistogramData.buckets);
+    throw new Error('Invalid buckets data:', jsonDecodedHistogramData.buckets);
+  }
+
   const decodedHistogramBuckets: number[] = [];
   for (const byte of jsonDecodedHistogramData.buckets) {
-    // Convert each byte to its binary representation (as a string)
-    const binaryString = byte.toString(2).padStart(8, '0'); // Pad with leading zeros
-
-    // Convert each bit in the binary string to a number (0 or 1)
-    for (const bit of binaryString) {
-      decodedHistogramBuckets.push(parseInt(bit, 10));
+    if (typeof byte !== 'number') {
+      console.error('Invalid bucket value:', byte);
+      throw new Error('Invalid bucket value:', byte);
+    }
+    // Iterate through the bits of the byte
+    for (let i = 0; i < 8; i++) {
+      // Extract each bit using bitwise operations
+      decodedHistogramBuckets.push((byte >> i) & 1);
     }
   }
   const finalHistogram = decodedHistogramBuckets.slice(
