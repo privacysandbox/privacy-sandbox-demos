@@ -133,3 +133,8 @@ ReportRouter.get('/view-reports', async (req: Request, res: Response) => {
     ...hostDetails,
   });
 });
+
+ReportRouter.get('/clear-reports', async (req: Request, res: Response) => {
+  ReportStore.clearReports();
+  res.status(200).json({Message: 'Reports have been cleared'});
+});
