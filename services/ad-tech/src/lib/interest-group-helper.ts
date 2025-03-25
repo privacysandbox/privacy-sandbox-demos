@@ -367,6 +367,8 @@ function extractDspName(str: string): string {
   const match = str.match(/([^-]+-[a-z])\.dev$/); // Matches "dsp-x.dev", "dsp-y.dev", etc.
   if (match) {
     return match[1];
+  } else {
+    return 'dsp';
   }
   return ''; // Return null if no match is found
 }

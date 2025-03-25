@@ -72,28 +72,6 @@ tlsRouter.get('/auction-config.json', (req, res) => {
   });
 });
 
-/** Full route: /ssp/usecase/bidding-and-auction/ad-tag.html */
-tlsRouter.get('/ad-tag.html', async (req, res) => {
-  res.render('ssp/usecase/bidding-and-auction/ad-tag', {
-    BIDDING_AND_AUCTION_SSP_A_TAG_URL: new URL(
-      '/ssp/usecase/bidding-and-auction/ssp-a/construct-component-auction.js',
-      SSP_A_ORIGIN,
-    ),
-    BIDDING_AND_AUCTION_SSP_X_TAG_URL: new URL(
-      '/ssp/usecase/bidding-and-auction/ssp-x/construct-component-auction.js',
-      SSP_X_ORIGIN,
-    ),
-    BIDDING_AND_AUCTION_SSP_Y_TAG_URL: new URL(
-      '/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.js',
-      SSP_Y_ORIGIN,
-    ),
-  });
-});
-
-tlsRouter.get('/ad-tag.js', async (req, res) => {
-  res.render('ssp/usecase/bidding-and-auction/ad-tag', {});
-});
-
 tlsRouter.get('/service/kv', (req, res) => {
   res.setHeader('Ad-Auction-Allowed', 'true');
 
@@ -106,21 +84,6 @@ tlsRouter.get('/service/kv', (req, res) => {
 });
 
 tlsRouter.use('/service/ad', adService);
-
-sspARouter.use(
-  express.static('src/public/js/ssp/usecase/bidding-and-auction/ssp-a', {
-    setHeaders: (res, path) => {
-      if (path.includes('decision-logic.js')) {
-        res.set('Ad-Auction-Allowed', 'true');
-      }
-
-      if (path.includes('run-ad-auction.js')) {
-        res.set('Supports-Loading-Mode', 'fenced-frame');
-        res.set('Permissions-Policy', 'run-ad-auction=(*)');
-      }
-    },
-  }),
-);
 
 sspARouter.get('/service/ad/auction-config.json', async (req, res) => {
   console.log('[B&A] SSP-A returning auction config.');
@@ -194,22 +157,6 @@ sspARouter.get('/', (req, res) => {
   res.sendStatus(200);
 });
 
-/** sspXYRouter will only serve static files from this static file location. */
-sspXRouter.use(
-  express.static('src/public/js/ssp/usecase/bidding-and-auction/ssp-x', {
-    setHeaders: (res, path) => {
-      if (path.includes('decision-logic.js')) {
-        res.set('Ad-Auction-Allowed', 'true');
-      }
-
-      if (path.includes('run-ad-auction.js')) {
-        res.set('Supports-Loading-Mode', 'fenced-frame');
-        res.set('Permissions-Policy', 'run-ad-auction=(*)');
-      }
-    },
-  }),
-);
-
 /** Full route: /ssp/usecase/bidding-and-auction/service/ad */
 sspXRouter.use('/service/ad', adService);
 
@@ -245,22 +192,6 @@ sspXRouter.get('/construct-component-auction.js', async (req, res) => {
 sspXRouter.get('/', (req, res) => {
   res.sendStatus(200);
 });
-
-/** sspYRouter will only serve static files from this static file location. */
-sspYRouter.use(
-  express.static('src/public/js/ssp/usecase/bidding-and-auction/ssp-y', {
-    setHeaders: (res, path) => {
-      if (path.includes('decision-logic.js')) {
-        res.set('Ad-Auction-Allowed', 'true');
-      }
-
-      if (path.includes('run-ad-auction.js')) {
-        res.set('Supports-Loading-Mode', 'fenced-frame');
-        res.set('Permissions-Policy', 'run-ad-auction=(*)');
-      }
-    },
-  }),
-);
 
 /** Full route: /ssp/usecase/bidding-and-auction/ssp-y/service/ad */
 sspYRouter.use('/service/ad', adService);

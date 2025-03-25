@@ -383,7 +383,7 @@ BuyerRouter.get(
   async (req: Request, res: Response) => {
     res.render(
       'dsp/usecase/bidding-and-auction/dsp-advertiser-iframe',
-      getTemplateVariables('Join Ad Interest Group'),
+      getEJSTemplateVariables('Join Ad Interest Group'),
     );
   },
 );

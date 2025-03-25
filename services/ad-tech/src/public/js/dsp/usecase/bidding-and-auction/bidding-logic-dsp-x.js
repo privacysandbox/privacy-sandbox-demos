@@ -23,8 +23,7 @@ function generateBid(
 ) {
   return {
     bid: 500,
-    render:
-      '<%= https://${DSP_Y_HOST}:${EXTERNAL_PORT}/html/protected-audience-ad-y.html%>',
+    render: `<%= 'https://' + DSP_Y_HOST  +  '/html/protected-audience-ad-y.html'%>`,
     allowComponentAuction: !!browserSignals.topLevelSeller,
   };
 }

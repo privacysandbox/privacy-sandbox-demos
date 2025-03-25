@@ -20,7 +20,27 @@ import {
   SHOP_HOST,
   TRAVEL_HOST,
   PUBLISHER_IDS,
+  SSP_A_HOST,
+  SSP_X_HOST,
+  SSP_Y_HOST,
 } from './constants.js';
+
+//TODO: Inject these variables elsewhere
+const SSP_A_ORIGIN = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`).origin;
+const SSP_X_ORIGIN = new URL(`https://${SSP_X_HOST}:${EXTERNAL_PORT}`).origin;
+const SSP_Y_ORIGIN = new URL(`https://${SSP_Y_HOST}:${EXTERNAL_PORT}`).origin;
+const BIDDING_AND_AUCTION_SSP_A_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-a/construct-component-auction.js',
+  SSP_A_ORIGIN,
+);
+const BIDDING_AND_AUCTION_SSP_X_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-x/construct-component-auction.js',
+  SSP_X_ORIGIN,
+);
+const BIDDING_AND_AUCTION_SSP_Y_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.js',
+  SSP_Y_ORIGIN,
+);
 
 /** Returns template variables for the contextual advertiser. */
 export const getContextualAdTemplateVariables = () => {
@@ -107,6 +127,9 @@ export const getEjsTemplateVariables = (
   additionalTemplateVariables: {[key: string]: string} = {},
 ) => {
   const hostDetails = {
+    BIDDING_AND_AUCTION_SSP_A_TAG_URL,
+    BIDDING_AND_AUCTION_SSP_X_TAG_URL,
+    BIDDING_AND_AUCTION_SSP_Y_TAG_URL,
     HOSTNAME,
     EXTERNAL_PORT,
     PORT,

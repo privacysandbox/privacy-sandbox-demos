@@ -67,7 +67,7 @@ BuyerRouter.get(
   async (req: Request, res: Response) => {
     res.render(
       'dsp/dsp-advertiser-iframe',
-      getTemplateVariables('Join Ad Interest Group'),
+      getEjsTemplateVariables('Join Ad Interest Group'),
     );
   },
 );
@@ -76,7 +76,7 @@ BuyerRouter.get(
   async (req: Request, res: Response) => {
     res.render(
       'dsp/usecase/bidding-and-auction/dsp-advertiser-iframe',
-      getTemplateVariables('Join Ad Interest Group'),
+      getEjsTemplateVariables('Join Ad Interest Group'),
     );
   },
 );
