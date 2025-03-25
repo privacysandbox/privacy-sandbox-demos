@@ -127,7 +127,7 @@ ReportRouter.post('/', async (req: Request, res: Response) => {
 // ****************************************************************************
 /** Shows all reports from in-memory storage. */
 ReportRouter.get('/view-reports', async (req: Request, res: Response) => {
-  const hostDetails = getEjsTemplateVariables('Reports');
+  const hostDetails = getEjsTemplateVariables(/* title= */ 'Reports');
   res.render('view-reports', {
     reports: ReportStore.getAllReports(),
     ...hostDetails,
