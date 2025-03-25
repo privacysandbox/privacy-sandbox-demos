@@ -19,7 +19,7 @@ import {readFile} from 'fs/promises';
 import express, {Router} from 'express';
 import ejs from 'ejs';
 import adService from './ad-service.js';
-import type {AdAuctionDataConfig} from '../../../../public/js/ssp/usecase/bidding-and-auction/model/model.js';
+
 const {
   EXTERNAL_PORT,
   SSP_HOST,
