@@ -17,7 +17,21 @@
   <h1><%= TITLE %></h1>
   <pre><%= JSON.stringify(reports, " ", " ") %></pre>
 
-  <a href="/reporting/clean-reports" >Clear Report Cache</a>
+  <a href="/reporting/clean-reports" onclick="event.preventDefault(); refreshReport();">Clear Report Cache</a>
+
+  <script type="text/javascript">
+    function refreshReport() {
+      fetch("/reporting/clean-reports")
+        .then(response => response.json())
+        .then(data => {
+            location.reload();
+        })
+        .catch(error => {
+          console.error("Error refreshing report:", error);
+        });
+    }
+  </script>
+
 </body>
 
 </html>

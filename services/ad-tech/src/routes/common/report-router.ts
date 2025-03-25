@@ -135,10 +135,7 @@ ReportRouter.get('/view-reports', async (req: Request, res: Response) => {
 });
 
 ReportRouter.get('/clean-reports', async (req: Request, res: Response) => {
-  const hostDetails = getTemplateVariables('Clear Report Cache');
-
-  res.render('clean-reports', {
-    reports: ReportStore.cleanReports(),
-    ...hostDetails,
-  });
+  const hostDetails = getEjsTemplateVariables('Clear Report Cache');
+  ReportStore.cleanReports();
+  res.status(200).json({data: 'Reports have been cleared'});
 });
