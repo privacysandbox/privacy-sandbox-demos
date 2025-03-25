@@ -36,8 +36,8 @@ export interface Report {
   data: any;
 }
 
-/** TTL for in-memory reports: 10 minutes */
-export const REPORT_TTL_SECONDS = 10 * 60;
+/** TTL for in-memory reports: 30 minutes */
+export const REPORT_TTL_SECONDS = 30 * 60;
 
 /** Simple in-memory implementation of report storage. */
 export const ReportStore = (() => {
@@ -55,8 +55,15 @@ export const ReportStore = (() => {
     return Reports.keys().map((key) => Reports.get(key) as Report);
   };
 
+  /** Delete all reports from in-memory storage. */
+  const clearReports = (): void => {
+    Reports.flushAll();
+    console.log('[ReportStore] keys flushed');
+  };
+
   return {
     addReport,
     getAllReports,
+    clearReports,
   };
 })();
