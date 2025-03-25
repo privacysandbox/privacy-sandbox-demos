@@ -576,33 +576,12 @@ async function runComponentAuction() {
 }
 ```
 
-7. Within the `componentAuction.getAuctionInfo()` call, there are many requests to retrieve information. The first one is to fetch the ad auction
-   config.
+7. Within the `componentAuction.getAuctionInfo()` call, there are many requests to retrieve information. First, the ad auction config is defined as a
+   static variable. This includes the `perBuyerConfig`, **this map must match the one provided to the Seller Frontend Service in B&A.** If it does
+   not, it will not be able to recognize the seller.
 
 ```typescript
-//This occurs within the function call
-const adAuctionDataConfig = await this.#fetchAdAuctionDataConfig();
-```
-
-- This call will handled by the [ad-service.ts](../../../ad-tech/src/routes/ssp/usecase/bidding-and-auction/ad-service.ts) file.
-
-```typescript
-  async #fetchAdAuctionDataConfig() {
-    const adAuctionDataConfigUrl = new URL(
-      'ssp/usecase/bidding-and-auction/service/ad/ad-auction-data-config.json',
-      SSP_Y_ORIGIN,
-    );
-    const response = await fetch(adAuctionDataConfigUrl);
-    return response.json();
-  }
-```
-
-8.
-
-```typescript
-router.get('/ad-auction-data-config.json', (req: Request, res: Response) => {
-  const host: any = req.headers.host;
-    const adAuctionDataConfig = {
+ const adAuctionDataConfig = {
       seller: SSP_Y_ORIGIN,
       requestSize: 51200,
       perBuyerConfig: {
@@ -610,7 +589,6 @@ router.get('/ad-auction-data-config.json', (req: Request, res: Response) => {
         [DSP_Y_ORIGIN]: {targetSize: 8192},
       },
     };
-    res.json(adAuctionDataConfig);
-  }
-);
 ```
+
+8.
