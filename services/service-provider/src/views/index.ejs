@@ -12,38 +12,12 @@
 </head>
 
 <body>
-  <script>
-    let cardRegistered = false;
-
-    async function storeInfo() {
-      let lastDigits = document.getElementById('cardnumber').value.slice(-4);
-
-      await window.sharedStorage.clear();
-      await window.sharedStorage.set('lastDigits', lastDigits);
-
-      var button = document.getElementById('demo-button');
-
-      this.cardRegistered = true;
-      button.innerHTML = "Card Registered!";
-      button.style.backgroundColor = "#3bd897";
-      button.style.color = "white";
-    };
-
-    function resetButton() {
-      if (this.cardRegistered) {
-        var button = document.getElementById('demo-button');
-
-        button.innerHTML = "Update Card Number";
-        button.style.backgroundColor = "white";
-        button.style.color = "#3bd897";
-      }
-    }
-  </script>
+  <script src="/js/register-card.js"></script>
 
   <main>
     <div class="flex-row">
-      <img
-                  class="small-image" src="/images/payment-provider-card-small.png"><h1>
+      <img class="small-image" src="/images/payment-provider-card-small.png">
+      <h1>
         ExamplePay
       </h1>
     </div>
@@ -51,14 +25,15 @@
       <h1>
         Register to create a wallet
       </h1>
-      <div class="flex-columns">
+      <div class="flex-row">
         <div class="box-column">
           <card>
             <form action="">
               <label for="cardnumber">Card Number</label>
               <div class="flex-row">
                 <input id="cardnumber" class="card-input" type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}"
-                  maxlength="19" placeholder="XXXXXXXXXXXXXXXX" value="1234123412341234" oninput="resetButton()" required>
+                  maxlength="19" placeholder="XXXXXXXXXXXXXXXX" value="1234123412341234" oninput="resetButton()"
+                  required>
               </div>
               <label for="expiration">Expiration Date</label>
               <input class="small-input" type="text" id="expiration" placeholder="MM/YY" value="12/99"><br>
@@ -67,7 +42,7 @@
               <label for="vendor">Card Vendor</label>
               <input class="small-input" type="text" id="vendor" placeholder="Visa" value="Visa"><br>
             </form>
-            <button id="demo-button" onclick="storeInfo()">Register Card</button>
+            <button id="demo-button" onclick="registerCard()">Register Card</button>
           </card>
         </div>
         <div class="box-column">
@@ -75,18 +50,14 @@
         </div>
       </div>
     </div>
-    <div class="box-outline-green">
-      <p>
-        When you register your credit card with ExamplePay, you'll have access to speedy checkout from supported
-        websites.
-      </p>
-      <p>
-        Just add your credit card info below and start shopping! Click the ExamplePay button at checkout, and we'll
-        handle the rest.
-      </p>
-    </div>
+    <p>
+      When you register your credit card with ExamplePay, you'll have access to speedy checkout from supported
+      websites.
+    </p>
+    <p>
+      Just add your credit card info below and start shopping! Click the ExamplePay button at checkout, and we'll
+      handle the rest.
+    </p>
   </main>
-
 </body>
-
 </html>

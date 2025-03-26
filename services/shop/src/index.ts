@@ -250,9 +250,23 @@ app.delete('/cart/:name', async (req: Request, res: Response) => {
   res.status(204).end();
 });
 
-/** Redirects checkout form submit from the cart page. */
-app.post('/checkout', async (req: Request, res: Response) => {
-  res.redirect(303, '/checkout');
+app.post('/summary', async (req: Request, res: Response) => {
+  const body = req.body;
+  res.redirect(303, '/summary');
+});
+
+app.get('/summary', async (req: Request, res: Response) => {
+  const cart = req.session.cart as Order[];
+  const subtotal = cart.reduce((sum, {item, quantity}) => {
+    return sum + item.price * quantity;
+  }, 0);
+  const shipping = 40;
+
+  res.render('summary', {
+    cart,
+    subtotal,
+    shipping,
+  });
 });
 
 /** Renders the checkout page. */

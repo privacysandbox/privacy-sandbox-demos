@@ -1,16 +1,42 @@
-function createFencedFrame() {
-  let fencedframe = document.createElement('fencedframe');
+const externalPort = '<%= EXTERNAL_PORT %>';
 
-  let serviceProviderHost = '<%= SERVICE_PROVIDER_HOST %>';
-  let shopHost = '<%= SHOP_HOST %>';
-  let externalPort = '<%= EXTERNAL_PORT %>';
+function createFallbackPaymentButton() {
+  // For browsers not supporting Fenced Storage Read
+  const fallbackButton = document.createElement('button');
+  fallbackButton.id = 'fallback-button';
+  fallbackButton.innerText = 'PAY NOW';
+  fallbackButton.addEventListener('click', () => {
+    navigateToCheckout();
+  });
+
+  fallbackButton.classList.add(
+    'w-60',
+    'border',
+    'border-slate-600',
+    'text-slate-600',
+    'enabled:hover:bg-slate-400',
+    'enabled:hover:text-white',
+    'disabled:opacity-40',
+  );
+  document.getElementById('button-holder').appendChild(fallbackButton);
+}
+
+function navigateToCheckout() {
+  const shopHost = '<%= SHOP_HOST %>';
+  window.location.href = `https://${shopHost}:${externalPort}/checkout`;
+}
+
+function createFencedFrame() {
+  const fencedframe = document.createElement('fencedframe');
+
+  const serviceProviderHost = '<%= SERVICE_PROVIDER_HOST %>';
 
   fencedframe.addEventListener('fencedtreeclick', () => {
-    let height = 500;
-    let width = 600;
-    let left = screen.width / 2 - width / 2;
-    let top = screen.height / 2 - height / 2;
-    let params =
+    const height = 600;
+    const width = 600;
+    const left = screen.width / 2 - width / 2;
+    const top = screen.height / 2 - height / 2;
+    const params =
       'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
 
     window.open(
@@ -19,9 +45,9 @@ function createFencedFrame() {
       params,
     );
 
-    window.setTimeout(function () {
-      window.location.href = `https://${shopHost}:${externalPort}/checkout`;
-    }, 3000);
+    window.addEventListener('message', (event) => {
+      navigateToCheckout();
+    });
   });
 
   try {
@@ -36,6 +62,7 @@ function createFencedFrame() {
     document.getElementById('button-holder').appendChild(fencedframe);
   } catch (e) {
     console.log('Cannot provide personalized button: ' + e);
+    createFallbackPaymentButton();
   }
 }
 

@@ -19,7 +19,7 @@
       </nav>
     </header>
     <div class="flex flex-col gap-6">
-      <form class="flex flex-col gap-6" action="/checkout" method="POST">
+      <form class="flex flex-col gap-6" action="/summary" method="POST">
         <ul class="flex flex-col gap-6">
           <% cart.forEach(({item, size, quantity}) => { %>
             <%- include("cart-item", { item, size, quantity, onCheckoutPage: false }) %>
