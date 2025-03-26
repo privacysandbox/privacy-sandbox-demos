@@ -58,8 +58,9 @@
 
 
         </div>
-        <div id="button-holder" class="text-center" <%=cart.length===0 ? "hidden" : "" %>>
-            <script src="/js/fencedframe.js"></script>
+        <div id="button-holder" class="text-center flex flex-col justify-center items-center border border-slate-600 gap-4 py-6" <%=cart.length===0 ? "hidden" : "" %>>
+            <h3 class="text-lg font-bold text-center text-slate-700 py-2">Choose payment method</h3>
+            <script src="/js/payment-buttons.js"></script>
         </div>
     </div>
 
