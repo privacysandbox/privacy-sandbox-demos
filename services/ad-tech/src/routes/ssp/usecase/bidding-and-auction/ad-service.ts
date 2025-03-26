@@ -102,31 +102,36 @@ function runProtectedAudienceAuction(
   const [contextualAuctionWinner] = contextualAuctionResult;
   const {auctionRequest} = protectedAudience;
   const perBuyerConfigs = buildPerBuyerConfigs(contextualAuctionResult);
-  //TODO: simplify to an SSPConfig interface/object
+  let SELLER_HOST;
   if (host.includes(SSP_X_HOST)) {
-    const selectAdRequest = {
-      auction_config: {
-        top_level_seller: SSP_ORIGIN,
-        seller: SSP_X_ORIGIN,
-        seller_signals: '{"testKey":"someValue"}',
-        auction_signals: `{"bidFloor": 0}`,
-        buyer_list: [DSP_X_ORIGIN, DSP_Y_ORIGIN],
-        per_buyer_config: {
-          [DSP_X_ORIGIN]: {
-            buyer_signals: JSON.stringify(
-              perBuyerConfigs[DSP_X_ORIGIN].buyer_signals,
-            ),
-          },
-          [DSP_Y_ORIGIN]: {
-            buyer_signals: JSON.stringify(
-              perBuyerConfigs[DSP_Y_ORIGIN].buyer_signals,
-            ),
-          },
+    SELLER_HOST = SSP_X_ORIGIN;
+  } else {
+    SELLER_HOST = SSP_Y_ORIGIN;
+  }
+  const selectAdRequest = {
+    auction_config: {
+      top_level_seller: SSP_ORIGIN,
+      seller: SELLER_HOST,
+      seller_signals: '{"testKey":"someValue"}',
+      auction_signals: `{"bidFloor": 0}`,
+      buyer_list: [DSP_X_ORIGIN, DSP_Y_ORIGIN],
+      per_buyer_config: {
+        [DSP_X_ORIGIN]: {
+          buyer_signals: JSON.stringify(
+            perBuyerConfigs[DSP_X_ORIGIN].buyer_signals,
+          ),
+        },
+        [DSP_Y_ORIGIN]: {
+          buyer_signals: JSON.stringify(
+            perBuyerConfigs[DSP_Y_ORIGIN].buyer_signals,
+          ),
         },
       },
-      client_type: 'CLIENT_TYPE_BROWSER',
-      protected_auction_ciphertext: decodeRequest(auctionRequest),
-    };
+    },
+    client_type: 'CLIENT_TYPE_BROWSER',
+    protected_auction_ciphertext: decodeRequest(auctionRequest),
+  };
+  if (host.includes(SSP_X_HOST)) {
     sfeClientSSPX.selectAd(
       selectAdRequest,
       metadata,
@@ -141,7 +146,6 @@ function runProtectedAudienceAuction(
           .digest('base64url');
 
         res.set('Ad-Auction-Result', ciphertextShaHash);
-        console.log('Ad-Auction-Result: ' + ciphertextShaHash);
         res.json({
           contextualAuctionWinner,
           protectedAudienceAuctionCiphertext: encodeResponse(
@@ -150,30 +154,8 @@ function runProtectedAudienceAuction(
         });
       },
     );
-  } else if (host.includes(SSP_Y_HOST)) {
-    const selectAdRequest = {
-      auction_config: {
-        top_level_seller: SSP_ORIGIN,
-        seller: SSP_Y_ORIGIN,
-        seller_signals: '{"testKey":"someValue"}',
-        auction_signals: `{"bidFloor": 0}`,
-        buyer_list: [DSP_X_ORIGIN, DSP_Y_ORIGIN],
-        per_buyer_config: {
-          [DSP_X_ORIGIN]: {
-            buyer_signals: JSON.stringify(
-              perBuyerConfigs[DSP_X_ORIGIN].buyer_signals,
-            ),
-          },
-          [DSP_Y_ORIGIN]: {
-            buyer_signals: JSON.stringify(
-              perBuyerConfigs[DSP_Y_ORIGIN].buyer_signals,
-            ),
-          },
-        },
-      },
-      client_type: 'CLIENT_TYPE_BROWSER',
-      protected_auction_ciphertext: decodeRequest(auctionRequest),
-    };
+  }
+  if (host.includes(SSP_Y_HOST)) {
     sfeClientSSPY.selectAd(
       selectAdRequest,
       metadata,
@@ -182,13 +164,11 @@ function runProtectedAudienceAuction(
           console.log(`No response received from SFE.  Error=${error}`);
           return;
         }
-
         const ciphertextShaHash = createHash('sha256')
           .update(response.auction_result_ciphertext, 'base64')
           .digest('base64url');
 
         res.set('Ad-Auction-Result', ciphertextShaHash);
-        console.log('Ad-Auction-Result: ' + ciphertextShaHash);
         res.json({
           contextualAuctionWinner,
           protectedAudienceAuctionCiphertext: encodeResponse(
