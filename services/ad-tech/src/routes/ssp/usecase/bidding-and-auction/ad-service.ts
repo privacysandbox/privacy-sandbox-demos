@@ -1,6 +1,6 @@
 import express, {Router, Request, Response} from 'express';
-import sfeClientSSPX from './server/ssp-x-sfe-client.js';
-import sfeClientSSPY from './server/ssp-y-sfe-client.js';
+import baOnlyClientSFE from './server/ssp-x-sfe-client.js';
+import mixedModeClientSFE from './server/ssp-y-sfe-client.js';
 import grpc from '@grpc/grpc-js';
 import {createHash} from 'crypto';
 
@@ -23,9 +23,7 @@ const {
   SSP_X_HOST,
   SSP_Y_HOST,
   DSP_A_HOST,
-  DSP_A_URI,
   DSP_B_HOST,
-  DSP_B_URI,
   DSP_X_HOST,
   DSP_X_URI,
   DSP_Y_HOST,
@@ -132,7 +130,7 @@ function runProtectedAudienceAuction(
     protected_auction_ciphertext: decodeRequest(auctionRequest),
   };
   if (host.includes(SSP_X_HOST)) {
-    sfeClientSSPX.selectAd(
+    baOnlyClientSFE.selectAd(
       selectAdRequest,
       metadata,
       (error: any, response: any) => {
@@ -156,7 +154,7 @@ function runProtectedAudienceAuction(
     );
   }
   if (host.includes(SSP_Y_HOST)) {
-    sfeClientSSPY.selectAd(
+    mixedModeClientSFE.selectAd(
       selectAdRequest,
       metadata,
       (error: any, response: any) => {
