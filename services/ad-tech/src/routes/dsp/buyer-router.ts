@@ -12,7 +12,12 @@
  */
 
 import express, {Request, Response} from 'express';
-import {HOSTNAME, DSP_A_HOST, DSP_X_HOST} from '../../lib/constants.js';
+import {
+  HOSTNAME,
+  DSP_A_HOST,
+  DSP_X_HOST,
+  EXTERNAL_PORT,
+} from '../../lib/constants.js';
 import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
@@ -80,7 +85,7 @@ BuyerRouter.get('/service/kv', (req, res) => {
 BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
   res.json({
     bid: Math.floor(Math.random() * 100),
-    renderURL: `https://${DSP_X_HOST}/html/contextual-ad.html`,
+    renderURL: `https://${DSP_X_HOST}:${EXTERNAL_PORT}/html/contextual-ad.html`,
     perBuyerSignals: {'testKey': 'dsp-x'},
   });
 });
