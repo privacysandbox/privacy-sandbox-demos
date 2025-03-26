@@ -16,16 +16,22 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 ### Description
 
-This demo is used to show that **ad reach** can be measured directly using the existing Shared Storage and Private Aggregation APIs – we call this
-approach **Point in Time**.
+Many content producers and advertisers want to know how many unique people saw their content - **ad reach** . By using the Shared Storage and Private
+Aggregation APIs, this demo is used to show that ad reach can be measured the **first** time an ad is viewed, without contributing to reach
+measurement on subsequent views of the ad.
 
-:::info The use case demonstrated may be referred to as **Point in Time** We will demonstrate one aggregate contribution for the entire lifetime of
-the flag in Shared Storage (~30 days). Whereas, the other approach may measure reach over some defined number of days `trailing-x-days reach`. :::
+:::info
+
+The use case demonstrated may be referred to as **Point in Time** We will demonstrate one aggregate contribution for the entire lifetime of the flag
+in Shared Storage (~30 days). Whereas, the other approach may measure reach over some defined number of days `trailing-x-days reach`.
+
+:::
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Private Aggregation](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation)
-- [Shared Storage](https://developers.google.com/privacy-sandbox/private-advertising/shared-storage)
+- [Private Aggregation :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation)
+- [Shared Storage :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/shared-storage)
+- [Unique reach measurement :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation/unique-reach)
 
 ### Related parties
 
