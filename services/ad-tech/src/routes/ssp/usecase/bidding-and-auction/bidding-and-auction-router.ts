@@ -77,8 +77,8 @@ tlsRouter.get('/service/kv', (req, res) => {
 
   res.json({
     renderUrls: {
-      [new URL('/html/contextual-ad.html', DSP_X_ORIGIN).toString()]: [1, 2],
-      [new URL('/html/contextual-ad.html', DSP_Y_ORIGIN).toString()]: [1, 2],
+      [`${DSP_X_ORIGIN}:${EXTERNAL_PORT}/html/contextual-ad.html`]: [1, 2],
+      [`${DSP_Y_ORIGIN}:${EXTERNAL_PORT}/html/contextual-ad.html`]: [1, 2],
     },
   });
 });
@@ -132,8 +132,8 @@ sspARouter.get('/service/kv', (req, res) => {
 
   res.json({
     renderUrls: {
-      [new URL('/html/contextual-ad.html', DSP_A_ORIGIN).toString()]: [1, 2],
-      [new URL('/html/contextual-ad.html', DSP_B_ORIGIN).toString()]: [1, 2],
+      [`${DSP_A_ORIGIN}:${EXTERNAL_PORT}/html/contextual-ad.html`]: [1, 2],
+      [`${DSP_B_ORIGIN}:${EXTERNAL_PORT}/html/contextual-ad.html`]: [1, 2],
     },
   });
 });
@@ -165,10 +165,12 @@ sspXRouter.get('/service/kv', (req, res) => {
 
   res.json({
     renderUrls: {
-      [new URL('/html/protected-audience-ad-x.html', DSP_X_ORIGIN).toString()]:
-        [1, 2],
-      [new URL('/html/protected-audience-ad-y.html', DSP_Y_ORIGIN).toString()]:
-        [1, 2],
+      [`${DSP_X_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad-x.html`]: [
+        1, 2,
+      ],
+      [`${DSP_Y_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad-y.html`]: [
+        1, 2,
+      ],
     },
   });
 });
@@ -201,16 +203,18 @@ sspYRouter.get('/service/kv', (req, res) => {
   res.setHeader('Ad-Auction-Allowed', 'true');
   res.json({
     renderUrls: {
-      [new URL('/html/protected-audience-ad.html', DSP_A_ORIGIN).toString()]: [
+      [`${DSP_A_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad.html`]: [
         1, 2,
       ],
-      [new URL('/html/protected-audience-ad.html', DSP_B_ORIGIN).toString()]: [
+      [`${DSP_B_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad.html`]: [
         1, 2,
       ],
-      [new URL('/html/protected-audience-ad-x.html', DSP_X_ORIGIN).toString()]:
-        [1, 2],
-      [new URL('/html/protected-audience-ad-y.html', DSP_Y_ORIGIN).toString()]:
-        [1, 2],
+      [`${DSP_X_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad-x.html`]: [
+        1, 2,
+      ],
+      [`${DSP_Y_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad-y.html`]: [
+        1, 2,
+      ],
     },
   });
 });
