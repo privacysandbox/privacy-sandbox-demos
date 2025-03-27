@@ -8,7 +8,7 @@ async function registerCard() {
 
   var button = document.getElementById('demo-button');
 
-  this.cardRegistered = true;
+  cardRegistered = true;
   button.innerHTML = 'Card Registered!';
   button.style.backgroundColor = '#3bd897';
   button.style.color = 'white';
@@ -19,7 +19,7 @@ async function registerCard() {
 }
 
 function resetButton() {
-  if (this.cardRegistered) {
+  if (cardRegistered) {
     var button = document.getElementById('demo-button');
 
     button.innerHTML = 'Update Card Number';

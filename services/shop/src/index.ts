@@ -92,7 +92,6 @@ app.use((req, res, next) => {
 
 /** Custom handler to use EJS renderer for JavaScript files. */
 app.get('/js/*.js', async (req: Request, res: Response) => {
-  console.log('Getting js2');
   const filePath = `src/public${req.path}`;
   res.set('Content-Type', 'application/javascript');
   ejs.renderFile(
