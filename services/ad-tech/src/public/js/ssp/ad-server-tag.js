@@ -34,27 +34,9 @@
   // ********************************************************
   /** Logs to console. */
   const log = (message, context) => {
-    console.log('[PSDemo] Seller', CURR_HOSTNAME, 'ad tag', message, {context});
-  };
-
-  /** Returns frame URL with page context as search query. */
-  const getIframeUrlWithPageContext = () => {
-    // Construct iframe URL using current script origin.
-    const $script = document.currentScript;
-    const src = new URL($script.src);
-    src.pathname = '/ssp/run-sequential-ad-auction.html';
-    // Append query parameters from script dataset context.
-    for (const datakey in $script.dataset) {
-      src.searchParams.append(datakey, $script.dataset[datakey]);
-    }
-    // Append query params from page URL.
-    const currentUrl = new URL(location.href);
-    for (const [key, value] of currentUrl.searchParams) {
-      src.searchParams.append(key, value);
-    }
-    src.searchParams.append('publisher', location.origin);
-    src.searchParams.append('title', document.title);
-    return src;
+    console.info('[PSDemo] Seller', CURR_HOSTNAME, 'ad tag', message, {
+      context,
+    });
   };
 
   /** Injects an iframe using the current script's reference. */
@@ -143,12 +125,16 @@
     return true;
   };
 
+  // ****************************************************************
+  // CORE LOGIC: DELIVER ADS FOR EACH AD UNIT
+  // ****************************************************************
   /** Iterates through adUnit configs and delivers ads. */
   const deliverAds = (adUnits, otherSellers) => {
     // Iterate over adUnits and inject an ad-container iframe for each adUnit.
     // The container iframe has additional scripts to execute ad auctions for
     // a given adUnit config. This ad-server-tag will post message the adUnit config
     // to the injected iframe once it's loaded.
+    const pageContext = window.PSDemo.getPageContextData();
     for (const adUnit of adUnits) {
       if (!isValidAdUnit(adUnit)) {
         continue;
@@ -161,7 +147,11 @@
         addEventListenerForDspPostMessages();
         size[1] = 48; // Set height to 48px, just enough for a description.
       }
-      const src = getIframeUrlWithPageContext();
+      const src = new URL(document.currentScript.src);
+      src.pathname = '/ssp/run-sequential-ad-auction.html';
+      src.searchParams.append('publisher', location.origin);
+      // Add page context to ad unit configuration.
+      Object.assign(adUnit, pageContext);
       log('injecting iframe for adUnit', {src, adUnit});
       const iframeEl = injectAndReturnIframe({
         src,
@@ -174,17 +164,10 @@
         },
       });
       // Post-message the adUnit config to the injected iframe.
-      adUnit.pageURL = location.href;
-      adUnit.pageTitle = document.title;
-      adUnit.userAgent = navigator.userAgent;
-      adUnit.isMobile = navigator.userAgentData.mobile;
-      adUnit.platform = navigator.userAgentData.platform;
-      adUnit.browserVersion = navigator.userAgentData.brands.find(
-        (brand) => 'Chromium' === brand.brand,
-      ).version;
       iframeEl.addEventListener('load', () => {
         iframeEl.contentWindow.postMessage(
           JSON.stringify({
+            message: 'RUN_AD_AUCTION',
             adUnit,
             otherSellers,
           }),
@@ -196,7 +179,9 @@
     }
   };
 
-  /** Main function. */
+  // ****************************************************************
+  // MAIN FUNCTION
+  // ****************************************************************
   (() => {
     // Read page ad unit configurations from local storage.
     if (!window.PSDemo || !window.PSDemo.PAGE_ADS_CONFIG) {

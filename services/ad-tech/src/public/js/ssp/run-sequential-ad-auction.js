@@ -23,7 +23,7 @@
   // ****************************************************************
   /** Logs to console. */
   const log = (message, context) => {
-    console.log(
+    console.info(
       '[PSDemo] Seller',
       CURR_SCRIPT_URL.hostname,
       'sequential auction runner',

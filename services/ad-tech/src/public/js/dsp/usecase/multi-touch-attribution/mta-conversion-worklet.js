@@ -18,64 +18,68 @@
  */
 const SCALE_FACTOR = 256;
 
+function getImpressionContextSSKey(campaignId) {
+  return `impressionContext${campaignId}`;
+}
+
 function generateAggregationKey(campaignId, publisherId) {
   const aggregationKey = BigInt(`${campaignId}${publisherId}`);
   return aggregationKey;
 }
 
+async function getImpressionsFromSharedStorage(campaignId) {
+  const impressionContextSSKey = getImpressionContextSSKey(campaignId);
+  const impressions = await sharedStorage.get(impressionContextSSKey);
+  if (!impressions) {
+    console.warn('[PSDemo] No impressions found in Shared Storage', {
+      campaignId,
+      impressionContextSSKey,
+    });
+    return [];
+  }
+  // Impressions saved in the Shared Storage will have this format:
+  // "|{"publisherId":"1000","campaignId":"123","timestamp":1723061856804}|{"publisherId":"2000","campaignId":"123","timestamp":1723061876437}|..."
+  // So, we need to split using the delimeter '|' after removing the first character.
+  const impressionsArray = impressions.substring(1).split('|');
+  try {
+    return impressionsArray.map((impression) => JSON.parse(impression));
+  } catch (error) {
+    console.error('[PSDemo] Error parsing impressions', {
+      error,
+      impressionContextSSKey,
+      impressionsArray,
+    });
+    return [];
+  }
+}
+
 class MultiTouchAttributionConversion {
   async run(data) {
+    // debugger;
+    // Enable debug mode.
+    privateAggregation.enableDebugMode({debugKey: 1234n});
+    console.debug('[PSDemo] MTA conversion worklet triggered', {data});
     const {campaignId, purchaseValue} = data;
-    console.log('[PSDemo] Purchase value for MTA Conversion', purchaseValue);
-
-    // Read from Shared Storage
-    const impressionContextSSKey = 'impressionContext' + campaignId;
-    console.log('[PSDemo] Reading from Shared Storage', impressionContextSSKey);
-    let impressions = await sharedStorage.get(impressionContextSSKey);
-
-    // Do not report if there isn't any impression
-    if (!impressions) {
-      console.log(
-        "[PSDemo] Couldn't find impressions in Shared Storage",
-        impressionContextSSKey,
-      );
-      return;
-    }
-
-    // Impressions saved in the Shared Storage will have this format:
-    // "|{"publisherId":"1000","campaignId":"123","timestamp":1723061856804}|{"publisherId":"2000","campaignId":"123","timestamp":1723061876437}|..."
-    // So, we need to split using the delimeter '|' after removing the first character
-
-    impressions = impressions.substring(1);
-    const impressionsArray = impressions.split('|');
-    const numberImpressions = impressionsArray.length;
-
-    console.log('[PSDemo] Found impressions', numberImpressions);
-
     // Custom logic for Multi Touch Attribution
     // In this example, we are splitting the total purchase value of this
     // campaign equally between all impressions (which might have duplicate
-    // publishers)
-
-    impressionsArray.forEach((impression) => {
-      let impressionParsed = JSON.parse(impression);
-
-      // Generate the aggregation key and the aggregatable value
-      const bucket = generateAggregationKey(
-        campaignId,
-        impressionParsed.publisherId,
-      );
+    // publishers).
+    const impressions = await getImpressionsFromSharedStorage(campaignId);
+    for (const impression of impressions) {
+      const bucket = generateAggregationKey(campaignId, impression.publisherId);
       const value =
-        Math.floor(purchaseValue / numberImpressions) * SCALE_FACTOR;
-
-      // Send an aggregatable report via the Private Aggregation API
-      console.log('[PSDemo] contributeToHistogram', {bucket, value});
+        Math.floor(purchaseValue / impressions.length) * SCALE_FACTOR;
+      console.info('[PSDemo] MTA conversion contributeToHistogram', {
+        bucket,
+        value,
+        impression,
+      });
       privateAggregation.contributeToHistogram({bucket, value});
-    });
-
-    // Delete these impressions after the conversion and reporting
+    }
+    // Delete these impressions after the conversion and reporting.
+    const impressionContextSSKey = getImpressionContextSSKey(campaignId);
     await sharedStorage.delete(impressionContextSSKey);
-    console.log('[PSDemo] Deleted Shared Storage key', impressionContextSSKey);
+    console.info('[PSDemo] Deleted Shared Storage key', impressionContextSSKey);
   }
 }
 

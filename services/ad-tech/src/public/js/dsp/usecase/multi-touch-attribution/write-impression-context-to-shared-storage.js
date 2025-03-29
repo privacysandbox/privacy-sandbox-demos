@@ -16,16 +16,18 @@
  *
  * What does this script do: TODO(sidneyzanetti)
  */
-const {campaignId, publisherId} = document.currentScript.dataset;
+const {publisherId} = document.currentScript.dataset;
+const urlParams = new URLSearchParams(location.search);
+const campaignId = urlParams.get('campaignId') || 1234;
 const impressionContext = {
   publisherId,
   campaignId,
   timestamp: Date.now(),
 };
 const impressionContextSSKey = `impressionContext${campaignId}`;
-const valueToAppend = JSON.stringify(impressionContext);
+const valueToAppend = `|${JSON.stringify(impressionContext)}`;
 window.sharedStorage.append(impressionContextSSKey, valueToAppend);
-console.info('[PSDemo] Appended value to SharedStorage for MTA', {
+console.info('[PSDemo] Appended value to Shared Storage for MTA', {
   impressionContextSSKey,
   valueToAppend,
 });

@@ -32,7 +32,7 @@ const runSimpleAdAuction = async () => {
   // ****************************************************************
   /** Logs to console. */
   const log = (message, context) => {
-    console.log(
+    console.info(
       '[PSDemo] Seller',
       CURR_HOSTNAME,
       'PAAPI auction runner',

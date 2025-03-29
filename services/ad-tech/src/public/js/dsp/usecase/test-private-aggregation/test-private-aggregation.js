@@ -16,43 +16,80 @@
  */
 
 /**
- * TODO: This script needs to be refactored into a specific use-case.
+ * Where is this script used:
+ * This script demonstrates how an ad-tech script running in an cross-origin
+ * iframe may access page context data and trigger a Shared Storage worklet.
+ * This script is loaded inside a cross-origin ad-tech iframe loaded on a
+ * publisher page.
  *
- * This is a simple script to test aggregate reporting with Shared Storage and
- * Private Aggregation. This script is loaded inside the
- * dsp/test-private-aggregation.html iframe, and invokes a Shared Storage
- * worklet.
+ * What does this script do:
+ * This scripts listens for a post-message containing page context data which
+ * includes top-level page URL search parameters and some standard page
+ * variables. Then this script proceeds to trigger a Shared Storage worklet
+ * passing the received page context data.
  */
 (async () => {
-  /** Configurations for Private Aggregation API invocation. */
-  const privateAggregationConfig = {};
-  /** Additional data to pass to the worklet. */
-  const data = {};
-  // Include all query parameters from the URL.
-  const urlQueryParams = new URLSearchParams(window.location.search);
-  for (const [key, value] of urlQueryParams.entries()) {
-    data[key] = value;
-  }
-  // Optional: Specify coordinator origin.
-  if (urlQueryParams.has('cloudEnv')) {
-    const cloudEnv = urlQueryParams.get('cloudEnv');
-    privateAggregationConfig.aggregationCoordinatorOrigin = new URL(
-      `https://publickeyservice.msmt.${cloudEnv}.privacysandboxservices.com`,
-    ).toString();
-  }
-  // Use a placeholder bucket key if not specified.
-  if (!urlQueryParams.has('bucketKey')) {
-    data.bucketKey = '1234567890';
-  }
-  // sharedStorage.set('bucketKey', `${data.bucketKey}`);
-  // Optional: Use contextId to opt-in for instant reports.
-  privateAggregationConfig.contextId = `contextId-${crypto.randomUUID()}`;
-  // Finally, create and invoke worklet.
-  const worklet = await window.sharedStorage.createWorklet(
-    '/js/dsp/usecase/test-private-aggregation/test-private-aggregation-worklet.js',
-  );
-  await worklet.run('test-private-aggregation', {
-    data,
-    privateAggregationConfig,
-  });
+  const testPrivateAggregation = async (data) => {
+    if (!data.bucketKey) {
+      // Use a placeholder bucket key if not specified.
+      data.bucketKey = BigInt(data.uniqueBigInt);
+    }
+    if (!data.contextId) {
+      data.contextId = data.uniqueInt64;
+    }
+    // Assemble configurations for Private Aggregation API invocation.
+    const privateAggregationConfig = {};
+    // Optional: Use contextId to opt-in to instant reports.
+    privateAggregationConfig.contextId = data.contextId;
+    // Optional: Specify coordinator origin.
+    if (data.cloudEnv) {
+      privateAggregationConfig.aggregationCoordinatorOrigin = new URL(
+        `https://publickeyservice.msmt.${data.cloudEnv}.privacysandboxservices.com`,
+      ).toString();
+    }
+    // Finally, create and invoke worklet.
+    const worklet = await window.sharedStorage.createWorklet(
+      '/js/dsp/usecase/test-private-aggregation/test-private-aggregation-worklet.js',
+    );
+    console.info('[PSDemo] Triggering Private Aggregation worklet', {
+      run: 'test-private-aggregation',
+      data,
+      privateAggregationConfig,
+    });
+    await worklet.run('test-private-aggregation', {
+      data,
+      privateAggregationConfig,
+    });
+  };
+
+  /** Parses post-message and triggers Private Aggregation worklet. */
+  const parsePostMessageAndTriggerWorklet = (event) => {
+    if (!event.origin.startsWith('https://<%= DEMO_HOST_PREFIX %>')) {
+      console.debug('[PSDemo] Ignoring message from unknown origin', {event});
+      return;
+    }
+    if ('string' === typeof event.data) {
+      try {
+        const parsedMessage = JSON.parse(event.data);
+        if ('PAGE_CONTEXT' === parsedMessage.message) {
+          console.debug('[PSDemo] Received page context', {parsedMessage});
+          testPrivateAggregation(parsedMessage.pageContext);
+          return;
+        } else {
+          console.debug('[PSDemo] Received unknown message', {parsedMessage});
+        }
+      } catch (err) {
+        console.error('[PSDemo] Encountered error parsing post-message', {
+          err,
+          event,
+        });
+      }
+    }
+  };
+
+  /** Main function. */
+  (() => {
+    window.addEventListener('message', parsePostMessageAndTriggerWorklet);
+    console.info('[PSDemo] Waiting for page context post-message.');
+  })();
 })();

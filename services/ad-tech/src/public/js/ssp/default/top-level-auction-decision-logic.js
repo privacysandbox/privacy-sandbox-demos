@@ -30,7 +30,7 @@ CURR_HOST = '';
 AUCTION_ID = '';
 /** Logs to console. */
 function log(msg, context) {
-  console.log(
+  console.info(
     '[PSDemo] Top-level Seller',
     CURR_HOST,
     'decision logic',

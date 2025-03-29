@@ -16,32 +16,47 @@
  */
 
 /**
- * TODO: This script needs to be refactored into a specific use-case.
+ * Where is this script used:
+ * This script is used to demonstrate passing page context data such as
+ * top-level page URL search params into a Shared Storage worklet.
  *
- * This is a simple script to test aggregate reporting with Shared Storage and
- * Private Aggregation. This script is executed inside a Shared Storage
- * worklet.
+ * What does this script do:
+ * This script uses the Private Aggregation API to contribute to the aggregate
+ * histogram. This operation allows for local testing by overriding key
+ * variables using the page URL, such as bucketKey, bucketValue, scaleFactor,
+ * and contextId.
  */
 class TestPrivateAggregation {
   async run(data) {
-    /** Helper method to encode bucket key. */
-    const convertToBucket = (bucketId) => {
-      // TODO: Implement
-      return BigInt(bucketId);
-    };
-    // Enable debug mode.
-    privateAggregation.enableDebugMode({debugKey: 1234n});
-    // Assemble aggregate contribution bucket key.
-    let {bucketKey} = data;
+    if ('debug' in data) {
+      debugger;
+    }
+    let {bucketKey, bucketValue, contextId, scaleFactor} = data;
+    if (!contextId) {
+      contextId = BigInt(Math.floor(Math.random() * Math.pow(2, 64)));
+    }
     if (!bucketKey) {
-      bucketKey = '1234567890';
+      bucketKey = BigInt('1234567890');
+    }
+    if (!bucketValue) {
+      bucketValue = 1;
+    }
+    if (scaleFactor) {
+      bucketValue *= scaleFactor;
     }
     // Finally, contribute to aggregate histogram.
+    privateAggregation.enableDebugMode({debugKey: contextId});
     privateAggregation.contributeToHistogram({
-      bucket: convertToBucket(bucketKey),
-      value: 1,
+      bucket: bucketKey,
+      value: bucketValue,
     });
-    // sharedStorage.clear();
+    console.info('[PSDemo] Contributed to histogram with Private Aggregation', {
+      bucketKey,
+      bucketValue,
+      contextId,
+      debugKey: contextId,
+      data,
+    });
   }
 }
 
