@@ -14,6 +14,23 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 ## Overview
 
+### Background
+
+The Private Aggregation API allows for the collection of aggregate data from [worklets](https://developer.mozilla.org/docs/Web/API/Worklet) that have
+access to **_cross-site_** data. This API is particularly useful for developers who are building reporting functions within
+[Shared Storage](https://developers.google.com/privacy-sandbox/private-advertising/shared-storage) and
+[Private Aggregation](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation).
+
+- Aggregate data collection: The Private Aggregation API focuses on collecting data in aggregate, which means that individual user data is not
+  identifiable. This helps to protect user privacy while still allowing for valuable insights to be gleaned from the data.
+- Cross-site data access: Worklets that have access to cross-site data can use the Private Aggregation API to collect data from multiple sites. This
+  can be useful for tracking user behavior across different websites or for measuring the effectiveness of advertising campaigns.
+- Shared Storage and Private Aggregation: The concepts that are demonstrated in the use of the Private Aggregation API are relevant for developers who
+  are working with Shared Storage and Private Aggregation. These APIs are designed to protect user privacy while still allowing for data to be
+  collected and used for advertising and other purposes.
+- Importance for developers: By understanding how the Private Aggregation API works and how it can be used, developers can build more effective and
+  privacy-conscious reporting functions within these APIs.
+
 ### Description
 
 Many content producers and advertisers want to know how many unique people saw their content - **ad reach** . By using the Shared Storage and Private
@@ -30,6 +47,7 @@ in Shared Storage (~30 days). Whereas, the other approach may measure reach over
 ### Privacy Sandbox APIs and related documentation
 
 - [Private Aggregation :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation)
+- [Private Aggregation API fundamentals :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation/fundamentals)
 - [Shared Storage :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/shared-storage)
 - [Unique reach measurement :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation/unique-reach)
 
@@ -45,8 +63,8 @@ in Shared Storage (~30 days). Whereas, the other approach may measure reach over
 
 ### Goals
 
-In this demo, we assume an advertiser would like to measure the reach of marketing campaigns. By using a combination of Shared Storage and Private
-Aggregation APIs, we will demonstrate an effective method for reach measurement available within Privacy Sandbox.
+In this demo, we assume an advertiser would like to measure the unique reach of marketing campaigns. By using a combination of Shared Storage and
+Private Aggregation APIs, we will demonstrate an effective method for reach measurement available within Privacy Sandbox.
 
 ### Assumptions
 
@@ -56,8 +74,9 @@ measured.
 
 ### Key Exclusions
 
-The use case covers Private Aggregation reports before they are processed, aggregated, or summarized. This use case does not intend to demonstrate the
-Aggregation Service nor noised summary reports.
+This use case pertains to Private Aggregation reports in their raw, unprocessed state, prior to aggregation or summarization. This use case does not
+encompass demonstrations of the Aggregation Service, nor does it include demonstration of noise addition to summary reports or the implementation of
+ad tech beyond what is outlined in the use case description and design.
 
 ### System Design
 
@@ -157,11 +176,64 @@ but you cannot interact or communicate with the outside page.
 
 The ad returned by the ad buyer will:
 
+- Create a new js file `static-ads-for-reach.js` to define and measure unique reach.
 - Add a new Shared Storage module for reach measurement.
 - Create a new worklet `reach-measurement-worklet.js` to invoke the module.
 - include reference to the `reach-measurement-worklet.js` worklet.
 
+**static-ads-for-reach.js**
+
+Defining `measureUniqueReach()` and the attributes ( `data` ) to be measured:
+
+In the use case the attrebutes being measured are `contentId`,`geo`, and `createiveId`.
+
+```javaScript
+(() => {
+  const measureUniqueReach = async () => {
+    // Load the Shared Storage worklet
+    await window.sharedStorage.worklet.addModule(
+      '/js/dsp/usecase/reach-measurement/reach-measurement-worklet.js',
+    );
+
+    // Run the reach measurement operation
+    await window.sharedStorage.run('reach-measurement', {
+      data: {
+        contentId: 99,
+        geo: 'san jose',
+        creativeId: '55',
+      },
+    });
+  };
+
+  /** Main function */
+  (() => {
+    measureUniqueReach();
+  })();
+})();
+```
+
 **reach-measurement-worklet.js**
+
+Creating the bucket from the data provided by `measureUniqueReach`
+
+Using the data passed via `measureUniqueReach()` , the bucket (measure) is defined .
+
+```javascript
+function convertContentIdToBucket(contentId) {
+  return BigInt(contentId);
+}
+
+class ReachMeasurementOperation {
+  async run(data) {
+    const {contentId} = data;
+
+    ...
+
+    // Generate the aggregation key and the aggregatable value
+    const bucket = convertContentIdToBucket(contentId);
+
+    ...
+```
 
 ```javaScript
 class ReachMeasurementOperation {
