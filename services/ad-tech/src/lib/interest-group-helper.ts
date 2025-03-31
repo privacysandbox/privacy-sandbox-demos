@@ -340,7 +340,7 @@ export const getInterestGroupBiddingAndAuction = (
     name: `${dspName}-ig`,
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/bidding-logic.js`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
     updateURL: constructInterestGroupUpdateUrl(targetingContext),
