@@ -7,7 +7,7 @@ reach-measurement-with-shared-storage
 
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-# Reach Measurement with Shared Storage
+# Reach Measurement
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
@@ -21,15 +21,15 @@ access to **_cross-site_** data. This API is particularly useful for developers 
 [Shared Storage](https://developers.google.com/privacy-sandbox/private-advertising/shared-storage) and
 [Private Aggregation](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation).
 
-- Aggregate data collection: The Private Aggregation API focuses on collecting data in aggregate, which means that individual user data is not
+- **Aggregate data collection**: The Private Aggregation API focuses on collecting data in aggregate, which means that individual user data is not
   identifiable. This helps to protect user privacy while still allowing for valuable insights to be gleaned from the data.
-- Cross-site data access: Worklets that have access to cross-site data can use the Private Aggregation API to collect data from multiple sites. This
-  can be useful for tracking user behavior across different websites or for measuring the effectiveness of advertising campaigns.
-- Shared Storage and Private Aggregation: The concepts that are demonstrated in the use of the Private Aggregation API are relevant for developers who
-  are working with Shared Storage and Private Aggregation. These APIs are designed to protect user privacy while still allowing for data to be
+- **Cross-site data access**: Worklets that have access to cross-site data can use the Private Aggregation API to collect data from multiple sites.
+  This can be useful for tracking user behavior across different websites or for measuring the effectiveness of advertising campaigns.
+- **Shared Storage and Private Aggregation**: The concepts that are demonstrated in the use of the Private Aggregation API are relevant for developers
+  who are working with Shared Storage and Private Aggregation. These APIs are designed to protect user privacy while still allowing for data to be
   collected and used for advertising and other purposes.
-- Importance for developers: By understanding how the Private Aggregation API works and how it can be used, developers can build more effective and
-  privacy-conscious reporting functions within these APIs.
+- **Importance for developers**: By understanding how the Private Aggregation API works and how it can be used, developers can build more effective
+  and privacy-conscious reporting functions within these APIs.
 
 ### Description
 
@@ -39,8 +39,9 @@ measurement on subsequent views of the ad.
 
 :::info
 
-The use case demonstrated may be referred to as **Point in Time** We will demonstrate one aggregate contribution for the entire lifetime of the flag
-in Shared Storage (~30 days). Whereas, the other approach may measure reach over some defined number of days `trailing-x-days reach`.
+The approach demonstrated in this demo may be referred to as **point in time reach**. In this approach we will demonstrate one aggregate contribution
+for the entire lifetime of the flag in Shared Storage (~30 days) whereas, another approach may measure reach over some defined number of trailing
+days.
 
 :::
 
@@ -81,7 +82,8 @@ ad tech beyond what is outlined in the use case description and design.
 ### System Design
 
 - The user visits the [news site](https://privacy-sandbox-demos-news.dev/basic-reach-mmt) where an ad is rendered.
-- The ad-tech loads a JavaScript module for reach measurement and creates a Shared Storage worklet to trigger reporting if necessary.
+- Inside this ad frame, the ad-tech loads a JavaScript module for reach measurement and creates a Shared Storage worklet to trigger reporting if
+  necessary.
 - The ad-tech maintains a flag in Shared Storage to note whether a report for reach measurement has been generated from this browser using the Shared
   Storage getter and setter methods.
 - If a reach report has been sent previously, the ad-tech ends the Shared Storage worklet execution.
@@ -94,7 +96,7 @@ ad tech beyond what is outlined in the use case description and design.
 ```mermaid
 
 sequenceDiagram
-Title: Reach Measurement with Shared Storage
+Title: Reach Measurement
 
 participant Browser
 participant Publisher
@@ -105,7 +107,7 @@ participant DSP
 Browser-)SSP:User visits a publisher site
 SSP-->>Browser: SSP runs auction and loads the winning ad into an iframe*
 
-Note right of Browser:* we skip the auction flow<br/> to focus on measurement and Shared Storage
+Note right of Browser:* We skip the auction flow<br/> to focus on measurement and Shared Storage
 
 Browser->>DSP:Browser loads ad creative
 
@@ -113,11 +115,10 @@ Browser-->>Browser:Check for previously sent reach reports using sharedStorage.g
 
 Browser-->>Browser:If sharedStorage.get(some_key) fails to return result, create reach report.
 
-Note right of Browser:* we skip the reach reporting flow<br/> if sharedStorage.get(some_key) returns a result.
+Note right of Browser:* We skip the reach reporting flow<br/> if sharedStorage.get(some_key) returns a result.
 
 Browser-)DSP: Trigger reporting using privateAggregation.contributeToHistogram()
 
-Browser-->>Browser: View aggregatable reports via chrome://private-aggregation-internals/
 
 Browser-)DSP: View aggregatable reports delivered to .well-known endpoint (https://privacy-sandbox-demos-dsp.dev/reporting/view-reports)
 
@@ -136,13 +137,14 @@ Browser-)DSP: View aggregatable reports delivered to .well-known endpoint (https
 - Enable Privacy Sandbox APIs (Open `chrome://settings/adPrivacy` to enable _Ad measurement_)
 - Clear your browsing history before you run one of the demo scenario below (Open `chrome://settings/clearBrowserData` to delete your browsing
   history)
-- Open `chrome://private-aggregation-internals/` and click "Clear all attribution data"
+- Open `chrome://private-aggregation-internals/` and click "Clear all private aggregation data"
 
 ### User Journey
 
 1. [Navigate to news site](https://privacy-sandbox-demos-news.dev/basic-reach-mmt) (a publisher)
 2. Open Chrome DevTools
-3. View Application > Shared Storage - verify has-reported-content has a single entry ![Shared Storage](./img/reach-measurement-shared-storage1.png)
+3. View Application > Shared Storage - verify the origin **<https://privacy-sandbox-demos-dsp.dev>** has-reported-content has a single entry
+   ![Shared Storage](./img/reach-measurement-shared-storage1.png)
 4. Reload the page
 5. View Application > Shared Storage - verify has-reported-content has a single entry
 6. View local Private Aggregation API Internals (Chrome generated) reports by pasting the following into your Chrome address box:
@@ -167,7 +169,7 @@ Browser-)DSP: View aggregatable reports delivered to .well-known endpoint (https
 
 :::info
 
-_Key term_: a [worklet](https://developer.mozilla.org/docs/Web/API/Worklet) lets you run specific JavaScript functions and return information back to
+_Key term_: A [worklet](https://developer.mozilla.org/docs/Web/API/Worklet) lets you run specific JavaScript functions and return information back to
 the requester. There are different types of worklets, Shared Storage uses the
 [SharedStorageWorklet](https://developer.mozilla.org/docs/Web/API/SharedStorageWorklet) . Within a SharedStorageWorklet, you can execute JavaScript
 but you cannot interact or communicate with the outside page.
@@ -176,18 +178,23 @@ but you cannot interact or communicate with the outside page.
 
 The ad returned by the ad buyer will:
 
-- Create a new js file `static-ads-for-reach.js` to define and measure unique reach.
+- Include some JavaScript as a script tag named `static-ads-for-reach.js` to define and measure unique reach.
 - Add a new Shared Storage module for reach measurement.
 - Create a new worklet `reach-measurement-worklet.js` to invoke the module.
-- include reference to the `reach-measurement-worklet.js` worklet.
+-
+
+## Add the module for the Reach Measurement worklet
+
+The `static-ads-for-reach.js` file:
+
+- Invokes the reach-measurement-worklet.js worklet (line 6).
+- Attributes ( data ) to be measured. In the use case the attributes being measured are `contentId`, `geo`, and `createiveId` (lines 11 - 15).
+- Adds the reach measurement module, `measureUniqueReach()` (line 21).
 
 **static-ads-for-reach.js**
 
-Defining `measureUniqueReach()` and the attributes ( `data` ) to be measured:
+```javascript showLineNumbers
 
-In the use case the attrebutes being measured are `contentId`,`geo`, and `createiveId`.
-
-```javaScript
 (() => {
   const measureUniqueReach = async () => {
     // Load the Shared Storage worklet
@@ -212,13 +219,20 @@ In the use case the attrebutes being measured are `contentId`,`geo`, and `create
 })();
 ```
 
-**reach-measurement-worklet.js**
+## Implement the Reach Measurement Worklet
 
-Creating the bucket from the data provided by `measureUniqueReach`
+The **reach-measurement-worklet.js** file:
 
-Using the data passed via `measureUniqueReach()` , the bucket (measure) is defined .
+- Defines the ReachMeasurementOperation() method
+  - Identifies the use previously reported measures via the hasReportedContent variable (line 13)
+  - Sends aggregatable reports to the `.well-known` endpoint via the `privateAggregation.contributeToHistogram()` api (line 29).
+  - Uses Shared Storage to indicate that the browser has previously contributed to the aggregatable reports via `sharedStorage.set()` api (line 31)
+- Convert Content ID to a bucket id via `convertContentIdToBucket()` function (line 24).
+- Registers the method `measureUniqueReach()` (line 36).
 
-```javascript
+```javascript showLineNumbers
+...
+const SCALE_FACTOR = 65536;
 function convertContentIdToBucket(contentId) {
   return BigInt(contentId);
 }
@@ -227,63 +241,32 @@ class ReachMeasurementOperation {
   async run(data) {
     const {contentId} = data;
 
-    ...
-
-    // Generate the aggregation key and the aggregatable value
-    const bucket = convertContentIdToBucket(contentId);
-
-    ...
-```
-
-```javaScript
-class ReachMeasurementOperation {
-  async run(data) {
-  . . .
-
-
- //Read from Shared Storage
-    const key = 'has-reported-content: ' + contentId;
-    const hasReportedContent = (await sharedStorage.get(key)) === 'true';
+    // Read from Shared Storage
+    const ssKey = `has-reported-content:${contentId}`;
+    const hasReportedContent = (await sharedStorage.get(ssKey)) === 'true';
 
     // Do not report if a report has been sent already
     if (hasReportedContent) {
-      console.log('Content ID already seen:  ' + key);
+      console.log('[PSDemo] Content ID already seen, not reporting', {
+        key: ssKey,
+      });
       return;
     }
 
-    . . .
-
-```
-
-The `reach-measurement-worklet.js` file triggers aggregate reporting if no reports have been sent previously:
-
-```javaScript
-class ReachMeasurementOperation {
-  async run(data) {
-  . . .
+    // Generate the aggregation key and the aggregatable value
+    const bucket = convertContentIdToBucket(contentId);
+    const value = 1 * SCALE_FACTOR;
 
     // Send an aggregatable report via the Private Aggregation API
-    console.log('contributeToHistogram:');
+    console.log('[PSDemo] Contributed to histogram', {bucket, value, ssKey});
     privateAggregation.contributeToHistogram({bucket, value});
+    // Set the report submission status flag
+    await sharedStorage.set(ssKey, true);
+  }
+}
 
-    . . .
-
-```
-
-Once the `privateAggregation.contributeToHistogram` is called we can set the Shared Storage value to indicate that the ad has been seen using the
-`sharedStorage.set(key, true)` method.
-
-```javaScript
-class ReachMeasurementOperation {
-  async run(data) {
-  . . .
-
-  // Set the report submission status flag
-    console.log('Shared Storage key ' + key + ' stored');
-    await sharedStorage.set(key, true);
-
-  . . .
-
+// Register the operation
+register('reach-measurement', ReachMeasurementOperation);
 ```
 
 </TabItem>
