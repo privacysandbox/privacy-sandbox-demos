@@ -13,7 +13,9 @@
 
 <body>
   <script src="/js/register-card.js"></script>
-
+  <div class="warning-banner">
+    This is a demo website that simulate a payment provider. Please do not provide your real credit card number.
+  </div>
   <main>
     <div class="flex-row">
       <img class="small-image" src="/images/payment-provider-card-small.png">
@@ -25,19 +27,27 @@
       <h1>
         Register to create a wallet
       </h1>
+      <p>
+        When you register your credit card with ExamplePay, you'll have access to speedy checkout from supported
+        websites.
+      </p>
+      <p>
+        Just add your credit card info below and start shopping! Click the ExamplePay button at checkout, and we'll
+        handle the rest.
+      </p>
       <div class="flex-row">
         <div class="box-column">
           <card>
             <form action="">
               <label for="cardnumber">Card Number</label>
-              <div class="flex-row">
-                <input id="cardnumber" class="card-input" type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}"
-                  maxlength="19" placeholder="XXXXXXXXXXXXXXXX" value="1234123412341234" oninput="resetButton()"
-                  required>
+              <div class="flex-col">
+                <input id="cardnumber" class="card-input" maxlength="19" placeholder="XXXXXXXXXXXXXXXX"
+                  value="1234123412341234" oninput="resetButton()" required>
+                <span id="error-message" class="error-message" style="display: none"></span>
               </div>
               <label for="expiration">Expiration Date</label>
               <input class="small-input" type="text" id="expiration" placeholder="MM/YY" value="12/99"><br>
-              <label for="securitycode">CCV</label>
+              <label for="securitycode">CVV</label>
               <input class="small-input" type="text" id="securitycode" placeholder="XXX" value="123" maxlength="3"><br>
               <label for="vendor">Card Vendor</label>
               <input class="small-input" type="text" id="vendor" placeholder="Visa" value="Visa"><br>
@@ -50,14 +60,6 @@
         </div>
       </div>
     </div>
-    <p>
-      When you register your credit card with ExamplePay, you'll have access to speedy checkout from supported
-      websites.
-    </p>
-    <p>
-      Just add your credit card info below and start shopping! Click the ExamplePay button at checkout, and we'll
-      handle the rest.
-    </p>
   </main>
 </body>
 </html>

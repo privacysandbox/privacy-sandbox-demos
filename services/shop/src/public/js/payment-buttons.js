@@ -1,12 +1,32 @@
-const externalPort = '<%= EXTERNAL_PORT %>';
+/*
+ Copyright 2025 Google LLC
 
-function createPaymentButtons() {
-  createSecondaryPaymentButton('CREDIT CARD');
-  createSecondaryPaymentButton('BANK TRANSFER');
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+/**
+ * This script is used on Summary page
+ * and it creates fenced frame with config provided by Service-Provider
+ * resulting in rendering personalized payment button that on click opens
+ * payment provider popup to simulate payment process
+ */
+
+const EXTERNAL_PORT = '<%= EXTERNAL_PORT %>';
+const SERVICE_PROVIDER_HOST = '<%= SERVICE_PROVIDER_HOST %>';
+const SHOP_HOST = '<%= SHOP_HOST %>';
+
+(function createPaymentButtons() {
   const fencedframe = document.createElement('fencedframe');
-
-  const serviceProviderHost = '<%= SERVICE_PROVIDER_HOST %>';
 
   fencedframe.addEventListener('fencedtreeclick', () => {
     const height = 600;
@@ -17,19 +37,24 @@ function createPaymentButtons() {
     const params = `width=${width}, height=${height}, top=${y}, left=${x}`;
 
     window.open(
-      `https://${serviceProviderHost}:${externalPort}/popup`,
+      `https://${SERVICE_PROVIDER_HOST}:${EXTERNAL_PORT}/popup`,
       'example-pay-popup',
       params,
     );
 
     window.addEventListener('message', (event) => {
-      navigateToCheckout();
+      const receivedMessage = event.data;
+      if (receivedMessage === 'PAYMENT_PROCESSED') {
+        navigateToCheckout();
+      } else {
+        console.error('[PSDemo] Cannot perform payment simulation.');
+      }
     });
   });
 
   try {
     fencedframe.config = new FencedFrameConfig(
-      `https://${serviceProviderHost}:${externalPort}/button`,
+      `https://${SERVICE_PROVIDER_HOST}:${EXTERNAL_PORT}/button`,
     );
     fencedframe.height = '75px';
     fencedframe.width = '250px';
@@ -38,34 +63,10 @@ function createPaymentButtons() {
 
     document.getElementById('button-holder').appendChild(fencedframe);
   } catch (e) {
-    console.log('Cannot provide personalized button: ' + e);
+    console.error('[PSDemo] Cannot provide personalized button: ', {e});
   }
-}
-
-function createSecondaryPaymentButton(buttonText) {
-  const button = document.createElement('button');
-  button.innerText = buttonText;
-  button.addEventListener('click', () => {
-    navigateToCheckout();
-  });
-
-  button.classList.add(
-    'w-60',
-    'border',
-    'border-slate-600',
-    'text-slate-600',
-    'enabled:hover:bg-slate-400',
-    'enabled:hover:text-white',
-    'disabled:opacity-40',
-    'rounded',
-  );
-
-  document.getElementById('button-holder').appendChild(button);
-}
+})();
 
 function navigateToCheckout() {
-  const shopHost = '<%= SHOP_HOST %>';
-  window.location.href = `https://${shopHost}:${externalPort}/checkout`;
+  window.location.href = `https://${SHOP_HOST}:${EXTERNAL_PORT}/checkout`;
 }
-
-createPaymentButtons();
