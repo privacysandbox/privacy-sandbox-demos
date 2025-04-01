@@ -1,5 +1,5 @@
 ---
-title: Reach Measurement with Shared Storage
+title: Reach Measurement
 sidebar_position: 8
 ---
 
@@ -81,7 +81,7 @@ ad tech beyond what is outlined in the use case description and design.
 
 ### System Design
 
-- The user visits the [news site](https://privacy-sandbox-demos-news.dev/basic-reach-mmt) where an ad is rendered.
+- The user visits the [news site](https://privacy-sandbox-demos-news.dev/mmt-basic-reach-mmt) where an ad is rendered.
 - Inside this ad frame, the ad-tech loads a JavaScript module for reach measurement and creates a Shared Storage worklet to trigger reporting if
   necessary.
 - The ad-tech maintains a flag in Shared Storage to note whether a report for reach measurement has been generated from this browser using the Shared
@@ -141,7 +141,7 @@ Browser-)DSP: View aggregatable reports delivered to .well-known endpoint (https
 
 ### User Journey
 
-1. [Navigate to news site](https://privacy-sandbox-demos-news.dev/basic-reach-mmt) (a publisher)
+1. [Navigate to news site](https://privacy-sandbox-demos-news.dev/mmt-basic-reach-mmt) (a publisher)
 2. Open Chrome DevTools. View Application > Shared Storage - under origin `https://privacy-sandbox-demos-dsp.dev` verify that `has-reported-content`
    is set to true ![Shared Storage](./img/reach-measurement-shared-storage1.png)
 3. View local Private Aggregation API Internals (Chrome generated) reports by pasting the following into your Chrome address box:
