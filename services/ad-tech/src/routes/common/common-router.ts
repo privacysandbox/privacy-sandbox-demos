@@ -15,7 +15,6 @@ import ejs from 'ejs';
 import express, {NextFunction, Request, Response} from 'express';
 import {
   DEMO_HOST_PREFIX,
-  EXTERNAL_PORT,
   JAVASCRIPT_TEMPLATE_VARIABLES,
 } from '../../lib/constants.js';
 import {getEjsTemplateVariables} from '../../lib/common-utils.js';

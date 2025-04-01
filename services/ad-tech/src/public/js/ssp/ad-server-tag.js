@@ -78,7 +78,7 @@
           console.error(
             LOG_PREFIX,
             'encountered error while parsing post-message',
-            {e},
+            {err},
           );
         }
       }
@@ -162,7 +162,6 @@
       }
       const src = new URL(document.currentScript.src);
       src.pathname = '/ssp/run-sequential-ad-auction.html';
-      src.searchParams.append('publisher', location.origin);
       // Add page context to ad unit configuration.
       Object.assign(adUnit, pageContext);
       console.debug(LOG_PREFIX, 'injecting iframe for adUnit', {src, adUnit});

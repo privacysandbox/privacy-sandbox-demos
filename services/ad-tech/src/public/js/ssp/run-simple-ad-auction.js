@@ -64,9 +64,7 @@ const runSimpleAdAuction = async () => {
       console.error(
         LOG_PREFIX,
         'encountered error in fetching auction config',
-        {
-          status: res.statusText,
-        },
+        {status: res.statusText},
       );
     }
   };

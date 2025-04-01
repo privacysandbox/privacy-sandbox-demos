@@ -28,11 +28,6 @@ const CURR_ORIGIN = '<%= CURRENT_ORIGIN %>';
 const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> top-level seller decision logic';
 
 // ********************************************************
-// Helper Functions
-// ********************************************************
-function getAuctionId(auctionConfig, componentSeller) {}
-
-// ********************************************************
 // Top-level decision logic functions
 // ********************************************************
 function scoreAd(

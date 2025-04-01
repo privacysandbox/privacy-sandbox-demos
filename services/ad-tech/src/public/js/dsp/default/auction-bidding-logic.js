@@ -127,7 +127,7 @@ function getBidForVideoAd({
   // Select an ad meeting the auction requirements.
   const [selectedAd] = ads.filter((ad) => 'VIDEO' === ad.metadata.adType);
   if (!selectedAd) {
-    console.warn('did not find video ad in interest group', {
+    console.warn(LOG_PREFIX, 'did not find video ad in interest group', {
       interestGroup,
       browserSignals,
     });
