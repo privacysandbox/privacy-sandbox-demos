@@ -94,9 +94,12 @@
 
   /** Post messages page context data to ad-tech iframes. */
   const postMessagePageContextToCrossDomainIframes = () => {
+    console.info(
+      '[PSDemo] Broadcasting PAGE_LOAD post-message to ad-tech iframes.',
+    );
     const pageContext = window.PSDemo.getPageContextData();
     const pageContextMessage = JSON.stringify({
-      message: 'PAGE_CONTEXT',
+      message: 'PAGE_LOAD',
       pageContext,
     });
     const iframeEls = document.querySelectorAll('iframe');

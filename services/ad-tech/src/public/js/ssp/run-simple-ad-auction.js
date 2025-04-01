@@ -27,20 +27,11 @@
 const runSimpleAdAuction = async () => {
   /** Domain of the current script. */
   const CURR_HOSTNAME = '<%= HOSTNAME %>';
+  const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> single-seller auction runner';
+
   // ****************************************************************
   // HELPER FUNCTIONS
   // ****************************************************************
-  /** Logs to console. */
-  const log = (message, context) => {
-    console.info(
-      '[PSDemo] Seller',
-      CURR_HOSTNAME,
-      'PAAPI auction runner',
-      message,
-      {context},
-    );
-  };
-
   /** Makes a request to the server to retrieve an auction config. */
   const getAuctionConfig = async (adUnit) => {
     const auctionConfigUrl = new URL(
@@ -54,7 +45,7 @@ const runSimpleAdAuction = async () => {
     const currentUrl = new URL(location.href);
     for (const [key, value] of currentUrl.searchParams) {
       if (auctionConfigUrl.searchParams.has(key)) {
-        log('INTERNAL overwriting query parameter', {
+        console.debug(LOG_PREFIX, 'overwriting query parameter', {
           key,
           oldValue: auctionConfigUrl.searchParams.get(key),
           newValue: value,
@@ -63,16 +54,20 @@ const runSimpleAdAuction = async () => {
       }
       auctionConfigUrl.searchParams.append(key, value);
     }
-    log('retrieving auction config', {auctionConfigUrl});
+    console.debug(LOG_PREFIX, 'retrieving auction config', {auctionConfigUrl});
     const res = await fetch(auctionConfigUrl);
     if (res.ok) {
       const auctionConfig = await res.json();
-      log('retrieved auction config', {auctionConfig});
+      console.info(LOG_PREFIX, 'retrieved auction config', {auctionConfig});
       return auctionConfig;
     } else {
-      log('encountered error in fetching auction config', {
-        status: res.statusText,
-      });
+      console.error(
+        LOG_PREFIX,
+        'encountered error in fetching auction config',
+        {
+          status: res.statusText,
+        },
+      );
     }
   };
 
@@ -80,24 +75,32 @@ const runSimpleAdAuction = async () => {
   // PROTECTED AUDIENCE : RUN AD AUCTION
   // ****************************************************************
   if (!navigator.runAdAuction) {
-    return log('stopping because Protected Audience is not supported', {});
+    return console.warn(
+      LOG_PREFIX,
+      'stopping because Protected Audience is not supported',
+    );
   }
   const [adUnit] = window.PSDemo.PAGE_ADS_CONFIG.adUnits;
   const auctionConfig = await getAuctionConfig(adUnit);
-  log('starting Protected Audience auction', {auctionConfig});
+  console.info(LOG_PREFIX, 'starting Protected Audience auction', {
+    auctionConfig,
+  });
   const adAuctionResult = await navigator.runAdAuction(auctionConfig);
   if (!adAuctionResult) {
-    log("didn't get a Protected Audience result", {
+    console.warn(LOG_PREFIX, 'did not get a Protected Audience result', {
       auctionConfig,
       adAuctionResult,
     });
     document.getElementById(adUnit.divId).innerText = 'No eligible ads';
   } else {
-    log('got Protected Audience result', {auctionConfig, adAuctionResult});
+    console.info(LOG_PREFIX, 'got Protected Audience result', {
+      auctionConfig,
+      adAuctionResult,
+    });
     const adFrame = document.createElement('fencedframe');
     adFrame.config = adAuctionResult;
     [adFrame.width, adFrame.height] = adUnit.size;
-    log('delivering ads in ', {
+    console.debug(LOG_PREFIX, 'delivering ads in ', {
       adFrame,
       adUnit,
       auctionConfig,

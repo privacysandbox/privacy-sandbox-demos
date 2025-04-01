@@ -71,7 +71,7 @@
     if ('string' === typeof event.data) {
       try {
         const parsedMessage = JSON.parse(event.data);
-        if ('PAGE_CONTEXT' === parsedMessage.message) {
+        if ('PAGE_LOAD' === parsedMessage.message) {
           console.debug('[PSDemo] Received page context', {parsedMessage});
           testPrivateAggregation(parsedMessage.pageContext);
           return;
@@ -90,6 +90,6 @@
   /** Main function. */
   (() => {
     window.addEventListener('message', parsePostMessageAndTriggerWorklet);
-    console.info('[PSDemo] Waiting for page context post-message.');
+    console.info('[PSDemo] Waiting for PAGE_LOAD post-message.');
   })();
 })();
