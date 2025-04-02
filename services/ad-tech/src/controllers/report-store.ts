@@ -27,6 +27,8 @@ export enum ReportCategory {
   PAGG_VIA_SS_DEBUG,
   PAGG_VIA_PAAPI,
   PAGG_VIA_PAAPI_DEBUG,
+  RTM_HISTOGRAM,
+  RTM_PLATFORM,
 }
 
 /** High-level abstraction of a report. */
