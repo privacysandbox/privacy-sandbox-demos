@@ -50,6 +50,7 @@ app.get('/', async (req: Request, res: Response) => {
   });
 });
 
+//TODO: remove route once B&A is integrated with on-device flow
 app.get('/bidding-and-auction', async (req: Request, res: Response) => {
   res.render('bidding-and-auction', {
     TITLE: NEWS_DETAIL,

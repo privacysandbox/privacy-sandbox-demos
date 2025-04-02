@@ -93,8 +93,12 @@ BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
 /** Returns the interest group to join on an advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   const targetingContext = assembleTargetingContext(req.query);
+  const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
   // TODO: Generalize to accommodate additional use cases.
-  if ('bidding-and-auction' === targetingContext.usecase) {
+  if (
+    'bidding-and-auction' === targetingContext.usecase &&
+    (baseUrl.includes('dsp-x') || baseUrl.includes('dsp-y'))
+  ) {
     res.json(getInterestGroupBiddingAndAuction(targetingContext));
   } else {
     res.json(getInterestGroup(targetingContext));

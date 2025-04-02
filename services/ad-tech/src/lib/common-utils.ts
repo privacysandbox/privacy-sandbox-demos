@@ -126,6 +126,7 @@ export const getEjsTemplateVariables = (
   titleMessage: string = '',
   additionalTemplateVariables: {[key: string]: string} = {},
 ) => {
+  //TODO: remove from host details and add to additionalTemplateVariables
   const hostDetails = {
     BIDDING_AND_AUCTION_SSP_A_TAG_URL,
     BIDDING_AND_AUCTION_SSP_X_TAG_URL,

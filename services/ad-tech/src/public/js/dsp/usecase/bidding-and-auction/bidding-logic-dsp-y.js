@@ -29,4 +29,6 @@ function generateBid(
   };
 }
 
-function reportWin() {}
+function reportWin() {
+  console.warn('[PSDemo] reportWin for dsp-y is not implemented.');
+}

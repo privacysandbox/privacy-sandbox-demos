@@ -28,4 +28,6 @@ function scoreAd(
   };
 }
 
-function reportResult(auctionConfig, browserSignals) {}
+function reportResult(auctionConfig, browserSignals) {
+  console.warn('[PSDemo] reportResult for ssp is not implemented.');
+}
