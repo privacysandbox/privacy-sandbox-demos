@@ -150,7 +150,7 @@ Browser-)DSP: View aggregatable reports delivered to .well-known endpoint (https
 4. Click select the report and click "Send Selected Report"
 5. Verify the report has been sent to the well-known endpoint: `https://privacy-sandbox-demos-dsp.dev/reporting/view-reports`
    ![Private Aggregation API Internals ](./img/reach-measurement-well-known-reports.png)
-6. Reload the News page
+6. Reload the [news site](https://privacy-sandbox-demos-news.dev/mmt-basic-reach-mmt)
 7. In Chrome DevTools. View Application > Shared Storage - under origin `https://privacy-sandbox-demos-dsp.dev` verify that has-reported-content is
    set to true
 
