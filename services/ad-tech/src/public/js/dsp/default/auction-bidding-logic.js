@@ -31,7 +31,8 @@ AUCTION_ID = '';
 /** Logs to console. */
 function log(message, context) {
   console.log(
-    '[PSDemo] Buyer',
+    '%c[PSDemo] Buyer',
+    'color:darkmagenta;',
     CURR_HOST,
     'bidding logic',
     AUCTION_ID,

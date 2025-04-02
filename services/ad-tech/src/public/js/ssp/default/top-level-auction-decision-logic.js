@@ -31,7 +31,8 @@ AUCTION_ID = '';
 /** Logs to console. */
 function log(msg, context) {
   console.log(
-    '[PSDemo] Top-level Seller',
+    '%c[PSDemo] Top-level Seller',
+    'color:teal;',
     CURR_HOST,
     'decision logic',
     AUCTION_ID,

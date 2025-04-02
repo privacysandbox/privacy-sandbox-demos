@@ -31,7 +31,8 @@ AUCTION_ID = '';
 /** Logs to console. */
 function log(message, context) {
   console.log(
-    '[PSDemo] Seller',
+    '%c[PSDemo] Seller',
+    'color:green;',
     CURR_HOST,
     'decision logic',
     AUCTION_ID,
@@ -142,6 +143,9 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
+  //TODO: remove after implementation
+  if (adMetadata==='additional-bid') 
+    debugger;
   const scoringContext = {
     adMetadata,
     bid,

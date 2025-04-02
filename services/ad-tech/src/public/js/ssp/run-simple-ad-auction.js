@@ -33,7 +33,8 @@ const runSimpleAdAuction = async () => {
   /** Logs to console. */
   const log = (message, context) => {
     console.log(
-      '[PSDemo] Seller',
+      '%c[PSDemo] Seller',
+      'color:darkcyan;',
       CURR_HOSTNAME,
       'PAAPI auction runner',
       message,
@@ -84,6 +85,13 @@ const runSimpleAdAuction = async () => {
   }
   const [adUnit] = window.PSDemo.PAGE_ADS_CONFIG.adUnits;
   const auctionConfig = await getAuctionConfig(adUnit);
+  const auctionNonce = await navigator.createAuctionNonce();
+  auctionConfig.interestGroupBuyers = ['https://privacy-sandbox-demos-dsp.dev/'];
+  auctionConfig.auctionNonce = auctionNonce;
+  auctionConfig.additionalBids = fetch(
+    'https://privacy-sandbox-demos-dsp.dev/dsp/additional-bids' + 
+    `?auction-nonce=${auctionNonce}&auction-seller=${auctionConfig.seller}`, 
+    { adAuctionHeaders: true, mode: 'no-cors' });
   log('starting Protected Audience auction', {auctionConfig});
   const adAuctionResult = await navigator.runAdAuction(auctionConfig);
   if (!adAuctionResult) {
