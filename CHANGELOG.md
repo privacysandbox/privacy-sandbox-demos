@@ -16,9 +16,6 @@
 
 - **Refactoring:**
   - Significant code refactoring for improved efficiency and future development.
-- **Others:**
-  - Stay updated with what's new with Privacy Sandbox Demos by joining our group here:
-    <https://groups.google.com/a/google.com/g/PS-demos-updates-external>
 
 ## v2.0.0 (2025/2/21)
 
