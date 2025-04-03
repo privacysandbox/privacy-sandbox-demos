@@ -15,7 +15,7 @@
  */
 
 /**
- * This script is used on Summary page
+ * This script is used on Cart page
  * and it creates fenced frame with config provided by Service-Provider
  * resulting in rendering personalized payment button that on click opens
  * payment provider popup to simulate payment process
