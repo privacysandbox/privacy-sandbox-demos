@@ -41,8 +41,7 @@
         </dl>
 
         <div id="button-holder" class="text-center flex flex-col justify-center items-center border border-slate-600 gap-4 py-6" <%=cart.length===0 ? 'style=display:none' : "" %>>
-          <h3 class="text-lg font-bold text-center text-slate-700 py-2">Choose payment method</h3>
-          <button class="w-60 border border-slate-600 text-slate-600 enabled:hover:bg-slate-400 enabled:hover:text-white disabled:opacity-40 rounded" onclick="navigateToCheckout()">CREDIT CARD</button>
+          <h3 class="text-lg font-bold text-center text-slate-700 py-2">Available payment methods</h3>
           <button class="w-60 border border-slate-600 text-slate-600 enabled:hover:bg-slate-400 enabled:hover:text-white disabled:opacity-40 rounded" onclick="navigateToCheckout()">BANK TRANSFER</button>
           <script src="/js/payment-buttons.js"></script>
       </div>
