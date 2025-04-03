@@ -11,6 +11,7 @@ Please describe a summary of the changes.
 - [ ] Shop
 - [ ] Travel
 - [ ] Ad-tech
+- [ ] Service Provider
 - [ ] ALL
 
 ## Changelog
