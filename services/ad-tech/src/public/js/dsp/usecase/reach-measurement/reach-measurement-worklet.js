@@ -26,7 +26,7 @@
  *
  * If the browser has NOT previously contributed to the Aggregation report,  the "privateAggregation.contributeToHistogram" functun is called.
  */
-const SCALE_FACTOR = 65536;
+const SCALE_FACTOR = 1;
 function convertContentIdToBucket(contentId) {
   return BigInt(contentId);
 }
