@@ -1,3 +1,17 @@
+---
+title: Bidding & Auction Services for Protected Audience
+sidebar_position: 6
+more_data:
+  - apis:
+      - Protected Audience API
+      - Bidding & Auction servers
+      - Key/Value servers
+  - parties:
+      - Publisher
+      - SSP
+      - DSP
+---
+
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # **Bidding & Auction Services for Protected Audience**
@@ -10,7 +24,7 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 ## **Description**
 
 Bidding & Auction Services aim to provide open source infrastructure for executing Protected Audience auctions server-side. This demo will walk you
-through how to set up a deployment of this infrastructure on your machine.
+through how to set up a deployment of this infrastructure on your local machine.
 
 ## **Privacy Sandbox APIs**
 
@@ -38,12 +52,12 @@ how Bidding & Auction components work before committing to a full production clo
 ## **Assumptions**
 
 This demo assumes that the reader has knowledge of how the Protected Audience API works. This demo will not provide details on the cloud deployment of
-B&A at this time but plans to in the future.
+B&A at this time.
 
 ## **Key Exclusions**
 
 - Cloud deployment
-- Maximum of 2 buyers
+- Maximum of 2 B&A buyers
 - Bidding inference service
 
 ## **System Design**
@@ -70,7 +84,7 @@ components of the system work together to complete an auction.
 - The seller's real time bidding service then forwards the encrypted ad auction result back to the publisher page. Then the
   `navigator.runAdAuction()`function runs on the page and displays the winning ad.
 
-![Bidding Auction API Flow](./img/bidding-auction-api-flow.png)
+#TODO: FIX IMAGE ![Bidding Auction API Flow](./img/bidding-auction-api-flow.png)
 
 ### User Journey
 
