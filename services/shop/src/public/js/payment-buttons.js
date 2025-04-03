@@ -68,5 +68,6 @@ const SHOP_HOST = '<%= SHOP_HOST %>';
 })();
 
 function navigateToCheckout() {
-  window.location.href = `https://${SHOP_HOST}:${EXTERNAL_PORT}/checkout`;
+  const form = document.getElementById('cart-form');
+  form.submit();
 }
