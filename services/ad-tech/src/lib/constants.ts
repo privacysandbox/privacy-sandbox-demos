@@ -67,6 +67,14 @@ export const {
   SSP_B_DETAIL,
   SSP_B_URI,
 
+  SSP_X_HOST,
+  SSP_X_DETAIL,
+  SSP_X_URI,
+
+  SSP_Y_HOST,
+  SSP_Y_DETAIL,
+  SSP_Y_URI,
+
   AD_SERVER_HOST,
   AD_SERVER_DETAIL,
   AD_SERVER_URI,
@@ -200,6 +208,8 @@ export const JAVASCRIPT_TEMPLATE_VARIABLES = {
   EXTERNAL_PORT,
   HOSTNAME,
   SHOP_HOST,
+  DSP_Y_HOST,
+  DSP_X_HOST,
 };
 
 // ****************************************************************************

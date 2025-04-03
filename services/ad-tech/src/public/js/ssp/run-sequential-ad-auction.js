@@ -259,7 +259,7 @@
   // ****************************************************************
   (() => {
     if (!navigator.runAdAuction) {
-      return log('stopping becuase Protected Audience is not supported', {});
+      return log('stopping because Protected Audience is not supported', {});
     }
     // Wait for adUnit object to be post-messaged by ad server tag.
     window.addEventListener('message', runMultiSellerAdAuction);

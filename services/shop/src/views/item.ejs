@@ -124,15 +124,14 @@
         scriptEl.dataset.itemId = '<%= item.id %>'
         return scriptEl
       }
-      // Inject DSP script tags for audience targeting.
-      switch ('<%= usecase %>') {
+      switch ('<%= usecase %>'){
         case 'bidding-and-auction':
-          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'))
-          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
         default: 
-          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'))
-          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'))
-          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'))
+          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>')); 
       }
     </script>
   </body>
