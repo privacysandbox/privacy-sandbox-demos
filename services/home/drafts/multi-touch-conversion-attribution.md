@@ -45,9 +45,9 @@ is called multi-touch attribution.
 - DSP
 
 </TabItem>
-<TabItem value="scope" label="Scope">
+<TabItem value="design" label="Design">
 
-## Scope
+## Design
 
 ### Goals
 
