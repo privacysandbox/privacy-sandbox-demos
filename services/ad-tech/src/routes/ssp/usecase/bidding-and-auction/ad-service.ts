@@ -145,7 +145,7 @@ function runProtectedAudienceAuction(
     client_type: 'CLIENT_TYPE_BROWSER',
     protected_auction_ciphertext: decodeRequest(auctionRequest),
   };
-  if (host.includes(SSP_X_HOST)) {
+  if (host.includes(SSP_X_HOST) && baOnlyClientSFE) {
     baOnlyClientSFE.selectAd(
       selectAdRequest,
       metadata,
@@ -169,7 +169,7 @@ function runProtectedAudienceAuction(
       },
     );
   }
-  if (host.includes(SSP_Y_HOST)) {
+  if (host.includes(SSP_Y_HOST) && mixedModeClientSFE) {
     mixedModeClientSFE.selectAd(
       selectAdRequest,
       metadata,
