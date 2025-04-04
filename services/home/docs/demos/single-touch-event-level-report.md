@@ -37,9 +37,9 @@ interactions to conversions without revealing user identities across websites. I
 - Ad Tech: Implements API, receives cross-site reports
 
 </TabItem>
-<TabItem value="scope" label="Scope">
+<TabItem value="design" label="Design">
 
-## Scope
+## Design
 
 ### System Design
 

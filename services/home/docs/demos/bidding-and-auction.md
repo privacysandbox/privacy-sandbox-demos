@@ -1,57 +1,57 @@
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
-# **Bidding & Auction Services for Protected Audience**
+# Bidding & Auction Services for Protected Audience
 
-\<Tabs\>  
-\<TabItem value="overview" label="Overview" default\>
+<Tabs>
+<TabItem value="overview" label="Overview" default>
 
-# **Overview**
+## Overview
 
-## **Description**
+### Description
 
 Bidding & Auction Services aim to provide open source infrastructure for executing Protected Audience auctions server-side. This demo will walk you
 through how to set up a deployment of this infrastructure on your machine.
 
-## **Privacy Sandbox APIs**
+### Privacy Sandbox APIs
 
 - [Protected Audience](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
 - [Bidding & Auction Services](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience/android/bidding-and-auction-services)
 
-## **Related parties**
+### Related parties
 
 - SSP
 - DSP
 - Publisher
 
-\</TabItem\>
+</TabItem>
 
-\<TabItem value="scope" label="Scope"\>
+<TabItem value="design" label="Design">
 
-# **Scope**
+## Design
 
-## **Goals**
+### Goals
 
 In this demo, we assume SSPs and DSPs would like to improve performance of their Protected Audience auctions. Bidding & Auction services allows
 Protected Audience bidding and scoring computation to take place on servers. This demo will provide a local environment where developers can explore
 how Bidding & Auction components work before committing to a full production cloud deployment.
 
-## **Assumptions**
+### Assumptions
 
 This demo assumes that the reader has knowledge of how the Protected Audience API works. This demo will not provide details on the cloud deployment of
 B&A at this time but plans to in the future.
 
-## **Key Exclusions**
+### Key Exclusions
 
 - Cloud deployment
 - Maximum of 2 buyers
 - Bidding inference service
 
-## **System Design**
+### System Design
 
 Below outlines the general system design for B&A. Please see the bullets below or the image for a chronological set of steps detailing how the
 components of the system work together to complete an auction.
 
-### API Flow
+#### API Flow
 
 - The user visits a shopping site and gets added to an interest group from the Protected Audience API. This interest group will have an
   [optimized payload](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/bidding-auction-services-payload-optimization.md).
@@ -72,7 +72,7 @@ components of the system work together to complete an auction.
 
 ![Bidding Auction API Flow](./img/bidding-auction-api-flow.png)
 
-### User Journey
+#### User Journey
 
 ![Bidding Auction Flow](./img/bidding-auction-flow.png)
 
@@ -98,13 +98,13 @@ sequenceDiagram
     Browser-->>Browser: navigator.runAdAuction(auctionConfig)
 ```
 
-\</TabItem\>
+</TabItem>
 
-\<TabItem value="demo" label="Demo"\>
+<TabItem value="demo" label="Demo">
 
-# **Demo**
+## Demo
 
-## **Prerequisites**
+### Prerequisites
 
 - Chrome > v107 (Open chrome://version to look up your current version)
 - Enable Privacy Sandbox APIs (Open chrome://settings/privacySandbox to enable this setting)
@@ -243,9 +243,9 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 
 ```
 
-### **Do not proceed until services are running and validated properly.**
+#### Do not proceed until services are running and validated properly.
 
-## **Steps**
+### Steps
 
 1. Navigate to the Advertiser's shop site [privacy-sandbox-demos-shop.dev](privacy-sandbox-demos-shop.dev).
 2. Click on any item in the shop.
@@ -286,9 +286,9 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
   - On-device component of mixed mode with `SSP-Y`
   - B&A component of mixed mode with `SSP-Y`
 
-## **Implementation details**
+### Implementation details
 
-### Buyer Details
+#### Buyer Details
 
 1. The shop has multiple DSP tags on the page for each item. When the user clicks on an item and adds the `bidding-and-auction` query parameter, the
    DSP tags for the B&A enabled DSPs will be populated. Below code can be found in the [index.ts for the shop](../../../shop/src/index.ts).
@@ -471,7 +471,7 @@ export const getInterestGroupBiddingAndAuction = (
 };
 ```
 
-### Seller Details
+#### Seller Details
 
 1. When the user visits the news website using the `/bidding-and-auction` query parameter, the router will render the bidding and auction EJS file and
    inject the following variables. This logic is handled in the [index.ts](../../../news/src/index.ts) file.
