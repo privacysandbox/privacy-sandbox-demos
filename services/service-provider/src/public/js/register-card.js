@@ -23,7 +23,7 @@ let cardRegistered = false;
 let errorVisible = false;
 
 async function registerCard() {
-  let cardNumber = document.getElementById('cardnumber').value;
+  const cardNumber = document.getElementById('cardnumber').value;
 
   if (!/^[0-9\s]{13,19}$/.test(cardNumber)) {
     const errorMessage = document.getElementById('error-message');
@@ -33,11 +33,11 @@ async function registerCard() {
     return;
   }
 
-  let lastDigits = cardNumber.slice(-4);
+  const lastDigits = cardNumber.slice(-4);
 
   await window.sharedStorage.set('lastDigits', lastDigits);
 
-  var button = document.getElementById('demo-button');
+  const button = document.getElementById('demo-button');
 
   cardRegistered = true;
   button.innerHTML = 'Card Registered!';
