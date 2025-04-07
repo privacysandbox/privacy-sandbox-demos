@@ -89,7 +89,7 @@ const runSimpleAdAuction = async () => {
   auctionConfig.interestGroupBuyers = ['https://privacy-sandbox-demos-dsp.dev/'];
   auctionConfig.auctionNonce = auctionNonce;
   auctionConfig.additionalBids = fetch(
-    'https://privacy-sandbox-demos-dsp.dev/dsp/additional-bids' + 
+    `${auctionConfig.seller}ssp/additional-bids` + 
     `?auction-nonce=${auctionNonce}&auction-seller=${auctionConfig.seller}`, 
     { adAuctionHeaders: true, mode: 'no-cors' });
   log('starting Protected Audience auction', {auctionConfig});

@@ -15,6 +15,7 @@ import express, {Request, Response} from 'express';
 import {constructAuctionConfig} from '../../lib/auction-config-helper.js';
 import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 import {EXTERNAL_PORT, HOSTNAME} from '../../lib/constants.js';
+import * as ed25519 from '../../lib/noble-ed25519.js';
 
 /**
  * This is the main Seller router and is responsible for handling a variety of
@@ -91,3 +92,69 @@ SellerRouter.get('/vast.xml', async (req: Request, res: Response) => {
     ADVERTISER_HOST: advertiser,
   });
 });
+
+async function _generateSignature(message: string, base64EncodedSecretKey: string) {
+  const secretKey = Uint8Array.from(atob(base64EncodedSecretKey), c => c.charCodeAt(0));
+  const [publicKey, signature] = await Promise.all([
+    ed25519.getPublicKeyAsync(secretKey),
+    ed25519.signAsync(new TextEncoder().encode(message), secretKey)
+  ]);
+
+  console.log('signature generated', publicKey, signature);
+
+  return {
+    'key': btoa(String.fromCharCode(...publicKey)),
+    'signature': btoa(String.fromCharCode(...signature))
+  };
+}
+
+function _generateAdditionalBid(auctionNonce: string, auctionSeller: string) {
+  return {
+    "bid": {
+      "ad": 'additional-bid',
+      "bid": 999,
+      "bidCurrency": "USD",
+      "render": "https://privacy-sandbox-demos-dsp.dev/ads/display-ads?advertiser=privacy-sandbox-demos-shop.dev&itemId=1f45f"
+    },
+  
+    "interestGroup": {
+      "owner": "https://privacy-sandbox-demos-dsp.dev/",
+      "name": "additional-bid-campaign",
+      "biddingLogicURL": "https://privacy-sandbox-demos-dsp.dev/bid_logic.js"
+    },
+    auctionNonce: auctionNonce,
+    seller: auctionSeller
+  };
+}
+
+// const ADDITIONAL_BID_SECRET_KEY_1 = 'nWGxne/9WmC6hEr0kuwsxERJxWl7MmkZcDusAxyuf2A=';
+// const ADDITIONAL_BID_PUBLIC_KEY = '11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo=';
+// const ADDITIONAL_BID_SECRET_KEY_2 = btoa(String.fromCharCode(...ed25519.utils.randomPrivateKey()));
+SellerRouter.get(
+  '/additional-bids',
+  async (req: Request, res: Response) => {
+    const auctionNonce = req.query['auction-nonce'] as string | undefined;
+    const auctionSeller = req.query['auction-seller'] as string | undefined;
+    if (!!auctionNonce && !!auctionSeller) {
+      const additionalBid = _generateAdditionalBid(auctionNonce, auctionSeller);
+      const signedAdditionalBid = {
+        bid: JSON.stringify(additionalBid),
+        signatures: [
+          //FYI: skipping sigs since we don't need them for additional bid without negative ig
+          // await _generateSignature(JSON.stringify(additionalBid), ADDITIONAL_BID_SECRET_KEY_1),
+          // await _generateSignature(JSON.stringify(additionalBid), ADDITIONAL_BID_SECRET_KEY_2),
+        ]
+      };
+      const encodedAdditionalBid = Buffer.from(JSON.stringify(signedAdditionalBid)).toString('base64')
+      console.log('additionalBid', additionalBid);
+      console.log('signedAdditionalBid', signedAdditionalBid);
+      console.log('encodedAdditionalBid', encodedAdditionalBid);
+      res.set({
+        'Ad-Auction-Additional-Bid': `${auctionNonce}:${encodedAdditionalBid}`
+      });
+      res.send('OK');
+    } else {
+      res.send('MISSING AUCTION NONCE OR SELLER');
+    }
+  },
+);
