@@ -615,4 +615,5 @@ async function runComponentAuction() {
     };
 ```
 
-8.
+</TabItem>
+</Tabs>
