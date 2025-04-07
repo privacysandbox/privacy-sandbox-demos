@@ -1,3 +1,17 @@
+---
+title: Bidding & Auction Services for Protected Audience
+sidebar_position: 6
+more_data:
+  - apis:
+      - Protected Audience API
+      - Bidding & Auction servers
+      - Key/Value servers
+  - parties:
+      - Publisher
+      - SSP
+      - DSP
+---
+
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # Bidding & Auction Services for Protected Audience
@@ -10,7 +24,7 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 ### Description
 
 Bidding & Auction Services aim to provide open source infrastructure for executing Protected Audience auctions server-side. This demo will walk you
-through how to set up a deployment of this infrastructure on your machine.
+through how to set up a deployment of this infrastructure on your local machine.
 
 ### Privacy Sandbox APIs
 
@@ -38,12 +52,12 @@ how Bidding & Auction components work before committing to a full production clo
 ### Assumptions
 
 This demo assumes that the reader has knowledge of how the Protected Audience API works. This demo will not provide details on the cloud deployment of
-B&A at this time but plans to in the future.
+B&A at this time.
 
 ### Key Exclusions
 
 - Cloud deployment
-- Maximum of 2 buyers
+- Maximum of 2 B&A buyers
 - Bidding inference service
 
 ### System Design
@@ -70,7 +84,7 @@ components of the system work together to complete an auction.
 - The seller's real time bidding service then forwards the encrypted ad auction result back to the publisher page. Then the
   `navigator.runAdAuction()`function runs on the page and displays the winning ad.
 
-![Bidding Auction API Flow](./img/bidding-auction-api-flow.png)
+#TODO: FIX IMAGE ![Bidding Auction API Flow](./img/bidding-auction-api-flow.png)
 
 #### User Journey
 
@@ -152,6 +166,7 @@ production/packaging/build_and_test_all_in_docker \
 ## DSP-X Bidding Service ##
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.101 --network=privacy-sandbox-demos_adnetwork" \
 BIDDING_JS_URL="http://privacy-sandbox-demos-dsp-x.dev:8080/js/dsp/usecase/bidding-and-auction/bidding-logic-dsp-x.js" \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bidding
 ```
@@ -161,6 +176,8 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.102 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-x.dev:8080/dsp/service/kv" \
 BIDDING_SERVER_ADDR=172.16.0.101:50057 \
+BIDDING_SIGNALS_FETCH_MODE="REQUIRED" \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe
 ```
@@ -171,6 +188,7 @@ SKIP_TLS_VERIFICATION=true \
 ## DSP-Y Bidding Service ##
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.201 --network=privacy-sandbox-demos_adnetwork" \
 BIDDING_JS_URL="http://privacy-sandbox-demos-dsp-y.dev:8080/js/dsp/usecase/bidding-and-auction/bidding-logic-dsp-y.js" \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bidding
 ```
@@ -180,6 +198,8 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.202 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-y.dev:8080/dsp/service/kv" \
 BIDDING_SERVER_ADDR=172.16.0.201:50057 \
+BIDDING_SIGNALS_FETCH_MODE="REQUIRED" \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe
 ```
@@ -190,6 +210,7 @@ SKIP_TLS_VERIFICATION=true \
 ## SSP-X Auction Service ##
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.103 --network=privacy-sandbox-demos_adnetwork" \
 AUCTION_JS_URL="http://privacy-sandbox-demos-ssp-x.dev:8080/js/ssp/usecase/bidding-and-auction/ssp-x/decision-logic.js" \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_auction
 ```
@@ -201,6 +222,7 @@ SELLER_ORIGIN_DOMAIN="https://privacy-sandbox-demos-ssp-x.dev" \
 AUCTION_SERVER_ADDR=172.16.0.103:50061 \
 KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-x.dev:8080/ssp/usecase/bidding-and-auction/ssp-x/service/kv" \
 BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.16.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.16.0.202:50051","cloudPlatform":"LOCAL"}}' \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_sfe
 ```
@@ -211,6 +233,7 @@ SKIP_TLS_VERIFICATION=true \
 ## SSP-Y Auction Service ##
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.203 --network=privacy-sandbox-demos_adnetwork" \
 AUCTION_JS_URL="http://privacy-sandbox-demos-ssp-y.dev:8080/js/ssp/usecase/bidding-and-auction/ssp-y/decision-logic.js" \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_auction
 ```
@@ -222,6 +245,7 @@ SELLER_ORIGIN_DOMAIN="https://privacy-sandbox-demos-ssp-y.dev" \
 AUCTION_SERVER_ADDR=172.16.0.203:50061 \
 KEY_VALUE_SIGNALS_ADDR="http://privacy-sandbox-demos-ssp-y.dev:8080/ssp/usecase/bidding-and-auction/ssp-y/service/kv" \
 BUYER_SERVER_ADDRS_JSON='{"https://privacy-sandbox-demos-dsp-x.dev":{"url":"172.16.0.102:50051","cloudPlatform":"LOCAL"},"https://privacy-sandbox-demos-dsp-y.dev":{"url":"172.16.0.202:50051","cloudPlatform":"LOCAL"}}' \
+PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_sfe
 ```
