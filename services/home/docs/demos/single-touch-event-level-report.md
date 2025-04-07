@@ -111,11 +111,11 @@ end
 1. Clear attribution data in chrome://attribution-internals/
 2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/mmt-single-touch-attribution-html)
 
-- ice skate shoes image will be displayed
+- static shoes ad image will be displayed
 
 3. Click on the ad image
 
-- Demo shop site of skate shoes detail page will open
+- Demo shop site of shoes detail page will open
 
 4. Check “SourceTrigger Registration” tab in chrome://attribution-internals
 5. Go back to the shop site and click the "ADD TO CART" button
@@ -126,9 +126,9 @@ end
 1. Clear attribution data in chrome://attribution-internals/
 2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/mmt-single-touch-attribution-html)
 
-- ice skate shoes image will be displayed
+- static shoes ad image will be displayed
 
-3. Click on "To the shop without ad click" below the image
+3. Click on "Navigate to the shop page without ad click" below the image
 
 - Demo shop site will open
 
@@ -156,8 +156,8 @@ For views:
 ```html
 <img id="adImg" alt="ad image" loading="lazy"
     onclick="adClick()"
-    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8"
-    src="https://privacy-sandbox-demos-shop.dev/image/svg/emoji_u26f8.svg" />
+    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
+    src="https://privacy-sandbox-demos-shop.dev/image/svg/emoji_1f45e.svg" />
 
 ```
 
@@ -168,8 +168,8 @@ For clicks:
 
 ```js
 function adClick() {
-  const encoded = encodeURIComponent("https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8");
-  const url = "https://privacy-sandbox-demos-shop.dev/items/26f8";
+  const encoded = encodeURIComponent("https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e");
+  const url = "https://privacy-sandbox-demos-shop.dev/items/1f45e";
   window.open(
     url,
     "_blank",
