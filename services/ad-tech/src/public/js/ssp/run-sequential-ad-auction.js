@@ -284,7 +284,7 @@
     if (!navigator.runAdAuction) {
       console.warn(
         LOG_PREFIX,
-        'stopping becuase Protected Audience is not supported',
+        'stopping because Protected Audience is not supported',
       );
       return;
     }
