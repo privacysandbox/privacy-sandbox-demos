@@ -53,6 +53,12 @@ async function getImpressionsFromSharedStorage(campaignId) {
   }
 }
 
+async function deleteImpressionsFromSharedStorage(campaignId) {
+  const impressionContextSSKey = getImpressionContextSSKey(campaignId);
+  await sharedStorage.delete(impressionContextSSKey);
+  console.info('[PSDemo] Deleted Shared Storage key', impressionContextSSKey);
+}
+
 class MultiTouchAttributionConversion {
   async run(data) {
     // debugger;
@@ -76,10 +82,7 @@ class MultiTouchAttributionConversion {
       });
       privateAggregation.contributeToHistogram({bucket, value});
     }
-    // Delete these impressions after the conversion and reporting.
-    const impressionContextSSKey = getImpressionContextSSKey(campaignId);
-    await sharedStorage.delete(impressionContextSSKey);
-    console.info('[PSDemo] Deleted Shared Storage key', impressionContextSSKey);
+    deleteImpressionsFromSharedStorage(campaignId);
   }
 }
 

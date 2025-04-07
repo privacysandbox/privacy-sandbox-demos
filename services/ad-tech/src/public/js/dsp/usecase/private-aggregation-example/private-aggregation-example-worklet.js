@@ -26,7 +26,7 @@
  * variables using the page URL, such as bucketKey, bucketValue, scaleFactor,
  * and contextId.
  */
-class TestPrivateAggregation {
+class PrivateAggregationExample {
   async run(data) {
     if ('debug' in data) {
       debugger;
@@ -60,4 +60,4 @@ class TestPrivateAggregation {
   }
 }
 
-register('test-private-aggregation', TestPrivateAggregation);
+register('private-aggregation-example', PrivateAggregationExample);

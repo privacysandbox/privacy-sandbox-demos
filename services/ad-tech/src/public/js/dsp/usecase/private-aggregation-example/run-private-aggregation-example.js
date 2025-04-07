@@ -29,7 +29,7 @@
  * passing the received page context data.
  */
 (async () => {
-  const testPrivateAggregation = async (data) => {
+  const runPrivateAggregationExample = async (data) => {
     if (!data.bucketKey) {
       // Use a placeholder bucket key if not specified.
       data.bucketKey = BigInt(data.uniqueBigInt);
@@ -49,14 +49,14 @@
     }
     // Finally, create and invoke worklet.
     const worklet = await window.sharedStorage.createWorklet(
-      '/js/dsp/usecase/test-private-aggregation/test-private-aggregation-worklet.js',
+      '/js/dsp/usecase/private-aggregation-example/private-aggregation-example-worklet.js',
     );
     console.info('[PSDemo] Triggering Private Aggregation worklet', {
       run: 'test-private-aggregation',
       data,
       privateAggregationConfig,
     });
-    await worklet.run('test-private-aggregation', {
+    await worklet.run('private-aggregation-example', {
       data,
       privateAggregationConfig,
     });
@@ -73,7 +73,7 @@
         const parsedMessage = JSON.parse(event.data);
         if ('PAGE_LOAD' === parsedMessage.message) {
           console.debug('[PSDemo] Received page context', {parsedMessage});
-          testPrivateAggregation(parsedMessage.pageContext);
+          runPrivateAggregationExample(parsedMessage.pageContext);
           return;
         } else {
           console.debug('[PSDemo] Received unknown message', {parsedMessage});
