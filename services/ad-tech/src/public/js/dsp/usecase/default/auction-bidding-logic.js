@@ -23,44 +23,13 @@
  *   participation in Protected Audience auctions.
  */
 
+const CURRENT_HOST = '<%= HOSTNAME %>';
+const CURRENT_ORIGIN = '<%= CURRENT_ORIGIN %>';
+const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> bidding logic';
+
 // ********************************************************
 // Helper Functions
 // ********************************************************
-CURR_HOST = '';
-AUCTION_ID = '';
-/** Logs to console. */
-function log(message, context) {
-  console.log(
-    '[PSDemo] Buyer',
-    CURR_HOST,
-    'bidding logic',
-    AUCTION_ID,
-    message,
-    JSON.stringify({context}, ' ', ' '),
-  );
-}
-
-/** Logs execution context for demonstrative purposes. */
-function logContextForDemo(message, context) {
-  const {
-    interestGroup,
-    auctionSignals,
-    perBuyerSignals,
-    // UNUSED trustedBiddingSignals,
-    // UNUSED browserSignals,
-    sellerSignals,
-  } = context;
-  AUCTION_ID = auctionSignals.auctionId;
-  if (interestGroup) {
-    CURR_HOST = interestGroup.owner.substring('https://'.length);
-  } else if (perBuyerSignals && perBuyerSignals.buyerHost) {
-    CURR_HOST = perBuyerSignals.buyerHost;
-  } else if (sellerSignals && sellerSignals.buyer) {
-    CURR_HOST = sellerSignals.buyer.substring('https://'.length);
-  }
-  log(message, context);
-}
-
 /** Checks whether the current ad campaign is active. */
 function isCurrentCampaignActive(biddingContext) {
   const {
@@ -72,7 +41,7 @@ function isCurrentCampaignActive(biddingContext) {
   } = biddingContext;
   if ('true' !== trustedBiddingSignals['isActive']) {
     // Don't place a bid if campaign is inactive.
-    log('not bidding since campaign is inactive', {
+    console.debug(LOG_PREFIX, 'campaign is inactive', {
       trustedBiddingSignals,
       seller: browserSignals.seller,
       topLevelSeller: browserSignals.topLevelSeller,
@@ -96,7 +65,12 @@ function calculateBidAmount(trustedBiddingSignals, dealId) {
   }
   let bid = Math.random() * (maxBid - minBid) + minBid;
   bid = (bid * multiplier).toFixed(2);
-  log('calculated bid price', {bid, minBid, maxBid, multiplier});
+  console.debug(LOG_PREFIX, 'calculated bid price', {
+    bid,
+    minBid,
+    maxBid,
+    multiplier,
+  });
   return bid;
 }
 
@@ -132,7 +106,7 @@ function selectDealId(selectedAd, auctionSignals) {
   const randomIndex = Math.floor(Math.random() * countOfEligibleIds);
   const selectedId = eligibleDeals[randomIndex];
   // Log reporting IDs to console.
-  log('found reporting IDs', {
+  console.debug(LOG_PREFIX, 'found reporting IDs', {
     buyerReportingId,
     buyerAndSellerReportingId,
     selectableBuyerAndSellerReportingIds,
@@ -153,7 +127,10 @@ function getBidForVideoAd({
   // Select an ad meeting the auction requirements.
   const [selectedAd] = ads.filter((ad) => 'VIDEO' === ad.metadata.adType);
   if (!selectedAd) {
-    log('didnt find eligible video ad in IG', {interestGroup, browserSignals});
+    console.warn(LOG_PREFIX, 'did not find video ad in interest group', {
+      interestGroup,
+      browserSignals,
+    });
     return {bid: '0.0'};
   }
   // Check if any deals are eligible.
@@ -194,7 +171,9 @@ function getBidForDisplayAd({
     (ad) => 'DISPLAY' === ad.metadata.adType,
   );
   if (!selectedAd) {
-    log("can't select display ad, no matching ad type found", {interestGroup});
+    console.warn(LOG_PREFIX, 'did not find display ad in interest group', {
+      interestGroup,
+    });
     return {bid: '0.0'};
   }
   // Check if any deals are eligible.
@@ -239,17 +218,13 @@ function getBidForMultipieceAd({
     (ad) => 'MULTIPIECE' === ad.metadata.adType,
   );
   if (!selectedAd) {
-    log("can't select multi-piece ad, no matching ad type found", {
+    console.warn(LOG_PREFIX, 'did not find multi-piece ad in interest group', {
       interestGroup,
     });
     return {bid: '0.0'};
   }
   // Check if any deals are eligible.
   const dealId = selectDealId(selectedAd, auctionSignals);
-
-  //get adComponents from InterstGroup
-  const {adComponents} = interestGroup;
-
   return {
     ad: {
       ...selectedAd.metadata,
@@ -267,13 +242,14 @@ function getBidForMultipieceAd({
     },
     // Specify selected deal ID for reporting.
     selectedBuyerAndSellerReportingId: dealId,
-
     // Use-case: Ad components
-    adComponents: adComponents.map(({renderUrl, widht, height}) => ({
-      url: renderUrl,
-      width: widht,
-      height: height,
-    })),
+    adComponents: interestGroup.adComponents.map(
+      ({renderUrl, width, height}) => ({
+        url: renderUrl,
+        width,
+        height,
+      }),
+    ),
     targetNumAdComponents: 5,
     numMandatoryAdComponents: 1,
   };
@@ -285,10 +261,9 @@ function getBidByAdType(adType, biddingContext) {
       return getBidForVideoAd(biddingContext);
     case 'MULTIPIECE':
       return getBidForMultipieceAd(biddingContext);
+    default: // Default to DISPLAY.
+      return getBidForDisplayAd(biddingContext);
   }
-
-  //DISPLAY
-  return getBidForDisplayAd(biddingContext);
 }
 
 const BUCKET_SLOW_EXECUTION = 125;
@@ -328,17 +303,19 @@ function generateBid(
     trustedBiddingSignals,
     browserSignals,
   };
-  logContextForDemo('generateBid()', biddingContext);
+  console.debug(LOG_PREFIX, 'generateBid() invoked', {biddingContext});
   if (!isCurrentCampaignActive(biddingContext)) {
-    log('not bidding as campaign is inactive', biddingContext);
+    console.warn(LOG_PREFIX, 'not bidding because campaign is inactive', {
+      biddingContext,
+    });
     return;
   }
   const bid = getBidByAdType(auctionSignals.adType, biddingContext);
   if (bid) {
-    log('returning bid', {bid, biddingContext});
+    console.info(LOG_PREFIX, 'returning bid', {bid, biddingContext});
     return bid;
   } else {
-    log('not bidding', {biddingContext});
+    console.warn(LOG_PREFIX, 'did not generate bid', {biddingContext});
   }
 }
 
@@ -348,18 +325,12 @@ function reportWin(
   sellerSignals,
   browserSignals,
 ) {
-  logContextForDemo('reportWin()', {
-    auctionSignals,
-    perBuyerSignals,
-    sellerSignals,
-    browserSignals,
-  });
   // Assemble query parameters for event logs.
   let additionalQueryParams = browserSignals.renderURL.substring(
     browserSignals.renderURL.indexOf('?') + 1,
   );
   const reportingContext = {
-    auctionId: AUCTION_ID,
+    auctionId: auctionSignals.auctionId,
     pageURL: auctionSignals.pageURL,
     componentSeller: browserSignals.seller,
     topLevelSeller: browserSignals.topLevelSeller,
@@ -374,10 +345,17 @@ function reportWin(
   for (const [key, value] of Object.entries(reportingContext)) {
     additionalQueryParams = additionalQueryParams.concat(`&${key}=${value}`);
   }
-  sendReportTo(
-    browserSignals.interestGroupOwner +
-      `/reporting?report=win&${additionalQueryParams}`,
-  );
+  const winReportUrl =
+    CURRENT_ORIGIN + `reporting?report=win&${additionalQueryParams}`;
+  console.info(LOG_PREFIX, 'reportWin() invoked', {
+    auctionSignals,
+    perBuyerSignals,
+    sellerSignals,
+    browserSignals,
+    reportingContext,
+    sendReportToUrl: winReportUrl,
+  });
+  sendReportTo(winReportUrl);
   // Disable redirect chain temporarily to make ARA debugging easier.
   // additionalQueryParams = additionalQueryParams.concat(
   //   `&redirect=${browserSignals.seller}`,

@@ -39,7 +39,7 @@
     const currentUrl = new URL(location.href);
     const sspVastQuery = currentUrl.searchParams.get('sspVast');
     if (!sspVastQuery) {
-      return console.log('[PSDemo] Expected sspVast query in renderURL', {
+      return console.warn('[PSDemo] Expected sspVast query in renderURL', {
         url: location.href,
         queryParam: 'sspVast',
       });
@@ -85,7 +85,7 @@
     // The rendering process begins when the frame receives the auctionId.
     window.addEventListener('message', async (message) => {
       if (!message.origin.startsWith('https://<%= DEMO_HOST_PREFIX %>')) {
-        return console.log(
+        return console.debug(
           '[PSDemo] Ignoring message from unknonw origin',
           message,
         );
@@ -93,7 +93,7 @@
       try {
         const {auctionId} = JSON.parse(message.data);
         if (!auctionId || 'string' !== typeof auctionId) {
-          return console.log('[PSDemo] auctionId not found', {message});
+          return console.warn('[PSDemo] auctionId not found', {message});
         }
         const sspVast = getSspVastQueryFromCurrentUrl();
         const vastXmlText = await fetchFinalizedVastXmlFromSsp(
@@ -114,10 +114,10 @@
             '*',
           );
         } else {
-          console.log('[PSDemo] Could not fetch VAST XML', {auctionId});
+          console.warn('[PSDemo] Could not fetch VAST XML', {auctionId});
         }
       } catch (e) {
-        console.log('[PSDemo] Encountered error delivering video ad', {e});
+        console.error('[PSDemo] Encountered error delivering video ad', {e});
       }
     });
   })();

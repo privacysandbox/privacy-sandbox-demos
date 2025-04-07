@@ -29,5 +29,9 @@
       campaignId: campaignId,
       purchaseValue: purchaseValue,
     },
+    privateAggregationConfig: {
+      // Optional: Use contextId to opt-in for instant reports.
+      contextId: `mmt-mta-${crypto.randomUUID()}`,
+    },
   });
 })();

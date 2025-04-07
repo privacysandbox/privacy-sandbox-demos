@@ -117,7 +117,6 @@ export const getStaticAdTemplateVariables = (
     ).toString(),
     ATTRIBUTION_SRC: registerSourceUrl.toString(),
     PUBLISHER_ID: PUBLISHER_IDS[publisherHost] || '9999',
-    CAMPAIGN_ID: 1234,
   };
 };
 
