@@ -355,6 +355,25 @@
           }
         }
       ]
+    },
+    {
+      "target": "service-provider",
+      "public": "services/service-provider/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "service-provider",
+            "region": "us-central1"
+          }
+        }
+      ]
     }
   ]
 }
