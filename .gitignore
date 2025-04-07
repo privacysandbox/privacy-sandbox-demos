@@ -1,6 +1,7 @@
-node_modules
-.vscode
 build
+node_modules
+.cache
+.vscode
 *pem
 .firebase
 .firebaserc

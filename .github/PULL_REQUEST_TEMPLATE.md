@@ -1,12 +1,8 @@
 **Prior to creating a pull request, please follow all the steps in the [contributing guide](CONTRIBUTING.md).**
 
-# Description
+## Description
 
 Please describe a summary of the changes.
-
-## Related Issue
-
-- Fixes #xxx
 
 ## Affected services
 
@@ -14,8 +10,10 @@ Please describe a summary of the changes.
 - [ ] News
 - [ ] Shop
 - [ ] Travel
-- [ ] DSP
-- [ ] SSP
+- [ ] Ad-tech
+- [ ] Service Provider
 - [ ] ALL
 
-Other:
+## Changelog
+
+Explain your changes in more detail.

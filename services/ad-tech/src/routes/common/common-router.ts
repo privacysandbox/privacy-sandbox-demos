@@ -69,6 +69,7 @@ CommonRouter.get('/js/*.js', (req: Request, res: Response) => {
     res.set('Supports-Loading-Mode', 'fenced-frame');
     res.set('Permissions-Policy', 'run-ad-auction=(*)');
   }
+  console.log('Rendering JS file: ' + req.path);
   res.set('Content-Type', 'application/javascript');
   ejs.renderFile(filePath, JAVASCRIPT_TEMPLATE_VARIABLES, (err, content) => {
     if (err) {

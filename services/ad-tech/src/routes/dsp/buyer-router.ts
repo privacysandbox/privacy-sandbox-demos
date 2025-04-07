@@ -12,7 +12,12 @@
  */
 
 import express, {Request, Response} from 'express';
-import {HOSTNAME} from '../../lib/constants.js';
+import {
+  HOSTNAME,
+  DSP_A_HOST,
+  DSP_X_HOST,
+  EXTERNAL_PORT,
+} from '../../lib/constants.js';
 import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
@@ -61,11 +66,39 @@ BuyerRouter.get('*.html', async (req: Request, res: Response) => {
 // ************************************************************************
 // HTTP handlers with JSON responses
 // ************************************************************************
+/** Iframe document used as context to join interest group. */
+/** Full route: /dsp/service/kv */
+BuyerRouter.get('/service/kv', (req, res) => {
+  res.setHeader('Ad-Auction-Allowed', 'true');
+
+  res.json({
+    keys: {
+      'isActive': 0,
+      'minBid': 1,
+      'maxBid': 100,
+      'multiplier': 0,
+    },
+  });
+});
+
+//TODO: Replace this with the buyer-contextual-bidder-router endpoint
+BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
+  res.json({
+    bid: Math.floor(Math.random() * 100),
+    renderURL: `https://${DSP_X_HOST}:${EXTERNAL_PORT}/html/contextual-ad.html`,
+    perBuyerSignals: {'testKey': 'dsp-x'},
+  });
+});
+
 /** Returns the interest group to join on an advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   const targetingContext = assembleTargetingContext(req.query);
+  const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
   // TODO: Generalize to accommodate additional use cases.
-  if ('bidding-and-auction' === targetingContext.usecase) {
+  if (
+    'bidding-and-auction' === targetingContext.usecase &&
+    (baseUrl.includes('dsp-x') || baseUrl.includes('dsp-y'))
+  ) {
     res.json(getInterestGroupBiddingAndAuction(targetingContext));
   } else {
     res.json(getInterestGroup(targetingContext));

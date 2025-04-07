@@ -14,6 +14,7 @@
  limitations under the License.
  */
 
+import ejs from 'ejs';
 import express, {NextFunction, Application, Request, Response} from 'express';
 import session from 'express-session';
 import MemoryStoreFactory from 'memorystore';
@@ -29,6 +30,10 @@ import {
   PORT,
   SHOP_DETAIL,
   SHOP_HOST,
+  SSP_HOST,
+  SSP_A_HOST,
+  SSP_B_HOST,
+  SERVICE_PROVIDER_HOST,
 } from './lib/constants.js';
 import {
   addOrder,
@@ -83,6 +88,31 @@ app.use((req, res, next) => {
     req.session.cart = [];
   }
   next();
+});
+
+/** Custom handler to use EJS renderer for JavaScript files. */
+app.get('/js/*.js', async (req: Request, res: Response) => {
+  const filePath = `src/public${req.path}`;
+  res.set('Content-Type', 'application/javascript');
+  ejs.renderFile(
+    filePath,
+    {SERVICE_PROVIDER_HOST, SHOP_HOST, EXTERNAL_PORT},
+    (err: any, content: any) => {
+      if (err) {
+        console.log('Encountered error rendering static JS', {
+          filePath,
+          err,
+        });
+        res.status(500).send();
+        return;
+      }
+      if (content) {
+        res.send(content);
+      } else {
+        res.status(404).send();
+      }
+    },
+  );
 });
 
 app.use(express.urlencoded({extended: true}));

@@ -307,7 +307,7 @@ export const getInterestGroup = (
     name: getInterestGroupName(targetingContext),
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/${usecase}/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsURL: new URL(
       `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/realtime-signals/bidding-signal.json`,
@@ -333,33 +333,21 @@ export const getInterestGroup = (
 export const getInterestGroupBiddingAndAuction = (
   targetingContext: TargetingContext,
 ): InterestGroup => {
-  const {usecase} = targetingContext;
-  const userBiddingSignals: {[key: string]: string} = {
-    'user-signal-key-1': 'user-signal-value-1',
-  };
-  if (targetingContext.additionalContext) {
-    for (const [key, values] of Object.entries(
-      targetingContext.additionalContext,
-    )) {
-      userBiddingSignals[key] = JSON.stringify(values);
-    }
-  }
+  const hostString: string = HOSTNAME ?? 'dsp-x';
+  const dspName: string = extractDspName(hostString);
+  const creative: string = buildCreativeURL(hostString);
   return {
-    name: getInterestGroupName(targetingContext),
+    name: `${dspName}-ig`,
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
-    ).toString(),
-    trustedBiddingSignalsURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/realtime-signals/bidding-signal.json`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
     updateURL: constructInterestGroupUpdateUrl(targetingContext),
-    userBiddingSignals,
     ads: [
       {
         adRenderId: '1234',
-        renderURL: '',
+        renderURL: creative,
       },
     ],
     adSizes: {
@@ -374,3 +362,34 @@ export const getInterestGroupBiddingAndAuction = (
     ],
   };
 };
+// Regex function to identify which DSP is the origin to set the owner properly
+function extractDspName(str: string): string {
+  const match = str.match(/([^-]+-[a-z])\.dev$/); // Matches "dsp-x.dev", "dsp-y.dev", etc.
+  if (match) {
+    return match[1];
+  } else {
+    return 'dsp';
+  }
+  return ''; // Return null if no match is found
+}
+
+// Function to set the creative URL to the correct DSP
+//TODO: Pull from KV
+function buildCreativeURL(hostname: string) {
+  if (extractDspName(hostname).includes('x')) {
+    return new URL(
+      `html/protected-audience-ad-x.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  } else if (extractDspName(hostname).includes('y')) {
+    return new URL(
+      `html/protected-audience-ad-y.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  } else {
+    return new URL(
+      `html/protected-audience-ad.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  }
+}
