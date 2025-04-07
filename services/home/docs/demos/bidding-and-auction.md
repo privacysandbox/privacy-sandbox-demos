@@ -271,7 +271,7 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 
 ### Steps
 
-1. Navigate to the Advertiser's shop site [privacy-sandbox-demos-shop.dev](privacy-sandbox-demos-shop.dev).
+1. Navigate to the Advertiser's shop site [privacy-sandbox-demos-shop.dev](https://privacy-sandbox-demos-shop.dev).
 2. Click on any item in the shop.
    - The advertiser assumes the user is interested in this type of product. The advertiser uses a demand-side provider (DSP) to handle advertising
      needs. The DSP has a tag on this page that will add the user to an interest group for this product category.
@@ -354,7 +354,7 @@ app.get('/items/:id', async (req: Request, res: Response) => {
 });
 ```
 
-2. The DSP tags are then loaded into the [item embedded Javascript template](../../../shop/src/views/item.ejs) and each tag is executed as a script.
+2. The DSP tags are then loaded into the item embedded Javascript template and each tag is executed as a script.
 
 ```html
     <script>
@@ -380,7 +380,8 @@ app.get('/items/:id', async (req: Request, res: Response) => {
     </script>
 ```
 
-3. This will execute the [dsp-tag.js](../../../ad-tech/src/public/js/dsp/usecase/bidding-and-auction/) for all DSPs by injecting an iframe.
+3. This will execute the [dsp-tag.js](https://privacy-sandbox-demos-dsp.dev/js/dsp/usecase/bidding-and-auction/dsp-tag.js) for all DSPs by injecting
+   an iframe.
 
 ```javascript
  (() => {
@@ -398,8 +399,7 @@ app.get('/items/:id', async (req: Request, res: Response) => {
   })();
 ```
 
-4. The [buyer router](../../../ad-tech/src/routes/dsp/buyer-router.ts) will catch this request and render the iframe which is within an embedded
-   javascript file.
+4. The buyer router will catch this request and render the iframe which is within an embedded javascript file.
 
 ```javascript
 BuyerRouter.get(
@@ -421,8 +421,8 @@ BuyerRouter.get(
   </script>
 ```
 
-6. This [join-ad-interest-group.js](../../../ad-tech/src/public/js/dsp/usecase/bidding-and-auction/join-ad-interest-group.js) file will first clear
-   other interest groups for the demo. It will then fetch the `/dsp/interest-group-bidding-auction.json` from the DSPs' origin.
+6. This [join-ad-interest-group.js](https://privacy-sandbox-demos-dsp.dev/js/dsp/usecase/bidding-and-auction/join-ad-interest-group.js) file will
+   first clear other interest groups for the demo. It will then fetch the `/dsp/interest-group-bidding-auction.json` from the DSPs' origin.
 
 ```javascript
   navigator.clearOriginJoinedAdInterestGroups(location.origin);
@@ -498,7 +498,7 @@ export const getInterestGroupBiddingAndAuction = (
 #### Seller Details
 
 1. When the user visits the news website using the `/bidding-and-auction` query parameter, the router will render the bidding and auction EJS file and
-   inject the following variables. This logic is handled in the [index.ts](../../../news/src/index.ts) file.
+   inject the following variables. This logic is handled in the index.ts file.
 
 ```javascript
 app.get('/bidding-and-auction', async (req: Request, res: Response) => {
@@ -566,7 +566,8 @@ tlsRouter.get('/ad-tag.html', async (req, res) => {
 ```
 
 5. Once this variable is injected and the EJS file renders, it will execute the URL as a script. It will be caught by the router for `SSP-Y` and will
-   generate the [construct-component-auction.js](../../../ad-tech/src/public/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.ts)
+   generate the
+   [construct-component-auction.js](https://privacy-sandbox-demos-dsp.dev/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.ts)
    file.
 
 ```javascript
