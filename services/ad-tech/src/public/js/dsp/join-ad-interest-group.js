@@ -52,6 +52,7 @@
       console.log('[PSDemo] Protected Audience API is not supported.');
       return;
     }
+    navigator.clearOriginJoinedAdInterestGroups(location.origin);
     const interestGroup = await getInterestGroupFromServer();
     console.log('[PSDemo] Joining interest group: ', {interestGroup});
     const kSecsPerDay = 3600 * 24 * 30;

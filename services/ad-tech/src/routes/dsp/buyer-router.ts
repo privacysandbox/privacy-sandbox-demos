@@ -82,7 +82,7 @@ BuyerRouter.get('/service/kv', (req, res) => {
 });
 
 //TODO: Replace this with the buyer-contextual-bidder-router endpoint
-BuyerRouter.get('/contextual-bid', async (req: Request, res: Response) => {
+BuyerRouter.get('/contextual-bid-ba', async (req: Request, res: Response) => {
   res.json({
     bid: Math.floor(Math.random() * 100),
     renderURL: `https://${DSP_X_HOST}:${EXTERNAL_PORT}/html/contextual-ad.html`,
