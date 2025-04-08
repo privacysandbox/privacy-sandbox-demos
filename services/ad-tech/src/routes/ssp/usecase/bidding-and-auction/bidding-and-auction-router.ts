@@ -111,7 +111,7 @@ sspARouter.get('/service/ad/contextual-auction', async (req, res) => {
       bidUrl: new URL('/dsp/contextual-bid', DSP_A_URI).toString(),
     },
     [DSP_B_ORIGIN]: {
-      bidUrl: new URL('/dsp/contextual-bid', DSP_B_URI).toString(),
+      bidUrl: new URL('/dsp/contextual-bid-ba', DSP_B_URI).toString(),
     },
   };
 

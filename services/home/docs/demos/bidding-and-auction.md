@@ -84,11 +84,11 @@ components of the system work together to complete an auction.
 - The seller's real time bidding service then forwards the encrypted ad auction result back to the publisher page. Then the
   `navigator.runAdAuction()`function runs on the page and displays the winning ad.
 
-#TODO: FIX IMAGE ![Bidding Auction API Flow](./img/bidding-auction-api-flow.png)
+![Bidding Auction API Flow](https://github.com/privacysandbox/privacy-sandbox-demos/blob/73a017521449a526da715aabeaa02734faead7b3/services/home/docs/demos/img/bidding-auction-api-flow.png)
 
 #### User Journey
 
-![Bidding Auction Flow](./img/bidding-auction-flow.png)
+#TODO FIX ![Bidding Auction Flow](./img/bidding-auction-flow.png)
 
 ```bash
 sequenceDiagram

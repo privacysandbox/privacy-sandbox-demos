@@ -210,8 +210,8 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/contextual-auction-buyers.json', (req: Request, res: Response) => {
   res.json({
     buyers: {
-      [DSP_X_ORIGIN]: {bidUrl: new URL('/dsp/contextual-bid', DSP_X_URI)},
-      [DSP_Y_ORIGIN]: {bidUrl: new URL('/dsp/contextual-bid', DSP_Y_URI)},
+      [DSP_X_ORIGIN]: {bidUrl: new URL('/dsp/contextual-bid-ba', DSP_X_URI)},
+      [DSP_Y_ORIGIN]: {bidUrl: new URL('/dsp/contextual-bid-ba', DSP_Y_URI)},
     },
   });
 });
