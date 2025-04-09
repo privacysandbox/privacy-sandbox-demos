@@ -258,7 +258,7 @@ reports.
 
 ### API Reference
 
-- [Overview of Attribution Reporting API | Privacy Sandbox](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/)
+- [Overview of Attribution Reporting API | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting)
 - [Attribution Reporting API developer guide | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting/dev-guide)
 - [Set up debug reports for Attribution Reporting | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting/attribution-reporting-debugging/part-2)
 
