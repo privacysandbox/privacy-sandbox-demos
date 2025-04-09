@@ -133,18 +133,20 @@ Browser-)DSP:Browser sends aggregatable report (Live Report is deferred)
 
 ### Prerequisites
 
-- Chrome > v129 (Open chrome://version to look up your current version)
-- Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
+- Latest stable version of Chrome (Open `chrome://version` to check your current version)
+- Clear your browsing history before you run one of the demo scenario below (Open `chrome://settings/clearBrowserData` to delete your browsing
+  history)
 
-### User Journey #1
+### User Journey
 
 1. [Navigate to main news site](https://privacy-sandbox-demos-news.dev/mmt-multi-touch-attribution) (Publisher 1) and observe the ad served on the
-   news site
+   news site.
 
 2. [Navigate to the soccer news site](https://soccer.privacy-sandbox-demos-news.dev/mmt-multi-touch-attribution) (Publisher 2) and observe the ad
-   served on the soccer site
+   served on the soccer site.
 
-3. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (Advertiser), select a shoe, add to cart and click on the checkout button
+3. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (Advertiser), select a shoe, click "Add to cart" then on the `cart` page, click on
+   the payment button.
 
 4. Navigate to [DSP service report visualization page](https://privacy-sandbox-demos-dsp.dev/reports)
    - On this page you can see the aggregatable report sent by the browser to the DSP. In a production environment, the aggregatable report is

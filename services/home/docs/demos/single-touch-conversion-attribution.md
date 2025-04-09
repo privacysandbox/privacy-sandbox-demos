@@ -56,8 +56,8 @@ non-encrypted) before it is sent to the aggregation service (encrypted).
 
 The user visits a news site where an ad is rendered. Using Attribution Reporting API & Summary Reports, a view-through conversion source event is
 registered. The user clicks on the ads, a click-through conversion source is registered. Then the user navigates to the advertiser page (shopping
-site), clicks "Add to cart" then "Checkout". The browser registers a conversion trigger event and a summary report (debug report) is sent to the
-advertiser.
+site), clicks "Add to cart" then on the `cart` page, clicks on the payment button. The browser registers a conversion trigger event and a summary
+report (debug report) is sent to the advertiser.
 
 #### Attribution Reporting Flow
 
@@ -150,10 +150,10 @@ Note over DSP:Scenario 1 stops here<br/>where we visualize<br/>debug reports
   the. purchase of an item on the **shop** site) to a previous event (here. The user saw/clicked an ad on the **news** site)
 
 7. On the product page, click "Add to cart"
-8. On the cart page, click "Checkout"
+8. On the `cart` page, click on the payment button.
 
-- In this scenario the "checkout" event is the conversion event the advertiser wants to measure to evaluate the performance of their ad campaign,
-- The checkout page **triggers** the conversion attribution for the `source` whose eTLD+1 matches the eTLD+1 of the site provided in `destination`
+- In this scenario the "purchase" event is the conversion event the advertiser wants to measure to evaluate the performance of their ad campaign.
+- The `checkout` page **triggers** the conversion attribution for the `source` whose eTLD+1 matches the eTLD+1 of the site provided in `destination`
   (here privacy-sandbox-demos-shop.dev) . The **Attribution Reporting API** logic will then process the event.
 
 9. Navigate to chrome://attribution-internals/ and click the `Trigger Registration` tab
