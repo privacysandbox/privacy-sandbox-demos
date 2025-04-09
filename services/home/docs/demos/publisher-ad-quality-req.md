@@ -24,9 +24,9 @@ creative metadata stored in its Key/Value (K/V) server that the SSP might have g
 
 ### Privacy Sandbox APIs
 
-- [Protected Audience API](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Fenced Frames](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
-- [Key/Value Service](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience#key-value-service-detail)
+- [Protected Audience API](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Fenced Frames](https://privacysandbox.google.com/private-advertising/fenced-frame)
+- [Key/Value Service](https://privacysandbox.google.com/private-advertising/protected-audience#key-value-service-detail)
 
 ### Related parties
 
@@ -252,12 +252,12 @@ function scoreAd(
 }
 ```
 
-### Related API documentation
+### API Reference
 
-- [Protected Audience Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience developer guide - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Key / Value Service Overview - Google Developers](https://developers.google.com/privacy-sandbox/blog/fledge-service-overview#key-value-service)
-- [Fenced Frames Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience developer guide - Google Developers](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Key / Value Service Overview - Google Developers](https://privacysandbox.google.com/blog/fledge-service-overview#key-value-service)
+- [Fenced Frames Overview - Google Developers](https://privacysandbox.google.com/private-advertising/fenced-frame)
 
 </TabItem>
 </Tabs>

@@ -11,16 +11,18 @@ Looking to run these demos yourself? Check our [guide](https://github.com/privac
 
 :::
 
-| **Use Case**                                                                                               | **Privacy Sandbox APIs**                                 |
-| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [Basic retargeting / remarketing ad campaign](demos/retargeting-remarketing.md)                            | Protected Audience, Fenced Frames                        |
+| Use Case                                                                                                   | Privacy Sandbox APIs                                     |
+| :--------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| [Basic retargeting / remarketing ads with Protected Audience](demos/retargeting-remarketing.md)            | Protected Audience, Fenced Frames                        |
 | [Sequential setup of Protected Audience with contextual auction](demos/sequential-auction-setup.md)        | Protected Audience, Fenced Frames                        |
 | [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md) | Protected Audience, Fenced Frames                        |
 | [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                  | Protected Audience                                       |
 | [Ads Composed of Multiple Pieces](demos/multi-piece-ad.md)                                                 | Protected Audience                                       |
+| [Bidding & Auction Services for Protected Audience](demos/bidding-and-auction)                             | Protected Audience, Bidding & Auction Services           |
 | [Event-level reports for single touch attribution](demos/single-touch-event-level-report.md)               | Attribution Reporting                                    |
+| [Reach Measurement](demos/reach-measurement-with-shared-storage.md)                                        | Shared Storage, Private Aggregation                      |
+| [Multi-touch conversion Attribution](demos/multi-touch-conversion-attribution)                             | Private Aggregation, Shared Storage, Aggregation Service |
 | [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Protected Audience, Fenced Frames, Attribution Reporting |
-| [Reach Measurement with Shared Storage](demos/reach-measurement-with-shared-storage.md)                    | Shared Storage, Private Aggregation                      |
 
 :::info
 

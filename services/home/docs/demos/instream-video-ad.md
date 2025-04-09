@@ -23,15 +23,15 @@ this use case.
 
 This demo expands on the demo for the [sequential setup of Protected Audience with contextual auction](sequential-auction-setup) to showcase how video
 ads may be served with Protected Audience. The demo uses the industry-standard Video Ads Serving Template (VAST) XMLs to deliver video ads in iframes.
-Additionally, note that the technique shown in this demo does not work with
-[Fenced Frames](https://developers.google.com/privacy-sandbox/relevance/fenced-frame), but Protected Audience allows iframe usage
-[until at least 2026](https://developers.google.com/privacy-sandbox/relevance/protected-audience-api/feature-status#fenced_frames).
+Additionally, note that the technique shown in this demo does not work with [Fenced Frames](https://privacysandbox.google.com/relevance/fenced-frame),
+but Protected Audience allows iframe usage
+[until at least 2026](https://privacysandbox.google.com/relevance/protected-audience-api/feature-status#fenced_frames).
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/auction/sequential-auction)
 
 ### Related parties
 
