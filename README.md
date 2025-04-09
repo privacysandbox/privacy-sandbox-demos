@@ -1,11 +1,11 @@
 # Privacy Sandbox Demos
 
-A use case demo library for the [Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) on the web.
+A use case demo library for the [Privacy Sandbox APIs](https://privacysandbox.google.com) on the web.
 
 ## Motivation
 
-The Privacy Sandbox initiative offers [20+ APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) to protect people’s privacy online while
-giving companies and developers tools to build thriving digital businesses.
+The Privacy Sandbox initiative offers [20+ APIs](https://privacysandbox.google.com) to protect people’s privacy online while giving companies and
+developers tools to build thriving digital businesses.
 
 Web ecosystem developers expect new approaches to typical use cases supported today by third-party cookies. These use cases often require
 incorporating a combination of new Privacy Sandbox APIs into their products, which requires advanced planning and a clear understanding how these APIs

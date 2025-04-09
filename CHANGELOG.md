@@ -122,4 +122,4 @@ NA
 
 - Launch Privacy Sandbox Demos [Github Repository](https://github.com/privacysandbox/privacy-sandbox-demos)
 - Launch hosted demos [https://privacy-sandbox-demos.dev/](https://privacy-sandbox-demos.dev/)
-- Publication of a [blog post](https://developer.chrome.com/blog/privacy-sandbox-demos/)on [developers.chrome.com](http://developers.chrome.com/)
+- Publication of a [blog post](https://privacysandbox.google.com/blog/privacy-sandbox-demos/)on [developers.chrome.com](http://developers.chrome.com/)

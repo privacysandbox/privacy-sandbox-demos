@@ -21,7 +21,7 @@ conversion.
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Attribution Reporting API](https://developer.chrome.com/en/docs/privacy-sandbox/attribution-reporting/)
+- [Attribution Reporting API](https://privacysandbox.google.com/private-advertising/attribution-reporting)
 
 ### Related parties
 
@@ -62,7 +62,7 @@ report (debug report) is sent to the advertiser.
 #### Attribution Reporting Flow
 
 Below is a general introduction of Single-Touch conversion Attribution using Privacy Sandbox Attribution Reporting API. For further information see
-[Attribution Reporting - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/) .
+[Attribution Reporting - Chrome Developers](https://privacysandbox.google.com/private-advertising/attribution-reporting/) .
 
 ![Attribution Reporting Flow](./img/attribution-reporting-flow.png)
 

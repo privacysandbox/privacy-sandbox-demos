@@ -27,7 +27,7 @@ interactions to conversions without revealing user identities across websites. I
 
 ### Privacy Sandbox APIs
 
-- [Attribution Reporting API](https://developer.chrome.com/en/docs/privacy-sandbox/attribution-reporting/)
+- [Attribution Reporting API](https://privacysandbox.google.com/private-advertising/attribution-reporting)
 - [Get started with Attribution Reporting](https://privacysandbox.google.com/private-advertising/attribution-reporting/getting-started)
 
 ### Related parties
@@ -258,9 +258,9 @@ reports.
 
 ### API Reference
 
-- [Attribution Reporting - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/)
-- [Attribution Reporting - Developer Guide](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/developer-guide/)
-- [Set up debug reports - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting-debugging/part-2/)
+- [Overview of Attribution Reporting API | Privacy Sandbox](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/)
+- [Attribution Reporting API developer guide | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting/dev-guide)
+- [Set up debug reports for Attribution Reporting | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting/attribution-reporting-debugging/part-2)
 
 </TabItem>
 </Tabs>
