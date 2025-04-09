@@ -17,6 +17,7 @@ Looking to run these demos yourself? Check our [guide](https://github.com/privac
 | [Sequential setup of Protected Audience with contextual auction](demos/sequential-auction-setup.md)        | Protected Audience, Fenced Frames                        |
 | [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md) | Protected Audience, Fenced Frames                        |
 | [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                  | Protected Audience                                       |
+| [Ads Composed of Multiple Pieces](demos/multi-piece-ad.md)                                                 | Protected Audience                                       |
 | [Event-level reports for single touch attribution](demos/single-touch-event-level-report.md)               | Attribution Reporting                                    |
 | [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Protected Audience, Fenced Frames, Attribution Reporting |
 | [Reach Measurement with Shared Storage](demos/reach-measurement-with-shared-storage.md)                    | Shared Storage, Private Aggregation                      |
