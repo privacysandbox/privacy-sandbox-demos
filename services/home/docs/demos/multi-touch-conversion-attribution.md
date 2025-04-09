@@ -34,9 +34,9 @@ is called multi-touch attribution.
 
 ### Privacy Sandbox APIs
 
-- [Private Aggregation](https://developers.google.com/privacy-sandbox/relevance/private-aggregation)
-- [Shared Storage](https://developers.google.com/privacy-sandbox/relevance/shared-storage)
-- [Aggregation Service](https://developers.google.com/privacy-sandbox/relevance/aggregation-service)
+- [Private Aggregation](https://privacysandbox.google.com/relevance/private-aggregation)
+- [Shared Storage](https://privacysandbox.google.com/relevance/shared-storage)
+- [Aggregation Service](https://privacysandbox.google.com/relevance/aggregation-service)
 
 ### Related parties
 
@@ -58,8 +58,8 @@ by bidding more frequently and/or with a higher amount for a specific publisher 
 
 To keep this example simple, during the conversion, we will divide the purchase amount (budget) equally between all sites that displayed this
 ad/campaign. However, you can also use a similar implementation if you want to calculate it based on path. In this
-[Multi-Touch Attribution article](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation/multi-touch-attribution), you
-can learn more about these two different strategies and decide which one is the best for you.
+[Multi-Touch Attribution article](https://privacysandbox.google.com/private-advertising/private-aggregation/multi-touch-attribution), you can learn
+more about these two different strategies and decide which one is the best for you.
 
 This demo uses the Shared Storage and Private Aggregation APIs, as they enable the data capture and aggregated measurement of multiple touchpoints on
 a single browser.
@@ -133,18 +133,20 @@ Browser-)DSP:Browser sends aggregatable report (Live Report is deferred)
 
 ### Prerequisites
 
-- Chrome > v129 (Open chrome://version to look up your current version)
-- Clear your browsing history before you run one of the demo scenario below (Open chrome://settings/clearBrowserData to delete your browsing history)
+- Latest stable version of Chrome (Open `chrome://version` to check your current version)
+- Clear your browsing history before you run one of the demo scenario below (Open `chrome://settings/clearBrowserData` to delete your browsing
+  history)
 
-### User Journey #1
+### User Journey
 
 1. [Navigate to main news site](https://privacy-sandbox-demos-news.dev/mmt-multi-touch-attribution) (Publisher 1) and observe the ad served on the
-   news site
+   news site.
 
 2. [Navigate to the soccer news site](https://soccer.privacy-sandbox-demos-news.dev/mmt-multi-touch-attribution) (Publisher 2) and observe the ad
-   served on the soccer site
+   served on the soccer site.
 
-3. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (Advertiser), select a shoe, add to cart and click on the checkout button
+3. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (Advertiser), select a shoe, click "Add to cart" then on the `cart` page, click on
+   the payment button.
 
 4. Navigate to [DSP service report visualization page](https://privacy-sandbox-demos-dsp.dev/reports)
    - On this page you can see the aggregatable report sent by the browser to the DSP. In a production environment, the aggregatable report is
@@ -161,12 +163,12 @@ Browser-)DSP:Browser sends aggregatable report (Live Report is deferred)
 <script src="https://privacy-sandbox-demos-dsp.dev/js/mta-conversion-tag.js" ></script>
 ```
 
-### Related API documentation
+### API Reference
 
-- [Shared Storage - Chrome Developers](https://developers.google.com/privacy-sandbox/relevance/shared-storage)
-- [Private Aggregation - Chrome Developers](https://developers.google.com/privacy-sandbox/relevance/private-aggregation)
-- [Aggregation Service - Chrome Developers](https://developers.google.com/privacy-sandbox/relevance/aggregation-service)
-- [Multi-Touch Attribution article](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation/multi-touch-attribution)
+- [Shared Storage - Chrome Developers](https://privacysandbox.google.com/relevance/shared-storage)
+- [Private Aggregation - Chrome Developers](https://privacysandbox.google.com/relevance/private-aggregation)
+- [Aggregation Service - Chrome Developers](https://privacysandbox.google.com/relevance/aggregation-service)
+- [Multi-Touch Attribution article](https://privacysandbox.google.com/private-advertising/private-aggregation/multi-touch-attribution)
 
 </TabItem>
 </Tabs>

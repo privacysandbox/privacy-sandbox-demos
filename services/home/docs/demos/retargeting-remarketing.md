@@ -20,9 +20,9 @@ traffic back to your website, and boost sales.
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/fenced-frame)
 
 ### Related parties
 
@@ -277,6 +277,11 @@ included in the interest group.
   </html>
 </fencedframe>
 ```
+
+### API Reference
+
+- [Protected Audience API overview](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience API: developer guide](https://privacysandbox.google.com/private-advertising/protected-audience-api)
 
 </TabItem>
 </Tabs>

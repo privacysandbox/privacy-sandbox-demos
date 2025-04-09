@@ -104,7 +104,7 @@ const config = {
               },
               {
                 label: 'Privacy Sandbox Developers Documentation',
-                href: 'https://developer.chrome.com/docs/privacy-sandbox/',
+                href: 'https://privacysandbox.google.com',
               },
               {
                 label: 'Chromium Blog',

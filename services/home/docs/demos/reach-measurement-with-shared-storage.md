@@ -3,8 +3,6 @@ title: Reach Measurement
 sidebar_position: 8
 ---
 
-reach-measurement-with-shared-storage
-
 import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # Reach Measurement
@@ -18,8 +16,8 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 The Private Aggregation API allows for the collection of aggregate data from [worklets](https://developer.mozilla.org/docs/Web/API/Worklet) that have
 access to **_cross-site_** data. This API is particularly useful for developers who are building reporting functions within
-[Shared Storage](https://developers.google.com/privacy-sandbox/private-advertising/shared-storage) and
-[Private Aggregation](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation).
+[Shared Storage](https://privacysandbox.google.com/private-advertising/shared-storage) and
+[Private Aggregation](https://privacysandbox.google.com/private-advertising/private-aggregation).
 
 - **Aggregate data collection**: The Private Aggregation API focuses on collecting data in aggregate, which means that individual user data is not
   identifiable. This helps to protect user privacy while still allowing for valuable insights to be gleaned from the data.
@@ -47,10 +45,10 @@ days.
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Private Aggregation :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation)
-- [Private Aggregation API fundamentals :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation/fundamentals)
-- [Shared Storage :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/shared-storage)
-- [Unique reach measurement :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/private-aggregation/unique-reach)
+- [Private Aggregation :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/private-aggregation)
+- [Private Aggregation API fundamentals :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/private-aggregation/fundamentals)
+- [Shared Storage :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/shared-storage)
+- [Unique reach measurement :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/private-aggregation/unique-reach)
 
 ### Related parties
 
