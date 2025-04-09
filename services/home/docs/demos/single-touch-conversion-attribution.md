@@ -257,11 +257,11 @@ You can also refer to the
 [source code](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/lib/attribution-reporting-helper.ts#L47)
 to see how the response header `aggregatable_trigger_data` was formed.
 
-### Privacy Sandbox APIs and related documentation
+### API Reference
 
-- [Attribution Reporting for Web overview | Privacy Sandbox | Google for Developers](https://developers.google.com/privacy-sandbox/private-advertising/attribution-reporting)
-- [Attribution Reporting API developer guide | Privacy Sandbox | Google for Developers](https://developers.google.com/privacy-sandbox/private-advertising/attribution-reporting/dev-guide)
-- [Introduction to Attribution Reporting debug reports | Privacy Sandbox | Google for Developers](https://developers.google.com/privacy-sandbox/private-advertising/attribution-reporting/attribution-reporting-debugging)
+- [Attribution Reporting for Web overview | Privacy Sandbox | Google for Developers](https://privacysandbox.google.com/private-advertising/attribution-reporting)
+- [Attribution Reporting API developer guide | Privacy Sandbox | Google for Developers](https://privacysandbox.google.com/private-advertising/attribution-reporting/dev-guide)
+- [Introduction to Attribution Reporting debug reports | Privacy Sandbox | Google for Developers](https://privacysandbox.google.com/private-advertising/attribution-reporting/attribution-reporting-debugging)
 - [Fenced_Frames_Ads_Reporting.md on GitHub](https://github.com/WICG/turtledove/blob/main/Fenced_Frames_Ads_Reporting.md)
 
 </TabItem>

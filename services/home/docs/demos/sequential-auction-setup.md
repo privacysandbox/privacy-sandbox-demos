@@ -23,10 +23,10 @@ Audience as an additional demand source that may or may not beat the contextual 
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
-- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/auction/sequential-auction)
+- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/fenced-frame)
 
 ### Related parties
 
