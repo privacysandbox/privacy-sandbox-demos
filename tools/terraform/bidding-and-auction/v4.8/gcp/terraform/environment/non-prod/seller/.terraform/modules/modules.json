@@ -1,0 +1,54 @@
+{
+  "Modules": [
+    {
+      "Key": "seller",
+      "Source": "../../../modules/seller",
+      "Dir": "../../../modules/seller"
+    },
+    {
+      "Key": "",
+      "Source": "",
+      "Dir": "."
+    },
+    {
+      "Key": "secrets",
+      "Source": "../../../modules/secrets",
+      "Dir": "../../../modules/secrets"
+    },
+    {
+      "Key": "seller.autoscaling",
+      "Source": "../../services/autoscaling",
+      "Dir": "../../../services/autoscaling"
+    },
+    {
+      "Key": "seller_dashboard",
+      "Source": "../../../services/dashboards/seller_dashboard",
+      "Dir": "../../../services/dashboards/seller_dashboard"
+    },
+    {
+      "Key": "seller.seller_dashboard",
+      "Source": "../../services/dashboards/seller_dashboard",
+      "Dir": "../../../services/dashboards/seller_dashboard"
+    },
+    {
+      "Key": "seller.load_balancing",
+      "Source": "../../services/load_balancing",
+      "Dir": "../../../services/load_balancing"
+    },
+    {
+      "Key": "seller.networking",
+      "Source": "../../services/networking",
+      "Dir": "../../../services/networking"
+    },
+    {
+      "Key": "seller.security",
+      "Source": "../../services/security",
+      "Dir": "../../../services/security"
+    },
+    {
+      "Key": "seller_frontend_load_balancing",
+      "Source": "../../../services/frontend_load_balancing",
+      "Dir": "../../../services/frontend_load_balancing"
+    }
+  ]
+}

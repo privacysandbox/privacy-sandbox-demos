@@ -1,0 +1,96 @@
+#cloud-config
+
+
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Even though this setup is for a GCP collector, `awss3` is used to write to GCS via interoperability (https://cloud.google.com/storage/docs/interoperability). Therefore, the $AWS_ACCESS_KEY_ID and $AWS_SECRET_ACCESS_KEY are configured using the HMAC key created in GCP (https://cloud.google.com/storage/docs/authentication/managing-hmackeys#create)
+
+write_files:
+- path: /etc/systemd/system/otelcol-contrib.service
+  permissions: "0644"
+  owner: root
+  content: |
+    [Unit]
+    Description=Start a simple otel collector
+
+    [Service]
+    ExecStart=/usr/bin/docker run --name otel -p ${collector_port}:${collector_port} -v /tmp/config.yaml:/etc/otelcol-contrib/config.yaml --env AWS_ACCESS_KEY_ID=${gcs_hmac_key} --env AWS_SECRET_ACCESS_KEY=${gcs_hmac_secret} ${otel_collector_image_uri}
+    ExecStop=/usr/bin/docker stop otel
+    ExecStopPost=/usr/bin/docker rm otel
+
+- path: /tmp/config.yaml
+  permissions: "0444"
+  owner: root
+  content: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: :${collector_port}
+
+    processors:
+      batch:
+      filter/drop_event:
+        error_mode: ignore
+        logs:
+          log_record:
+            - 'attributes["ps_tee_log_type"] == "event_message"'
+      filter/drop_non_event:
+        error_mode: ignore
+        logs:
+          log_record:
+            - 'attributes["ps_tee_log_type"] != "event_message"'
+
+    exporters:
+      awss3:
+        s3uploader:
+          region: us-east-1
+          s3_bucket: ${gcs_bucket}
+          s3_prefix: ${gcs_bucket_prefix}
+          s3_partition: minute
+          file_prefix: ${file_prefix}
+          endpoint: https://storage.googleapis.com/
+        marshaler: body
+      googlecloud:
+        metric:
+          resource_filters:
+            # configures all resources to be passed on to GCP
+            # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/googlecloudexporter/README.md
+            - regex: .*
+        log:
+          default_log_name: bidding-auction
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [googlecloud]
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [googlecloud]
+        logs/1:
+          receivers: [otlp]
+          processors: [batch, filter/drop_event]
+          exporters: [googlecloud]
+        logs/2:
+          receivers: [otlp]
+          processors: [filter/drop_non_event]
+          exporters: [awss3]
+
+runcmd:
+- systemctl daemon-reload
+- systemctl start otelcol-contrib.service
