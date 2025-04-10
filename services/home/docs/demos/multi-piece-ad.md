@@ -9,8 +9,6 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # Ads Composed of Multiple Pieces
 
-# Ads Composed of Multiple Pieces
-
 <Tabs>
 <TabItem value="overview" label="Overview" default>
 ## Overview
@@ -101,14 +99,14 @@ const myGroup = {
     {renderUrl: shoesAd2, sizeGroup: 'group2'},
   ],
   'adComponents': [
-   {renderUrl: runningShoes1, sizeGroup: 'group2', ...},
+    {renderUrl: runningShoes1, sizeGroup: 'group2', ...},
     {renderUrl: runningShoes2, sizeGroup: 'group2', ...},
-    {renderUrl: gymShoes, sizeGroup; 'group2', ...},
+    {renderUrl: gymShoes, sizeGroup: 'group2', ...},
   ],
   'adSizes': {
     'size1': {width: '100', height: '100'},
-     'size2': {width: '100', height: '200'},
-     'size3': {width: '75', height: '25'},
+    'size2': {width: '100', height: '200'},
+    'size3': {width: '75', height: '25'},
     'size4': {width: '100', height: '25'},
   },
   'sizeGroups': {
