@@ -51,8 +51,9 @@ repos:
     hooks:
       - id: npm-build-services-home
         name: Build services/home docs
-        entry: sh -c 'cd services/home && npm run build'
+        entry: sh -c 'cd services/home && npm install && npm run build'
         language: system
         files: "^services/home.*"
         pass_filenames: false
         always_run: false
+        verbose: true
