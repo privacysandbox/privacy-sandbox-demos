@@ -21,7 +21,7 @@ ci:
   autoupdate_branch: "dev"
   autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
   autoupdate_schedule: quarterly
-  skip: []
+  skip: [npm-build-services-home]
   submodules: false
 
 fail_fast: true
@@ -45,3 +45,15 @@ repos:
     hooks:
       - id: markdownlint-cli2
         name: lint markdown
+
+  # when home service docs are modified, try to build docs before commit
+  - repo: local
+    hooks:
+      - id: npm-build-services-home
+        name: Build services/home docs
+        entry: sh -c 'cd services/home && npm install && npm run build'
+        language: system
+        files: "^services/home.*"
+        pass_filenames: false
+        always_run: false
+        verbose: true
