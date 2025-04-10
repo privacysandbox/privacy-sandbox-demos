@@ -376,8 +376,8 @@ app.locals = {
     </script>
 ```
 
-3. The [dsp-tag.js]
-   (<https://github.com/privacysandbox/privacy-sandbox-demos/blob/0558610e4712de7a5861bf2f2fa61126f1ffcdda/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97>)
+3. The
+   [dsp-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0558610e4712de7a5861bf2f2fa61126f1ffcdda/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97)
    will be executed for all DSPs. Within the tag, this DSP will inject an iframe to initiate the `joinAdInterestGroup` call.
 
 ```javascript
