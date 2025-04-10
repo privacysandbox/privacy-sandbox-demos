@@ -38,16 +38,18 @@
     <div id="adContainer">
       <div id="ad-label">DSP multi-piece ad</div>
       <div id="components-container--fenced-frame"></div>
+      <div id="components-container--iframe"></div>
     </div>
     <script>
+
+      /**
+       *  adAuctionComponents in Fenced Frames
+       * 
+       *  You can use window.fence.getNestedConfigs() if you want to render your adAuctionComponents in Fenced Frames
+       */
       function renderFencedFrameAds(count) {
         const containerEl = document.getElementById('components-container--fenced-frame')
         let componentAdConfigs = window.fence.getNestedConfigs().slice(0, count);
-        /**
-         * You can also use iframes instead of Fenced Frames. In this case, you can read adAuctionComponents 
-         * using the function 'navigator.adAuctionComponents()' which will return the URL of each 
-         * Ad Auction component instead of the frame config.
-         */
 
         componentAdConfigs = componentAdConfigs.sort((a, b) => 0.5 - Math.random()); //random order
         for (const componentAdConfig of componentAdConfigs) {
@@ -59,7 +61,32 @@
         }
       }
 
-      renderFencedFrameAds(5);
+      /**
+       * adAuctionComponents in iframes
+       * 
+       * You can also use iframes instead of Fenced Frames. In this case, you can read adAuctionComponents 
+       * using the function 'navigator.adAuctionComponents()' which will return the URL of each 
+       * Ad Auction component instead of the frame config.
+       */
+      function renderIFrameAds(count) {
+        const containerEl = document.getElementById('components-container--iframe')
+        
+        const numberOfAdComponents = count;
+        let componentAdSources = navigator.adAuctionComponents(numberOfAdComponents);
+
+        componentAdSources = componentAdSources.sort((a, b) => 0.5 - Math.random()); //random order
+        for (const componentAdSrc of componentAdSources) {
+          const frame = document.createElement('iframe')
+          console.log(componentAdSrc);
+          frame.src = componentAdSrc;
+          frame.style.height = '75px';
+          frame.style.width = '75px';
+          containerEl.appendChild(frame);
+        }
+      }
+
+      //renderFencedFrameAds(5);
+      renderIFrameAds(5);
     </script>
   </body>
 </html>
