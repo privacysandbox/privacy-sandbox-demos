@@ -11,8 +11,11 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
+
 ## Overview
+
 ### Description
+
 Advertisers can display multiple products/pieces in one ad unit, allowing users to click directly to individual product pages. This is achieved
 through a template 'container' with customizable product slots.
 
@@ -87,8 +90,8 @@ the `adComponents` field.
 
 The top-level ad ("container") includes some slots that can be filled in with specific products ("ad components").
 
-The `adComponents` field contains the various ad components that can be used to construct "ads composed of multiple pieces". Similar to the ads field,
-each entry is an object that includes a `renderURL`,optional `adRenderId`, and `metadata` fields.
+The `adComponents` field contains the various ad components that can be used to construct "ads composed of multiple pieces". Similar to the `ads`
+field, each entry is an object that includes a `renderURL`, optional `adRenderId`, and `metadata` fields.
 
 ```javascript
 const myGroup = {
@@ -109,7 +112,7 @@ const myGroup = {
     'size3': {width: '75', height: '25'},
     'size4': {width: '100', height: '25'},
   },
-  'sizeGroups': {
+  'sizeGroups:' {
     'group1': ['size1', 'size2', 'size3'],
     'group2': ['size3', 'size4'],
   },
@@ -117,7 +120,7 @@ const myGroup = {
 };
 ```
 
-The `adSizes` field contains a dictionary of named ad sizes. Each size has the format `{ width: widthVal, height: heightVal }`, where the values can
+The `adSizes` field contains a dictionary of named ad sizes. Each size has the format `{width: widthVal, height: heightVal}`, where the values can
 have either pixel units (e.g. `100` or `100px`) or screen dimension coordinates (e.g. `100sw` or `100sh`).
 
 The `sizeGroups` field contains a dictionary of named lists of ad sizes. Each ad declared above must specify a size group, saying which sizes it might
@@ -125,46 +128,46 @@ be loaded at.
 
 **How do we serve a Multi Piece Ad?**
 
-If the bid returns a multi piece ad, the creative's URL ("container") must match the `renderURL` of an ad in the interest group's ads list.
+To implement the multi-piece ad, the user joins the interest group which contains one ad in the ads field and also contains a list of products/ads in
+the `adComponents` field.
 
-And, it also needs to return the `adComponents` field with the selected products for this creative. In this case, each value in the `adComponents`
-list must match one of `adComponent`'s `renderURL` and sizes available in the interest group. Partners can also use `sizeGroup` instead of `size`.
+The top-level ad ("container") includes some slots that can be filled in with specific products ("ad components").
 
-Importantly, the `adComponents` list doesn't have to include every item from the interest group's `adComponent`, giving ad-techs the flexibility to
-choose which ads or products to display.
+The `adComponents` field contains the various ad components that can be used to construct "ads composed of multiple pieces". Similar to the `ads`
+field, each entry is an object that includes a `renderURL`,optional `adRenderId`, and `metadata` fields.
 
 ```javascript
-const bid = {
-  ...,
-  'bid': bidValue,
-  'bidCurrency': 'USD',
-  'render': {
-    'url': 'https://www.example.com/ads/multi-piece-container.html',
-    'width': renderWidth,
-    'height': renderHeight
-  },
-  'adComponents': [
-    {
-        'url': 'https://www.example.com/ads/multi-piece-product1.html',
-        'width': componentWidth1,
-        'height': componentHeight1
-    },
-    {
-        'url': 'https://www.example.com/ads/multi-piece-product1.html',
-        'width': componentWidth2,
-        'height': componentHeight2
-    },
-    ...
+const myGroup = {
+  'owner': 'https://www.example-dsp.com',
+  'name': 'womens-running-shoes',
+  'ads': [
+    {renderUrl: "container.html", sizeGroup: 'group1', ...},
+    {renderUrl: shoesAd2, sizeGroup: 'group2'},
   ],
-}
+  'adComponents': [
+    {renderUrl: runningShoes1, sizeGroup: 'group2', ...},
+    {renderUrl: runningShoes2, sizeGroup: 'group2', ...},
+    {renderUrl: gymShoes, sizeGroup: 'group2', ...},
+  ],
+  'adSizes': {
+    'size1': {width: '100', height: '100'},
+    'size2': {width: '100', height: '200'},
+    'size3': {width: '75', height: '25'},
+    'size4': {width: '100', height: '25'},
+  },
+  'sizeGroups:' {
+    'group1': ['size1', 'size2', 'size3'],
+    'group2': ['size3', 'size4'],
+  },
+  ...
+};
 ```
 
-To serve ads from `adComponents`, you can utilize either iframes or Fenced Frames.
+The `adSizes` field contains a dictionary of named ad sizes. Each size has the format `{width: widthVal, height: heightVal}`, where the values can
+have either pixel units (e.g. `100` or `100px`) or screen dimension coordinates (e.g. `100sw` or `100sh`).
 
-For iframes, the `navigator.adAuctionComponents(numberOfAdComponents)` function provides an array containing the requested number of `AdComponents`
-along with their respective `renderURL`.
-
-Alternatively, for Fenced Frames, the `window.fence.getNestedConfigs()` function returns an array of `FencedFrameConfig` objects.
+The `sizeGroups` field contains a dictionary of named lists of ad sizes. Each ad declared above must specify a size group, saying which sizes it might
+be loaded at.
 
 ### Related API documentation
 
