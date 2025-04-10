@@ -1,6 +1,6 @@
 ---
 title: Ads Composed of Multiple Pieces
-sidebar_position: 9
+sidebar_position: 5
 ---
 
 multi-piece-ad
