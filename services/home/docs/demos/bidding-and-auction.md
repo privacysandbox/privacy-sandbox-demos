@@ -312,53 +312,51 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 
 ### Implementation details
 
-#### Buyer Details
+#### Buyer Implementation
 
-1. The shop has multiple DSP tags on the page for each item. When the user clicks on an item and adds the `bidding-and-auction` query parameter, the
-   DSP tags for the B&A enabled DSPs will be populated. Below code can be found in the [index.ts for the shop](../../../shop/src/index.ts).
+1. The shop has multiple DSP tags on the page for each item. When the user clicks on an item, the DSP tags from the locals will be inserted into the
+   embedded Javascript template for the item when rendered. Below code can be found in the
+   [index.ts for the shop](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0558610e4712de7a5861bf2f2fa61126f1ffcdda/services/shop/src/index.ts#L151).
 
 ```javascript
-app.get('/items/:id', async (req: Request, res: Response) => {
-  const {usecase} = req.query;
-  const {id} = req.params;
-  const item = await getItem(id);
-  let DSP_TAG_URL = new URL(
+app.locals = {
+  title: SHOP_DETAIL,
+  displayCategory,
+  DSP_TAG_URL: new URL(
     `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  let DSP_A_TAG_URL = new URL(
+  ),
+  DSP_A_TAG_URL: new URL(
     `https://${DSP_A_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  let DSP_B_TAG_URL = new URL(
+  ),
+  DSP_B_TAG_URL: new URL(
     `https://${DSP_B_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
-  );
-  let DSP_X_TAG_URL;
-  let DSP_Y_TAG_URL;
-  if (usecase == 'bidding-and-auction') {
-    DSP_X_TAG_URL = new URL(
-      `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
-    );
-    DSP_Y_TAG_URL = new URL(
-      `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/dsp-tag.js`,
-    );
-  }
-  res.render('item', {
-    DSP_A_TAG_URL,
-    DSP_B_TAG_URL,
-    DSP_X_TAG_URL,
-    DSP_Y_TAG_URL,
-    DSP_TAG_URL,
-    item,
-    SHOP_HOST,
-    usecase,
-  });
-});
+  ),
+  DSP_X_TAG_URL: new URL(
+    `https://${DSP_X_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  ),
+  DSP_Y_TAG_URL: new URL(
+    `https://${DSP_Y_HOST}:${EXTERNAL_PORT}/js/dsp/dsp-tag.js`,
+  ),
+  MTA_CONVERSION_TAG_URL: new URL(
+    `https://${DSP_HOST}:${EXTERNAL_PORT}/js/dsp/usecase/multi-touch-attribution/mta-conversion-tag.js`,
+  ).toString(),
+  getCartTotal,
+  getConversionTriggerUrls: (order: Order) =>
+    AD_TECHS_TO_TAG_FOR_CONVERSIONS.map((host) =>
+      constructConversionTriggerUrl(host, order),
+    ),
+  getEventTriggerUrl,
+};
 ```
 
-2. The DSP tags are then loaded into the item embedded Javascript template and each tag is executed as a script.
+2. These locals will be injected as template variables into the
+   [item embedded Javascript file](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0558610e4712de7a5861bf2f2fa61126f1ffcdda/services/shop/src/views/item.ejs#L119)
+   when the item is being rendered. When rendering, these variables are injected and the scripts referencing the DSP tags are executed. The bidding
+   and auction variables will only be injected if the `?usecase=bidding-and-auction` query parameter is provided.
 
-```html
-    <script>
-      function buildDspScriptTag(tagUrl) {
+```javascript
+</script>
+     function buildDspScriptTag(tagUrl) {
         const scriptEl = document.createElement('script')
         scriptEl.className = 'dsp_tag'
         scriptEl.src = tagUrl
@@ -370,50 +368,35 @@ app.get('/items/:id', async (req: Request, res: Response) => {
         case 'bidding-and-auction':
           document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
           document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
         default:
-          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
           document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
           document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
       }
     </script>
 ```
 
-3. This will execute the [dsp-tag.js](https://privacy-sandbox-demos-dsp.dev/js/dsp/usecase/bidding-and-auction/dsp-tag.js) for all DSPs by injecting
-   an iframe.
+3. The [dsp-tag.js]
+   (<https://github.com/privacysandbox/privacy-sandbox-demos/blob/0558610e4712de7a5861bf2f2fa61126f1ffcdda/services/ad-tech/src/public/js/dsp/dsp-tag.js#L97>)
+   will be executed for all DSPs. Within the tag, this DSP will inject an iframe to initiate the `joinAdInterestGroup` call.
 
 ```javascript
- (() => {
-    /** Inject DSP iframe to execute scripts in ad-tech's origin context.
-     */
-    injectIframe(
+   injectIframe(
       /* src= */ getServerUrlWithPageContext(
-        /* pathname= */ 'dsp/dsp-advertiser-iframe-bidding-and-auction.html',
+        /* pathname= */ 'dsp/join-ad-interest-group.html',
       ),
       /* options= */ {
         allow: 'join-ad-interest-group',
         browsingTopics: '',
       },
     );
-  })();
 ```
 
-4. The buyer router will catch this request and render the iframe which is within an embedded javascript file.
+4. The
+   [buyer router](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0558610e4712de7a5861bf2f2fa61126f1ffcdda/services/ad-tech/src/routes/dsp/buyer-router.ts#L41)
+   will catch this request to`dsp/join-ad-interest-group.html` and will render the corresponding embedded Javascript file.
 
-```javascript
-BuyerRouter.get(
-  '/dsp-advertiser-iframe-bidding-and-auction.html',
-  async (req: Request, res: Response) => {
-    res.render(
-      'dsp/usecase/bidding-and-auction/dsp-advertiser-iframe',
-      getEJSTemplateVariables('Join Ad Interest Group'),
-    );
-  },
-);
-```
-
-5. This iframe will only include a script to execute a file from the DSP that will help with the `joinAdInterestGroup` call.
+5. Within the iframe, it will only include a script to execute the `join-ad-interest-group.js` file.
 
 ```html
   <%/* Script to add user to an interest group. */%>
@@ -421,46 +404,53 @@ BuyerRouter.get(
   </script>
 ```
 
-6. This [join-ad-interest-group.js](https://privacy-sandbox-demos-dsp.dev/js/dsp/usecase/bidding-and-auction/join-ad-interest-group.js) file will
-   first clear other interest groups for the demo. It will then fetch the `/dsp/interest-group-bidding-auction.json` from the DSPs' origin.
+6. This
+   [join-ad-interest-group.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8d7effd11f4d4e51065208ef4af92d5f2d921706/services/ad-tech/src/public/js/dsp/join-ad-interest-group.js#L32)
+   file will make a request to the route `/dsp/interest-group.json` to fetch the interest group configuration.
 
 ```javascript
-  navigator.clearOriginJoinedAdInterestGroups(location.origin);
-  getInterestGroupFromServer = async () => {
+ getInterestGroupFromServer = async () => {
     const currentUrl = new URL(location.href);
     const interestGroupUrl = new URL(location.origin);
-    interestGroupUrl.pathname = '/dsp/interest-group-bidding-and-auction.json';
+    interestGroupUrl.pathname = '/dsp/interest-group.json';
     // Copy query params from current context.
     for (const [key, value] of currentUrl.searchParams) {
       interestGroupUrl.searchParams.append(key, value);
     }
-    const res = await fetch(interestGroupUrl, {browsingTopics: true});
     if (res.ok) {
       return res.json();
     }
-  };
 ```
 
-7. This call to retrieve the JSON is caught by the buyer router and the `getInterestGroupBiddingAndAuction` function is called.
+7. This call from the client to the server will be caught by the
+   [buyer router](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8d7effd11f4d4e51065208ef4af92d5f2d921706/services/ad-tech/src/routes/dsp/buyer-router.ts#L94).
+   If the usecase query parameter from the targeting context matches `bidding-and-auction` and the caller is a B&A enabled buyer, the payload
+   optimized interest group will be used by calling the `getInterestGroupBiddingAndAuction` function.
 
-```javascript
-BuyerRouter.get(
-  '/interest-group-bidding-and-auction.json',
-  async (req: Request, res: Response) => {
-    const targetingContext = assembleTargetingContext(req.query);
+```typescript
+BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
+  const targetingContext = assembleTargetingContext(req.query);
+  const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+  if (
+    'bidding-and-auction' === targetingContext.usecase &&
+    (baseUrl.includes('dsp-x') || baseUrl.includes('dsp-y'))
+  ) {
     res.json(getInterestGroupBiddingAndAuction(targetingContext));
-  },
-);
+  } else {
+    res.json(getInterestGroup(targetingContext));
+  }
+});
 ```
 
-8. This anonymous function creates the interest group. There are a few key fields to note that are different from a typical interest group.
-   - Within the `ads` field there are `adRenderId` and `renderUrl` parameters. The `adRenderId` field will be part of the B&A auction payload. The
-     `renderUrl` will be used later by the browser to reconcile with the `renderUrl` provided to `generateBid`. **These must be the same**.
-   - The `auctionServerRequestFlags` will ensure the `ads` and `userBiddingSignals` fields are omitted from the B&A payload.
-   - It's important to note the `bidding-logic.js` file here is not used for bidding. The file provided to the `Bidding Service` will be used for
-     bidding.
+8. The
+   [interest-group-helper.ts](https://github.com/privacysandbox/privacy-sandbox-demos/blob/8d7effd11f4d4e51065208ef4af92d5f2d921706/services/ad-tech/src/lib/interest-group-helper.ts#L333)
+   file contains the call to get the interest group configuration. This anonymous function will return a
+   [payload optimized](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/bidding-auction-services-payload-optimization.md)
+   interest group. The notable differences in the interest group are:
+   - `auctionServerRequestFlags` indicates to the browser that the `userBiddingSignals` and `ads` fields can be omitted.
+   - `adRenderId` within the `ads` list provides a lookup key to identify and pull the creative during generateBid
 
-```javascript
+```typescript
 export const getInterestGroupBiddingAndAuction = (
   targetingContext: TargetingContext,
 ): InterestGroup => {
@@ -471,7 +461,7 @@ export const getInterestGroupBiddingAndAuction = (
     name: `${dspName}-ig`,
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/bidding-logic.js`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
     updateURL: constructInterestGroupUpdateUrl(targetingContext),

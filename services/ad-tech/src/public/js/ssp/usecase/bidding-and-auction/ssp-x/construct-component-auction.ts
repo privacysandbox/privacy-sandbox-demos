@@ -81,8 +81,8 @@ class AdAuction {
       await response.json();
 
     return {
-      protectedAudienceAuctionResult: new Uint8Array(
-        this.#decodeResponse(protectedAudienceAuctionCiphertext),
+      protectedAudienceAuctionResult: this.#decodeResponse(
+        protectedAudienceAuctionCiphertext,
       ),
       contextualAuctionWinner,
     };
