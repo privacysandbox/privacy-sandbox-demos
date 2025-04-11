@@ -40,16 +40,14 @@
       <div id="components-container"></div>
     </div>
     <script>
-      function renderAdAuctionComponents(count) {
-        const containerEl = document.getElementById('components-container')
-        
-        const numberOfAdComponents = count;
-        let componentAdSources = navigator.adAuctionComponents(numberOfAdComponents);
-
-        componentAdSources = componentAdSources.sort((a, b) => 0.5 - Math.random()); //random order
+      function renderAdAuctionComponents(numberOfAdComponents) {
+        const containerEl = document.getElementById('components-container');
+        const componentAdSources = navigator
+          .adAuctionComponents(numberOfAdComponents)
+          .sort((a, b) => 0.5 - Math.random()); // random order;
+        console.debug('[PSDemo] Rendering ad components', componentAdSources);
         for (const componentAdSrc of componentAdSources) {
-          const frame = document.createElement('iframe')
-          console.log(componentAdSrc);
+          const frame = document.createElement('iframe');
           frame.src = componentAdSrc;
           frame.style.height = '75px';
           frame.style.width = '75px';
