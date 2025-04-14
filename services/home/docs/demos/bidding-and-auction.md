@@ -176,7 +176,6 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.102 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-x.dev:8080/dsp/service/kv" \
 BIDDING_SERVER_ADDR=172.16.0.101:50057 \
-BIDDING_SIGNALS_FETCH_MODE="REQUIRED" \
 PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe
@@ -198,7 +197,6 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.202 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-y.dev:8080/dsp/service/kv" \
 BIDDING_SERVER_ADDR=172.16.0.201:50057 \
-BIDDING_SIGNALS_FETCH_MODE="REQUIRED" \
 PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe

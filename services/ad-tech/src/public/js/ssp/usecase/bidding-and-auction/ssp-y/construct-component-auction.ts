@@ -107,16 +107,12 @@ class AdAuction {
     } = await response.json();
 
     return {
-      protectedAudienceAuctionResult: new Uint8Array(
-        this.#decodeResponse(protectedAudienceAuctionCiphertext),
+      protectedAudienceAuctionResult: this.#decodeResponse(
+        protectedAudienceAuctionCiphertext,
       ),
       contextualAuctionWinner,
       onDeviceAuctionConfig,
     };
-  }
-
-  #encodeRequest(request: any) {
-    return btoa(String.fromCharCode.apply(null, request));
   }
 
   #decodeResponse(base64response: string) {
