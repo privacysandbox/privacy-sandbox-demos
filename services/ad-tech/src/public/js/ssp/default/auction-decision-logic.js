@@ -23,46 +23,13 @@
  *   in a Protected Audience auction.
  */
 
+const CURR_HOST = '<%= HOSTNAME %>';
+const CURR_ORIGIN = '<%= CURRENT_ORIGIN %>';
+const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> decision logic';
+
 // ********************************************************
 // Helper Functions
 // ********************************************************
-CURR_HOST = '';
-AUCTION_ID = '';
-/** Logs to console. */
-function log(message, context) {
-  console.log(
-    '[PSDemo] Seller',
-    CURR_HOST,
-    'decision logic',
-    AUCTION_ID,
-    message,
-    JSON.stringify({context}, ' ', ' '),
-  );
-}
-
-/** Logs execution context for demonstrative purposes. */
-function logContextForDemo(message, context) {
-  const {
-    // UNUSED adMetadata,
-    // UNUSED bid,
-    auctionConfig,
-    // UNUSED trustedScoringSignals,
-    // UNUSED browserSignals,
-  } = context;
-  CURR_HOST = auctionConfig.seller.substring('https://'.length);
-  AUCTION_ID = auctionConfig.auctionSignals.auctionId;
-  log(message, context);
-  // Log reporting IDs if found.
-  const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
-    context.browserSignals;
-  if (buyerAndSellerReportingId || selectedBuyerAndSellerReportingId) {
-    log('found reporting IDs', {
-      buyerAndSellerReportingId,
-      selectedBuyerAndSellerReportingId,
-    });
-  }
-}
-
 /** Checks whether the bid is below the winning contextual bid. */
 function isBidBelowAuctionFloor({
   // UNUSED adMetadata,
@@ -102,7 +69,7 @@ function isCreativeBlocked(scoringContext) {
       parsedScoringSignals.tags.includes(excludeCreativeTag)
     ) {
       // Creative tag is to be excluded, reject bid.
-      log('rejecting bid blocked by publisher', {
+      console.debug(LOG_PREFIX, 'rejecting bid blocked by publisher', {
         parsedScoringSignals,
         trustedScoringSignals,
         renderURL,
@@ -149,7 +116,7 @@ function scoreAd(
     trustedScoringSignals,
     browserSignals,
   };
-  logContextForDemo('scoreAd()', scoringContext);
+  console.debug(LOG_PREFIX, 'scoreAd() invoked', {scoringContext});
   // Initialize ad score defaulting to a first-price auction.
   const score = {
     desirability: bid,
@@ -159,7 +126,9 @@ function scoreAd(
   if (isCreativeBlocked(scoringContext)) {
     score.desirability = 0;
     score.rejectReason = 'disapproved-by-exchange';
-    log('rejecting bid with blocked creative', scoringContext);
+    console.warn(LOG_PREFIX, 'rejecting bid with blocked creative', {
+      scoringContext,
+    });
     return score;
   }
   // Check if DSP responded with an eligible deal ID.
@@ -169,28 +138,35 @@ function scoreAd(
     // Only accepting bids with eligible bids.
     score.desirability = 0;
     score.rejectReason = 'invalid-bid';
-    log('rejecting bid with ineligible deal', scoringContext);
+    console.warn(LOG_PREFIX, 'rejecting bid with ineligible deal', {
+      scoringContext,
+    });
     return score;
   } else if (bidHasEligibleDeal) {
     // Boost desirability score by 10 points for bids with eligible deals.
     score.desirability = bid + 10.0;
-    log('boosting bid with eligible deal', scoringContext);
+    console.info(LOG_PREFIX, 'boosting bid with eligible deal', {
+      scoringContext,
+    });
     return score;
   }
   // Check if bid is below auction floor.
   if (isBidBelowAuctionFloor(scoringContext)) {
     score.desirability = 0;
     score.rejectReason = 'bid-below-auction-floor';
+    console.warn(LOG_PREFIX, 'rejecting bid below auction floor', {
+      scoringContext,
+    });
     return score;
   }
   // In all other cases, default to a first-price auction.
+  console.info(LOG_PREFIX, 'scored bid', {scoringContext, score});
   return score;
 }
 
 function reportResult(auctionConfig, browserSignals) {
-  logContextForDemo('reportResult()', {auctionConfig, browserSignals});
   const reportingContext = {
-    auctionId: AUCTION_ID,
+    auctionId: auctionConfig.auctionSignals.auctionId,
     pageURL: auctionConfig.auctionSignals.pageURL,
     topLevelSeller: browserSignals.topLevelSeller,
     winningBuyer: browserSignals.interestGroupOwner,
@@ -205,10 +181,16 @@ function reportResult(auctionConfig, browserSignals) {
   for (const [key, value] of Object.entries(reportingContext)) {
     reportUrl = `${reportUrl}&${key}=${value}`;
   }
+  console.info(LOG_PREFIX, 'reportResult() invoked', {
+    auctionConfig,
+    browserSignals,
+    reportingContext,
+    sendReportToUrl: reportUrl,
+  });
   sendReportTo(reportUrl);
   return /* sellerSignals= */ {
     success: true,
-    auctionId: AUCTION_ID,
+    auctionId: auctionConfig.auctionSignals.auctionId,
     buyer: browserSignals.interestGroupOwner,
     reportUrl: auctionConfig.seller + '/reporting',
     signalsForWinner: {signalForWinner: 1},

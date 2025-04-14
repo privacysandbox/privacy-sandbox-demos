@@ -19,10 +19,10 @@
       </nav>
     </header>
     <div class="flex flex-col gap-6">
-      <form class="flex flex-col gap-6" action="/checkout" method="POST">
+      <form id="cart-form" class="flex flex-col gap-6" action="/checkout" method="POST">
         <ul class="flex flex-col gap-6">
           <% cart.forEach(({item, size, quantity}) => { %>
-            <%- include("cart-item", { item, size, quantity, checkout: false }) %>
+            <%- include("cart-item", { item, size, quantity, onCheckoutPage: false }) %>
           <% }) %>
         </ul>
         <dl class="flex flex-col">
@@ -36,20 +36,21 @@
           </div>
           <div class="flex justify-end gap-2">
             <dt class="font-bold">Total:</dt>
-            <dd>$<%= subtotal + shipping %>.00</dd>
+            <dd>$<%= total %>.00</dd>
           </div>
         </dl>
-        <section class="flex justify-center">
-          <button
-            type="submit"
-            <%= cart.length === 0 ? "disabled" : "" %>
-            class="w-60 border border-slate-600 text-slate-600 enabled:hover:bg-slate-400 enabled:hover:text-white disabled:opacity-40"
-          >
-            CHECKOUT
-          </button>
-        </section>
+
+        <div id="button-holder" class="text-center flex flex-col justify-center items-center border border-slate-600 gap-4 py-6" <%=cart.length===0 ? 'style=display:none' : "" %>>
+          <h3 class="text-lg font-bold text-center text-slate-700 py-2">Available payment methods</h3>
+          <button class="w-60 border border-slate-600 text-slate-600 enabled:hover:bg-slate-400 enabled:hover:text-white disabled:opacity-40 rounded" onclick="navigateToCheckout()">BANK TRANSFER</button>
+          <script src="/js/payment-buttons.js"></script>
+      </div>
       </form>
-      <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
+      <footer class="border-t-2 py-4">
+        <a class="underline before:content-['<<']" href="/">
+          continue shopping
+        </a>
+      </footer>
     </div>
   </body>
 </html>

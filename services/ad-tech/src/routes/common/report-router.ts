@@ -23,7 +23,7 @@ import {
 } from '../../lib/attribution-reporting-helper.js';
 import {
   getStructuredObject,
-  getTemplateVariables,
+  getEjsTemplateVariables,
 } from '../../lib/common-utils.js';
 import {decodeDict} from 'structured-field-values';
 
@@ -127,9 +127,14 @@ ReportRouter.post('/', async (req: Request, res: Response) => {
 // ****************************************************************************
 /** Shows all reports from in-memory storage. */
 ReportRouter.get('/view-reports', async (req: Request, res: Response) => {
-  const hostDetails = getTemplateVariables('Reports');
+  const hostDetails = getEjsTemplateVariables(/* title= */ 'Reports');
   res.render('view-reports', {
     reports: ReportStore.getAllReports(),
     ...hostDetails,
   });
+});
+
+ReportRouter.get('/clear-reports', async (req: Request, res: Response) => {
+  ReportStore.clearReports();
+  res.status(200).json({Message: 'Reports have been cleared'});
 });

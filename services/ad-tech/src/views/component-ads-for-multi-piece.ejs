@@ -1,0 +1,32 @@
+<%/* This is used in fenced-frames to deliver a single component ad of multi-piece ads. */%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <title><%= TITLE %></title>
+  <link rel="icon"
+        href="" />
+  <link rel="stylesheet"
+        href="/css/ad-frame.css" />
+  <link rel="stylesheet"
+        href="/css/ad-label.css" />
+</head>
+
+<body>
+  <a width="60"
+     height="50"
+     target="_blank"
+     rel="noopener noreferrer"
+     href="<%= DESTINATION %>">
+    <!-- Smaller to avoid scrollbar -->
+    <img width="59"
+         height="49"
+         loading="lazy"
+         src="<%= CREATIVE %>">
+  </a>
+</body>
+
+</html>

@@ -15,44 +15,45 @@
  */
 
 (() => {
-  const CURR_SCRIPT_URL = new URL(document.currentScript.src);
-  let CURR_AUCTION_ID = '';
+  const CURRENT_ORIGIN = '<%= CURRENT_ORIGIN %>';
+  const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> sequential auction runner';
+  const CONTEXTUAL_AUCTION_TIMEOUT_MS = 5000;
+
   // ****************************************************************
   // HELPER FUNCTIONS
   // ****************************************************************
-  /** Logs to console. */
-  const log = (message, context) => {
-    console.log(
-      '[PSDemo] Seller',
-      CURR_SCRIPT_URL.hostname,
-      'sequential auction runner',
-      CURR_AUCTION_ID,
-      message,
-      {context},
-    );
-  };
-
   /** Validates the post messages and returns the adUnit and other sellers. */
-  const getValidatedAdUnitAndOtherSellers = (message) => {
-    const iframeUrl = new URL(window.location.href);
-    const publisher = iframeUrl.searchParams.get('publisher');
-    if (message.origin !== publisher) {
-      log('ignoring message from unknown origin', {message, publisher});
+  const getValidatedAdUnitAndOtherSellers = (event) => {
+    if (!event.origin.startsWith('https://<%= DEMO_HOST_PREFIX %>')) {
+      console.debug(LOG_PREFIX, 'ignoring message from unknown origin', {
+        event,
+      });
       return [];
     }
     try {
-      const {adUnit, otherSellers} = JSON.parse(message.data);
+      const {message, adUnit, otherSellers} = JSON.parse(event.data);
+      if ('RUN_AD_AUCTION' !== message) {
+        console.debug(LOG_PREFIX, 'ignoring unexpected message', {event});
+        return [];
+      }
       if (!adUnit.adType) {
-        log('stopping as adType not found in adUnit', {adUnit});
+        console.warn(LOG_PREFIX, 'stopping as adType not found in adUnit', {
+          adUnit,
+        });
         return [];
       }
       if (!otherSellers || !otherSellers.length) {
-        log('did not find other sellers', {adUnit, otherSellers});
+        console.debug(LOG_PREFIX, 'did not find other sellers', {
+          adUnit,
+          otherSellers,
+        });
         return [adUnit, []];
       }
       return [adUnit, otherSellers];
     } catch (e) {
-      log('encountered error in parsing adUnit config', {message});
+      console.error(LOG_PREFIX, 'encountered error in parsing adUnit config', {
+        event,
+      });
       return [];
     }
   };
@@ -79,17 +80,25 @@
   const getAllContextualBidResponses = async (adUnit, sellers) => {
     const bidRequestUrls = getBidRequestUrlsWithContext(adUnit, sellers);
     const bidResponsePromises = bidRequestUrls.map(async (bidRequestUrl) => {
-      log('making contextual bid request', {bidRequestUrl});
+      console.debug(LOG_PREFIX, 'making contextual bid request', {
+        bidRequestUrl,
+      });
       const response = await fetch(bidRequestUrl);
       if (response.ok) {
         const bidResponse = await response.json();
-        log('received contextual bid response', {bidResponse});
+        console.debug(LOG_PREFIX, 'received contextual bid response', {
+          bidResponse,
+        });
         return bidResponse;
       } else {
-        log('encountered error in contextual bid response', {
-          statusText: response.statusText,
-          bidRequestUrl,
-        });
+        console.error(
+          LOG_PREFIX,
+          'encountered error in contextual bid response',
+          {
+            statusText: response.statusText,
+            bidRequestUrl,
+          },
+        );
         return {bid: '0.0'};
       }
     });
@@ -112,17 +121,17 @@
     componentAuctions,
   ) => {
     const decisionLogicURL = (() => {
-      const url = new URL(CURR_SCRIPT_URL.origin);
+      const url = new URL(CURRENT_ORIGIN);
       url.pathname = '/js/ssp/default/top-level-auction-decision-logic.js';
       return url.toString();
     })();
     const trustedScoringSignalsURL = (() => {
-      const url = new URL(CURR_SCRIPT_URL.origin);
+      const url = new URL(CURRENT_ORIGIN);
       url.pathname = '/ssp/realtime-signals/scoring-signal.json';
       return url.toString();
     })();
     return {
-      seller: CURR_SCRIPT_URL.origin,
+      seller: CURRENT_ORIGIN,
       decisionLogicURL,
       trustedScoringSignalsURL,
       // 'maxTrustedScoringSignalsURLLength': 10000,
@@ -154,27 +163,34 @@
       winningContextualBid,
       componentAuctionConfigs,
     );
-    log('executing sequential auction', {
+    console.info(LOG_PREFIX, 'initiating Protected Audience auction', {
       adUnit,
       winningContextualBid,
       auctionConfig,
     });
     const adAuctionResult = await navigator.runAdAuction(auctionConfig);
     if (adAuctionResult) {
-      log('delivering Protected Audience ad', {adAuctionResult});
+      console.info(LOG_PREFIX, 'delivering Protected Audience ad', {
+        adAuctionResult,
+      });
       return {
         type: 'PROTECTED_AUDIENCE',
         value: adAuctionResult,
       };
     } else if (winningContextualBid) {
-      log('delivering contextual ad', {winningContextualBid});
+      console.info(LOG_PREFIX, 'delivering contextual ad', {
+        winningContextualBid,
+      });
       return {
         type: 'CONTEXTUAL',
         value: winningContextualBid.renderURL,
       };
     } else {
       document.getElementById('ad-label').innerText = 'No eligible ads found.';
-      log('found no eligible ads', {adUnit, auctionConfig});
+      console.warn(LOG_PREFIX, 'found no eligible ads', {
+        adUnit,
+        auctionConfig,
+      });
       return {
         type: 'NONE',
       };
@@ -191,16 +207,16 @@
       return;
     }
     const {auctionId} = adUnit;
-    CURR_AUCTION_ID = auctionId;
     const contextualBidResponses = await getAllContextualBidResponses(
       adUnit,
       [location.origin, ...otherSellers], // Explicitly include self.
     );
     if (!contextualBidResponses || !contextualBidResponses.length) {
-      return log('received no contextual bid responses', {
+      console.error(LOG_PREFIX, 'received no contextual bid responses', {
         adUnit,
         otherSellers,
       });
+      return;
     }
     const adAuctionResult = await executeSequentialAuction(
       adUnit,
@@ -218,7 +234,7 @@
       // chrome://flags/#enable-fenced-frames-developer-mode
       // See: https://github.com/WICG/fenced-frame/blob/master/explainer/use_cases.md#manual-construction-for-general-purpose-usage-and-testing
       if (isFencedFrame) {
-        log('forcing render in iframe for contextual ad', {
+        console.debug(LOG_PREFIX, 'rendering contextual ad in iframe', {
           adUnit,
           adAuctionResult,
         });
@@ -235,7 +251,10 @@
         adFrame.src = adAuctionResult.value;
       }
     } else {
-      log('auction result type not implemented', {adUnit, adAuctionResult});
+      console.warn(LOG_PREFIX, 'does not handle auction result type', {
+        adUnit,
+        adAuctionResult,
+      });
       return;
     }
     const {size} = adUnit;
@@ -249,7 +268,12 @@
         '*',
       );
     });
-    log('rendering ad', {adUnit, otherSellers, adAuctionResult, adFrame});
+    console.info(LOG_PREFIX, 'rendering ad', {
+      adUnit,
+      otherSellers,
+      adAuctionResult,
+      adFrame,
+    });
     document.body.appendChild(adFrame);
   };
 
@@ -258,10 +282,14 @@
   // ****************************************************************
   (() => {
     if (!navigator.runAdAuction) {
-      return log('stopping becuase Protected Audience is not supported', {});
+      console.warn(
+        LOG_PREFIX,
+        'stopping because Protected Audience is not supported',
+      );
+      return;
     }
     // Wait for adUnit object to be post-messaged by ad server tag.
     window.addEventListener('message', runMultiSellerAdAuction);
-    log('multi-seller waiting for adUnit configs', {});
+    console.debug(LOG_PREFIX, 'waiting for adUnit configs');
   })();
 })();

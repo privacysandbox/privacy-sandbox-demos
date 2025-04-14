@@ -1,9 +1,0 @@
-<p> Click the Image to Register Source</p>
-<div class="w-full flex flex-row justify-center ad-row">
-  <!-- register event (impression) with attributionsrc -->
-  <img id="adImg" alt="ad image" loading="lazy"
-    onclick="adClick()"
-    attributionsrc="<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/attribution/register-source?advertiser=${SHOP_HOST}&amp;id=u26f8` %>"
-    src="<%= `https://${SHOP_HOST}:${EXTERNAL_PORT}/image/svg/emoji_u26f8.svg` %>" />
-</div>
-<button id="playButton" onclick="navigateToShop()">To the shop without ad click</button>

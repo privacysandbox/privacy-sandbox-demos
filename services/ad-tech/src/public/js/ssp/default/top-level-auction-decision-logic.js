@@ -23,49 +23,9 @@
  *   in a Protected Audience auction.
  */
 
-// ********************************************************
-// Helper Functions
-// ********************************************************
-CURR_HOST = '';
-AUCTION_ID = '';
-/** Logs to console. */
-function log(msg, context) {
-  console.log(
-    '[PSDemo] Top-level Seller',
-    CURR_HOST,
-    'decision logic',
-    AUCTION_ID,
-    msg,
-    JSON.stringify({context}, ' ', ' '),
-  );
-}
-
-/** Logs execution context for demonstrative purposes. */
-function logContextForDemo(message, context) {
-  const {
-    // UNUSED adMetadata,
-    // UNUSED bid,
-    auctionConfig,
-    // UNUSED trustedScoringSignals,
-    browserSignals,
-  } = context;
-  CURR_HOST = auctionConfig.seller.substring('https://'.length);
-  const winningComponentSeller = browserSignals.componentSeller;
-  const winningComponentAuctionConfig = auctionConfig.componentAuctions.find(
-    (componentAuction) => winningComponentSeller === componentAuction.seller,
-  );
-  AUCTION_ID = winningComponentAuctionConfig.auctionSignals.auctionId;
-  log(message, context);
-  // Log reporting IDs if found.
-  const {buyerAndSellerReportingId, selectedBuyerAndSellerReportingId} =
-    context.browserSignals;
-  if (buyerAndSellerReportingId || selectedBuyerAndSellerReportingId) {
-    log('found reporting IDs', {
-      buyerAndSellerReportingId,
-      selectedBuyerAndSellerReportingId,
-    });
-  }
-}
+const CURR_HOST = '<%= HOSTNAME %>';
+const CURR_ORIGIN = '<%= CURRENT_ORIGIN %>';
+const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> top-level seller decision logic';
 
 // ********************************************************
 // Top-level decision logic functions
@@ -77,7 +37,7 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
-  logContextForDemo('scoreAd()', {
+  console.info(LOG_PREFIX, 'scoreAd() invoked', {
     adMetadata,
     bid,
     auctionConfig,
@@ -92,13 +52,12 @@ function scoreAd(
 }
 
 function reportResult(auctionConfig, browserSignals) {
-  logContextForDemo('reportResult()', {auctionConfig, browserSignals});
   const winningComponentSeller = browserSignals.componentSeller;
   const winningComponentAuctionConfig = auctionConfig.componentAuctions.find(
     (componentAuction) => winningComponentSeller === componentAuction.seller,
   );
   const reportingContext = {
-    auctionId: AUCTION_ID,
+    auctionId: winningComponentAuctionConfig.auctionSignals.auctionId,
     pageURL: winningComponentAuctionConfig.auctionSignals.pageURL,
     winningComponentSeller,
     winningBuyer: browserSignals.interestGroupOwner,
@@ -113,10 +72,16 @@ function reportResult(auctionConfig, browserSignals) {
   for (const [key, value] of Object.entries(reportingContext)) {
     reportUrl = `${reportUrl}&${key}=${value}`;
   }
+  console.info(LOG_PREFIX, 'reportResult() invoked', {
+    auctionConfig,
+    browserSignals,
+    reportingContext,
+    sendReportToUrl: reportUrl,
+  });
   sendReportTo(reportUrl);
   return {
     success: true,
-    auctionId: AUCTION_ID,
+    auctionId: winningComponentAuctionConfig.auctionSignals.auctionId,
     buyer: browserSignals.interestGroupOwner,
     reportUrl: auctionConfig.seller + '/reporting',
     signalsForWinner: {signalForWinner: 1},

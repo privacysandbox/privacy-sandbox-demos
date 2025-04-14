@@ -210,39 +210,29 @@ const getMultiPieceAdForRequest = (
 /** Returns adComponents array for the multi-piece container. */
 const getAdComponentsForRequest = (
   targetingContext: TargetingContext,
-): Array<InterestGroupAd> => {
-  const {itemId} = targetingContext;
+): InterestGroupAd[] => {
+  const itemId = targetingContext.itemId || '1f45f';
   const numAdComponents = 5;
-
-  //get first numAdComponents IDs from KNOWN_SHOP_ITEM_TAGS_BY_ID
-  let items = Object.entries(KNOWN_SHOP_ITEM_TAGS_BY_ID)
-    .slice(0, numAdComponents)
-    .map((entry) => entry[0]);
-
-  //if the current item is not in the default list, it is added to this list
-  if (itemId && items.indexOf(itemId) == -1) {
-    items[0] = itemId;
+  const knownItemIds = Object.keys(KNOWN_SHOP_ITEM_TAGS_BY_ID);
+  const items = [itemId];
+  while (items.length < numAdComponents) {
+    const randomIndex = Math.floor(Math.random() * knownItemIds.length);
+    const randomItem = knownItemIds[randomIndex];
+    if (items.includes(randomItem)) {
+      continue;
+    } else {
+      items.push(randomItem);
+    }
   }
-
-  let ads: Array<InterestGroupAd> = [];
-
-  items.forEach((itemId) => {
-    const renderUrl = new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/ads/static-ads?`,
-    );
-
-    renderUrl.searchParams.append('itemId', itemId);
-    renderUrl.searchParams.append('width', '50');
-    renderUrl.searchParams.append('height', '50');
-    renderUrl.searchParams.append('enableWriteImpression', 'false');
-
-    const ad: InterestGroupAd = {
-      renderURL: `${renderUrl.toString()}`,
-    };
-
-    ads.push(ad);
-  });
-
+  const ads: InterestGroupAd[] = [];
+  for (const item of items) {
+    const renderUrl = new URL(`https://${HOSTNAME}:${EXTERNAL_PORT}`);
+    renderUrl.pathname = '/ads/component-ads-for-multi-piece';
+    renderUrl.searchParams.append('itemId', item);
+    ads.push({
+      renderURL: renderUrl.toString(),
+    });
+  }
   return ads;
 };
 
@@ -317,7 +307,7 @@ export const getInterestGroup = (
     name: getInterestGroupName(targetingContext),
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/${usecase}/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsURL: new URL(
       `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/realtime-signals/bidding-signal.json`,
@@ -343,33 +333,21 @@ export const getInterestGroup = (
 export const getInterestGroupBiddingAndAuction = (
   targetingContext: TargetingContext,
 ): InterestGroup => {
-  const {usecase} = targetingContext;
-  const userBiddingSignals: {[key: string]: string} = {
-    'user-signal-key-1': 'user-signal-value-1',
-  };
-  if (targetingContext.additionalContext) {
-    for (const [key, values] of Object.entries(
-      targetingContext.additionalContext,
-    )) {
-      userBiddingSignals[key] = JSON.stringify(values);
-    }
-  }
+  const hostString: string = HOSTNAME ?? 'dsp-x';
+  const dspName: string = extractDspName(hostString);
+  const creative: string = buildCreativeURL(hostString);
   return {
-    name: getInterestGroupName(targetingContext),
+    name: `${dspName}-ig`,
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/${usecase}/auction-bidding-logic.js`,
-    ).toString(),
-    trustedBiddingSignalsURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/realtime-signals/bidding-signal.json`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
     updateURL: constructInterestGroupUpdateUrl(targetingContext),
-    userBiddingSignals,
     ads: [
       {
         adRenderId: '1234',
-        renderURL: '',
+        renderURL: creative,
       },
     ],
     adSizes: {
@@ -384,3 +362,34 @@ export const getInterestGroupBiddingAndAuction = (
     ],
   };
 };
+// Regex function to identify which DSP is the origin to set the owner properly
+function extractDspName(str: string): string {
+  const match = str.match(/([^-]+-[a-z])\.dev$/); // Matches "dsp-x.dev", "dsp-y.dev", etc.
+  if (match) {
+    return match[1];
+  } else {
+    return 'dsp';
+  }
+  return ''; // Return null if no match is found
+}
+
+// Function to set the creative URL to the correct DSP
+//TODO: Pull from KV
+function buildCreativeURL(hostname: string) {
+  if (extractDspName(hostname).includes('x')) {
+    return new URL(
+      `html/protected-audience-ad-x.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  } else if (extractDspName(hostname).includes('y')) {
+    return new URL(
+      `html/protected-audience-ad-y.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  } else {
+    return new URL(
+      `html/protected-audience-ad.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  }
+}

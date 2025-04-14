@@ -43,6 +43,14 @@ export const constructAuctionConfig = (context: {
     perBuyerSignals,
     resolveToConfig,
   });
+  const buyerRealTimeReportingConfig: {[key: string]: {[key: string]: string}} =
+    {};
+  BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST.get(HOSTNAME!)!.map((buyerHost) => {
+    buyerRealTimeReportingConfig[
+      new URL(`https://${buyerHost}:${EXTERNAL_PORT}`).toString()
+    ] = {type: 'default-local-reporting'};
+  });
+
   const auctionConfig = {
     seller: CURRENT_ORIGIN,
     decisionLogicURL: new URL(
@@ -68,6 +76,12 @@ export const constructAuctionConfig = (context: {
       ...sellerSignals,
     },
     perBuyerSignals,
+    perBuyerRealTimeReportingConfig: {
+      ...buyerRealTimeReportingConfig,
+    },
+    sellerRealTimeReportingConfig: {
+      type: 'default-local-reporting',
+    },
     // Needed for ad size macro replacements.
     requestedSize: {'width': '300px', 'height': '250px'},
     sellerCurrency: 'USD',

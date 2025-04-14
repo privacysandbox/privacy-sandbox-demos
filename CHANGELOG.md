@@ -1,5 +1,22 @@
 # Changelog
 
+## v3.0.0 (2025/3/14)
+
+- **New Use Cases:**
+
+  - **Reach Measurement with Shared Storage:** Added demonstration of reach measurement using Shared Storage. (PR #573)
+  - **Multi-piece Ads with Protected Audience:** Introduced demo showcasing multi-piece ads/Protected Audience ad components. (PR #560)
+
+- **Fixes and Improvements:**
+
+  - **Infrastructure Updates/Fixes:**
+    - Fixed documentation index page to include missing demos.
+    - Corrected firebase deployment script with missing project setting command.
+    - Updated release notes for v2.0.0. (PR #570)
+
+- **Refactoring:**
+  - Significant code refactoring for improved efficiency and future development.
+
 ## v2.0.0 (2025/2/21)
 
 - added framework skeleton for synthetic monitoring (see monitoring/puppeteer-nodejs/ folder)
@@ -105,4 +122,4 @@ NA
 
 - Launch Privacy Sandbox Demos [Github Repository](https://github.com/privacysandbox/privacy-sandbox-demos)
 - Launch hosted demos [https://privacy-sandbox-demos.dev/](https://privacy-sandbox-demos.dev/)
-- Publication of a [blog post](https://developer.chrome.com/blog/privacy-sandbox-demos/)on [developers.chrome.com](http://developers.chrome.com/)
+- Publication of a [blog post](https://privacysandbox.google.com/blog/privacy-sandbox-demos/)on [developers.chrome.com](http://developers.chrome.com/)

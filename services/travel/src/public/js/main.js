@@ -14,4 +14,4 @@
  limitations under the License.
  */
 
-console.log('main.js');
+console.info('main.js');

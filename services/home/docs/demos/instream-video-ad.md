@@ -23,15 +23,15 @@ this use case.
 
 This demo expands on the demo for the [sequential setup of Protected Audience with contextual auction](sequential-auction-setup) to showcase how video
 ads may be served with Protected Audience. The demo uses the industry-standard Video Ads Serving Template (VAST) XMLs to deliver video ads in iframes.
-Additionally, note that the technique shown in this demo does not work with
-[Fenced Frames](https://developers.google.com/privacy-sandbox/relevance/fenced-frame), but Protected Audience allows iframe usage
-[until at least 2026](https://developers.google.com/privacy-sandbox/relevance/protected-audience-api/feature-status#fenced_frames).
+Additionally, note that the technique shown in this demo does not work with [Fenced Frames](https://privacysandbox.google.com/relevance/fenced-frame),
+but Protected Audience allows iframe usage
+[until at least 2026](https://privacysandbox.google.com/relevance/protected-audience-api/feature-status#fenced_frames).
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/auction/sequential-auction)
 
 ### Related parties
 
@@ -133,7 +133,7 @@ Browsr ->> Browser: Ad server library passes this finalized VAST to the video pl
 
 ### User Journey
 
-1. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/iframe-video-ad) (publisher)
+1. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/pa-iframe-video-ad) (publisher)
    - Observe that this page contains some video content served by the publisher. When you click on the play button, the video content plays without
      ads.
    - The participating ad buyers or DSPs don't generate any contextual bids for video ads. And since we just cleared all data, there are no interest
@@ -141,7 +141,7 @@ Browsr ->> Browser: Ad server library passes this finalized VAST to the video pl
 2. [Navigate to shop site :arrow_upper_right:](https://privacy-sandbox-demos-shop.dev/) (advertiser)
    - Click on any "shoe" product item on the shop site. DSP tags on this product detail page will leverage the Protected Audience API to join an ad
      interest group.
-3. [Navigate to the news site again :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/iframe-video-ad) (publisher)
+3. [Navigate to the news site again :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/pa-iframe-video-ad) (publisher)
    - Observe that this time when you click the play button, a pre-roll ad is played before the content. This ad was delivered using a VAST XML
      delivered via Protected Audience.
 

@@ -52,7 +52,10 @@
         ],
         "ad-server": [
           "privacy-sandbox-demos-ad-server"
-        ]
+        ],
+        "services": [
+          "privacy-sandbox-demos-services"
+        ],
       }
     }
   },
