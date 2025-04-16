@@ -25,14 +25,14 @@
       otherSellers,
       // Ad units to request bids for.
       adUnits: [{
-        code: 'pa-iframe-multiple-ad-display',
+        code: 'slot-pa-iframe-multiple-ad-display',
         auctionId: `PUB-${crypto.randomUUID()}`,
         divId: 'display-ad--iframe',
         adType: 'DISPLAY',
         size: [300, 250],
         isFencedFrame: false,
       }, {
-        code: 'pa-fenced-frame-multiple-ad-display',
+        code: 'slot-pa-fenced-frame-multiple-ad-display',
         auctionId: `PUB-${crypto.randomUUID()}`,
         divId: 'display-ad--fenced-frame',
         adType: 'DISPLAY',
@@ -40,7 +40,7 @@
         isFencedFrame: true,
       },
       {
-        code: 'pa-iframe-multiple-ad-video',
+        code: 'slot-pa-iframe-multiple-ad-video',
         auctionId: `PUB-${crypto.randomUUID()}`,
         divId: 'video-ad--iframe',
         adType: 'VIDEO',
