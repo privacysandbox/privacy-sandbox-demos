@@ -20,6 +20,7 @@ steps:
     script: |
       #!/usr/bin/env bash
       cp -f cicd/attestations/privacy-sandbox-attestations.json.*.${PROJECT_ENV} services/ad-tech/src/public/.well-known/
+      cp -f cicd/attestations/privacy-sandbox-attestations.json.service-provider.${PROJECT_ENV} services/service-provider/src/public/.well-known/privacy-sandbox-attestations.json
 
   # HOME
   # Build the HTML files with docusaurus
@@ -196,6 +197,45 @@ steps:
         ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
         echo $${ENV_VARS}
         gcloud run deploy travel --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
+
+  # SERVICE-PROVIDER
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-service-provider
+    waitFor:
+      - copy-attestations
+    args:
+      [
+        "build",
+        "-t",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/service-provider:$COMMIT_SHA",
+        "services/service-provider",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-service-provider
+    waitFor:
+      - build-service-provider
+    args:
+      [
+        "push",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/service-provider:$COMMIT_SHA",
+      ]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy-service-provider
+    waitFor:
+      - push-service-provider
+      - read-env
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        ENV_VARS=$(cat /workspace/env_vars.txt)
+        HOSTNAME_ENV="HOSTNAME=$(grep "SERVICE_PROVIDER_HOST=" cicd/.env.${_PROJECT_ENV} | cut -d '=' -f2)"
+        ENV_VARS=$${HOSTNAME_ENV}@$${ENV_VARS}
+        echo $${ENV_VARS}
+        gcloud run deploy service-provider --image ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/service-provider:$COMMIT_SHA --platform managed --region ${_LOCATION} --memory 2Gi --min-instances 1 --allow-unauthenticated --set-env-vars "^@^$${ENV_VARS}"
 
   # AD-TECH
   # Build the ad-tech image
@@ -414,6 +454,7 @@ images:
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/news:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/shop:$COMMIT_SHA"
   - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/travel:$COMMIT_SHA"
+  - "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/service-provider:$COMMIT_SHA"
 
 options:
   machineType: "E2_HIGHCPU_8"

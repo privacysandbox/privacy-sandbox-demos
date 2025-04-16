@@ -50,6 +50,17 @@ app.get('/', async (req: Request, res: Response) => {
   });
 });
 
+//TODO: remove route once B&A is integrated with on-device flow
+app.get('/bidding-and-auction', async (req: Request, res: Response) => {
+  res.render('bidding-and-auction', {
+    TITLE: NEWS_DETAIL,
+    TEXT_LOREM,
+    BIDDING_AND_AUCTION_SSP_TAG_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/usecase/bidding-and-auction/ad-tag.js`,
+    ).toString(),
+  });
+});
+
 app.get('*', async (req: Request, res: Response) => {
   res.render(req.path.substring(1), {
     TITLE: NEWS_DETAIL,

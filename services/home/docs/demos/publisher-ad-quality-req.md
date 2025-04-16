@@ -24,9 +24,9 @@ creative metadata stored in its Key/Value (K/V) server that the SSP might have g
 
 ### Privacy Sandbox APIs
 
-- [Protected Audience API](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Fenced Frames](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
-- [Key/Value Service](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience#key-value-service-detail)
+- [Protected Audience API](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Fenced Frames](https://privacysandbox.google.com/private-advertising/fenced-frame)
+- [Key/Value Service](https://privacysandbox.google.com/private-advertising/protected-audience#key-value-service-detail)
 
 ### Related parties
 
@@ -144,7 +144,7 @@ DSP -->> Browser: Return ad creative
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on any "shoe" product item on the shop site. The shop (advertiser) would assume the user is interested in this type of shoe, so they would
    leverage Protected Audience API and ask the browser to join an ad interest group for this product.
-3. [Navigate to this page on the news site](https://privacy-sandbox-demos-news.dev/publisher-ad-quality-req) (publisher)
+3. [Navigate to this page on the news site](https://privacy-sandbox-demos-news.dev/pa-publisher-ad-quality-req) (publisher)
 4. Observe the ad served on the news site is for the shoe product you recently browsed.
 5. Click on a button which matches your selected shoe:
    - Hide Red Shoes
@@ -252,12 +252,12 @@ function scoreAd(
 }
 ```
 
-### Related API documentation
+### API Reference
 
-- [Protected Audience Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience developer guide - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Key / Value Service Overview - Google Developers](https://developers.google.com/privacy-sandbox/blog/fledge-service-overview#key-value-service)
-- [Fenced Frames Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience developer guide - Google Developers](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Key / Value Service Overview - Google Developers](https://privacysandbox.google.com/blog/fledge-service-overview#key-value-service)
+- [Fenced Frames Overview - Google Developers](https://privacysandbox.google.com/private-advertising/fenced-frame)
 
 </TabItem>
 </Tabs>

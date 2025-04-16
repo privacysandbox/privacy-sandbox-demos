@@ -17,7 +17,7 @@ import {
   DEMO_HOST_PREFIX,
   JAVASCRIPT_TEMPLATE_VARIABLES,
 } from '../../lib/constants.js';
-import {getTemplateVariables} from '../../lib/common-utils.js';
+import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 
 /**
  * This router is responsible for registering HTTP headers, preflight requests,
@@ -69,6 +69,7 @@ CommonRouter.get('/js/*.js', (req: Request, res: Response) => {
     res.set('Supports-Loading-Mode', 'fenced-frame');
     res.set('Permissions-Policy', 'run-ad-auction=(*)');
   }
+  console.log('Rendering JS file: ' + req.path);
   res.set('Content-Type', 'application/javascript');
   ejs.renderFile(filePath, JAVASCRIPT_TEMPLATE_VARIABLES, (err, content) => {
     if (err) {
@@ -105,5 +106,5 @@ CommonRouter.options('*', (req: Request, res: Response) => {
 
 /** Index page, not commonly used in tests. */
 CommonRouter.get('/', async (req: Request, res: Response) => {
-  res.render('index', getTemplateVariables());
+  res.render('index', getEjsTemplateVariables());
 });

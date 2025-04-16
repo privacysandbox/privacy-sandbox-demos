@@ -27,8 +27,8 @@ interactions to conversions without revealing user identities across websites. I
 
 ### Privacy Sandbox APIs
 
-- [Attribution Reporting API](https://developer.chrome.com/en/docs/privacy-sandbox/attribution-reporting/)
-- [Get started with Attribution Reporting](https://developers.google.com/privacy-sandbox/private-advertising/attribution-reporting/getting-started)
+- [Attribution Reporting API](https://privacysandbox.google.com/private-advertising/attribution-reporting)
+- [Get started with Attribution Reporting](https://privacysandbox.google.com/private-advertising/attribution-reporting/getting-started)
 
 ### Related parties
 
@@ -37,9 +37,9 @@ interactions to conversions without revealing user identities across websites. I
 - Ad Tech: Implements API, receives cross-site reports
 
 </TabItem>
-<TabItem value="scope" label="Scope">
+<TabItem value="design" label="Design">
 
-## Scope
+## Design
 
 ### System Design
 
@@ -109,13 +109,13 @@ end
 ### Click-Through Conversion Journey
 
 1. Clear attribution data in chrome://attribution-internals/
-2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/iframe-static-img-ad)
+2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/mmt-single-touch-attribution-html)
 
-- ice skate shoes image will be displayed
+- static shoes ad image will be displayed
 
 3. Click on the ad image
 
-- Demo shop site of skate shoes detail page will open
+- Demo shop site of shoes detail page will open
 
 4. Check “SourceTrigger Registration” tab in chrome://attribution-internals
 5. Go back to the shop site and click the "ADD TO CART" button
@@ -124,11 +124,11 @@ end
 ### View-Through Conversion Journey
 
 1. Clear attribution data in chrome://attribution-internals/
-2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/iframe-static-img-ad)
+2. [Navigate to news site](https://privacy-sandbox-demos-news.dev/mmt-single-touch-attribution-html)
 
-- ice skate shoes image will be displayed
+- static shoes ad image will be displayed
 
-3. Click on "To the shop without ad click" below the image
+3. Click on "Navigate to the shop page without ad click" below the image
 
 - Demo shop site will open
 
@@ -156,8 +156,8 @@ For views:
 ```html
 <img id="adImg" alt="ad image" loading="lazy"
     onclick="adClick()"
-    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8"
-    src="https://privacy-sandbox-demos-shop.dev/image/svg/emoji_u26f8.svg" />
+    attributionsrc="https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
+    src="https://privacy-sandbox-demos-shop.dev/image/svg/emoji_1f45e.svg" />
 
 ```
 
@@ -168,8 +168,8 @@ For clicks:
 
 ```js
 function adClick() {
-  const encoded = encodeURIComponent("https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=u26f8");
-  const url = "https://privacy-sandbox-demos-shop.dev/items/26f8";
+  const encoded = encodeURIComponent("https://privacy-sandbox-demos-dsp.dev/attribution/register-source?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e");
+  const url = "https://privacy-sandbox-demos-shop.dev/items/1f45e";
   window.open(
     url,
     "_blank",
@@ -218,7 +218,7 @@ function addToCart() {
     eventSourceEligible: false,
     triggerEligible: true,
   };
-  const url = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?conversion-type=add-to-cart"
+  const url = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?conversionType=add-to-cart"
   window.fetch(url, {
     mode: "no-cors",  keepalive: true, attributionReporting
   });
@@ -256,11 +256,11 @@ reports.
 
 ![endpoint](./img/single-touch-event-level-report-endpoint.png)
 
-### Related API documentation
+### API Reference
 
-- [Attribution Reporting - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/)
-- [Attribution Reporting - Developer Guide](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting/developer-guide/)
-- [Set up debug reports - Chrome Developers](https://developer.chrome.com/docs/privacy-sandbox/attribution-reporting-debugging/part-2/)
+- [Overview of Attribution Reporting API | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting)
+- [Attribution Reporting API developer guide | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting/dev-guide)
+- [Set up debug reports for Attribution Reporting | Privacy Sandbox](https://privacysandbox.google.com/private-advertising/attribution-reporting/attribution-reporting-debugging/part-2)
 
 </TabItem>
 </Tabs>

@@ -1,0 +1,61 @@
+<%/* This is used in fenced-frames to deliver multi-piece ads. */%>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+    <title>Multi-piece ad container</title>
+    <link rel="icon"
+          href="" />
+    <link rel="stylesheet"
+          href="/css/ad-label.css" />
+    <style>
+      body {
+        height: 300px;
+        width: 250px;
+        overflow: hidden;
+        font-family: sans-serif;
+        background: rgb(233, 229, 216);
+        text-align: center;
+        margin: 0 auto;
+      }
+
+      #components-container {
+        margin-top: 50px;
+        width: 100%;
+        padding: 5px;
+      }
+
+      p {
+        margin: 3px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="adContainer">
+      <div id="ad-label">DSP multi-piece ad</div>
+      <div id="components-container"></div>
+    </div>
+    <script>
+      function renderAdAuctionComponents(numberOfAdComponents) {
+        const containerEl = document.getElementById('components-container');
+        const componentAdSources = navigator
+          .adAuctionComponents(numberOfAdComponents)
+          .sort((a, b) => 0.5 - Math.random()); // random order;
+        console.debug('[PSDemo] Rendering ad components', componentAdSources);
+        for (const componentAdSrc of componentAdSources) {
+          const frame = document.createElement('iframe');
+          frame.src = componentAdSrc;
+          frame.style.height = '75px';
+          frame.style.width = '75px';
+          containerEl.appendChild(frame);
+        }
+      }
+
+      renderAdAuctionComponents(5);
+    </script>
+  </body>
+</html>

@@ -20,7 +20,27 @@ import {
   SHOP_HOST,
   TRAVEL_HOST,
   PUBLISHER_IDS,
+  SSP_A_HOST,
+  SSP_X_HOST,
+  SSP_Y_HOST,
 } from './constants.js';
+
+//TODO: Inject these variables elsewhere
+const SSP_A_ORIGIN = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`).origin;
+const SSP_X_ORIGIN = new URL(`https://${SSP_X_HOST}:${EXTERNAL_PORT}`).origin;
+const SSP_Y_ORIGIN = new URL(`https://${SSP_Y_HOST}:${EXTERNAL_PORT}`).origin;
+const BIDDING_AND_AUCTION_SSP_A_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-a/construct-component-auction.js',
+  SSP_A_ORIGIN,
+);
+const BIDDING_AND_AUCTION_SSP_X_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-x/construct-component-auction.js',
+  SSP_X_ORIGIN,
+);
+const BIDDING_AND_AUCTION_SSP_Y_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.js',
+  SSP_Y_ORIGIN,
+);
 
 /** Returns template variables for the contextual advertiser. */
 export const getContextualAdTemplateVariables = () => {
@@ -69,48 +89,53 @@ export const getInterestGroupAdTemplateVariables = (requestQuery: any) => {
   };
 };
 
-/** Returns variables for use in the MTA template. */
+/** Returns variables for use in the static ad templates. */
 export const getStaticAdTemplateVariables = (
   requestQuery: any,
   requestHeaders: any,
 ) => {
-  const getPublisherId = (requestHeaders: any) => {
-    const refererUrl = new URL(
-      requestHeaders.referer || `https://${NEWS_HOST}/`,
-    );
-    return PUBLISHER_IDS[refererUrl.hostname] || '9999';
-  };
-
+  // Assemble URL for registering attribution source with ARA, and include all
+  // query parameters from the ad URL in source registration context.
+  const registerSourceUrl = new URL(
+    `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source`,
+  );
+  for (const [key, value] of Object.entries(requestQuery)) {
+    registerSourceUrl.searchParams.append(key, value as string);
+  }
+  // Default to blue running shoe ad, unless overriden in URL query.
   const itemId = requestQuery.itemId?.toString() || '1f45f';
-
-  const width = requestQuery.width?.toString() || 300;
-  const height = requestQuery.height?.toString() || 250;
-
-  const enableWriteImpression =
-    requestQuery.enableWriteImpression?.toString() != 'false';
-
+  const publisherHost = requestHeaders.referer
+    ? new URL(requestHeaders.referer).hostname
+    : NEWS_HOST!;
   return {
     TITLE: `Your special ads from ${SHOP_HOST}`,
     DESTINATION: new URL(
       `https://${SHOP_HOST}:${EXTERNAL_PORT}/items/${itemId}`,
-    ),
-    CREATIVE: new URL(`https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`),
-    PUBLISHER_ID: getPublisherId(requestHeaders),
-    CAMPAIGN_ID: 1234,
-    WIDTH: width,
-    HEIGHT: height,
-    ENABLE_WRITE_IMPRESSION: enableWriteImpression,
+    ).toString(),
+    CREATIVE: new URL(
+      `https://${SHOP_HOST}:${EXTERNAL_PORT}/ads/${itemId}`,
+    ).toString(),
+    ATTRIBUTION_SRC: registerSourceUrl.toString(),
+    PUBLISHER_ID: PUBLISHER_IDS[publisherHost] || '9999',
   };
 };
 
 /** Returns EJS template variables for EJS files. */
-export const getTemplateVariables = (titleMessage: string = '') => {
+export const getEjsTemplateVariables = (
+  titleMessage: string = '',
+  additionalTemplateVariables: {[key: string]: string} = {},
+) => {
+  //TODO: remove from host details and add to additionalTemplateVariables
   const hostDetails = {
+    BIDDING_AND_AUCTION_SSP_A_TAG_URL,
+    BIDDING_AND_AUCTION_SSP_X_TAG_URL,
+    BIDDING_AND_AUCTION_SSP_Y_TAG_URL,
     HOSTNAME,
     EXTERNAL_PORT,
     PORT,
     SHOP_HOST,
     TITLE: `${HOSTNAME} - ${titleMessage}`,
+    ...additionalTemplateVariables,
   };
   console.log('Built template context: ', hostDetails);
   return hostDetails;

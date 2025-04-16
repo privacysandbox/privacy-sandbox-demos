@@ -1,0 +1,328 @@
+/*
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+ 
+syntax="proto3";
+
+package privacy_sandbox.bidding_auction_servers;
+
+message GetComponentAuctionCiphertextsRequest {
+  // Encrypted ProtectedAuctionInput from the device.
+  bytes protected_auction_ciphertext = 1;
+  // List of partner sellers that will participate in the server orchestrated
+  // component auctions.
+  repeated string component_sellers = 2;
+}
+
+message GetComponentAuctionCiphertextsResponse {
+  // Map of sellers passed in request to their encrypted ProtectedAuctionInput.
+  map<string, bytes> seller_component_ciphertexts = 1;
+}
+
+// SellerFrontEnd service (also known as SFE) operated by SSP / Seller.
+service SellerFrontEnd {
+  // Selects a winning remarketing ad for the Publisher ad slot that may be
+  // rendered on the user's device.
+  rpc SelectAd(SelectAdRequest) returns (SelectAdResponse) {
+    option (google.api.http) = {
+      post: "/v1/selectAd"
+      body: "*"
+    };
+  }
+  // Returns encrypted Protected Auction request payload for component level
+  // sellers for server component auctions.
+  rpc GetComponentAuctionCiphertexts(GetComponentAuctionCiphertextsRequest) returns (GetComponentAuctionCiphertextsResponse) {
+    option (google.api.http) = {
+      post: "/v1/getComponentAuctionCiphertexts"
+      body: "*"
+    };
+  }
+}
+
+// SelectAdRequest is sent by the untrusted Seller service to SellerFrontEnd
+// (SFE) once it receives an encrypted ProtectedAuctionInput from a client.
+// SelectAdRequest would also include contextual signals and other data
+// passed by untrusted Seller service for the auction.
+message SelectAdRequest {
+  message AuctionConfig {
+    // Required.
+    // Contextual signals that include information about the context
+    // (e.g. Category blocks Publisher has chosen and so on). This is passed by
+    // untrusted Seller service to SellerFrontEnd service.
+    // This is passed to ScoreAd() in AuctionConfig JSON object, the key in JSON
+    // being "sellerSignals".
+    // The serialized string can be deserialized to a JSON object.
+    string seller_signals = 1;
+
+    // Required.
+    // Contextual signals that are passed by untrusted Seller service to
+    // SellerFrontEnd service.
+    // Information about auction (ad format, size). This information
+    // is available both to the seller and all buyers participating in
+    // auction.
+    // This is passed to ScoreAd() in AuctionConfig JSON object, the key in JSON
+    // being "auctionSignals".
+    // The serialized string can be deserialized to a JSON object.
+    string auction_signals = 2;
+
+    // Required.
+    // List of buyers participating in FLEDGE auctions.
+    // Buyers are identified by buyer domain (i.e. Interest Group owner).
+    repeated string buyer_list = 3;
+
+    // Required.
+    // Seller origin / domain.
+    string seller = 4;
+
+    // Per buyer configuration.
+    message PerBuyerConfig {
+      // Required.
+      // Contextual signals corresponding to each Buyer in auction that could
+      // help in generating bids.
+      string buyer_signals = 1;
+
+      // Optional.
+      // The Id is specified by the buyer to support coordinated experiments
+      // with the buyer's Key/Value services.
+      optional int32 buyer_kv_experiment_group_id = 2;
+
+      // Optional.
+      // Version of buyer's GenerateBid() code.
+      // The string must be an object name belonging to the
+      // Cloud Storage bucket specified at Bidding service startup.
+      // A buyer can pass this information to the Seller in RTB response.
+      // If a version is not specified, the default version
+      // (specified in the service startup config) will be used.
+      string generate_bid_code_version = 3;
+
+      // Optional.
+      // A debug id passed by the buyer that will be logged with VLOG, if
+      // available. This can help adtech oncallers to map an ad request
+      // with their internal log / query id.
+      // Buyer can pass this information to the Seller in RTB response.
+      // Note: The VLOGs are only accessible in TEE debug mode. In TEE
+      // production mode, additional user consent would be required to access
+      // these.
+      string buyer_debug_id = 4;
+
+      // Optional.
+      // Version of buyer's GenerateBid() code for protected app signals.
+      // The string must be an object name belonging to the
+      // Cloud Storage bucket specified at Bidding service startup.
+      // A buyer can pass this information to the Seller in RTB response.
+      // If a version is not specified, the default version
+      // (specified in the service startup config) will be used.
+      string protected_signals_generate_bid_code_version = 5;
+
+      // Optional.
+      // Version of buyer's GenerateAdRetrievalUserMetadata() code for
+      // protected app signals.
+      // The string must be an object name belonging to the
+      // Cloud Storage bucket specified at Bidding service startup.
+      // A buyer can pass this information to the Seller in RTB response.
+      // If a version is not specified, the default version
+      // (specified in the service startup config) will be used.
+      string protected_signals_generate_embeddings_version = 6;
+
+      // Specifies currency in which interest group bids will be placed (expressed
+      // as ISO 4217 alpha code).
+      string buyer_currency = 7;
+
+      // Contextual data related to PAS ads.
+      ContextualProtectedAppSignalsData contextual_protected_app_signals_data = 8;
+
+      // A limit by sellers on total number of bids that can be passed by a
+      // buyer to seller with multi-bid generation required for K-Anonymity.
+      // Multi bid generation refers to generateBid() returning more than one
+      // bid, in case of web more than one bid per IG.
+      int32 per_buyer_multi_bid_limit = 9;
+    }
+
+    // The key in the map corresponds to Interest Group Owner (IGOwner), a
+    // string that can identify a buyer participating in the auction. The
+    // SellerFrontEnd server configuration, has the mapping of IGOwner to a
+    // public load balancer address in front of BuyerFrontEnd. IGOwners that the
+    // SFE has not been configured to communicate with will simply be ignored.
+    map<string, PerBuyerConfig> per_buyer_config = 5;
+
+    // Contains information about all code module versions to be used for
+    // bidding, auctions, and reporting. This supports the seller and buyers in
+    // maintaining multiple versions of their ScoreAd and GenerateBid modules,
+    // respectively, which may be used for experimentation. The desired code
+    // module version can be specified here per ad selection request.
+    message SellerCodeExperimentSpecification {
+      // The Id is specified by the seller to support coordinated experiments
+      // with the seller's Key/Value services.
+      optional int32 seller_kv_experiment_group_id = 1;
+
+      // The code version of the score ad module provided by the seller.
+      // The string must be an object name belonging to the
+      // Cloud Storage bucket specified at Auction service startup.
+      // If a version is not specified, the default version
+      // (specified in the service startup config) will be used.
+      string score_ad_version = 2;
+    }
+
+    // Specifications about code modules that are passed by
+    // the Seller Ad service in a SelectAd request.
+    SellerCodeExperimentSpecification code_experiment_spec = 6;
+
+    // Optional.
+    // A debug id passed by the seller that will be logged with VLOG, if
+    // available. This can help adtech oncallers to map an ad request
+    // with their internal log / query id.
+    // Note: The VLOGs are only accessible in TEE debug mode. In TEE
+    // production mode, additional user consent would be required to access
+    // these.
+    string seller_debug_id = 7;
+
+    // Optional.
+    // Timeout is milliseconds specified by the seller that applies to total
+    // time to complete GetBids.
+    // If no timeout is specified, the Seller's default maximum Buyer timeout
+    // configured in SellerFrontEnd service configuration, will apply.
+    int32 buyer_timeout_ms = 8;
+
+    // Optional.
+    // Top level seller name/domain. Must be provided for component auctions.
+    // If this is not present, the auction is treated as single seller.
+    string top_level_seller = 9;
+
+    // Native currency of the seller running the auction (expressed
+    // as ISO 4217 alpha code).
+    string seller_currency = 10;
+
+    // Optional. Specifies the cloud provider for the top-level seller. If this
+    // field is populated along with top-level seller field, this will be
+    // treated as a server orchestrated component auction, and the AuctionResult
+    // object in SelectAdResponse will be encrypted with a public key
+    // of the specified cloud platform instead of the shared encryption context.
+    EncryptionCloudPlatform top_level_cloud_platform = 11;
+
+    // Optional. For use by the top-level seller in a server-orchestrated
+    // multiseller auction only. Specifies configuration information about the
+    // component sellers.
+    message PerComponentSellerConfig {
+      // The currency in which the top-level seller expects this component seller
+      // to submit bids. Expressed as three capital letters, ISO 4217 suggested.
+      string expected_currency = 1;
+    }
+
+    // Optional. For use by the top-level seller in a server-orchestrated
+    // multiseller auction only. The key in the map corresponds to the seller
+    // identifier in AuctionResult.auction_params.component_seller.
+    map<string, PerComponentSellerConfig> per_component_seller_config = 12;
+  }
+
+  message ComponentAuctionResult {
+    //  AuctionResult from a server component auction.
+    bytes auction_result_ciphertext = 1;
+
+    // Version of the public key used for encryption. The service
+    // needs to use private keys corresponding to same key_id to decrypt
+    // 'auction_result'.
+    string key_id = 2;
+  }
+
+  // Encrypted ProtectedAudienceInput generated by the device.
+  bytes protected_audience_ciphertext = 1 [deprecated = true];
+
+  // Plaintext. Passed by the untrusted Seller service.
+  AuctionConfig auction_config = 2;
+
+  // Type of end user's device / client, that would help in validating the
+  // client integrity. Also passed to the key/value services.
+  // Note: Not all types of clients can be attested.
+  ClientType client_type = 3;
+
+  // Encrypted ProtectedAuctionInput generated by the client.
+  bytes protected_auction_ciphertext = 4;
+
+  // Encrypted Component Auction Results for conducting a top level auction.
+  // This should be populated along with protected_auction_ciphertext.
+  repeated ComponentAuctionResult component_auction_results = 5;
+}
+
+// SelectAdResponse is sent from the SellerFrontEndService to the Seller
+// service. auction_result_ciphertext can only be decrypted by the client device
+// that initiated the original SelectAdRequest. The untrusted Seller service may
+// send the contextual winner back to the client in addition to the
+// auction_result_ciphertext to allow the client to pick the final winner.
+message SelectAdResponse {
+  // Encrypted AuctionResult from FLEDGE auction. May  contain a real candidate
+  // or chaff, depending on ScoreAd() outcomes.
+  bytes auction_result_ciphertext = 1;
+
+  // Debug logs for sfe and downstream servers (only in non_prod)
+  DebugInfo debug_info = 2;
+
+  // Optional. Only populated for server orchestrated component auctions.
+  // Version of the public key used for encryption. The service
+  // needs to use private keys corresponding to same key_id to decrypt
+  // 'auction_result_ciphertext'.
+  string key_id = 3;
+}
+
+enum EncryptionCloudPlatform {
+  ENCRYPTION_CLOUD_PLATFORM_UNSPECIFIED = 0;
+  ENCRYPTION_CLOUD_PLATFORM_AWS = 1;
+  ENCRYPTION_CLOUD_PLATFORM_GCP = 2;
+}
+
+// Protected App Signals ad related data that Buyer adtechs can send via
+// contextual path to control which PAS ads participate in the auction.
+message ContextualProtectedAppSignalsData {
+  // Optional.
+  // Raw Ad ids that can be used to lookup signals from the KV server.
+  repeated string ad_render_ids = 1;
+
+  // Optional.
+  // Bool indicating whether ads should also be fetched from ads retrieval
+  // service.
+  //
+  // If true, the Bidding server will send an Ad fetch request to the
+  // Ad retrieval service and the request will contain the list of ad_render_ids
+  // as an additional parameter.
+  //
+  // If false, the ad_render_ids will be sent to the TEE K/V server to fetch
+  // the ads related metadata.
+  bool fetch_ads_from_retrieval_service = 2;
+}
+
+// Specifies the client type that originated the request.
+// This is used for message structuring and also passed
+// to the Buyer and Seller Key/Value services.
+enum ClientType {
+  CLIENT_TYPE_UNKNOWN = 0;
+
+  // An Android device with Google Mobile Services (GMS).
+  // Note: This covers apps on Android.
+  CLIENT_TYPE_ANDROID = 1;
+
+  // Any browser.
+  // Note: This covers browsers on Android and desktop.
+  CLIENT_TYPE_BROWSER = 2;
+}
+
+message DebugInfo {
+  string server_name = 1;
+
+  // Debug logs for current server
+  repeated string logs = 2;
+
+  // DebugInfo for downstream servers that receive requests from current server
+  repeated DebugInfo downstream_servers = 3;
+}
+

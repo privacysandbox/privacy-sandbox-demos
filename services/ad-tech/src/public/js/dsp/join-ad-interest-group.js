@@ -39,7 +39,7 @@
     }
     // TODO: Consider using Topics API for choosing Ads
     // const topics = await document.browsingTopics?
-    // console.log({ topics })
+    // console.debug({ topics })
     // interestGroupUrl.searchParams.append('topics', topics);
     const res = await fetch(interestGroupUrl, {browsingTopics: true});
     if (res.ok) {
@@ -49,14 +49,18 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (navigator.joinAdInterestGroup === undefined) {
-      console.log('[PSDemo] Protected Audience API is not supported.');
+      console.error('[PSDemo] Protected Audience API is not supported.');
       return;
     }
     const interestGroup = await getInterestGroupFromServer();
-    console.log('[PSDemo] Joining interest group: ', {interestGroup});
+    console.info('[PSDemo] Joining interest group: ', {interestGroup});
     const kSecsPerDay = 3600 * 24 * 30;
-    console.log(
-      await navigator.joinAdInterestGroup(interestGroup, kSecsPerDay),
-    );
+    console.info({
+      joinAdInterestGroupOutput: await navigator.joinAdInterestGroup(
+        interestGroup,
+        kSecsPerDay,
+      ),
+      interestGroup,
+    });
   });
 })();
