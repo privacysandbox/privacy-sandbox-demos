@@ -273,3 +273,8 @@ services:
 networks:
   adnetwork:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
+          ip_range: 172.16.128.0/24
+          gateway: 172.16.128.254
