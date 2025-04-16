@@ -128,7 +128,10 @@ async function runComponentAuction() {
   const componentAuction = new AdAuction();
   const componentAuctionInfo = await componentAuction.getAuctionInfo();
 
-  console.log('[SSP-Y] Component auction config ', componentAuctionInfo);
+  console.log(
+    '[SSP-Y][B&A mixed mode] Component auction config ',
+    componentAuctionInfo,
+  );
 
   window.auctionInfoCollector.push(componentAuctionInfo);
 }

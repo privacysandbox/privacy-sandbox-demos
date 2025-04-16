@@ -45,19 +45,20 @@ through how to set up a deployment of this infrastructure on your local machine.
 
 ### Goals
 
-In this demo, we assume SSPs and DSPs would like to improve performance of their Protected Audience auctions. Bidding & Auction services allows
-Protected Audience bidding and scoring computation to take place on servers. This demo will provide a local environment where developers can explore
-how Bidding & Auction components work before committing to a full production cloud deployment.
+This demo aims to showcase how sellers and buyers can enhance the performance of their Protected Audience auctions using server-side Bidding & Auction
+services. By providing a local development environment, we enable developers to explore the functionality of these components before committing to a
+full production cloud deployment.
 
 ### Assumptions
 
-This demo assumes that the reader has knowledge of how the Protected Audience API works. This demo will not provide details on the cloud deployment of
-B&A at this time.
+This demo assumes that the reader has knowledge of how the
+[Protected Audience API](https://privacysandbox.google.com/private-advertising/protected-audience) works. This demo will not provide details on the
+cloud deployment of B&A at this time.
 
 ### Key Exclusions
 
 - Cloud deployment
-- Maximum of 2 B&A buyers
+- Maximum of 2 B&A buyers per seller
 - Bidding inference service
 
 ### System Design
@@ -84,11 +85,9 @@ components of the system work together to complete an auction.
 - The seller's real time bidding service then forwards the encrypted ad auction result back to the publisher page. Then the
   `navigator.runAdAuction()`function runs on the page and displays the winning ad.
 
-![Bidding Auction API Flow](https://github.com/privacysandbox/privacy-sandbox-demos/blob/73a017521449a526da715aabeaa02734faead7b3/services/home/docs/demos/img/bidding-auction-api-flow.png)
+![Bidding Auction API Flow](https://raw.githubusercontent.com/privacysandbox/privacy-sandbox-demos/73a017521449a526da715aabeaa02734faead7b3/services/home/docs/demos/img/bidding-auction-api-flow.png)
 
 #### User Journey
-
-#TODO FIX ![Bidding Auction Flow](./img/bidding-auction-flow.png)
 
 ```bash
 sequenceDiagram
@@ -134,6 +133,13 @@ google-chrome --enable-privacy-sandbox-ads-apis --disable-features=EnforcePrivac
 2. Follow instructions listed in
    [Instructions for deploying and running the demos in your local environment with Docker](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/docs/deploy-to-linux-docker.md)
    to deploy Privacy Sandbox Demos locally.
+   - If you have run Privacy Sandbox Demos previously, it is recommended to delete the docker network with the below docker commands before running
+     `npm run start`.
+
+```bash
+docker-compose down
+docker network rm privacy-sandbox-demos_adnetwork
+```
 
 3. Clone the `bidding-auction-servers` [GitHub repository](https://github.com/privacysandbox/bidding-auction-servers).
 
@@ -300,13 +306,24 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 
 - Expanding the log for the `SSP-A` auction will show the auction config for an on-device auction.
 - Expanding the log for the `SSP-X` auction will show the auction config for a B&A only auction.
-- Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode auction. Within the mixed mode auction you will see two
-  component auctions, one being an on-device auction and the other being a B&A auction.
+- Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode B&A auction. Within the mixed mode auction you will see two
+  sub-component auctions, one being an on-device auction and the other being a B&A auction.
 - Expanding the log for the `TLS SSP` will show four component auctions.
   - On-device only with `SSP-A`
   - B&A only with `SSP-X`
-  - On-device component of mixed mode with `SSP-Y`
-  - B&A component of mixed mode with `SSP-Y`
+  - On-device sub-component of mixed mode with `SSP-Y`
+  - B&A sub-component of mixed mode with `SSP-Y`
+
+11. Within the `SSP-Y` sub-component auction for B&A, there are a few differences in the specification. The following code block shows an example of
+    what is different. The `requestId` field is a unique identifier for the browser to ensure this is a valid ad auction.
+
+```json
+adAuctionHeaders: true
+requestId: "b9f96e9b-3fee-4a2a-87c1-1121d76eff0f"
+resolveToConfig: true
+seller: "https://privacy-sandbox-demos-ssp-y.dev"
+serverResponse: Uint8Array(560) [110, 76, 79...]
+```
 
 ### Implementation details
 
