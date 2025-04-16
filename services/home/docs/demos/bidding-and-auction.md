@@ -91,25 +91,26 @@ components of the system work together to complete an auction.
 
 ```bash
 sequenceDiagram
-    Browser->>+Advertiser: User visits a shop site and reviews products
-    Browser-->>Browser: DSP calls navigator.joinAdInterestGroup(...)
-    Browser-->>+Publisher: User visits a site
-    Browser-->>Browser: SSP calls navigator.getInterestGroupAdAuctionData()
-    Browser-->>SSP: browser sends ad auction data to SSP's real time bidding service
-    SSP-->>DSP: SSP requests contextual bid from DSPs
-    SSP-->>SSP: SSP sends a SelectAd request to the Seller Frontend Service
-    SSP-->>DSP: SSP sends GetBids requests to Buyer Frontend Service
-    DSP-->>DSP: DSP retrieves trustedBiddingSignals from Key-Value server
-    DSP-->>DSP: Buyer Frontend sends GenerateBidsRequest to Bidding Service
-    DSP-->>DSP: Bidding Service calls generateBid function
-    DSP-->>SSP: Buyer Frontend returns AdWithBid for each interest group
-    SSP-->>SSP: Seller Frontend sends ScoreAdsRequest to Auction Service
-    SSP-->>SSP: Auction Service calls scoreAd function
-    SSP-->>SSP: Ad auction result is forwarded back to SSP's real time bidding service
-    SSP-->>Browser: Ad auction result is returned to the browser
-    Browser-->>Publisher: Ad auction result is returned to the publisher page
-    Browser-->>Browser: navigator.runAdAuction(auctionConfig)
+    Browser->>+Advertiser: User visits a shop site and clicks on a product
+    DSP -->>DSP: DSP implements payload optimization
+    DSP-->>Browser: DSP calls navigator.joinAdInterestGroup(...)
+    Browser-->>+Publisher Page: User visits a publisher site
+    Publisher Page-->>Browser: SSP generates encrypted ad auction data with navigator.getInterestGroupAdAuctionData()
+    Publisher Page -->> Seller Ad Service: Seller JS sends ad auction data to their Seller Ad Service
+    Seller Ad Service-->>DSP: SSP requests contextual bid and intent to bid from DSPs
+    Seller Ad Service-->>Seller Frontend Service: SSP sends a SelectAd request to the Seller Frontend Service
+    Seller Frontend Service-->>Buyer Frontend Service: SSP's Seller Frontend Service sends GetBids requests to Buyer Frontend Service
+    Buyer Frontend Service-->>Buyer K/V Server: DSP retrieves trustedBiddingSignals from Key-Value server
+    Buyer Frontend Service-->>Buyer Bidding Service: Buyer Frontend sends GenerateBidsRequest to Bidding Service and calls generateBid for each interest group
+    Buyer Frontend Service-->>Seller Frontend Service: Buyer Frontend returns AdWithBid for each interest group
+    Seller Frontend Service-->>Seller Auction Service: Seller Frontend sends ScoreAdsRequest to Auction Service and calls scoreAd for each AdWithBid
+    Seller Auction Service-->>Seller Frontend Service: Ad auction result is generated with the auction winner
+    Seller Frontend Service -->> Seller Ad Service: Ad auction result is forwarded back to SSP's real time bidding service
+    Seller Ad Service-->>Publisher Page: Ad auction result is returned to the publisher page and added to the auction configuration
+    Publisher Page-->>Browser: Top level seller runs navigator.runAdAuction(auctionConfig) on-device
 ```
+
+#TODO: add valid permalink ![User Journey](../demos/img/bidding-and-auction-flow.png)
 
 </TabItem>
 
@@ -275,47 +276,45 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 
 ### Steps
 
-1. Navigate to the Advertiser's shop site [privacy-sandbox-demos-shop.dev](https://privacy-sandbox-demos-shop.dev).
-2. Click on any item in the shop.
-   - The advertiser assumes the user is interested in this type of product. The advertiser uses a demand-side provider (DSP) to handle advertising
+1. Navigate to the Advertiser's shop site `privacy-sandbox-demos-shop.dev/items/1f45e?usecase=bidding-and-auction`.
+
+   - The advertiser assumes the user is interested in this type of product. The advertiser uses a demand-side platform (DSP) to handle advertising
      needs. The DSP has a tag on this page that will add the user to an interest group for this product category.
-3. Once on the product page, add the `?usecase=bidding-and-auction` query parameter to the query string to enable this demo.
-
    - **NOTE**: In a production deployment, this query parameter would **not** be required. This is for demo purposes only.
-   - Example: `https://privacy-sandbox-demos-shop.dev/items/1f45f?usecase=bidding-and-auction`
 
-4. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the user being added to an interest group.
-5. Navigate to the `Application` tab. Select `Interest Groups` under the `Storage` section.
+2. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the user being added to an interest group.
+3. Navigate to the `Application` tab. Select `Interest Groups` under the `Storage` section.
    - **NOTE**: If this tab has no events, refresh the page.
-6. Select the `privacy-sandbox-demos-shop.dev-bidding-and-auction` interest group. This shows a `joinAdInterestGroup` call for a DSP without
+4. Select one of the `privacy-sandbox-demos-shop.dev-bidding-and-auction` events. This shows a `joinAdInterestGroup` call for a DSP without
    [payload optimization](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/bidding-auction-services-payload-optimization.md).
-7. Select the `dsp-x-ig` interest group. This shows a `joinAdInterestGroup` call for a DSP with
+5. Select the `dsp-x-ig` event. This shows a `joinAdInterestGroup` call for a DSP with
    [payload optimization](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/bidding-auction-services-payload-optimization.md).
    - Within the `ads` field, note the `adRenderId` field. This is an optimization to retrieve the `renderURL` from a Key-Value server.
-   - Note the field `auctionServerRequestFlags: ["omit-ads","omit-user-bidding-signals"]`. This field notifies the browser to allow for ommission of
+   - Note the field `auctionServerRequestFlags: ["omit-ads","omit-user-bidding-signals"]`. This field notifies the browser to allow for omission of
      the `ads` and `userBiddingSignals` fields as these can cause larger payloads.
    - Note the field `trustedBiddingSignalsKeys`. This field will notify the Buyer Frontend Service to retrieve these real time bidding signals from
      their Key-Value server before generating a bid.
-8. Navigate to the news site [https://privacy-sandbox-demos-news.dev](https://privacy-sandbox-demos-news.dev/) with the Chrome Developers Tool window
-   open.
-9. Once on the news site, add the `bidding-and-auction` query parameter to the query string.
+6. Navigate to the news site with the query parameter to follow the bidding and auction flow.
+   [https://privacy-sandbox-demos-news.dev/bidding-and-auction](https://privacy-sandbox-demos-news.dev/bidding-and-auction) with the Chrome Developers
+   Tool window open.
    - **NOTE**: In a production deployment, this query parameter would **not** be required. This is for demo purposes only.
-   - Query string: `https://privacy-sandbox-demos-news.dev/bidding-and-auction`
-10. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the auction configurations from each
-    component auction, as well as the final multi-seller auction.
+7. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the auction configurations from each component
+   auction, as well as the final multi-seller auction.
 
-- Expanding the log for the `SSP-A` auction will show the auction config for an on-device auction.
-- Expanding the log for the `SSP-X` auction will show the auction config for a B&A only auction.
-- Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode B&A auction. Within the mixed mode auction you will see two
-  sub-component auctions, one being an on-device auction and the other being a B&A auction.
-- Expanding the log for the `TLS SSP` will show four component auctions.
-  - On-device only with `SSP-A`
-  - B&A only with `SSP-X`
-  - On-device sub-component of mixed mode with `SSP-Y`
-  - B&A sub-component of mixed mode with `SSP-Y`
+   - Expanding the log for the `SSP-A` auction will show the auction config for an on-device auction.
+   - Expanding the log for the `SSP-X` auction will show the auction config for a B&A only auction.
+   - Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode auction. Within the mixed mode auction you will see two
+     component auctions, one being an on-device auction and the other being a B&A auction.
+   - Expanding the log for the `TLS SSP` will show all four component auctions.
+     - On-device only with `SSP-A`
+     - B&A only with `SSP-X`
+     - On-device component of mixed mode with `SSP-Y`
+     - B&A component of mixed mode with `SSP-Y`
 
-11. Within the `SSP-Y` sub-component auction for B&A, there are a few differences in the specification. The following code block shows an example of
-    what is different. The `requestId` field is a unique identifier for the browser to ensure this is a valid ad auction.
+8. Within the `SSP-Y` sub-component auction for B&A, there are a few differences in the specification. The following code block shows an example of
+   what is different.
+   - The `requestId` field is a unique identifier for the browser to ensure this is a valid ad auction.
+   - The `serverResponse` field is the ad auction response from the auction service.
 
 ```json
 adAuctionHeaders: true
