@@ -113,32 +113,32 @@ resource "google_project_iam_member" "trafficdirector_get_networks_configs" {
 #   service_account_email = google_service_account.workload_operator.email
 # }
 
-resource "google_secret_manager_secret" "hmac_key" {
-  project = var.project_id
-  # If the following secret_id is changed, make sure to update any usage of
-  # module.secrets.gcs_hmac_key.
-  secret_id = "gcs-hmac-key"
+# resource "google_secret_manager_secret" "hmac_key" {
+#   project = var.project_id
+#   # If the following secret_id is changed, make sure to update any usage of
+#   # module.secrets.gcs_hmac_key.
+#   secret_id = "gcs-hmac-key"
 
-  replication {
-    auto {}
-  }
-}
+#   replication {
+#     auto {}
+#   }
+# }
 
 # resource "google_secret_manager_secret_version" "hmac_key_version" {
 #   secret      = google_secret_manager_secret.hmac_key.id
 #   secret_data = google_storage_hmac_key.key.access_id
 # }
 
-resource "google_secret_manager_secret" "hmac_secret" {
-  project = var.project_id
-  # If the following secret_id is changed, make sure to update any usage of
-  # module.secrets.gcs-hmac-secret.
-  secret_id = "gcs-hmac-secret"
+# resource "google_secret_manager_secret" "hmac_secret" {
+#   project = var.project_id
+#   # If the following secret_id is changed, make sure to update any usage of
+#   # module.secrets.gcs-hmac-secret.
+#   secret_id = "gcs-hmac-secret"
 
-  replication {
-    auto {}
-  }
-}
+#   replication {
+#     auto {}
+#   }
+# }
 
 # resource "google_secret_manager_secret_version" "hmac_secret_version" {
 #   secret      = google_secret_manager_secret.hmac_secret.id
