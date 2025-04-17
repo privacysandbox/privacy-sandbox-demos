@@ -29,10 +29,6 @@ for service in $SERVICES; do
   firebase deploy --only hosting:${service}
 done
 
-# Check all Firebase Hosting sites
-for service in $SERVICES; do
-  echo https://$FIREBASE_HOSTING_DOMAIN-${service}.web.app/
+# ReviewFirebase Hosting sites
+firebase hosting:sites:list
 
-  ## cleanup cache (-w'\n' will add line break to output)
-  curl -w'\n' -X PURGE https://$FIREBASE_HOSTING_DOMAIN-${service}.web.app/
-done
