@@ -94,7 +94,10 @@ async function runComponentAuction() {
   const componentAuction = new AdAuction();
   const componentAuctionInfo = await componentAuction.getAuctionInfo();
 
-  console.log('[SSP-A] Component auction config ', componentAuctionInfo);
+  console.log(
+    '[SSP-A][on-device] Component auction config ',
+    componentAuctionInfo,
+  );
 
   window.auctionInfoCollector.push(componentAuctionInfo);
 }
