@@ -45,7 +45,7 @@ Audience as an additional demand source that may or may not beat the contextual 
 
 In this demo, we aim to demonstrate a basic sequential auction setup with a focus on the data flow from the perspective of the Protected Audience
 auction and abstract a lot of the technical nuance in the contextual auction. Building on the
-[basic retargeting / remarketing ads demo](retargeting-remarketing), this demo shows a more realistic sequential setup with multiple buyers and
+[basic retargeting / remarketing ads demo](retargeting-remarketing.md), this demo shows a more realistic sequential setup with multiple buyers and
 sellers participating in the ad delivery process. This demo will also demonstrate SSPs sourcing `buyerSignals` from DSPs and including them in the
 Protected Audience auction configuration.
 
@@ -57,8 +57,8 @@ various ad delivery setups. This demo focuses on a few exemplary _'signals'_ as 
 
 ### System Design
 
-Identical to the [basic retargeting / remarketing ads demo](retargeting-remarketing), the user visiting an advertiser page is added to interest groups
-by multiple DSPs. While the overall ad delvery flow on the publisher page is similar, the biggest difference in this demo is the involvement of
+Identical to the [basic retargeting / remarketing ads demo](retargeting-remarketing.md), the user visiting an advertiser page is added to interest
+groups by multiple DSPs. While the overall ad delvery flow on the publisher page is similar, the biggest difference in this demo is the involvement of
 multiple ad sellers. The publisher ad server starts with a simplified contextual auction with other sellers also participating to arrive at a winning
 contextual ad while also collating their auction configurations for the Protected Audience auction. The publisher ad server also initiates the
 Protected Audience auction acting as the top-level seller with all sellers including the publisher ad server conducting their individual component
@@ -173,7 +173,7 @@ end
 ### Implementation details
 
 The user is added to interest groups by DSPs using the same mechanism as described in the
-[basic remarketing / retargeting use-case demo](retargeting-remarketing). The incremental difference in the implementation of this demo is on the
+[basic remarketing / retargeting use-case demo](retargeting-remarketing.md). The incremental difference in the implementation of this demo is on the
 publisher page.
 
 #### How does the publisher pass the ad unit configurations for a given page to the publisher ad server?

@@ -166,9 +166,9 @@ shoe ad from Protected Audience will not be delivered. Instead, the ad from the 
 ### Implementation details
 
 To add the user to an interest group, we reuse the implementation from the
-[basic retargeting / remarketing ad campaign use-case demo](retargeting-remarketing). It’s in the second half -- the auction execution and ad delivery
--- where this use case differs from the regular retargeting / remarketing use-case. This is also why this use-case is on a different page on the news
-site.
+[basic retargeting / remarketing ad campaign use-case demo](retargeting-remarketing.md). It’s in the second half -- the auction execution and ad
+delivery -- where this use case differs from the regular retargeting / remarketing use-case. This is also why this use-case is on a different page on
+the news site.
 
 The news page lists the available ad slot on the page in the
 [`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L29)
@@ -198,7 +198,7 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
 [ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L43)
 from the ad-server service. This ad server tag reads the ad slot configurations and proceeds to execute a sequential contextual + Protected Audience
-auction as described in the [sequential setup of Protected Audience with contextual ad auction demo](sequential-auction-setup).
+auction as described in the [sequential setup of Protected Audience with contextual ad auction demo](sequential-auction-setup.md).
 
 ```html title="Ad-server tag on publisher page: https://privacy-sandbox-demos-news.dev"
 <script
