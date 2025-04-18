@@ -125,7 +125,7 @@ Browser ->> DSP: Request ad creative
 DSP -->> Browser: Return ad creative
 ```
 
-[Full-sized diagram](./img/publisher-ad-quality-req-flow.png)
+[Full-sized diagram](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/home/docs/demos/img/publisher-ad-quality-req-flow.png)
 
 </TabItem>
 <TabItem value="demo" label="Demo">

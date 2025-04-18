@@ -85,7 +85,7 @@ components of the system work together to complete an auction.
 - The seller's real time bidding service then forwards the encrypted ad auction result back to the publisher page. Then the
   `navigator.runAdAuction()`function runs on the page and displays the winning ad.
 
-![Bidding Auction API Flow](https://raw.githubusercontent.com/privacysandbox/privacy-sandbox-demos/73a017521449a526da715aabeaa02734faead7b3/services/home/docs/demos/img/bidding-auction-api-flow.png)
+![Bidding Auction API Flow](img/bidding-auction-api-flow.png)
 
 #### User Journey
 
@@ -111,7 +111,7 @@ sequenceDiagram
     Publisher Page-->>Browser: Top level seller runs navigator.runAdAuction(auctionConfig) on-device
 ```
 
-[Full-sized diagram](./img/bidding-and-auction-flow.png)
+[Full-sized diagram](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/home/docs/demos/img/bidding-and-auction-flow.png)
 
 </TabItem>
 
