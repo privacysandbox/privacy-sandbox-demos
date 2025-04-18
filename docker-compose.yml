@@ -87,7 +87,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -100,7 +99,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -113,7 +111,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -126,7 +123,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_x_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -139,7 +135,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_y_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -152,7 +147,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -165,7 +159,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -178,7 +171,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -191,7 +183,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_x_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -204,7 +195,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_y_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -217,7 +207,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ad_server_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -273,3 +262,8 @@ services:
 networks:
   adnetwork:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
+          ip_range: 172.16.128.0/24
+          gateway: 172.16.128.254

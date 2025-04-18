@@ -8,6 +8,15 @@
         "home": [
           "privacy-sandbox-demos-home"
         ],
+        "news": [
+          "privacy-sandbox-demos-news"
+        ],
+        "shop": [
+          "privacy-sandbox-demos-shop"
+        ],
+        "travel": [
+          "privacy-sandbox-demos-travel"
+        ],
         "dsp": [
           "privacy-sandbox-demos-dsp"
         ],
@@ -23,9 +32,6 @@
         "dsp-y": [
           "privacy-sandbox-demos-dsp-y"
         ],
-        "shop": [
-          "privacy-sandbox-demos-shop"
-        ],
         "ssp": [
           "privacy-sandbox-demos-ssp"
         ],
@@ -40,22 +46,25 @@
         ],
         "ssp-y": [
           "privacy-sandbox-demos-ssp-y"
-        ],
-        "news": [
-          "privacy-sandbox-demos-news"
-        ],
-        "travel": [
-          "privacy-sandbox-demos-travel"
-        ],
-        "collector": [
-          "privacy-sandbox-demos-collector"
-        ],
+        ]
         "ad-server": [
           "privacy-sandbox-demos-ad-server"
         ],
         "services": [
           "privacy-sandbox-demos-services"
         ],
+        "moto-news": [
+          "privacy-sandbox-demos-motorcycles"
+        ],
+        "soccer-news": [
+          "privacy-sandbox-demos-soccer"
+        ],
+        "gardening-news": [
+          "privacy-sandbox-demos-gardening"
+        ],
+        "collector": [
+          "privacy-sandbox-demos-collector"
+        ]
       }
     }
   },
