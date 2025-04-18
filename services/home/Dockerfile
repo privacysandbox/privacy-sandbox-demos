@@ -12,9 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM nginx:1.25-alpine3.17
+FROM nginx:1.27.5-alpine
 
-COPY --chown=nginx:nginx nginx.conf /etc/nginx/templates/default.conf.template
+# Copy custom Nginx configuration
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
+
+# Copy built Docusaurus site from the buid folder
 COPY --chown=nginx:nginx build /usr/share/nginx/html
 
+# Nginx listens on 8080, expose it (for documentation/clarity)
+EXPOSE 8080
+
+# Start Nginx in the foreground
 CMD [ "nginx", "-g", "daemon off;" ]
