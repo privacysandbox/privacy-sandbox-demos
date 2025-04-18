@@ -213,7 +213,7 @@ const interestGroup = {
 
 SSPs indicate the supported ad type in `auctionConfig.auctionSignals` which is made available to the DSP's `generateBid()` method at auction time.
 Using this information, DSPs can filter for the appropriate ad types in their
-[bidding logic :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/dsp/default/auction-bidding-logic.js#L261-264);
+[bidding logic :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/dsp/usecase/default/auction-bidding-logic.js#L261-264);
 
 #### What does the interest group ad creative do?
 
@@ -232,11 +232,11 @@ includes a single
 wrapping the VAST XML.
 
 This script starts by
-[parsing :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/video-ad-frame.js#L38-48)
+[parsing :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/video-ads.js#L38)
 the SSP's VAST wrapping endpoint including in the URL. Then the scripts proceeds to
-[fetch the finalized VAST XML from this SSP endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/video-ad-frame.js#L51-69)
+[fetch the finalized VAST XML from this SSP endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/video-ads.js#L51)
 before
-[post-messaging the XML content to the top frame :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/video-ad-frame.js#L107-115).
+[post-messaging the XML content to the top frame :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/video-ads.js#L108).
 
 ```js title="Winning PA ad iframe assembles and post-messages the finalized VAST to the top frame"
 // ...

@@ -237,7 +237,7 @@ More specifically, the `ad-server-tag.js` injects an iframe for each ad unit whe
 Protected Audience auction to choose an ad. This iframe loads:
 [`https://privacy-sandbox-demos-ad-server.dev/ssp/run-sequential-ad-auction.html` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/views/ssp/run-sequential-ad-auction.ejs),
 which contains a single script:
-[`https://privacy-sandbox-demos-ad-server.dev/js/ssp/run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js).
+[`https://privacy-sandbox-demos-ad-server.dev/js/ssp/run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js).
 This iframe expects a post-message from `ad-server-tag.js` containing the ad unit configuration as well as the list of other sellers involved in the
 ad delivery process.
 
@@ -341,7 +341,7 @@ SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
 
 The publisher ad servers collates the contextual bid responses from all the sellers before assembling the combined auction configuration for Protected
 Audience. In the following code snippet from
-[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L145-182),
+[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L154),
 the winning contextual bid is chosen purely on the bid price. Along with the contextual bid response, the additional sellers or SSPs also respond with
 their Protected Audience component auction configuration. The publisher ad server also assembles the final Protected Audience auction configuration
 which includes these component auction configurations from other sellers as well as its own component auction.

@@ -36,8 +36,8 @@ through a template 'container' with customizable product slots.
 ### Goals
 
 In this demo, the auction setup and execution is similar to the
-[sequential setup of Protected Audience with contextual ad auction](https://privacy-sandbox-demos.dev/docs/demos/sequential-auction-setup/) demo. So,
-please check this use case implementation first if you want to learn about the Protected Audience auction setup.
+[sequential setup of Protected Audience with contextual ad auction](./sequential-auction-setup) demo. So, please check this use case implementation
+first if you want to learn about the Protected Audience auction setup.
 
 The only incremental difference in this use-case is that the advertiser can provide more than one product that the user interacted with in the same ad
 slot.
