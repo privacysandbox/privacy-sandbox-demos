@@ -23,37 +23,61 @@
  *   in a Protected Audience auction.
  */
 
-const CURR_HOST = '<%= HOSTNAME %>';
-const CURR_ORIGIN = '<%= CURRENT_ORIGIN %>';
-const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> decision logic';
+const CURRENT_HOST = '<%= HOSTNAME %>';
+const CURRENT_ORIGIN = '<%= CURRENT_ORIGIN %>';
+const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> decision logic:';
 
 // ********************************************************
 // Helper Functions
 // ********************************************************
+/** Returns whether running in debug mode. */
+function inDebugMode(auctionConfig) {
+  const debugFlag = `DEBUG_${CURRENT_HOST}`;
+  if (
+    debugFlag in auctionConfig.auctionSignals ||
+    debugFlag in auctionConfig.sellerSignals
+  ) {
+    console.info(LOG_PREFIX, 'running in debug mode');
+    return true;
+  }
+  return false;
+}
+
 /** Checks whether the bid is below the winning contextual bid. */
 function isBidBelowAuctionFloor({
   // UNUSED adMetadata,
   bid,
   auctionConfig,
   // UNUSED trustedScoringSignals,
-  // UNUSED browserSignals,
+  browserSignals,
+  inDebugMode,
 }) {
   const {winningContextualBid} = auctionConfig.sellerSignals;
   if (!winningContextualBid) {
+    console.warn(LOG_PREFIX, 'contextual winner not in seller signals');
     return false;
   }
-  return bid < Number(winningContextualBid.bid);
+  const isBidBelowAuctionFloor = bid < Number(winningContextualBid.bid);
+  if (isBidBelowAuctionFloor && inDebugMode) {
+    console.debug(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid is below auction floor (contextual winner)',
+      JSON.stringify({bid, winningContextualBid, auctionConfig}),
+    );
+  }
+  return isBidBelowAuctionFloor;
 }
 
 /** Checks real-time signals to see whether the ad creative is blocked. */
-function isCreativeBlocked(scoringContext) {
-  const {
-    // UNUSED adMetadata,
-    // UNUSED bid,
-    auctionConfig,
-    trustedScoringSignals,
-    browserSignals,
-  } = scoringContext;
+function isCreativeBlocked({
+  // UNUSED adMetadata,
+  // UNUSED bid,
+  auctionConfig,
+  trustedScoringSignals,
+  browserSignals,
+  inDebugMode,
+}) {
   const {excludeCreativeTag} = auctionConfig.sellerSignals;
   if (!excludeCreativeTag) {
     return false; // No creative tags to exclude
@@ -69,14 +93,21 @@ function isCreativeBlocked(scoringContext) {
       parsedScoringSignals.tags.includes(excludeCreativeTag)
     ) {
       // Creative tag is to be excluded, reject bid.
-      console.debug(LOG_PREFIX, 'rejecting bid blocked by publisher', {
-        parsedScoringSignals,
-        trustedScoringSignals,
-        renderURL,
-        buyer: browserSignals.interestGroupOwner,
-        dataVersion: browserSignals.dataVersion,
-        scoringContext,
-      });
+      if (inDebugMode) {
+        console.debug(
+          LOG_PREFIX,
+          browserSignals.interestGroupOwner,
+          'bid rejected, creative blocked by publisher',
+          JSON.stringify({
+            parsedScoringSignals,
+            trustedScoringSignals,
+            renderURL,
+            buyer: browserSignals.interestGroupOwner,
+            dataVersion: browserSignals.dataVersion,
+            scoringContext,
+          }),
+        );
+      }
       return true;
     }
   }
@@ -90,13 +121,31 @@ function doesBidHaveEligibleDeal({
   auctionConfig,
   // UNUSED trustedScoringSignals,
   browserSignals,
+  inDebugMode,
 }) {
   const {availableDeals} = auctionConfig.auctionSignals;
   if (!availableDeals || !availableDeals.length) {
     return false; // No deals available.
   }
   const {selectedBuyerAndSellerReportingId} = browserSignals;
-  return availableDeals.includes(selectedBuyerAndSellerReportingId);
+  const doesBidHaveEligibleDeal = availableDeals.includes(
+    selectedBuyerAndSellerReportingId,
+  );
+  if (inDebugMode) {
+    console.debug(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid, checking deal eligibility',
+      JSON.stringify({
+        availableDeals,
+        selectedBuyerAndSellerReportingId,
+        doesBidHaveEligibleDeal,
+        trustedScoringSignals,
+        adMetadata,
+      }),
+    );
+  }
+  return doesBidHaveEligibleDeal;
 }
 
 // ********************************************************
@@ -109,6 +158,9 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
+  console.groupCollapsed(
+    `${CURRENT_HOST} scoreAd() for buyer: ${browserSignals.interestGroupOwner}`,
+  );
   const scoringContext = {
     adMetadata,
     bid,
@@ -116,7 +168,16 @@ function scoreAd(
     trustedScoringSignals,
     browserSignals,
   };
-  console.debug(LOG_PREFIX, 'scoreAd() invoked', {scoringContext});
+  scoringContext.inDebugMode = inDebugMode(auctionConfig);
+  if (scoringContext.inDebugMode) {
+    console.debug(
+      LOG_PREFIX,
+      'scoreAd() invoked for buyer',
+      browserSignals.interestGroupOwner,
+      '\n\n',
+      JSON.stringify(scoringContext),
+    );
+  }
   // Initialize ad score defaulting to a first-price auction.
   const score = {
     desirability: bid,
@@ -126,9 +187,12 @@ function scoreAd(
   if (isCreativeBlocked(scoringContext)) {
     score.desirability = 0;
     score.rejectReason = 'disapproved-by-exchange';
-    console.warn(LOG_PREFIX, 'rejecting bid with blocked creative', {
-      scoringContext,
-    });
+    console.warn(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid rejected with blocked creative',
+    );
+    console.groupEnd();
     return score;
   }
   // Check if DSP responded with an eligible deal ID.
@@ -141,30 +205,51 @@ function scoreAd(
     console.warn(LOG_PREFIX, 'rejecting bid with ineligible deal', {
       scoringContext,
     });
+    console.warn(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid rejected with ineligible deal',
+    );
+    console.groupEnd();
     return score;
   } else if (bidHasEligibleDeal) {
     // Boost desirability score by 10 points for bids with eligible deals.
     score.desirability = bid + 10.0;
-    console.info(LOG_PREFIX, 'boosting bid with eligible deal', {
-      scoringContext,
-    });
+    console.info(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid score boosted with eligible deal',
+    );
+    console.groupEnd();
     return score;
   }
   // Check if bid is below auction floor.
   if (isBidBelowAuctionFloor(scoringContext)) {
     score.desirability = 0;
     score.rejectReason = 'bid-below-auction-floor';
-    console.warn(LOG_PREFIX, 'rejecting bid below auction floor', {
-      scoringContext,
-    });
+    console.warn(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid rejected, below auction floor',
+    );
+    console.groupEnd();
     return score;
   }
   // In all other cases, default to a first-price auction.
-  console.info(LOG_PREFIX, 'scored bid', {scoringContext, score});
+  console.info(
+    LOG_PREFIX,
+    browserSignals.interestGroupOwner,
+    'bid scored\n\n',
+    JSON.stringify(score),
+  );
+  console.groupEnd();
   return score;
 }
 
 function reportResult(auctionConfig, browserSignals) {
+  console.groupCollapsed(
+    `${CURRENT_HOST} reportResult() for buyer: ${browserSignals.interestGroupOwner}`,
+  );
   const reportingContext = {
     auctionId: auctionConfig.auctionSignals.auctionId,
     pageURL: auctionConfig.auctionSignals.pageURL,
@@ -181,13 +266,25 @@ function reportResult(auctionConfig, browserSignals) {
   for (const [key, value] of Object.entries(reportingContext)) {
     reportUrl = `${reportUrl}&${key}=${value}`;
   }
-  console.info(LOG_PREFIX, 'reportResult() invoked', {
-    auctionConfig,
-    browserSignals,
-    reportingContext,
-    sendReportToUrl: reportUrl,
-  });
+  console.info(
+    LOG_PREFIX,
+    'reportResult() invoked for buyer',
+    browserSignals.interestGroupOwner,
+  );
+  console.debug(
+    LOG_PREFIX,
+    'reportResult() invoked for buyer',
+    browserSignals.interestGroupOwner,
+    '\n\n',
+    JSON.stringify({
+      auctionConfig,
+      browserSignals,
+      reportingContext,
+      sendReportToUrl: reportUrl,
+    }),
+  );
   sendReportTo(reportUrl);
+  console.groupEnd();
   return /* sellerSignals= */ {
     success: true,
     auctionId: auctionConfig.auctionSignals.auctionId,
