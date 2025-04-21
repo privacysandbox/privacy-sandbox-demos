@@ -34,39 +34,37 @@ const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> bidding logic:';
 function inDebugMode({auctionSignals, perBuyerSignals, trustedBiddingSignals}) {
   const debugFlag = `DEBUG_${CURRENT_HOST}`;
   if (
-    debugFlag in auctionSignals ||
-    debugFlag in perBuyerSignals ||
-    debugFlag in trustedBiddingSignals
+    (auctionSignals && debugFlag in auctionSignals) ||
+    (perBuyerSignals && debugFlag in perBuyerSignals) ||
+    (trustedBiddingSignals && debugFlag in trustedBiddingSignals)
   ) {
     console.info(LOG_PREFIX, 'running in debug mode');
+    console.debug(
+      LOG_PREFIX,
+      'generateBid() invoked for seller',
+      browserSignals.seller,
+      '\n\n',
+      JSON.stringify({biddingContext}),
+    );
     return true;
   }
   return false;
 }
 
 /** Checks whether the current ad campaign is active. */
-function isCurrentCampaignActive({
-  // UNUSED interestGroup,
-  // UNUSED auctionSignals,
-  // UNUSED perBuyerSignals,
-  trustedBiddingSignals,
-  browserSignals,
-  inDebugMode,
-}) {
+function isCurrentCampaignActive({trustedBiddingSignals, browserSignals}) {
   if ('true' !== trustedBiddingSignals['isActive']) {
     // Don't place a bid if campaign is inactive.
-    if (inDebugMode) {
-      console.debug(
-        LOG_PREFIX,
-        'campaign is inactive\n\n',
-        JSON.stringify({
-          trustedBiddingSignals,
-          seller: browserSignals.seller,
-          topLevelSeller: browserSignals.topLevelSeller,
-          dataVersion: browserSignals.dataVersion,
-        }),
-      );
-    }
+    console.warn(
+      LOG_PREFIX,
+      'not bidding because campaign is inactive\n\n',
+      JSON.stringify({
+        trustedBiddingSignals,
+        seller: browserSignals.seller,
+        topLevelSeller: browserSignals.topLevelSeller,
+        dataVersion: browserSignals.dataVersion,
+      }),
+    );
     return false;
   }
   return true;
@@ -133,21 +131,20 @@ function selectDealId({selectedAd, auctionSignals, inDebugMode}) {
   })(auctionSignals.availableDeals);
   if (!eligibleDeals || !eligibleDeals.length) {
     // No eligible deals for this bid request.
+    console.info(LOG_PREFIX, 'no eligible deals for this bid request');
     if (inDebugMode) {
       console.debug(
         LOG_PREFIX,
         'no eligible deals for this bid request\n\n',
         JSON.stringify({selectedAd, auctionSignals, availableDeals}),
       );
-    } else {
-      console.info(LOG_PREFIX, 'no eligible deals for this bid request');
     }
     return;
   }
   // Choose one of the eligible deals at random.
-  const countOfEligibleIds = eligibleDeals.length;
-  const randomIndex = Math.floor(Math.random() * countOfEligibleIds);
-  const selectedId = eligibleDeals[randomIndex];
+  const countOfEligibleDeals = eligibleDeals.length;
+  const randomIndex = Math.floor(Math.random() * countOfEligibleDeals);
+  const selectedDeal = eligibleDeals[randomIndex];
   if (inDebugMode) {
     console.debug(
       LOG_PREFIX,
@@ -156,12 +153,37 @@ function selectDealId({selectedAd, auctionSignals, inDebugMode}) {
         buyerReportingId,
         buyerAndSellerReportingId,
         selectableBuyerAndSellerReportingIds,
-        selectedId,
+        selectedDeal,
         selectedAd,
       }),
     );
   }
-  return selectedId;
+  return selectedDeal;
+}
+
+/**
+ * Filters ads for the specified type and logs context to console for debugging.
+ */
+function getAdsByType({interestGroup, adType, inDebugMode}) {
+  const filteredAds = interestGroup.ads.filter(
+    (ad) => ad.metadata.adType === adType,
+  );
+  if (!filteredAds || !filteredAds.length) {
+    console.warn(
+      LOG_PREFIX,
+      `did not find ${adType} ad in interest group`,
+      interestGroup.name,
+    );
+    if (inDebugMode) {
+      console.debug(
+        LOG_PREFIX,
+        `did not find ${adType} ad in interest group\n\n`,
+        JSON.stringify({interestGroup}),
+      );
+    }
+    return;
+  }
+  return filteredAds;
 }
 
 /** Returns the bid response for a video ad request. */
@@ -173,15 +195,12 @@ function getBidForVideoAd({
   browserSignals,
   inDebugMode,
 }) {
-  const {ads} = interestGroup;
-  // Select an ad meeting the auction requirements.
-  const [selectedAd] = ads.filter((ad) => 'VIDEO' === ad.metadata.adType);
+  const [selectedAd] = getAdsByType({
+    interestGroup,
+    adType: 'VIDEO',
+    inDebugMode,
+  });
   if (!selectedAd) {
-    console.warn(
-      LOG_PREFIX,
-      'did not find video ad in interest group\n\n',
-      JSON.stringify({interestGroup}),
-    );
     return {bid: '0.0'};
   }
   // Check if any deals are eligible.
@@ -224,15 +243,12 @@ function getBidForDisplayAd({
   inDebugMode,
 }) {
   // Select an ad meeting the auction requirements.
-  const [selectedAd] = interestGroup.ads.filter(
-    (ad) => 'DISPLAY' === ad.metadata.adType,
-  );
+  const [selectedAd] = getAdsByType({
+    interestGroup,
+    adType: 'DISPLAY',
+    inDebugMode,
+  });
   if (!selectedAd) {
-    console.warn(
-      LOG_PREFIX,
-      'did not find display ad in interest group\n\n',
-      JSON.stringify({interestGroup}),
-    );
     return {bid: '0.0'};
   }
   // Check if any deals are eligible.
@@ -279,15 +295,12 @@ function getBidForMultipieceAd({
   inDebugMode,
 }) {
   // Select an ad meeting the auction requirements.
-  const [selectedAd] = interestGroup.ads.filter(
-    (ad) => 'MULTIPIECE' === ad.metadata.adType,
-  );
+  const [selectedAd] = getAdsByType({
+    interestGroup,
+    adType: 'MULTIPIECE',
+    inDebugMode,
+  });
   if (!selectedAd) {
-    console.warn(
-      LOG_PREFIX,
-      'did not find multi-piece ad in interest group\n\n',
-      JSON.stringify({interestGroup}),
-    );
     return {bid: '0.0'};
   }
   // Check if any deals are eligible.
@@ -328,14 +341,31 @@ function getBidForMultipieceAd({
 }
 
 function getBidByAdType(adType, biddingContext) {
+  let bid;
   switch (adType) {
     case 'VIDEO':
-      return getBidForVideoAd(biddingContext);
+      bid = getBidForVideoAd(biddingContext);
     case 'MULTIPIECE':
-      return getBidForMultipieceAd(biddingContext);
+      bid = getBidForMultipieceAd(biddingContext);
     default: // Default to DISPLAY.
-      return getBidForDisplayAd(biddingContext);
+      bid = getBidForDisplayAd(biddingContext);
   }
+  if (bid) {
+    console.info(
+      LOG_PREFIX,
+      'returning bid to seller',
+      biddingContext.browserSignals.seller,
+      '\n\n',
+      JSON.stringify(bid),
+    );
+  } else {
+    console.warn(
+      LOG_PREFIX,
+      'did not generate bid for seller',
+      biddingContext.browserSignals.seller,
+    );
+  }
+  return bid;
 }
 
 const BUCKET_SLOW_EXECUTION = 125;
@@ -370,52 +400,28 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  // Prepare for bidding.
-  console.groupCollapsed(
+  console.group(
     `${CURRENT_HOST} generateBid() for seller: ${browserSignals.seller}`,
   );
-  const biddingContext = {
-    interestGroup,
-    auctionSignals,
-    perBuyerSignals,
-    trustedBiddingSignals,
-    browserSignals,
-  };
-  biddingContext.inDebugMode = inDebugMode(biddingContext);
-  if (biddingContext.inDebugMode) {
-    console.debug(
-      LOG_PREFIX,
-      'generateBid() invoked for seller',
-      browserSignals.seller,
-      '\n\n',
-      JSON.stringify({biddingContext}),
-    );
-  }
-  // First, register contributions for execution latency.
-  monitorScriptExecutionLatency();
-  // Next, check campaign status.
-  if (!isCurrentCampaignActive(biddingContext)) {
-    console.warn(LOG_PREFIX, 'not bidding because campaign is inactive');
-    return;
-  }
-  // Assemble bid for ad slot type.
-  const bid = getBidByAdType(auctionSignals.adType, biddingContext);
-  if (bid) {
-    console.info(
-      LOG_PREFIX,
-      'returning bid to seller',
-      browserSignals.seller,
-      '\n\n',
-      JSON.stringify(bid),
-    );
-    console.groupEnd();
-    return bid;
-  } else {
-    console.warn(
-      LOG_PREFIX,
-      'did not generate bid for seller',
-      browserSignals.seller,
-    );
+  try {
+    // Prepare for bidding.
+    const biddingContext = {
+      interestGroup,
+      auctionSignals,
+      perBuyerSignals,
+      trustedBiddingSignals,
+      browserSignals,
+    };
+    biddingContext.inDebugMode = inDebugMode(biddingContext);
+    // First, register contributions for execution latency.
+    monitorScriptExecutionLatency();
+    // Next, check campaign status.
+    if (!isCurrentCampaignActive(biddingContext)) {
+      return;
+    }
+    // Assemble bid for ad slot type.
+    return getBidByAdType(auctionSignals.adType, biddingContext);
+  } finally {
     console.groupEnd();
   }
 }
@@ -426,57 +432,60 @@ function reportWin(
   sellerSignals,
   browserSignals,
 ) {
-  console.groupCollapsed(
+  console.group(
     `${CURRENT_HOST} reportWin() for seller: ${browserSignals.seller}`,
   );
-  // Assemble query parameters for event logs.
-  let additionalQueryParams = browserSignals.renderURL.substring(
-    browserSignals.renderURL.indexOf('?') + 1,
-  );
-  const reportingContext = {
-    auctionId: auctionSignals.auctionId,
-    pageURL: auctionSignals.pageURL,
-    componentSeller: browserSignals.seller,
-    topLevelSeller: browserSignals.topLevelSeller,
-    renderURL: browserSignals.renderURL,
-    bid: browserSignals.bid,
-    bidCurrency: browserSignals.bidCurrency,
-    buyerReportingId: browserSignals.buyerReportingId,
-    buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
-    selectedBuyerAndSellerReportingId:
-      browserSignals.selectedBuyerAndSellerReportingId,
-  };
-  for (const [key, value] of Object.entries(reportingContext)) {
-    additionalQueryParams = additionalQueryParams.concat(`&${key}=${value}`);
+  try {
+    // Assemble query parameters for event logs.
+    let additionalQueryParams = browserSignals.renderURL.substring(
+      browserSignals.renderURL.indexOf('?') + 1,
+    );
+    const reportingContext = {
+      auctionId: auctionSignals.auctionId,
+      pageURL: auctionSignals.pageURL,
+      componentSeller: browserSignals.seller,
+      topLevelSeller: browserSignals.topLevelSeller,
+      renderURL: browserSignals.renderURL,
+      bid: browserSignals.bid,
+      bidCurrency: browserSignals.bidCurrency,
+      buyerReportingId: browserSignals.buyerReportingId,
+      buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+      selectedBuyerAndSellerReportingId:
+        browserSignals.selectedBuyerAndSellerReportingId,
+    };
+    for (const [key, value] of Object.entries(reportingContext)) {
+      additionalQueryParams = additionalQueryParams.concat(`&${key}=${value}`);
+    }
+    const winReportUrl =
+      CURRENT_ORIGIN + `reporting?report=win&${additionalQueryParams}`;
+    console.info(
+      LOG_PREFIX,
+      'reportWin() invoked for seller',
+      browserSignals.seller,
+    );
+    console.debug(
+      LOG_PREFIX,
+      'reportWin() invoked\n\n',
+      JSON.stringify({
+        auctionSignals,
+        perBuyerSignals,
+        sellerSignals,
+        browserSignals,
+        reportingContext,
+        sendReportToUrl: winReportUrl,
+      }),
+    );
+    sendReportTo(winReportUrl);
+    // Disable redirect chain temporarily to make ARA debugging easier.
+    // additionalQueryParams = additionalQueryParams.concat(
+    //   `&redirect=${browserSignals.seller}`,
+    // );
+    registerAdBeacon({
+      'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
+      'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
+      'reserved.top_navigation_commit': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
+    });
+  } finally {
+    console.groupEnd();
   }
-  const winReportUrl =
-    CURRENT_ORIGIN + `reporting?report=win&${additionalQueryParams}`;
-  console.info(
-    LOG_PREFIX,
-    'reportWin() invoked for seller',
-    browserSignals.seller,
-  );
-  console.debug(
-    LOG_PREFIX,
-    'reportWin() invoked\n\n',
-    JSON.stringify({
-      auctionSignals,
-      perBuyerSignals,
-      sellerSignals,
-      browserSignals,
-      reportingContext,
-      sendReportToUrl: winReportUrl,
-    }),
-  );
-  sendReportTo(winReportUrl);
-  // Disable redirect chain temporarily to make ARA debugging easier.
-  // additionalQueryParams = additionalQueryParams.concat(
-  //   `&redirect=${browserSignals.seller}`,
-  // );
-  registerAdBeacon({
-    'impression': `${browserSignals.interestGroupOwner}/reporting?report=impression&${additionalQueryParams}`,
-    'reserved.top_navigation_start': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_start&${additionalQueryParams}`,
-    'reserved.top_navigation_commit': `${browserSignals.interestGroupOwner}/reporting?report=top_navigation_commit&${additionalQueryParams}`,
-  });
-  console.groupEnd();
 }
