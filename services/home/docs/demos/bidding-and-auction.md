@@ -85,12 +85,13 @@ components of the system work together to complete an auction.
 - The seller's real time bidding service then forwards the encrypted ad auction result back to the publisher page. Then the
   `navigator.runAdAuction()`function runs on the page and displays the winning ad.
 
-![Bidding Auction API Flow](https://raw.githubusercontent.com/privacysandbox/privacy-sandbox-demos/73a017521449a526da715aabeaa02734faead7b3/services/home/docs/demos/img/bidding-auction-api-flow.png)
+![Bidding Auction API Flow](img/bidding-auction-api-flow.png)
 
 #### User Journey
 
-```bash
+```mermaid
 sequenceDiagram
+
     Browser->>+Advertiser: User visits a shop site and clicks on a product
     DSP -->>DSP: DSP implements payload optimization
     DSP-->>Browser: DSP calls navigator.joinAdInterestGroup(...)
@@ -110,7 +111,7 @@ sequenceDiagram
     Publisher Page-->>Browser: Top level seller runs navigator.runAdAuction(auctionConfig) on-device
 ```
 
-#TODO: add valid permalink ![User Journey](../demos/img/bidding-and-auction-flow.png)
+[Full-sized diagram](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/home/docs/demos/img/bidding-and-auction-flow.png)
 
 </TabItem>
 
@@ -632,7 +633,7 @@ sspYRouter.get('/construct-component-auction.js', async (req, res) => {
 ```
 
 7. The
-   [construct-component-auction.ts](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.ts#L35)
+   [construct-component-auction.ts](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.ts#L35)
    file will first build the auction config.
 
 ```typescript
@@ -755,10 +756,10 @@ async #runComponentAdAuction(request: number[]) {
     The selectAd request can also be sent with a REST API call. This
     [proto file](https://github.com/privacysandbox/privacy-sandbox-demos/blob/e9b604243b99c4629b78a578844d054770f9d660/services/ad-tech/src/routes/ssp/usecase/bidding-and-auction/server/proto/sfe-client.proto#L3)
     defines the interface for interacting with the seller frontend service. The `ciphertextShaHash` uses the response from the seller front end and
-    generates a SHA-256 hash with base64 encoding. This is to ensure payload security between the seller ad service and the browser.  
-    The ciphertext is then set as the value for the `Ad-Auction-Result` header to be passed back to the browser. The `onDeviceAuctionConfig` field is
-    set to define the auction configuration for the on-device component of mixed mode. This will be passed to the browser along with the bidding and
-    auction result, but it will appear as a separate component auction in the browser.
+    generates a SHA-256 hash with base64 encoding. This is to ensure payload security between the seller ad service and the browser. The ciphertext is
+    then set as the value for the `Ad-Auction-Result` header to be passed back to the browser. The `onDeviceAuctionConfig` field is set to define the
+    auction configuration for the on-device component of mixed mode. This will be passed to the browser along with the bidding and auction result, but
+    it will appear as a separate component auction in the browser.
 
 ```typescript
    mixedModeClientSFE.selectAd(

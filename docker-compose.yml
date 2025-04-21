@@ -224,7 +224,7 @@ services:
       - adnetwork
 
   nginx:
-    image: nginx:1.22.1-alpine
+    image: nginx:1.27.5-alpine
     container_name: "proxy"
     volumes:
       # using env variables in nginx config
