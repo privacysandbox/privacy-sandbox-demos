@@ -68,7 +68,7 @@ function isBidBelowAuctionFloor({
   }
   const isBidBelowAuctionFloor = bid < Number(winningContextualBid.bid);
   if (isBidBelowAuctionFloor) {
-    console.warn(
+    console.error(
       LOG_PREFIX,
       browserSignals.interestGroupOwner,
       'bid rejected, below auction floor\n\n',
@@ -110,7 +110,7 @@ function isCreativeBlocked({
       parsedScoringSignals.tags.includes(excludeCreativeTag)
     ) {
       // Creative tag is to be excluded, reject bid.
-      console.warn(
+      console.error(
         LOG_PREFIX,
         browserSignals.interestGroupOwner,
         'bid rejected with blocked creative\n\n',
@@ -120,7 +120,7 @@ function isCreativeBlocked({
         console.debug(
           LOG_PREFIX,
           browserSignals.interestGroupOwner,
-          'bid rejected, creative blocked by publisher',
+          'bid rejected, creative blocked by publisher\n\n',
           JSON.stringify({
             parsedScoringSignals,
             trustedScoringSignals,
@@ -137,8 +137,8 @@ function isCreativeBlocked({
   return false;
 }
 
-/** Checks whether the bid includes a valid and eligible deal ID. */
-function doesBidHaveEligibleDeal({
+/** Returns a boosted score if bid includes an eligible deal. */
+function getScoreForEligibleDeal({
   // UNUSED adMetadata,
   // UNUSED bid,
   auctionConfig,
@@ -146,19 +146,20 @@ function doesBidHaveEligibleDeal({
   browserSignals,
   inDebugMode,
 }) {
-  const {availableDeals} = auctionConfig.auctionSignals;
+  const {availableDeals, strictRejectForDeals} = auctionConfig.auctionSignals;
   if (!availableDeals || !availableDeals.length) {
-    return false; // No deals available.
+    console.debug(LOG_PREFIX, 'no eligible deals in this auction');
+    return false;
   }
   const {selectedBuyerAndSellerReportingId} = browserSignals;
   const doesBidHaveEligibleDeal = availableDeals.includes(
     selectedBuyerAndSellerReportingId,
   );
-  if (inDebugMode) {
-    console.debug(
+  if (doesBidHaveEligibleDeal) {
+    console.info(
       LOG_PREFIX,
       browserSignals.interestGroupOwner,
-      'bid, checking deal eligibility',
+      'bid score boosted with eligible deal\n\n',
       JSON.stringify({
         availableDeals,
         selectedBuyerAndSellerReportingId,
@@ -167,8 +168,44 @@ function doesBidHaveEligibleDeal({
         adMetadata,
       }),
     );
+    // Boost desirability score by 10 points for bids with eligible deals.
+    return {desirability: bid + 10.0};
+  } else if (!doesBidHaveEligibleDeal && strictRejectForDeals) {
+    console.error(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid rejected with ineligible deal',
+    );
+    if (inDebugMode) {
+      console.debug(LOG_PREFIX, 'rejecting bid with ineligible deal', {
+        scoringContext,
+      });
+    }
+    // Only accepting bids with eligible deals.
+    return {desirability: 0, rejectReason: 'invalid-bid'};
+  } else if (!doesBidHaveEligibleDeal && availableDeals) {
+    // No eligible deals found in bid, score regularly.
+    console.info(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid scored regularly with ineligible deal',
+    );
+    if (inDebugMode) {
+      console.debug(
+        LOG_PREFIX,
+        browserSignals.interestGroupOwner,
+        'bid scored regularly with ineligible deal\n\n',
+        JSON.stringify({
+          availableDeals,
+          selectedBuyerAndSellerReportingId,
+          doesBidHaveEligibleDeal,
+          trustedScoringSignals,
+          adMetadata,
+        }),
+      );
+    }
   }
-  return doesBidHaveEligibleDeal;
+  // No return value in all other cases to revert to first-price auction.
 }
 
 // ********************************************************
@@ -208,29 +245,9 @@ function scoreAd(
       return score;
     }
     // Check if DSP responded with an eligible deal ID.
-    const bidHasEligibleDeal = doesBidHaveEligibleDeal(scoringContext);
-    const {strictRejectForDeals} = auctionConfig.auctionSignals;
-    if (strictRejectForDeals && !bidHasEligibleDeal) {
-      // Only accepting bids with eligible bids.
-      score.desirability = 0;
-      score.rejectReason = 'invalid-bid';
-      console.warn(LOG_PREFIX, 'rejecting bid with ineligible deal', {
-        scoringContext,
-      });
-      console.warn(
-        LOG_PREFIX,
-        browserSignals.interestGroupOwner,
-        'bid rejected with ineligible deal',
-      );
-      return score;
-    } else if (bidHasEligibleDeal) {
-      // Boost desirability score by 10 points for bids with eligible deals.
-      score.desirability = bid + 10.0;
-      console.info(
-        LOG_PREFIX,
-        browserSignals.interestGroupOwner,
-        'bid score boosted with eligible deal',
-      );
+    const scoreForEligibleDeal = getScoreForEligibleDeal(scoringContext);
+    if (scoreForEligibleDeal) {
+      Object.assign(score, scoreForEligibleDeal);
       return score;
     }
     // Check if bid is below auction floor.

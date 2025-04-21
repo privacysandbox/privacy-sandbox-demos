@@ -55,7 +55,7 @@ function inDebugMode({auctionSignals, perBuyerSignals, trustedBiddingSignals}) {
 function isCurrentCampaignActive({trustedBiddingSignals, browserSignals}) {
   if ('true' !== trustedBiddingSignals['isActive']) {
     // Don't place a bid if campaign is inactive.
-    console.warn(
+    console.error(
       LOG_PREFIX,
       'not bidding because campaign is inactive\n\n',
       JSON.stringify({
@@ -169,7 +169,7 @@ function getAdsByType({interestGroup, adType, inDebugMode}) {
     (ad) => ad.metadata.adType === adType,
   );
   if (!filteredAds || !filteredAds.length) {
-    console.warn(
+    console.error(
       LOG_PREFIX,
       `did not find ${adType} ad in interest group`,
       interestGroup.name,
@@ -359,7 +359,7 @@ function getBidByAdType(adType, biddingContext) {
       JSON.stringify(bid),
     );
   } else {
-    console.warn(
+    console.error(
       LOG_PREFIX,
       'did not generate bid for seller',
       biddingContext.browserSignals.seller,
