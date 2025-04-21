@@ -119,7 +119,7 @@ resource "google_compute_project_metadata" "default" {
 
 # See README.md for instructions on how to use the secrets module.
 module "secrets" {
-  source = "../../../modules/secrets"
+  source = "../../modules/secrets"
 }
 
 module "buyer" {
@@ -130,7 +130,7 @@ module "buyer" {
     key => value if length(value.match_rules) > 0 }
   )
 
-  source               = "../../../modules/buyer"
+  source               = "../../modules/buyer"
   environment          = each.key
   gcp_project_id       = local.gcp_project_id
   bidding_image        = "${local.image_repo}/bidding_service:${each.value.image_tag}"

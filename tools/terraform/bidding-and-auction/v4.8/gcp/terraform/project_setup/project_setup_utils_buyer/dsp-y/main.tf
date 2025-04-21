@@ -24,7 +24,7 @@ terraform {
 
   backend "gcs" {
     bucket = "gtech-privacy-baservices-dev-state"
-    prefix = "project_setup_utils"
+    prefix = "project_setup_utils/buyer/dsp-y"
   }
 }
 
@@ -34,19 +34,8 @@ module "domain" {
   domain     = var.domain
 }
 
-module "internal_tls" {
-  source     = "./internal_tls"
-  project_id = var.project_id
-
-  # Make internal_dns depend on the api module
-  depends_on = [module.api]
-}
-
 module "service_account" {
   source               = "./service_account"
   project_id           = var.project_id
   service_account_name = var.service_account_name
-
-  # Make internal_dns depend on the api module
-  depends_on = [module.api]
 }
