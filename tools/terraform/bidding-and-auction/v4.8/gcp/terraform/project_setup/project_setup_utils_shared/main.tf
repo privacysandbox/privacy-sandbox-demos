@@ -189,7 +189,7 @@ resource "google_project_service" "trafficdirector" {
   service                    = "trafficdirector.googleapis.com"
   disable_dependent_services = true
 }
-
+#TODO: Fix issue with org policy 
 # resource "google_storage_hmac_key" "key" {
 #   project               = var.project_id
 #   service_account_email = google_service_account.workload_operator.email
