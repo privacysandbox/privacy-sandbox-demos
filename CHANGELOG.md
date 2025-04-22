@@ -1,4 +1,20 @@
 # Changelog
+## v3.1.0 (2025/4/22)
+- **New Use Cases:**
+  - Bidding & Auction Services for Protected Audience (PR #619)
+  - Ads Composed of Multiple Pieces (full release)
+  - Multi-touch Attribution (PR #620)
+  - Reach Measurement (full release)
+
+- **Fixes and Improvements:**
+  - Nginx version update
+  - Nginx Configuration Update
+  - docusaurus config
+  - New domain added
+  - Dockerfile Modification
+
+And Others
+
 
 ## v3.0.0 (2025/3/14)
 
