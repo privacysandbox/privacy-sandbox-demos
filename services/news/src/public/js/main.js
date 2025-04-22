@@ -26,11 +26,9 @@
 
   /** Returns URL query param value as an array. */
   window.PSDemo.getUrlQueryAsArray = (key) => {
-    const values = new URLSearchParams(location.search)
-      .getAll(key)
-      .filter((v) => v);
-    if (values && values.length > 0) {
-      return values;
+    const urlQueries = new URLSearchParams(location.search);
+    if (urlQueries.has(key)) {
+      return urlQueries.getAll(key).filter((v) => v);
     }
   };
 
