@@ -38,14 +38,20 @@ and experimenting.
 ## Use Cases
 
 The current release supports the following use cases:
+| Use Case                                                                                                   | Privacy Sandbox APIs                                     |
+| :--------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| [Basic retargeting / remarketing ads with Protected Audience](demos/retargeting-remarketing.md)            | Protected Audience, Fenced Frames                        |
+| [Sequential setup of Protected Audience with contextual auction](demos/sequential-auction-setup.md)        | Protected Audience, Fenced Frames                        |
+| [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md) | Protected Audience, Fenced Frames                        |
+| [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                  | Protected Audience                                       |
+| [Ads Composed of Multiple Pieces](demos/multi-piece-ad.md)                                                 | Protected Audience                                       |
+| [Bidding & Auction Services for Protected Audience](demos/bidding-and-auction.md)                          | Protected Audience, Bidding & Auction Services           |
+| [Event-level reports for single touch attribution](demos/single-touch-event-level-report.md)               | Attribution Reporting                                    |
+| [Reach Measurement](demos/reach-measurement-with-shared-storage.md)                                        | Shared Storage, Private Aggregation                      |
+| [Multi-touch conversion Attribution](demos/multi-touch-conversion-attribution.md)                          | Private Aggregation, Shared Storage, Aggregation Service |
+| [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Protected Audience, Fenced Frames, Attribution Reporting |
 
-|         **Category**          |                                                           **Use Case**                                                            |                 **Privacy Sandbox APIs**                 |              **Relevant for**              |
-| :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------: |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience multi-seller auction](services/home/docs/demos/instream-video-ad-multi-seller.md) |                  Protected Audience API                  | Publisher, Ad Server, SSP, Advertiser, DSP |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience single-seller auction](services/home/docs/demos/vast-video-protected-audience.md) |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
-| Show Relevant Content and Ads |                         [Retargeting / Remarketing](services/home/docs/demos/retargeting-remarketing.md)                          |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
-|      Measure Digital Ads      |              [Single-touch conversion Attribution](services/home/docs/demos/single-touch-conversion-attribution.md)               |      Attribution Reporting API, Aggregation Service      |      Publisher, SSP, Advertiser, DSP       |
-|      Measure Digital Ads      |               [Multi-touch conversion Attribution](services/home/docs/demos/multi-touch-conversion-attribution.md)                | Private Aggregation, Shared Storage, Aggregation Service |         Publisher, Advertiser, DSP         |
+
 
 These use cases are based on a set of demo apps and services that we have developed to simulate the actors in the ad tech ecosystem :
 
