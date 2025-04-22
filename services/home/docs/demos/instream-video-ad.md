@@ -21,10 +21,10 @@ this use case.
 
 ### Description
 
-This demo expands on the demo for the [sequential setup of Protected Audience with contextual auction](sequential-auction-setup) to showcase how video
-ads may be served with Protected Audience. The demo uses the industry-standard Video Ads Serving Template (VAST) XMLs to deliver video ads in iframes.
-Additionally, note that the technique shown in this demo does not work with [Fenced Frames](https://privacysandbox.google.com/relevance/fenced-frame),
-but Protected Audience allows iframe usage
+This demo expands on the demo for the [sequential setup of Protected Audience with contextual auction](sequential-auction-setup.md) to showcase how
+video ads may be served with Protected Audience. The demo uses the industry-standard Video Ads Serving Template (VAST) XMLs to deliver video ads in
+iframes. Additionally, note that the technique shown in this demo does not work with
+[Fenced Frames](https://privacysandbox.google.com/relevance/fenced-frame), but Protected Audience allows iframe usage
 [until at least 2026](https://privacysandbox.google.com/relevance/protected-audience-api/feature-status#fenced_frames).
 
 ### Privacy Sandbox APIs and related documentation
@@ -71,7 +71,7 @@ video ad bids generated are within the Protected Audience auction.
 
 ### System Design
 
-Identical to the [sequential auction setup demo](sequential-auction-setup), the user visiting an advertiser page is added to interest groups by
+Identical to the [sequential auction setup demo](sequential-auction-setup.md), the user visiting an advertiser page is added to interest groups by
 multiple DSPs. The auction orchestration on the news publisher page is also similar at a high-level. The incremental difference is in the post-auction
 rendering phase where the output of the Protected Audience auction needs to be consumed by a video player.
 
@@ -90,8 +90,8 @@ rendering phase where the output of the Protected Audience auction needs to be c
   post-messages it to the ad server library code on the publisher's page.
 - Finally, this ad server library passes the VAST XML to the video player
 
-Since the overall auction orchestration for this use-case identical to that in the [sequential auction setup demo](sequential-auction-setup), we will
-skip ahead to the ad rendering phase.
+Since the overall auction orchestration for this use-case identical to that in the [sequential auction setup demo](sequential-auction-setup.md), we
+will skip ahead to the ad rendering phase.
 
 ```mermaid
 sequenceDiagram
@@ -148,7 +148,7 @@ Browsr ->> Browser: Ad server library passes this finalized VAST to the video pl
 ### Implementation Details
 
 The user is added to interest groups by ad buyers or DSPs using the same high-level flow as described in the
-[basic remarketing / retargeting use-case demo](retargeting-remarketing). These interest groups contain both display and video ads, with the DSPs
+[basic remarketing / retargeting use-case demo](retargeting-remarketing.md). These interest groups contain both display and video ads, with the DSPs
 filtering for the ad type corresponding to that signalled by ad sellers or SSPs via `auctionSignals`.
 
 #### How is the video ad structured as an interest group ad?
@@ -213,7 +213,7 @@ const interestGroup = {
 
 SSPs indicate the supported ad type in `auctionConfig.auctionSignals` which is made available to the DSP's `generateBid()` method at auction time.
 Using this information, DSPs can filter for the appropriate ad types in their
-[bidding logic :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/dsp/default/auction-bidding-logic.js#L261-264);
+[bidding logic :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/dsp/usecase/default/auction-bidding-logic.js#L261-264);
 
 #### What does the interest group ad creative do?
 
@@ -232,11 +232,11 @@ includes a single
 wrapping the VAST XML.
 
 This script starts by
-[parsing :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/video-ad-frame.js#L38-48)
+[parsing :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/video-ads.js#L38)
 the SSP's VAST wrapping endpoint including in the URL. Then the scripts proceeds to
-[fetch the finalized VAST XML from this SSP endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/public/js/video-ad-frame.js#L51-69)
+[fetch the finalized VAST XML from this SSP endpoint :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/video-ads.js#L51)
 before
-[post-messaging the XML content to the top frame :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/video-ad-frame.js#L107-115).
+[post-messaging the XML content to the top frame :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/video-ads.js#L108).
 
 ```js title="Winning PA ad iframe assembles and post-messages the finalized VAST to the top frame"
 // ...

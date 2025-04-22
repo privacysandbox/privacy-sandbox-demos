@@ -81,8 +81,8 @@ class AdAuction {
       await response.json();
 
     return {
-      protectedAudienceAuctionResult: this.#decodeResponse(
-        protectedAudienceAuctionCiphertext,
+      protectedAudienceAuctionResult: new Uint8Array(
+        this.#decodeResponse(protectedAudienceAuctionCiphertext),
       ),
       contextualAuctionWinner,
     };
@@ -105,7 +105,10 @@ async function runComponentAuction() {
   const componentAuction = new AdAuction();
   const componentAuctionInfo = await componentAuction.getAuctionInfo();
 
-  console.log('[SSP-X] Component auction config ', componentAuctionInfo);
+  console.log(
+    '[SSP-X][B&A only] Component auction config ',
+    componentAuctionInfo,
+  );
 
   window.auctionInfoCollector.push(componentAuctionInfo);
 }

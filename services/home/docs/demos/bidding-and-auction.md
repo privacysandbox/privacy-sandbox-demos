@@ -45,19 +45,20 @@ through how to set up a deployment of this infrastructure on your local machine.
 
 ### Goals
 
-In this demo, we assume SSPs and DSPs would like to improve performance of their Protected Audience auctions. Bidding & Auction services allows
-Protected Audience bidding and scoring computation to take place on servers. This demo will provide a local environment where developers can explore
-how Bidding & Auction components work before committing to a full production cloud deployment.
+This demo aims to showcase how sellers and buyers can enhance the performance of their Protected Audience auctions using server-side Bidding & Auction
+services. By providing a local development environment, we enable developers to explore the functionality of these components before committing to a
+full production cloud deployment.
 
 ### Assumptions
 
-This demo assumes that the reader has knowledge of how the Protected Audience API works. This demo will not provide details on the cloud deployment of
-B&A at this time.
+This demo assumes that the reader has knowledge of how the
+[Protected Audience API](https://privacysandbox.google.com/private-advertising/protected-audience) works. This demo will not provide details on the
+cloud deployment of B&A at this time.
 
 ### Key Exclusions
 
 - Cloud deployment
-- Maximum of 2 B&A buyers
+- Maximum of 2 B&A buyers per seller
 - Bidding inference service
 
 ### System Design
@@ -84,33 +85,33 @@ components of the system work together to complete an auction.
 - The seller's real time bidding service then forwards the encrypted ad auction result back to the publisher page. Then the
   `navigator.runAdAuction()`function runs on the page and displays the winning ad.
 
-![Bidding Auction API Flow](https://github.com/privacysandbox/privacy-sandbox-demos/blob/73a017521449a526da715aabeaa02734faead7b3/services/home/docs/demos/img/bidding-auction-api-flow.png)
+![Bidding Auction API Flow](img/bidding-auction-api-flow.png)
 
 #### User Journey
 
-#TODO FIX ![Bidding Auction Flow](./img/bidding-auction-flow.png)
-
-```bash
+```mermaid
 sequenceDiagram
-    Browser->>+Advertiser: User visits a shop site and reviews products
-    Browser-->>Browser: DSP calls navigator.joinAdInterestGroup(...)
-    Browser-->>+Publisher: User visits a site
-    Browser-->>Browser: SSP calls navigator.getInterestGroupAdAuctionData()
-    Browser-->>SSP: browser sends ad auction data to SSP's real time bidding service
-    SSP-->>DSP: SSP requests contextual bid from DSPs
-    SSP-->>SSP: SSP sends a SelectAd request to the Seller Frontend Service
-    SSP-->>DSP: SSP sends GetBids requests to Buyer Frontend Service
-    DSP-->>DSP: DSP retrieves trustedBiddingSignals from Key-Value server
-    DSP-->>DSP: Buyer Frontend sends GenerateBidsRequest to Bidding Service
-    DSP-->>DSP: Bidding Service calls generateBid function
-    DSP-->>SSP: Buyer Frontend returns AdWithBid for each interest group
-    SSP-->>SSP: Seller Frontend sends ScoreAdsRequest to Auction Service
-    SSP-->>SSP: Auction Service calls scoreAd function
-    SSP-->>SSP: Ad auction result is forwarded back to SSP's real time bidding service
-    SSP-->>Browser: Ad auction result is returned to the browser
-    Browser-->>Publisher: Ad auction result is returned to the publisher page
-    Browser-->>Browser: navigator.runAdAuction(auctionConfig)
+
+    Browser->>+Advertiser: User visits a shop site and clicks on a product
+    DSP -->>DSP: DSP implements payload optimization
+    DSP-->>Browser: DSP calls navigator.joinAdInterestGroup(...)
+    Browser-->>+Publisher Page: User visits a publisher site
+    Publisher Page-->>Browser: SSP generates encrypted ad auction data with navigator.getInterestGroupAdAuctionData()
+    Publisher Page -->> Seller Ad Service: Seller JS sends ad auction data to their Seller Ad Service
+    Seller Ad Service-->>DSP: SSP requests contextual bid and intent to bid from DSPs
+    Seller Ad Service-->>Seller Frontend Service: SSP sends a SelectAd request to the Seller Frontend Service
+    Seller Frontend Service-->>Buyer Frontend Service: SSP's Seller Frontend Service sends GetBids requests to Buyer Frontend Service
+    Buyer Frontend Service-->>Buyer K/V Server: DSP retrieves trustedBiddingSignals from Key-Value server
+    Buyer Frontend Service-->>Buyer Bidding Service: Buyer Frontend sends GenerateBidsRequest to Bidding Service and calls generateBid for each interest group
+    Buyer Frontend Service-->>Seller Frontend Service: Buyer Frontend returns AdWithBid for each interest group
+    Seller Frontend Service-->>Seller Auction Service: Seller Frontend sends ScoreAdsRequest to Auction Service and calls scoreAd for each AdWithBid
+    Seller Auction Service-->>Seller Frontend Service: Ad auction result is generated with the auction winner
+    Seller Frontend Service -->> Seller Ad Service: Ad auction result is forwarded back to SSP's real time bidding service
+    Seller Ad Service-->>Publisher Page: Ad auction result is returned to the publisher page and added to the auction configuration
+    Publisher Page-->>Browser: Top level seller runs navigator.runAdAuction(auctionConfig) on-device
 ```
+
+[Full-sized diagram](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/home/docs/demos/img/bidding-and-auction-flow.png)
 
 </TabItem>
 
@@ -134,6 +135,13 @@ google-chrome --enable-privacy-sandbox-ads-apis --disable-features=EnforcePrivac
 2. Follow instructions listed in
    [Instructions for deploying and running the demos in your local environment with Docker](https://github.com/privacysandbox/privacy-sandbox-demos/blob/main/docs/deploy-to-linux-docker.md)
    to deploy Privacy Sandbox Demos locally.
+   - If you have run Privacy Sandbox Demos previously, it is recommended to delete the docker network with the below docker commands before running
+     `npm run start`.
+
+```bash
+docker-compose down
+docker network rm privacy-sandbox-demos_adnetwork
+```
 
 3. Clone the `bidding-auction-servers` [GitHub repository](https://github.com/privacysandbox/bidding-auction-servers).
 
@@ -176,7 +184,6 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.102 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-x.dev:8080/dsp/service/kv" \
 BIDDING_SERVER_ADDR=172.16.0.101:50057 \
-BIDDING_SIGNALS_FETCH_MODE="REQUIRED" \
 PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe
@@ -198,7 +205,6 @@ SKIP_TLS_VERIFICATION=true \
 DOCKER_RUN_ARGS_STRING="--ip=172.16.0.202 --network=privacy-sandbox-demos_adnetwork" \
 BUYER_KV_SERVER_ADDR="http://privacy-sandbox-demos-dsp-y.dev:8080/dsp/service/kv" \
 BIDDING_SERVER_ADDR=172.16.0.201:50057 \
-BIDDING_SIGNALS_FETCH_MODE="REQUIRED" \
 PS_VERBOSITY=10 \
 SKIP_TLS_VERIFICATION=true \
 ./tools/debug/start_bfe
@@ -271,44 +277,53 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 
 ### Steps
 
-1. Navigate to the Advertiser's shop site [privacy-sandbox-demos-shop.dev](https://privacy-sandbox-demos-shop.dev).
-2. Click on any item in the shop.
-   - The advertiser assumes the user is interested in this type of product. The advertiser uses a demand-side provider (DSP) to handle advertising
+1. Navigate to the Advertiser's shop site `privacy-sandbox-demos-shop.dev/items/1f45e?usecase=bidding-and-auction`.
+
+   - The advertiser assumes the user is interested in this type of product. The advertiser uses a demand-side platform (DSP) to handle advertising
      needs. The DSP has a tag on this page that will add the user to an interest group for this product category.
-3. Once on the product page, add the `?usecase=bidding-and-auction` query parameter to the query string to enable this demo.
-
    - **NOTE**: In a production deployment, this query parameter would **not** be required. This is for demo purposes only.
-   - Example: `https://privacy-sandbox-demos-shop.dev/items/1f45f?usecase=bidding-and-auction`
 
-4. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the user being added to an interest group.
-5. Navigate to the `Application` tab. Select `Interest Groups` under the `Storage` section.
+2. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the user being added to an interest group.
+3. Navigate to the `Application` tab. Select `Interest Groups` under the `Storage` section.
    - **NOTE**: If this tab has no events, refresh the page.
-6. Select the `privacy-sandbox-demos-shop.dev-bidding-and-auction` interest group. This shows a `joinAdInterestGroup` call for a DSP without
+4. Select one of the `privacy-sandbox-demos-shop.dev-bidding-and-auction` events. This shows a `joinAdInterestGroup` call for a DSP without
    [payload optimization](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/bidding-auction-services-payload-optimization.md).
-7. Select the `dsp-x-ig` interest group. This shows a `joinAdInterestGroup` call for a DSP with
+5. Select the `dsp-x-ig` event. This shows a `joinAdInterestGroup` call for a DSP with
    [payload optimization](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/bidding-auction-services-payload-optimization.md).
    - Within the `ads` field, note the `adRenderId` field. This is an optimization to retrieve the `renderURL` from a Key-Value server.
-   - Note the field `auctionServerRequestFlags: ["omit-ads","omit-user-bidding-signals"]`. This field notifies the browser to allow for ommission of
+   - Note the field `auctionServerRequestFlags: ["omit-ads","omit-user-bidding-signals"]`. This field notifies the browser to allow for omission of
      the `ads` and `userBiddingSignals` fields as these can cause larger payloads.
    - Note the field `trustedBiddingSignalsKeys`. This field will notify the Buyer Frontend Service to retrieve these real time bidding signals from
      their Key-Value server before generating a bid.
-8. Navigate to the news site [https://privacy-sandbox-demos-news.dev](https://privacy-sandbox-demos-news.dev/) with the Chrome Developers Tool window
-   open.
-9. Once on the news site, add the `bidding-and-auction` query parameter to the query string.
+6. Navigate to the news site with the query parameter to follow the bidding and auction flow.
+   [https://privacy-sandbox-demos-news.dev/bidding-and-auction](https://privacy-sandbox-demos-news.dev/bidding-and-auction) with the Chrome Developers
+   Tool window open.
    - **NOTE**: In a production deployment, this query parameter would **not** be required. This is for demo purposes only.
-   - Query string: `https://privacy-sandbox-demos-news.dev/bidding-and-auction`
-10. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the auction configurations from each
-    component auction, as well as the final multi-seller auction.
+7. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the auction configurations from each component
+   auction, as well as the final multi-seller auction.
 
-- Expanding the log for the `SSP-A` auction will show the auction config for an on-device auction.
-- Expanding the log for the `SSP-X` auction will show the auction config for a B&A only auction.
-- Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode auction. Within the mixed mode auction you will see two
-  component auctions, one being an on-device auction and the other being a B&A auction.
-- Expanding the log for the `TLS SSP` will show four component auctions.
-  - On-device only with `SSP-A`
-  - B&A only with `SSP-X`
-  - On-device component of mixed mode with `SSP-Y`
-  - B&A component of mixed mode with `SSP-Y`
+   - Expanding the log for the `SSP-A` auction will show the auction config for an on-device auction.
+   - Expanding the log for the `SSP-X` auction will show the auction config for a B&A only auction.
+   - Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode auction. Within the mixed mode auction you will see two
+     component auctions, one being an on-device auction and the other being a B&A auction.
+   - Expanding the log for the `TLS SSP` will show all four component auctions.
+     - On-device only with `SSP-A`
+     - B&A only with `SSP-X`
+     - On-device component of mixed mode with `SSP-Y`
+     - B&A component of mixed mode with `SSP-Y`
+
+8. Within the `SSP-Y` sub-component auction for B&A, there are a few differences in the specification. The following code block shows an example of
+   what is different.
+   - The `requestId` field is a unique identifier for the browser to ensure this is a valid ad auction.
+   - The `serverResponse` field is the ad auction response from the auction service.
+
+```json
+adAuctionHeaders: true
+requestId: "b9f96e9b-3fee-4a2a-87c1-1121d76eff0f"
+resolveToConfig: true
+seller: "https://privacy-sandbox-demos-ssp-y.dev"
+serverResponse: Uint8Array(560) [110, 76, 79...]
+```
 
 ### Implementation details
 
@@ -487,8 +502,9 @@ export const getInterestGroupBiddingAndAuction = (
 
 #### Seller Details
 
-1. When the user visits the news website using the `/bidding-and-auction` query parameter, the router will render the bidding and auction EJS file and
-   inject the following variables. This logic is handled in the index.ts file.
+1. When the user visits the news website using the `/bidding-and-auction` query parameter, the
+   [news router](https://github.com/privacysandbox/privacy-sandbox-demos/blob/745c641c8d40170d53e5cda5e834cdbe7f3ea033/services/news/src/index.ts#L54)
+   will render the bidding and auction EJS file and inject the following variables.
 
 ```javascript
 app.get('/bidding-and-auction', async (req: Request, res: Response) => {
@@ -502,13 +518,15 @@ app.get('/bidding-and-auction', async (req: Request, res: Response) => {
 });
 ```
 
-2. When the EJS file renders, it will inject `BIDDING_AND_AUCTION_SSP_TAG_URL` and this URL will be executed as a script.
+2. When the
+   [embedded Javascript file](https://github.com/privacysandbox/privacy-sandbox-demos/blob/745c641c8d40170d53e5cda5e834cdbe7f3ea033/services/news/src/views/bidding-and-auction.ejs#L31)
+   renders, it will inject `BIDDING_AND_AUCTION_SSP_TAG_URL` and this URL will be executed as a script.
 
 ```html
 <ins class="ads"><script class="ssp_tag" src="<%= BIDDING_AND_AUCTION_SSP_TAG_URL %>"></script></ins>
 ```
 
-3. The script that's executed includes logic to create an iframe. This will send a request to this path
+3. The script that's executed includes logic to create an iframe and execute a script. This will send a request to this path
    `/ssp/usecase/bidding-and-auction/ad-tag.html`.
 
 ```javascript
@@ -530,37 +548,74 @@ app.get('/bidding-and-auction', async (req: Request, res: Response) => {
 })();
 ```
 
-4. Before rendering, this request is caught by the router. This handler will render the`ad-tag` EJS file and insert the following variables. These
-   variables are the tags that will be used to initiate the execution of component auctions for SSP-A, SSP-X, and SSP-Y.
-   - **NOTE**: Each of these tags will execute a component auction. This demo will follow the flow of `SSP-Y` to show how mixed mode is implemented.
+4. Before rendering, this request is caught by the
+   [seller router’s html handler](https://github.com/privacysandbox/privacy-sandbox-demos/blob/d358ea882c2aa8b9d6f56390321f024dae9b8261/services/ad-tech/src/routes/ssp/seller-router.ts#L47).
+   This handler will render the`ad-tag` embedded Javascript file and insert the following variables from the
+   [common-utils.ts file](https://github.com/privacysandbox/privacy-sandbox-demos/blob/df01c883ba73f54609f3c75889c7320d36a917b7/services/ad-tech/src/lib/common-utils.ts#L32C1-L43C3).
+   These variables are the tags that will be used to initiate the execution of component auctions for SSP-A, SSP-X, and SSP-Y.
+   - **NOTE**: Each of these tags will execute a component auction. This implementation will follow the flow of `SSP-Y` to show how mixed mode is
+     implemented.
 
-```javascript
+```typescript
+const SSP_A_ORIGIN = new URL(`https://${SSP_A_HOST}:${EXTERNAL_PORT}`).origin;
+const SSP_X_ORIGIN = new URL(`https://${SSP_X_HOST}:${EXTERNAL_PORT}`).origin;
+const SSP_Y_ORIGIN = new URL(`https://${SSP_Y_HOST}:${EXTERNAL_PORT}`).origin;
+const BIDDING_AND_AUCTION_SSP_A_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-a/construct-component-auction.js',
+  SSP_A_ORIGIN,
+);
+const BIDDING_AND_AUCTION_SSP_X_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-x/construct-component-auction.js',
+  SSP_X_ORIGIN,
+);
+const BIDDING_AND_AUCTION_SSP_Y_TAG_URL = new URL(
+  '/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.js',
+  SSP_Y_ORIGIN,
+);
 
-/** Full route: /ssp/usecase/bidding-and-auction/ad-tag.html */
-tlsRouter.get('/ad-tag.html', async (req, res) => {
-  res.render('ssp/usecase/bidding-and-auction/ad-tag', {
-    BIDDING_AND_AUCTION_SSP_A_TAG_URL: new URL(
-      '/ssp/usecase/bidding-and-auction/ssp-a/construct-component-auction.js',
-      SSP_A_ORIGIN,
-    ),
-    BIDDING_AND_AUCTION_SSP_X_TAG_URL: new URL(
-      '/ssp/usecase/bidding-and-auction/ssp-x/construct-component-auction.js',
-      SSP_X_ORIGIN,
-    ),
-    BIDDING_AND_AUCTION_SSP_Y_TAG_URL: new URL(
-      '/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.js',
-      SSP_Y_ORIGIN,
-    ),
-  });
-});
+/** Returns EJS template variables for EJS files. */
+export const getEjsTemplateVariables = (
+  titleMessage: string = '',
+  additionalTemplateVariables: {[key: string]: string} = {},
+) => {
+  const hostDetails = {
+    BIDDING_AND_AUCTION_SSP_A_TAG_URL,
+    BIDDING_AND_AUCTION_SSP_X_TAG_URL,
+    BIDDING_AND_AUCTION_SSP_Y_TAG_URL,
+    HOSTNAME,
+    EXTERNAL_PORT,
+    PORT,
+    SHOP_HOST,
+    TITLE: `${HOSTNAME} - ${titleMessage}`,
+    ...additionalTemplateVariables,
+  };
+  console.log('Built template context: ', hostDetails);
+  return hostDetails;
+};
+
 ```
 
-5. Once this variable is injected and the EJS file renders, it will execute the URL as a script. It will be caught by the router for `SSP-Y` and will
-   generate the
-   [construct-component-auction.js](https://privacy-sandbox-demos-dsp.dev/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.ts)
-   file.
+5. The
+   [ad-tag.ejs file](https://github.com/privacysandbox/privacy-sandbox-demos/blob/df01c883ba73f54609f3c75889c7320d36a917b7/services/ad-tech/src/views/ssp/usecase/bidding-and-auction/ad-tag.ejs#L28-L31)
+   will be rendered, insert the variables, and execute each URL as a script or fetch call. Each component auction will run and be collected in a
+   window function to be passed to a top seller that runs on-page.
 
-```javascript
+```html
+  <script>
+    window.auctionInfoCollector = []
+  </script>
+  <script type="module" src="/js/ssp/usecase/bidding-and-auction/ssp/run-ad-auction.js"></script>
+  <script type="module" defer src="<%= BIDDING_AND_AUCTION_SSP_A_TAG_URL %>"></script>
+  <script type="module" defer src="<%= BIDDING_AND_AUCTION_SSP_X_TAG_URL %>"></script>
+  <script type="module" defer src="<%= BIDDING_AND_AUCTION_SSP_Y_TAG_URL %>"></script>
+
+```
+
+6. This fetch call will be caught and handled by the
+   [bidding-and-auction-router.ts](https://github.com/privacysandbox/privacy-sandbox-demos/blob/df01c883ba73f54609f3c75889c7320d36a917b7/services/ad-tech/src/routes/ssp/usecase/bidding-and-auction/bidding-and-auction-router.ts#L223-L236)
+   and will compile the file to construct the component auction.
+
+```typescript
 sspYRouter.get('/construct-component-auction.js', async (req, res) => {
   let filePath;
   filePath = path.join(
@@ -569,7 +624,7 @@ sspYRouter.get('/construct-component-auction.js', async (req, res) => {
   );
   const file = await readFile(filePath, {encoding: 'utf8'});
   const compiledFile = await ejs.compile(file);
-  const fileContent = compiledFile({SSP_Y_ORIGIN});
+  const fileContent = compiledFile({SSP_Y_ORIGIN, DSP_X_ORIGIN, DSP_Y_ORIGIN});
 
   res.set('content-type', 'text/javascript');
 
@@ -577,26 +632,12 @@ sspYRouter.get('/construct-component-auction.js', async (req, res) => {
 });
 ```
 
-6. The entrypoint to this file is the `runComponentAuction` function call. This function will first create a new `AdAuction` object. Then the function
-   will call the method to retreive the auction info for SSP-Y.
+7. The
+   [construct-component-auction.ts](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/ssp/usecase/bidding-and-auction/ssp-y/construct-component-auction.ts#L35)
+   file will first build the auction config.
 
 ```typescript
-async function runComponentAuction() {
-  const componentAuction = new AdAuction();
-  const componentAuctionInfo = await componentAuction.getAuctionInfo();
-
-  console.log('[SSP-Y] Component auction config ', componentAuctionInfo);
-
-  window.auctionInfoCollector.push(componentAuctionInfo);
-}
-```
-
-7. Within the `componentAuction.getAuctionInfo()` call, there are many requests to retrieve information. First, the ad auction config is defined as a
-   static variable. This includes the `perBuyerConfig`, **this map must match the one provided to the Seller Frontend Service in B&A.** If it does
-   not, it will not be able to recognize the seller.
-
-```typescript
- const adAuctionDataConfig = {
+   const adAuctionDataConfig = {
       seller: SSP_Y_ORIGIN,
       requestSize: 51200,
       perBuyerConfig: {
@@ -604,6 +645,184 @@ async function runComponentAuction() {
         [DSP_Y_ORIGIN]: {targetSize: 8192},
       },
     };
+```
+
+8. Then, it will use the auction data config to make a call to the browser to generate an encrypted ad auction blob. This blob is generated using the
+   `navigator.getInterestGroupAdAuctionData()` call with the auction config as input. This function returns a requestId and a request. `requestId`
+   must be retained to provide back to the browser after the auction result is generated. This is a check by the browser to ensure the client-server
+   interaction was not tampered with. `request` is the encrypted ad auction blob that will be sent to the Seller Front End service.
+
+```typescript
+   const {requestId, request} =
+      await navigator.getInterestGroupAdAuctionData(adAuctionDataConfig);
+```
+
+9. The `request` object, ad auction blob, is then passed to the function that will run the component auction and return the auction result, contextual
+   auction winner, and on-device auction config.
+
+```typescript
+   const {
+      protectedAudienceAuctionResult,
+      contextualAuctionWinner,
+      onDeviceAuctionConfig,
+    }: ComponentAuctionResult = await this.#runComponentAdAuction(request);
+```
+
+10. The component auction will be run by building a request to create a _unified-auction_. First, the auction request is encoded with base64. Then,
+    this auction request is sent to the unified auction endpoint located in
+    [ad-service.ts](https://github.com/privacysandbox/privacy-sandbox-demos/blob/df01c883ba73f54609f3c75889c7320d36a917b7/services/ad-tech/src/routes/ssp/usecase/bidding-and-auction/ad-service.ts#L219).
+
+```typescript
+async #runComponentAdAuction(request: number[]) {
+    const auctionRequest = btoa(String.fromCharCode.apply(null, request));
+    const unifiedAuctionUrl = new URL(
+      '/ssp/usecase/bidding-and-auction/service/ad/unified-auction',
+      SSP_Y_ORIGIN,
+    );
+    const {buyers} = await this.#fetchContextualAuctionBuyers();
+
+    const response = await fetch(unifiedAuctionUrl, {
+      method: 'POST',
+      adAuctionHeaders: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contextual: {buyers},
+        protectedAudience: {auctionRequest},
+      }),
+    });
+```
+
+11. This request is handled by the
+    [unified auction route](https://github.com/privacysandbox/privacy-sandbox-demos/blob/df01c883ba73f54609f3c75889c7320d36a917b7/services/ad-tech/src/routes/ssp/usecase/bidding-and-auction/ad-service.ts#L219).
+    First, metadata from the client must be collected to ensure this request is a real Chrome request. Then, the contextual auction will run to
+    determine _perBuyerSignals_ to pass to the Protected Audience B&A auction. Finally, the Protected Audience auction begins by passing the request
+    body, contextual result, client metadata and host.
+
+```typescript
+ const {contextual, protectedAudience} = req.body;
+  const host = req.headers.host;
+
+  const metadata = new grpc.Metadata();
+  metadata.add('X-Accept-Language', req.header('Accept-Language') || '');
+  metadata.add('X-User-Agent', req.header('User-Agent') || '');
+  metadata.add('X-BnA-Client-IP', req.ip || '');
+
+  const contextualAuctionResult = await runContextualAuction(contextual);
+  runProtectedAudienceAuction(
+    protectedAudience,
+    contextualAuctionResult,
+    metadata,
+    host,
+    res,
+  );
+```
+
+12. The
+    [runProtectedAudienceAuction](https://github.com/privacysandbox/privacy-sandbox-demos/blob/e9b604243b99c4629b78a578844d054770f9d660/services/ad-tech/src/routes/ssp/usecase/bidding-and-auction/ad-service.ts#L109)
+    function will build the `selectAd` request to be sent to the Seller Front End. The `selectAd` request will kick off the Protected Audience flow on
+    B&A. The perBuyerSignals will be sourced from the contextual auction. **NOTE**: For B&A to work properly, the buyer list defined in the selectAd
+    request must match the buyer list provided to the seller front end service at startup.
+
+```typescript
+ const selectAdRequest = {
+    auction_config: {
+      top_level_seller: SSP_ORIGIN,
+      seller: SELLER_HOST,
+      seller_signals: '{"testKey":"someValue"}',
+      auction_signals: `{"bidFloor": 0}`,
+      buyer_list: [DSP_X_ORIGIN, DSP_Y_ORIGIN],
+      per_buyer_config: {
+        [DSP_X_ORIGIN]: {
+          buyer_signals: JSON.stringify(
+            perBuyerConfigs[DSP_X_ORIGIN].buyer_signals,
+          ),
+        },
+        [DSP_Y_ORIGIN]: {
+          buyer_signals: JSON.stringify(
+            perBuyerConfigs[DSP_Y_ORIGIN].buyer_signals,
+          ),
+        },
+      },
+    },
+    client_type: 'CLIENT_TYPE_BROWSER',
+    protected_auction_ciphertext: decodeRequest(auctionRequest),
+  };
+```
+
+13. The selectAd request will then be sent to the seller front end service through a
+    [gRPC client](https://github.com/privacysandbox/privacy-sandbox-demos/blob/e9b604243b99c4629b78a578844d054770f9d660/services/ad-tech/src/routes/ssp/usecase/bidding-and-auction/server/ssp-x-sfe-client.ts#L38-L41).
+    The selectAd request can also be sent with a REST API call. This
+    [proto file](https://github.com/privacysandbox/privacy-sandbox-demos/blob/e9b604243b99c4629b78a578844d054770f9d660/services/ad-tech/src/routes/ssp/usecase/bidding-and-auction/server/proto/sfe-client.proto#L3)
+    defines the interface for interacting with the seller frontend service. The `ciphertextShaHash` uses the response from the seller front end and
+    generates a SHA-256 hash with base64 encoding. This is to ensure payload security between the seller ad service and the browser. The ciphertext is
+    then set as the value for the `Ad-Auction-Result` header to be passed back to the browser. The `onDeviceAuctionConfig` field is set to define the
+    auction configuration for the on-device component of mixed mode. This will be passed to the browser along with the bidding and auction result, but
+    it will appear as a separate component auction in the browser.
+
+```typescript
+   mixedModeClientSFE.selectAd(
+      selectAdRequest,
+      metadata,
+      (error: any, response: any) => {
+        if (!response) {
+          console.log(`No response received from SFE.  Error=${error}`);
+          return;
+        }
+        const ciphertextShaHash = createHash('sha256')
+          .update(response.auction_result_ciphertext, 'base64')
+          .digest('base64url');
+
+        res.set('Ad-Auction-Result', ciphertextShaHash);
+        res.json({
+          contextualAuctionWinner,
+          protectedAudienceAuctionCiphertext: encodeResponse(
+            response.auction_result_ciphertext,
+          ),
+          onDeviceAuctionConfig: {
+            trustedScoringSignalsURL: SSP_Y_KV_URL,
+            decisionLogicURL: SSP_Y_DECISION_LOGIC_URL,
+            buyers: [DSP_A_ORIGIN, DSP_B_ORIGIN],
+            perBuyerSignals: {
+              [DSP_A_ORIGIN]: perBuyerConfigs[DSP_A_ORIGIN],
+              [DSP_B_ORIGIN]: perBuyerConfigs[DSP_B_ORIGIN],
+            },
+          },
+        });
+      },
+    );
+```
+
+14. The component auction for SSP-Y is now complete. The auction configs are passed back to the
+    [ad-tag.ejs](https://github.com/privacysandbox/privacy-sandbox-demos/blob/e9b604243b99c4629b78a578844d054770f9d660/services/ad-tech/src/views/ssp/usecase/bidding-and-auction/ad-tag.ejs#L26)
+    file’s `window.auctionInfoCollector` function. This will collect all auction configs to be passed to the top level seller.
+
+15. The top level auction will run the `runAdAuction` call on-device with the
+    [run-ad-auction.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/e9b604243b99c4629b78a578844d054770f9d660/services/ad-tech/src/public/js/ssp/usecase/bidding-and-auction/ssp/run-ad-auction.js#L36-L55)
+    file. This is a device-orchestrated bidding & auction services auction. Once this runs, the ad will be rendered with the winner of the auction.
+
+```typescript
+ async run(componentAuctionInfo) {
+    this.auctionConfig.componentAuctions =
+      this.#getComponentAuctionConfigs(componentAuctionInfo);
+    console.log(
+      '[TLS SSP] Top Protected Audience auction config ',
+      this.auctionConfig,
+    );
+    const adAuctionResult = await navigator.runAdAuction(this.auctionConfig);
+    console.log('[TLS SSP] Auction result generated, runAdAuction complete.');
+
+    if (adAuctionResult) {
+      this.#renderProtectedAudienceAd(adAuctionResult);
+    } else {
+      const contextualAuctionWinner =
+        this.#findContextualAuctionWinner(componentAuctionInfo);
+      console.log({contextualAuctionWinner});
+
+      this.#renderContextualAd(contextualAuctionWinner);
+    }
+  }
 ```
 
 </TabItem>
