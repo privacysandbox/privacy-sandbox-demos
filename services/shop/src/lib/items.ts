@@ -30,6 +30,7 @@ const items: Item[] = [
 ];
 
 export const CATEGORIES = ['sale', 'luxury', 'sports'];
+export const SHIPPING_FEE = 40;
 
 export type Order = {
   item: Item;
@@ -45,27 +46,19 @@ export type Item = {
   name: string;
 };
 
-export async function getItems(): Promise<Item[]> {
+export const getItems = (): Item[] => {
   return items;
-}
+};
 
-export async function getItem(id: string): Promise<Item> {
+export const getItem = (id: string): Item => {
   return items.find((item) => {
     return item.id === id;
   }) as Item;
-}
+};
 
-export function displayCategory(id: number): string {
+export const displayCategory = (id: number): string => {
   return CATEGORIES.at(id) || 'N/A';
-}
-
-export function toSize(num: number): string {
-  return `${num / 10 + 20}`;
-}
-
-export function fromSize(size: string): number {
-  return (Number(size) - 20) * 10;
-}
+};
 
 export const addOrder = (order: Order, state: Order[]) => {
   const index = state.findIndex(({item, size}) => {
@@ -95,4 +88,26 @@ export const updateOrder = (order: Order, state: Order[]) => {
     }
     return [...acc, o];
   }, []);
+};
+
+export const getCartSubtotal = (cart: Order[]) => {
+  return cart.reduce((sum, {item, quantity}) => {
+    return sum + item.price * quantity;
+  }, 0);
+};
+
+export const getCartTotal = (cart: Order[]) => {
+  return getCartSubtotal(cart) + SHIPPING_FEE;
+};
+
+export const constructOrder = (
+  itemId: string,
+  size: string,
+  quantity: number,
+): Order => {
+  return {
+    item: getItem(itemId),
+    size,
+    quantity,
+  };
 };

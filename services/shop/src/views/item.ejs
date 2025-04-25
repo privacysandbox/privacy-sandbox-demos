@@ -1,113 +1,136 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title><%= title %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="/css/global.css" />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👟</text></svg>"
-    />
-  </head>
-  <body>
-    <header class="flex flex-col">
-      <nav class="flex justify-between lg:py-6 py-2 border-b-2">
-        <h1 class="text-slate-800 text-4xl font-bold"><a href="/">Shopping DEMO</a></h1>
-        <a class="text-4xl px-2" href="/cart">🛒</a>
-      </nav>
-    </header>
-    <div class="flex flex-col gap-6">
-      <main class="grid lg:grid-cols-2">
-        <section class="">
-          <img alt="<%= item.name %>" fetchpriority="high" width="500" height="500" src="/image/svg/emoji_u<%= item.id %>.svg" />
-        </section>
-        <section class="">
-          <h2 class="text-2xl font-bold text-slate-800"><%= item.name %></h2>
-          <div class="flex gap-4 text-slate-500 border-b py-4">
-            <span>$<%= item.price %>.00</span><span>/</span><span><%= displayCategory(item.category) %></span>
-          </div>
-          <form method="post" action="/cart" class="flex flex-col gap-4">
-            <section class="flex border-b py-4">
-              <input type="hidden" value="<%= item.id %>" name="id" /><label for="size" class="basis-1/6 text-slate-500">Size</label
-              ><select id="size" name="size" class="basis-5/6 text-slate-800">
-                <option value="22.0">22.0cm</option>
-                <option value="22.5">22.5cm</option>
-                <option value="23.0">23.0cm</option>
-                <option value="23.5">23.5cm</option>
-                <option value="24.0">24.0cm</option>
-                <option value="24.5">24.5cm</option>
-                <option value="25.0" selected="">25.0cm</option>
-                <option value="25.5">25.5cm</option>
-                <option value="26.0">26.0cm</option>
-                <option value="26.5">26.5cm</option>
-                <option value="27.0">27.0cm</option>
-                <option value="27.5">27.5cm</option>
-                <option value="28.0">28.0cm</option>
-                <option value="28.5">28.5cm</option>
-              </select>
-            </section>
-            <section class="flex border-b py-4">
-              <label for="quantity" class="basis-1/6 text-slate-500">Quantity</label
-              ><select id="quantity" name="quantity" class="basis-5/6 text-slate-800">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </section>
-            <section>
-              <h3 class="font-bold">Description</h3>
-              <p class="pt-1 text-sm text-slate-800">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <p class="pt-1 text-sm text-slate-800">
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-              </p>
-              <p class="pt-1 text-sm text-slate-800">
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              </p>
-              <p class="pt-1 text-sm text-slate-800">
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </p>
-            </section>
-            <section class="flex justify-center">
-              <button onclick="addToCart()" type="submit" class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white">ADD TO CART</button>
-            </section>
-          </form>
-        </section>
-      </main>
-      <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
-    </div>
-    <script>
-      function addToCart() {
-        const attributionReporting = {
+
+<head>
+  <meta charset="utf-8" />
+  <title>
+    <%= title %>
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👟</text></svg>" />
+</head>
+
+<body>
+  <header class="flex flex-col">
+    <nav class="flex justify-between lg:py-6 py-2 border-b-2">
+      <h1 class="text-slate-800 text-4xl font-bold">
+        <a href="/">Shopping DEMO</a>
+      </h1>
+      <a class="text-4xl px-2" href="/cart">🛒</a>
+    </nav>
+  </header>
+  <div class="flex flex-col gap-6">
+    <main class="grid lg:grid-cols-2">
+      <section class="">
+        <img alt="<%= item.name %>" fetchpriority="high" width="500" height="500"
+          src="/image/svg/emoji_u<%= item.id %>.svg" />
+      </section>
+      <section class="">
+        <h2 class="text-2xl font-bold text-slate-800">
+          <%= item.name %>
+        </h2>
+        <div class="flex gap-4 text-slate-500 border-b py-4">
+          <span>$<%= item.price %>.00</span>
+          <span>/</span>
+          <span>
+            <%= displayCategory(item.category) %>
+          </span>
+        </div>
+        <form method="post" action="/cart" class="flex flex-col gap-4">
+          <section class="flex border-b py-4">
+            <input type="hidden" value="<%= item.id %>" name="id" />
+            <label for="size" class="basis-1/6 text-slate-500">Size</label>
+            <select id="size" name="size" class="basis-5/6 text-slate-800">
+              <option value="22.0">22.0cm</option>
+              <option value="22.5">22.5cm</option>
+              <option value="23.0">23.0cm</option>
+              <option value="23.5">23.5cm</option>
+              <option value="24.0">24.0cm</option>
+              <option value="24.5">24.5cm</option>
+              <option value="25.0" selected="">25.0cm</option>
+              <option value="25.5">25.5cm</option>
+              <option value="26.0">26.0cm</option>
+              <option value="26.5">26.5cm</option>
+              <option value="27.0">27.0cm</option>
+              <option value="27.5">27.5cm</option>
+              <option value="28.0">28.0cm</option>
+              <option value="28.5">28.5cm</option>
+            </select>
+          </section>
+          <section class="flex border-b py-4">
+            <label for="quantity" class="basis-1/6 text-slate-500">Quantity</label>
+            <select id="quantity" name="quantity" class="basis-5/6 text-slate-800">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </section>
+          <section>
+            <h3 class="font-bold">Description</h3>
+            <p class="pt-1 text-sm text-slate-800">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua.
+            </p>
+            <p class="pt-1 text-sm text-slate-800">
+              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+              consequat.
+            </p>
+            <p class="pt-1 text-sm text-slate-800">
+              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            </p>
+            <p class="pt-1 text-sm text-slate-800">
+              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+              laborum.
+            </p>
+          </section>
+          <section class="flex justify-center">
+            <button type="submit"
+              class="w-60 border border-slate-600 text-slate-600 hover:bg-slate-400 hover:text-white"
+              onclick="addToCart({size: size.value, quantity: quantity.value})">ADD TO CART</button>
+          </section>
+        </form>
+      </section>
+    </main>
+    <footer class="border-t-2 py-4"><a class="underline before:content-['<<']" href="/">continue shopping</a></footer>
+  </div>
+  <script>
+    function addToCart({ size, quantity }) {
+      const registerSourceUrl = new URL('<%- getEventTriggerUrl(item.id, "add-to-cart") %>')
+      registerSourceUrl.searchParams.append('size', size)
+      registerSourceUrl.searchParams.append('quantity', quantity)
+      const itemPrice = registerSourceUrl.searchParams.get('price')
+      registerSourceUrl.searchParams.append('gross', itemPrice * quantity)
+      window.fetch(registerSourceUrl, {
+        mode: "no-cors",
+        keepalive: true,
+        attributionReporting: {
           eventSourceEligible: false,
           triggerEligible: true,
-        };
-        const url = '<%= getEventTriggerUrl("add-to-cart") %>'
-        window.fetch(url, {
-          mode: "no-cors",  keepalive: true, attributionReporting
-        });
-      }
-      function buildDspScriptTag(tagUrl) {
-        const scriptEl = document.createElement('script')
-        scriptEl.className = 'dsp_tag'
-        scriptEl.src = tagUrl
-        scriptEl.dataset.advertiser = '<%= SHOP_HOST %>'
-        scriptEl.dataset.itemId = '<%= item.id %>'
-        return scriptEl
-      }
-      switch ('<%= usecase %>'){
-        case 'ba':
-          document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
-        default: 
-          document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
-          document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
-      }
-    </script>
-  </body>
+        },
+      })
+    }
+    function buildDspScriptTag(tagUrl) {
+      const scriptEl = document.createElement('script')
+      scriptEl.className = 'dsp_tag'
+      scriptEl.src = tagUrl
+      scriptEl.dataset.advertiser = '<%= SHOP_HOST %>'
+      scriptEl.dataset.itemId = '<%= item.id %>'
+      return scriptEl
+    }
+    switch ('<%= usecase %>') {
+      case 'bidding-and-auction':
+        document.body.appendChild(buildDspScriptTag('<%= DSP_X_TAG_URL %>'));
+        document.body.appendChild(buildDspScriptTag('<%= DSP_Y_TAG_URL %>'));
+      default:
+        document.body.appendChild(buildDspScriptTag('<%= DSP_A_TAG_URL %>'));
+        document.body.appendChild(buildDspScriptTag('<%= DSP_B_TAG_URL %>'));
+        document.body.appendChild(buildDspScriptTag('<%= DSP_TAG_URL %>'));
+    }
+  </script>
+</body>
+
 </html>

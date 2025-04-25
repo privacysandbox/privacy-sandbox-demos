@@ -1,11 +1,11 @@
 # Privacy Sandbox Demos
 
-A use case demo library for the [Privacy Sandbox APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) on the web.
+A use case demo library for the [Privacy Sandbox APIs](https://privacysandbox.google.com) on the web.
 
 ## Motivation
 
-The Privacy Sandbox initiative offers [20+ APIs](https://developer.chrome.com/en/docs/privacy-sandbox/) to protect people’s privacy online while
-giving companies and developers tools to build thriving digital businesses.
+The Privacy Sandbox initiative offers [20+ APIs](https://privacysandbox.google.com) to protect people’s privacy online while giving companies and
+developers tools to build thriving digital businesses.
 
 Web ecosystem developers expect new approaches to typical use cases supported today by third-party cookies. These use cases often require
 incorporating a combination of new Privacy Sandbox APIs into their products, which requires advanced planning and a clear understanding how these APIs
@@ -39,13 +39,14 @@ and experimenting.
 
 The current release supports the following use cases:
 
-|         **Category**          |                                                           **Use Case**                                                            |                 **Privacy Sandbox APIs**                 |              **Relevant for**              |
-| :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------: |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience multi-seller auction](services/home/docs/demos/instream-video-ad-multi-seller.md) |                  Protected Audience API                  | Publisher, Ad Server, SSP, Advertiser, DSP |
-|    Show Relevant Video Ads    | [Instream VAST video ad in a Protected Audience single-seller auction](services/home/docs/demos/vast-video-protected-audience.md) |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
-| Show Relevant Content and Ads |                         [Retargeting / Remarketing](services/home/docs/demos/retargeting-remarketing.md)                          |                  Protected Audience API                  |      Publisher, SSP, Advertiser, DSP       |
-|      Measure Digital Ads      |              [Single-touch conversion Attribution](services/home/docs/demos/single-touch-conversion-attribution.md)               |      Attribution Reporting API, Aggregation Service      |      Publisher, SSP, Advertiser, DSP       |
-|      Measure Digital Ads      |               [Multi-touch conversion Attribution](services/home/docs/demos/multi-touch-conversion-attribution.md)                | Private Aggregation, Shared Storage, Aggregation Service |         Publisher, Advertiser, DSP         |
+| **Use Case**                                                                                               | **Privacy Sandbox APIs**                                 |
+| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [Basic retargeting / remarketing ad campaign](demos/retargeting-remarketing.md)                            | Protected Audience, Fenced Frames                        |
+| [Sequential setup of Protected Audience with contextual auction](demos/sequential-auction-setup.md)        | Protected Audience, Fenced Frames                        |
+| [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md) | Protected Audience, Fenced Frames                        |
+| [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                  | Protected Audience                                       |
+| [Event-level reports for single touch attribution](demos/single-touch-event-level-report.md)               | Attribution Reporting                                    |
+| [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Protected Audience, Fenced Frames, Attribution Reporting |
 
 These use cases are based on a set of demo apps and services that we have developed to simulate the actors in the ad tech ecosystem :
 

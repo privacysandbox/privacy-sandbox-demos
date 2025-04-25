@@ -56,4 +56,19 @@ export const {
   SSP_B_DETAIL,
 
   AD_SERVER_HOST,
+
+  //Services
+  SERVICE_PROVIDER_HOST,
 } = process.env;
+
+/** List of ad-tech hosts to trigger conversions for. */
+export const AD_TECHS_TO_TAG_FOR_CONVERSIONS = [
+  DSP_A_HOST!,
+  DSP_B_HOST!,
+  DSP_HOST!,
+  DSP_X_HOST!,
+  DSP_Y_HOST!,
+  SSP_A_HOST!,
+  SSP_B_HOST!,
+  SSP_HOST!,
+];

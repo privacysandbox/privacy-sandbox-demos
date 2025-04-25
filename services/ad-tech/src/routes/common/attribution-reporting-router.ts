@@ -95,7 +95,8 @@ AttributionReportingRouter.get(
     res.sendStatus(200);
   },
 );
-/** Registers an attribution trigger (event) without aggr report. */
+
+/** Registers an attribution trigger for event-level reports only (without summary reports). */
 AttributionReportingRouter.get(
   '/register-event-level-trigger',
   async (req: Request, res: Response) => {

@@ -12,9 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM nginx:1.25-alpine3.17
+FROM nginx:1.27.5-alpine
 
-COPY --chown=nginx:nginx nginx.conf /etc/nginx/templates/default.conf.template
+# Set the default output directory for templating
+ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+
+# Copy custom Nginx configuration
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/templates/nginx.conf.template
+
+# Copy built Docusaurus site from the buid folder
 COPY --chown=nginx:nginx build /usr/share/nginx/html
 
+# Start Nginx in the foreground
 CMD [ "nginx", "-g", "daemon off;" ]

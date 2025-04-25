@@ -3,13 +3,12 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
-  <link rel="stylesheet"
-        href="/css/global.css" />
-  <link rel="icon"
-        href="/img/spy.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="icon" href="/img/spy.svg" />
   <script src="/js/main.js"></script>
 </head>
 
@@ -19,8 +18,10 @@
     <h2>This is a demo travel site.</h2>
   </header>
   <p id=notice>
-    Photo by <a href="https://unsplash.com/@foxxmd?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matt
-      Duncan</a> on <a href="https://unsplash.com/s/photos/travel?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+    Photo by <a
+      href="https://unsplash.com/@foxxmd?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matt
+      Duncan</a> on <a
+      href="https://unsplash.com/s/photos/travel?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
     <!-- Photo by <a
   href="https://unsplash.com/@dinoreichmuth?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Dino
@@ -34,7 +35,7 @@
     <p>✅ Your browser has joined the <strong>travel</strong> interest group.</p>
     <p>👉 Now view a demo news site that runs a Protected Audience API auction to select an ad:</p>
     <ul>
-      <li><a href=<%= `https://${NEWS_HOST}:${EXTERNAL_PORT}` %>>>news</a></p>
+      <li><a href=<%=`https://${NEWS_HOST}:${EXTERNAL_PORT}` %>>>news</a></p>
     </ul>
     <p>TIP: To modify the active DSP tags on this page use the `<strong>tag</strong>` query parameter.</p>
     <ul>

@@ -284,7 +284,7 @@
       ]
     },
     {
-      "target": "topics-motorcycles",
+      "target": "moto-news",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -302,7 +302,7 @@
       ]
     },
     {
-      "target": "topics-soccer",
+      "target": "soccer-news",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -320,7 +320,7 @@
       ]
     },
     {
-      "target": "topics-gardening",
+      "target": "gardening-news",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -351,6 +351,25 @@
           "source": "**",
           "run": {
             "serviceId": "ad-server",
+            "region": "us-central1"
+          }
+        }
+      ]
+    },
+    {
+      "target": "service-provider",
+      "public": "services/service-provider/src/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/**",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "run": {
+            "serviceId": "service-provider",
             "region": "us-central1"
           }
         }

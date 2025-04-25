@@ -1,58 +1,63 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title><%= title %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="/css/global.css" />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👟</text></svg>"
-    />
-  </head>
-  <body>
-    <header class="flex flex-col">
-      <nav class="flex justify-between lg:py-6 py-2 border-b-2">
-        <h1 class="text-slate-800 text-4xl font-bold"><a href="/">Shopping DEMO</a></h1>
-        <a class="text-4xl px-2" href="/cart">🛒</a>
-      </nav>
-    </header>
-    <div class="flex flex-col gap-6">
-      <div class="hidden lg:block">
-        <img
-          alt="shopping site hero image"
-          width="1280"
-          height="300"
-          fetchpriority="high"
-          class="object-cover object-[0%_5%] h-[300px]"
-          src="/image/shop.webp"
-        />
-      </div>
-      <main class="">
-        <ul class="grid lg:grid-cols-4 grid-cols-2 gap-4">
-          <% items.forEach((item) => { %>
+
+<head>
+  <meta charset="utf-8" />
+  <title>
+    <%= title %>
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👟</text></svg>" />
+</head>
+
+<body>
+  <header class="flex flex-col">
+    <nav class="flex justify-between lg:py-6 py-2 border-b-2">
+      <h1 class="text-slate-800 text-4xl font-bold">
+        <a href="/">Shopping DEMO</a>
+      </h1>
+      <a class="text-4xl px-2" href="/cart">🛒</a>
+    </nav>
+  </header>
+  <div class="flex flex-col gap-6">
+    <div class="hidden lg:block">
+      <img alt="shopping site hero image" width="1280" height="300" fetchpriority="high"
+        class="object-cover object-[0%_5%] h-[300px]" src="/image/shop.webp" />
+    </div>
+    <main class="">
+      <ul class="grid lg:grid-cols-4 grid-cols-2 gap-4">
+        <% items.forEach((item)=> { %>
           <li class="border shadow rounded flex flex-col text-center justify-between">
-            <a class="flex flex-col items-center pt-8 pb-4 px-4 gap-6 bg-gray-100 hover:bg-gray-200" href="/items/<%= item.id %>">
-              <img alt="Man's Shoe" loading="lazy" width="100" height="100" decoding="async" src="/image/svg/emoji_u<%= item.id %>.svg" />
+            <a class="flex flex-col items-center pt-8 pb-4 px-4 gap-6 bg-gray-100 hover:bg-gray-200"
+              href="/items/<%= item.id %>">
+              <img alt="Man's Shoe" loading="lazy" width="100" height="100" decoding="async"
+                src="/image/svg/emoji_u<%= item.id %>.svg" />
               <div>
-                <div class="font-bold text-xl text-slate-800"><%= item.name %></div>
-                <div class="font-mono text-slate-600">$<%= item.price %></div>
+                <div class="font-bold text-xl text-slate-800">
+                  <%= item.name %>
+                </div>
+                <div class="font-mono text-slate-600">$<%= item.price %>
+                </div>
               </div>
             </a>
           </li>
           <% }) %>
-        </ul>
-      </main>
-      <footer class="border-t-2 py-4">
-        <p class="underline text-slate-400 text-right">
-          Photo by
-          <a href="https://unsplash.com/@bruno_kelzer?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Bruno Kelzer</a>
-          on
-          <a href="https://unsplash.com/s/photos/shopping-cart?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText"
-            >Unsplash</a
-          >
-        </p>
-      </footer>
-    </div>
-  </body>
+      </ul>
+    </main>
+    <footer class="border-t-2 py-4">
+      <p class="underline text-slate-400 text-right">
+        Photo by
+        <a
+          href="https://unsplash.com/@bruno_kelzer?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Bruno
+          Kelzer</a>
+        on
+        <a
+          href="https://unsplash.com/s/photos/shopping-cart?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
+      </p>
+    </footer>
+  </div>
+</body>
+
 </html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= TITLE %>
+  </title>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/unified.css" />
+  <link rel="icon" href="/img/spy.svg" />
+  <script src="/js/main.js"></script>
+</head>
+
+<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
+  <%- include('components/header') %>
+    <main class="flex flex-col lg:flex-row justify-between gap-6">
+      <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
+        <b>Use-case: Reach Measurement</b>
+        <p>
+          <%= TEXT_LOREM %>
+        </p>
+        <div class="w-full flex flex-row justify-center ad-row ad-slot">
+          <iframe
+            src="<%= `https://${DSP_HOST}/ads/static-ads-for-reach?advertiser=${SHOP_HOST}&itemId=1f45e`%>"></iframe>
+        </div>
+        <p>
+          <%= TEXT_LOREM %>
+        </p>
+        <p>
+          <%= TEXT_LOREM %>
+        </p>
+        <p>
+          <%= TEXT_LOREM %>
+        </p>
+      </article>
+      <%- include('components/aside') %>
+    </main>
+
+    <footer>
+      <hr>
+      <h4 class="text-xl font-bold">TIPS</h4>
+      <ul class="list-disc pl-4">
+        <li>
+          <p>View scheduled and sent aggregatable reports at:
+          <section class="font-mono pl-4">
+            chrome://private-aggregation-internals/
+          </section>
+          </p>
+        </li>
+
+        <li>
+          <p>Inspect reports received by ad-tech server at:
+          <section class="font-mono pl-4">
+            <a href='<%= `https://${DSP_HOST}:${EXTERNAL_PORT}/reporting/view-reports` %>' target="_top">
+              <%= `${DSP_HOST}` %> Reports
+            </a>
+          </section>
+          </p>
+        </li>
+      </ul>
+      <p><a href=<%=`https://${HOME_HOST}:${EXTERNAL_PORT}` %>>back to home</a>
+    </footer>
+
+</body>
+
+</html>

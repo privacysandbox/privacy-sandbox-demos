@@ -23,10 +23,10 @@ Audience as an additional demand source that may or may not beat the contextual 
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/auction/sequential-auction)
-- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Sequential setup of Protected Audience with contextual ad auction - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/auction/sequential-auction)
+- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/fenced-frame)
 
 ### Related parties
 
@@ -45,7 +45,7 @@ Audience as an additional demand source that may or may not beat the contextual 
 
 In this demo, we aim to demonstrate a basic sequential auction setup with a focus on the data flow from the perspective of the Protected Audience
 auction and abstract a lot of the technical nuance in the contextual auction. Building on the
-[basic retargeting / remarketing ads demo](retargeting-remarketing), this demo shows a more realistic sequential setup with multiple buyers and
+[basic retargeting / remarketing ads demo](retargeting-remarketing.md), this demo shows a more realistic sequential setup with multiple buyers and
 sellers participating in the ad delivery process. This demo will also demonstrate SSPs sourcing `buyerSignals` from DSPs and including them in the
 Protected Audience auction configuration.
 
@@ -57,8 +57,8 @@ various ad delivery setups. This demo focuses on a few exemplary _'signals'_ as 
 
 ### System Design
 
-Identical to the [basic retargeting / remarketing ads demo](retargeting-remarketing), the user visiting an advertiser page is added to interest groups
-by multiple DSPs. While the overall ad delvery flow on the publisher page is similar, the biggest difference in this demo is the involvement of
+Identical to the [basic retargeting / remarketing ads demo](retargeting-remarketing.md), the user visiting an advertiser page is added to interest
+groups by multiple DSPs. While the overall ad delvery flow on the publisher page is similar, the biggest difference in this demo is the involvement of
 multiple ad sellers. The publisher ad server starts with a simplified contextual auction with other sellers also participating to arrive at a winning
 contextual ad while also collating their auction configurations for the Protected Audience auction. The publisher ad server also initiates the
 Protected Audience auction acting as the top-level seller with all sellers including the publisher ad server conducting their individual component
@@ -164,7 +164,7 @@ end
 2. Click on any "shoe" product item on the shop site.
    - The shop (advertiser) would assume the user is interested in this type of product, so they would leverage Protected Audience API and ask the
      browser to join an ad interest group for this product or this specific product category.
-3. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/fenced-frame-display-ad) (publisher)
+3. [Navigate to the news site :arrow_upper_right:](https://privacy-sandbox-demos-news.dev/pa-fenced-frame-display-ad) (publisher)
 4. Observe the ad served on the news site
    - If you previously browsed the "shoe" product on the shop site, you will be shown an ad for the same product.
    - When the page was loaded, the publisher ad server leveraged the Protected Audience API to run an ad auction on the publisher site involving
@@ -173,7 +173,7 @@ end
 ### Implementation details
 
 The user is added to interest groups by DSPs using the same mechanism as described in the
-[basic remarketing / retargeting use-case demo](retargeting-remarketing). The incremental difference in the implementation of this demo is on the
+[basic remarketing / retargeting use-case demo](retargeting-remarketing.md). The incremental difference in the implementation of this demo is on the
 publisher page.
 
 #### How does the publisher pass the ad unit configurations for a given page to the publisher ad server?
@@ -237,7 +237,7 @@ More specifically, the `ad-server-tag.js` injects an iframe for each ad unit whe
 Protected Audience auction to choose an ad. This iframe loads:
 [`https://privacy-sandbox-demos-ad-server.dev/ssp/run-sequential-ad-auction.html` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/ad-tech/src/views/ssp/run-sequential-ad-auction.ejs),
 which contains a single script:
-[`https://privacy-sandbox-demos-ad-server.dev/js/ssp/run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js).
+[`https://privacy-sandbox-demos-ad-server.dev/js/ssp/run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js).
 This iframe expects a post-message from `ad-server-tag.js` containing the ad unit configuration as well as the list of other sellers involved in the
 ad delivery process.
 
@@ -341,7 +341,7 @@ SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
 
 The publisher ad servers collates the contextual bid responses from all the sellers before assembling the combined auction configuration for Protected
 Audience. In the following code snippet from
-[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/dev/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L145-182),
+[`run-sequential-ad-auction.js` :arrow_upper_right:](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/ad-tech/src/public/js/ssp/run-sequential-ad-auction.js#L154),
 the winning contextual bid is chosen purely on the bid price. Along with the contextual bid response, the additional sellers or SSPs also respond with
 their Protected Audience component auction configuration. The publisher ad server also assembles the final Protected Audience auction configuration
 which includes these component auction configurations from other sellers as well as its own component auction.

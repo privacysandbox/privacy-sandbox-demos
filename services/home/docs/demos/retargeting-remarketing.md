@@ -20,9 +20,9 @@ traffic back to your website, and boost sales.
 
 ### Privacy Sandbox APIs and related documentation
 
-- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience Developer Guide - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Fenced Frames Overview - Google Developers :arrow_upper_right:](https://privacysandbox.google.com/private-advertising/fenced-frame)
 
 ### Related parties
 
@@ -161,7 +161,7 @@ dynamically injects an iframe in the DSP's origin to the advertiser's page.
 <iframe
   width="1"
   height="1"
-  src="https://privacy-sandbox-demos-dsp.dev/dsp/dsp-advertiser-iframe.html?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
+  src="https://privacy-sandbox-demos-dsp.dev/dsp/join-ad-interest-group.html?advertiser=privacy-sandbox-demos-shop.dev&amp;id=1f45e"
   allow="join-ad-interest-group"
 ></iframe>
 ```
@@ -277,6 +277,11 @@ included in the interest group.
   </html>
 </fencedframe>
 ```
+
+### API Reference
+
+- [Protected Audience API overview](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience API: developer guide](https://privacysandbox.google.com/private-advertising/protected-audience-api)
 
 </TabItem>
 </Tabs>

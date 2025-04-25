@@ -24,9 +24,9 @@ creative metadata stored in its Key/Value (K/V) server that the SSP might have g
 
 ### Privacy Sandbox APIs
 
-- [Protected Audience API](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Fenced Frames](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
-- [Key/Value Service](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience#key-value-service-detail)
+- [Protected Audience API](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Fenced Frames](https://privacysandbox.google.com/private-advertising/fenced-frame)
+- [Key/Value Service](https://privacysandbox.google.com/private-advertising/protected-audience#key-value-service-detail)
 
 ### Related parties
 
@@ -125,7 +125,7 @@ Browser ->> DSP: Request ad creative
 DSP -->> Browser: Return ad creative
 ```
 
-[Full-sized diagram](./img/publisher-ad-quality-req-flow.png)
+[Full-sized diagram](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/home/docs/demos/img/publisher-ad-quality-req-flow.png)
 
 </TabItem>
 <TabItem value="demo" label="Demo">
@@ -144,7 +144,7 @@ DSP -->> Browser: Return ad creative
 1. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (advertiser)
 2. Click on any "shoe" product item on the shop site. The shop (advertiser) would assume the user is interested in this type of shoe, so they would
    leverage Protected Audience API and ask the browser to join an ad interest group for this product.
-3. [Navigate to this page on the news site](https://privacy-sandbox-demos-news.dev/publisher-ad-quality-req) (publisher)
+3. [Navigate to this page on the news site](https://privacy-sandbox-demos-news.dev/pa-publisher-ad-quality-req) (publisher)
 4. Observe the ad served on the news site is for the shoe product you recently browsed.
 5. Click on a button which matches your selected shoe:
    - Hide Red Shoes
@@ -166,9 +166,9 @@ shoe ad from Protected Audience will not be delivered. Instead, the ad from the 
 ### Implementation details
 
 To add the user to an interest group, we reuse the implementation from the
-[basic retargeting / remarketing ad campaign use-case demo](retargeting-remarketing). It’s in the second half -- the auction execution and ad delivery
--- where this use case differs from the regular retargeting / remarketing use-case. This is also why this use-case is on a different page on the news
-site.
+[basic retargeting / remarketing ad campaign use-case demo](retargeting-remarketing.md). It’s in the second half -- the auction execution and ad
+delivery -- where this use case differs from the regular retargeting / remarketing use-case. This is also why this use-case is on a different page on
+the news site.
 
 The news page lists the available ad slot on the page in the
 [`window.PSDemo.PAGE_ADS_CONFIG`](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L29)
@@ -198,7 +198,7 @@ window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
 To deliver an ad for this ad slot, the news page also includes a third-party tag:
 [ad-server-tag.js](https://github.com/privacysandbox/privacy-sandbox-demos/blob/67d4c6368ff422ad9e952961352b5ac74ee9f500/services/news/src/views/publisher-ad-quality-req.ejs#L43)
 from the ad-server service. This ad server tag reads the ad slot configurations and proceeds to execute a sequential contextual + Protected Audience
-auction as described in the [sequential setup of Protected Audience with contextual ad auction demo](sequential-auction-setup).
+auction as described in the [sequential setup of Protected Audience with contextual ad auction demo](sequential-auction-setup.md).
 
 ```html title="Ad-server tag on publisher page: https://privacy-sandbox-demos-news.dev"
 <script
@@ -252,12 +252,12 @@ function scoreAd(
 }
 ```
 
-### Related API documentation
+### API Reference
 
-- [Protected Audience Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience)
-- [Protected Audience developer guide - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/protected-audience-api)
-- [Key / Value Service Overview - Google Developers](https://developers.google.com/privacy-sandbox/blog/fledge-service-overview#key-value-service)
-- [Fenced Frames Overview - Google Developers](https://developers.google.com/privacy-sandbox/private-advertising/fenced-frame)
+- [Protected Audience Overview - Google Developers](https://privacysandbox.google.com/private-advertising/protected-audience)
+- [Protected Audience developer guide - Google Developers](https://privacysandbox.google.com/private-advertising/protected-audience-api)
+- [Key / Value Service Overview - Google Developers](https://privacysandbox.google.com/blog/fledge-service-overview#key-value-service)
+- [Fenced Frames Overview - Google Developers](https://privacysandbox.google.com/private-advertising/fenced-frame)
 
 </TabItem>
 </Tabs>

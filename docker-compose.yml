@@ -3,6 +3,7 @@ volumes:
   news_node_modules:
   shop_node_modules:
   travel_node_modules:
+  service_provider_node_modules:
   dsp_node_modules:
   dsp_a_node_modules:
   dsp_b_node_modules:
@@ -65,6 +66,19 @@ services:
     networks:
       - adnetwork
 
+  service-provider:
+    image: gcr.io/privacy-sandbox-demos/service-provider:latest
+    build: ./services/service-provider
+    container_name: "sandcastle_service_provider"
+    hostname: ${SERVICE_PROVIDER_HOST:?err}
+    env_file:
+      - .env
+    volumes:
+      - ./services/service-provider:/workspace
+      - service_provider_node_modules:/workspace/node_modules
+    networks:
+      - adnetwork
+
   dsp:
     image: gcr.io/privacy-sandbox-demos/ad-tech:latest
     build: ./services/ad-tech
@@ -73,7 +87,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -86,7 +99,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -99,7 +111,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -112,7 +123,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_x_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -125,7 +135,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - dsp_y_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -138,7 +147,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -151,7 +159,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_a_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -164,7 +171,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_b_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -177,7 +183,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_x_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -190,7 +195,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ssp_y_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -203,7 +207,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./services/ad-tech:/workspace
       - ad_server_node_modules:/workspace/node_modules
     networks:
       - adnetwork
@@ -221,7 +224,7 @@ services:
       - adnetwork
 
   nginx:
-    image: nginx:1.22.1-alpine
+    image: nginx:1.27.5-alpine
     container_name: "proxy"
     volumes:
       # using env variables in nginx config
@@ -253,8 +256,14 @@ services:
       - dsp-x
       - dsp-y
       - ad-server
+      - service-provider
       - collector
 
 networks:
   adnetwork:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
+          ip_range: 172.16.128.0/24
+          gateway: 172.16.128.254
