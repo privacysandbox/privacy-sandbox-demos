@@ -3,10 +3,10 @@
     "attestation_parser_version": 2,
     "attestation_version": 1,
     "privacy_policy": ["https://policies.google.com/privacy"],
-    "ownership_token": "aa1ec2f0ee90815659f69e6e08be10599009e70b54954627f5de9fa145c1f92e",
-    "issued_seconds_since_epoch": "1745231350969",
-    "enrollment_id": "BG8PE",
-    "enrollment_site": "https://privacy-sandcastle-dev-services.web.app",
+    "ownership_token": "68d2d0e001dc7269cd763be4b88c1b56d025216512048025365033401c8f5e94",
+    "issued_seconds_since_epoch": "1745231350911",
+    "enrollment_id": "5BNFM",
+    "enrollment_site": "https://privacy-sandbox-demos-services.dev",
     "platform_attestations": [{
       "platform": "chrome",
       "attestations": {
