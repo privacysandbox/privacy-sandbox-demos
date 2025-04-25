@@ -113,7 +113,7 @@ function selectDealId({selectedAd, auctionSignals, inDebugMode}) {
     if (inDebugMode) {
       console.debug(
         LOG_PREFIX,
-        'no selectable BASRI found in interest group\n\n',
+        'no selectableBuyerAndSellerReportingIds found in interest group\n\n',
         JSON.stringify({selectedAd, auctionSignals}),
       );
     }
@@ -148,7 +148,7 @@ function selectDealId({selectedAd, auctionSignals, inDebugMode}) {
   if (inDebugMode) {
     console.debug(
       LOG_PREFIX,
-      'found selectable BASRI in interest group\n\n',
+      'returning a selectedBuyerAndSellerReportingId from interest group\n\n',
       JSON.stringify({
         buyerReportingId,
         buyerAndSellerReportingId,
