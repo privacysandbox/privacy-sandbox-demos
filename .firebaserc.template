@@ -50,7 +50,7 @@
         "ad-server": [
           "privacy-sandbox-demos-ad-server"
         ],
-        "services": [
+        "service-provider": [
           "privacy-sandbox-demos-services"
         ],
         "moto-news": [
