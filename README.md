@@ -39,18 +39,18 @@ and experimenting.
 
 The current release supports the following use cases:
 
-| Use Case                                                                                                   | Privacy Sandbox APIs                                     |
-| :--------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
-| [Basic retargeting / remarketing ads with Protected Audience](demos/retargeting-remarketing.md)            | Protected Audience, Fenced Frames                        |
-| [Sequential setup of Protected Audience with contextual auction](demos/sequential-auction-setup.md)        | Protected Audience, Fenced Frames                        |
-| [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md) | Protected Audience, Fenced Frames                        |
-| [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                  | Protected Audience                                       |
-| [Ads Composed of Multiple Pieces](demos/multi-piece-ad.md)                                                 | Protected Audience                                       |
-| [Bidding & Auction Services for Protected Audience](demos/bidding-and-auction.md)                          | Protected Audience, Bidding & Auction Services           |
-| [Event-level reports for single touch attribution](demos/single-touch-event-level-report.md)               | Attribution Reporting                                    |
-| [Reach Measurement](demos/reach-measurement-with-shared-storage.md)                                        | Shared Storage, Private Aggregation                      |
-| [Multi-touch conversion Attribution](demos/multi-touch-conversion-attribution.md)                          | Private Aggregation, Shared Storage, Aggregation Service |
-| [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Protected Audience, Fenced Frames, Attribution Reporting |
+| Use Case                                                                                                                                             | Privacy Sandbox APIs                                     |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| [Basic retargeting / remarketing ads with Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/retargeting-remarketing/)            | Protected Audience, Fenced Frames                        |
+| [Sequential setup of Protected Audience with contextual auction](https://privacy-sandbox-demos-home.dev/docs/demos/sequential-auction-setup/)        | Protected Audience, Fenced Frames                        |
+| [Incorporating publisher ad quality requirements in Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/publisher-ad-quality-req/) | Protected Audience, Fenced Frames                        |
+| [In-stream video ads with Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/instream-video-ad/)                                  | Protected Audience                                       |
+| [Ads Composed of Multiple Pieces](https://privacy-sandbox-demos-home.dev/docs/demos/multi-piece-ad/)                                                 | Protected Audience                                       |
+| [Bidding & Auction Services for Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/bidding-and-auction/)                          | Protected Audience, Bidding & Auction Services           |
+| [Event-level reports for single touch attribution](https://privacy-sandbox-demos-home.dev/docs/demos/single-touch-event-level-report/)               | Attribution Reporting                                    |
+| [Reach Measurement](https://privacy-sandbox-demos-home.dev/docs/demos/reach-measurement-with-shared-storage/)                                        | Shared Storage, Private Aggregation                      |
+| [Multi-touch conversion Attribution](https://privacy-sandbox-demos-home.dev/docs/demos/multi-touch-conversion-attribution/)                          | Private Aggregation, Shared Storage, Aggregation Service |
+| [Single-touch conversion attribution](https://privacy-sandbox-demos-home.dev/docs/demos/single-touch-conversion-attribution/)                        | Protected Audience, Fenced Frames, Attribution Reporting |
 
 These use cases are based on a set of demo apps and services that we have developed to simulate the actors in the ad tech ecosystem :
 
