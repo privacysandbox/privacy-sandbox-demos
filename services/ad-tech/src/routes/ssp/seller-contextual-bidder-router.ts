@@ -88,7 +88,7 @@ SellerContextualBidderRouter.get('/', async (req: Request, res: Response) => {
     componentAuctionConfig: constructAuctionConfig({
       useCase: req.query.useCase?.toString(),
       isFencedFrame: req.query.isFencedFrame?.toString(),
-      auctionSignals: auctionSignals,
+      auctionSignals,
       sellerSignals: {winningContextualBid, ...sellerSignals},
       perBuyerSignals,
     }),

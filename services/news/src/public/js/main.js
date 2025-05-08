@@ -26,14 +26,10 @@
 
   /** Returns URL query param value as an array. */
   window.PSDemo.getUrlQueryAsArray = (key) => {
-    const values = new URLSearchParams(location.search).getAll(key);
-    const nonEmptyValues = [];
-    for (const value of values) {
-      if (value) {
-        nonEmptyValues.push(value);
-      }
+    const urlQueries = new URLSearchParams(location.search);
+    if (urlQueries.has(key)) {
+      return urlQueries.getAll(key).filter((v) => v);
     }
-    return nonEmptyValues;
   };
 
   /** Returns URL query param value as text. */
@@ -62,6 +58,10 @@
   /** Returns page context data to be considered in ad delivery. */
   window.PSDemo.getPageContextData = () => {
     const pageContext = {};
+    // Include first-party data from local storage.
+    for (const [key, value] of Object.entries(localStorage)) {
+      pageContext[key] = value;
+    }
     // Include query params from page URL.
     const searchParams = new URLSearchParams(location.search);
     for (const [key, value] of searchParams.entries()) {
@@ -86,6 +86,9 @@
     pageContext.userAgent = navigator.userAgent;
     pageContext.isMobile = navigator.userAgentData.mobile;
     pageContext.platform = navigator.userAgentData.platform;
+    pageContext.browserBrands = navigator.userAgentData.brands
+      .map((brand) => brand.brand)
+      .join(',');
     pageContext.browserVersion = navigator.userAgentData.brands.find(
       (brand) => 'Chromium' === brand.brand,
     ).version;

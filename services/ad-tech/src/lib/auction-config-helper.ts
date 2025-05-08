@@ -26,31 +26,19 @@ export const constructAuctionConfig = (context: {
   sellerSignals?: {[key: string]: any};
   perBuyerSignals?: {[key: string]: {[key: string]: string}};
 }) => {
-  const interestGroupBuyers = BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST.get(
-    HOSTNAME!,
-  )!.map((buyerHost) => {
+  const buyerHosts = BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST.get(HOSTNAME!)!;
+  const buyerOrigins = buyerHosts.map((buyerHost) => {
     return new URL(`https://${buyerHost}:${EXTERNAL_PORT}`).toString();
   });
   const useCase = context.useCase || 'default';
-  const {isFencedFrame, auctionSignals, sellerSignals, perBuyerSignals} =
-    context;
-  const resolveToConfig = 'true' === isFencedFrame ? true : false;
-  console.log('Constructing auction config', {
-    useCase,
-    isFencedFrame,
-    auctionSignals,
-    sellerSignals,
-    perBuyerSignals,
-    resolveToConfig,
-  });
-  const buyerRealTimeReportingConfig: {[key: string]: {[key: string]: string}} =
-    {};
-  BUYER_HOSTS_TO_INTEGRATE_BY_SELLER_HOST.get(HOSTNAME!)!.map((buyerHost) => {
-    buyerRealTimeReportingConfig[
-      new URL(`https://${buyerHost}:${EXTERNAL_PORT}`).toString()
-    ] = {type: 'default-local-reporting'};
-  });
-
+  const {isFencedFrame} = context;
+  // Opt-in all buyers to real-time monitoring reports.
+  const perBuyerRealTimeReportingConfig: {[key: string]: {}} = {};
+  for (const buyerOrigin of buyerOrigins) {
+    perBuyerRealTimeReportingConfig[buyerOrigin] = {
+      type: 'default-local-reporting',
+    };
+  }
   const auctionConfig = {
     seller: CURRENT_ORIGIN,
     decisionLogicURL: new URL(
@@ -65,27 +53,18 @@ export const constructAuctionConfig = (context: {
      *     `https://${HOSTNAME}:${EXTERNAL_PORT}/ssp/direct-signal.json`,
      *   ),
      */
-    interestGroupBuyers,
-    auctionSignals: {
-      'auction_signals': 'auction_signals',
-      isFencedFrame,
-      ...auctionSignals, // Copy signals from request query.
-    },
-    sellerSignals: {
-      'seller_signals': 'seller_signals',
-      ...sellerSignals,
-    },
-    perBuyerSignals,
-    perBuyerRealTimeReportingConfig: {
-      ...buyerRealTimeReportingConfig,
-    },
-    sellerRealTimeReportingConfig: {
-      type: 'default-local-reporting',
-    },
+    interestGroupBuyers: buyerOrigins,
+    auctionSignals: {isFencedFrame, ...context.auctionSignals},
+    sellerSignals: {...context.sellerSignals},
+    perBuyerSignals: {...context.perBuyerSignals},
+    perBuyerRealTimeReportingConfig,
+    // Opt-in self for real-time monitoring reports.
+    sellerRealTimeReportingConfig: {type: 'default-local-reporting'},
     // Needed for ad size macro replacements.
     requestedSize: {'width': '300px', 'height': '250px'},
     sellerCurrency: 'USD',
-    resolveToConfig,
+    // Whether runAdAuction should return a FencedFrameConfig or not.
+    resolveToConfig: 'true' === isFencedFrame ? true : false,
     deprecatedRenderURLReplacements: {
       // This is for the video ads use-case where the DSP is expected to have
       // included the SSP_VAST macro in the render URL.
@@ -97,5 +76,6 @@ export const constructAuctionConfig = (context: {
       ).toString(),
     },
   };
+  console.log('Constructing auction config', {context, auctionConfig});
   return auctionConfig;
 };
