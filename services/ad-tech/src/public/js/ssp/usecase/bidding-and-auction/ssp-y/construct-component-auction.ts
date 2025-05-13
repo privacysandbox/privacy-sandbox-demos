@@ -107,16 +107,12 @@ class AdAuction {
     } = await response.json();
 
     return {
-      protectedAudienceAuctionResult: new Uint8Array(
-        this.#decodeResponse(protectedAudienceAuctionCiphertext),
+      protectedAudienceAuctionResult: this.#decodeResponse(
+        protectedAudienceAuctionCiphertext,
       ),
       contextualAuctionWinner,
       onDeviceAuctionConfig,
     };
-  }
-
-  #encodeRequest(request: any) {
-    return btoa(String.fromCharCode.apply(null, request));
   }
 
   #decodeResponse(base64response: string) {
@@ -132,7 +128,10 @@ async function runComponentAuction() {
   const componentAuction = new AdAuction();
   const componentAuctionInfo = await componentAuction.getAuctionInfo();
 
-  console.log('[SSP-Y] Component auction config ', componentAuctionInfo);
+  console.log(
+    '[SSP-Y][B&A mixed mode] Component auction config ',
+    componentAuctionInfo,
+  );
 
   window.auctionInfoCollector.push(componentAuctionInfo);
 }

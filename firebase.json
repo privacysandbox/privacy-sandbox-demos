@@ -284,7 +284,7 @@
       ]
     },
     {
-      "target": "topics-motorcycles",
+      "target": "moto-news",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -302,7 +302,7 @@
       ]
     },
     {
-      "target": "topics-soccer",
+      "target": "soccer-news",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -320,7 +320,7 @@
       ]
     },
     {
-      "target": "topics-gardening",
+      "target": "gardening-news",
       "ignore": [
         "firebase.json",
         "**/.*",

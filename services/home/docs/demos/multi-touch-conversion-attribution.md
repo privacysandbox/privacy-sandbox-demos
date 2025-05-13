@@ -148,7 +148,7 @@ Browser-)DSP:Browser sends aggregatable report (Live Report is deferred)
 3. [Navigate to shop site](https://privacy-sandbox-demos-shop.dev/) (Advertiser), select a shoe, click "Add to cart" then on the `cart` page, click on
    the payment button.
 
-4. Navigate to [DSP service report visualization page](https://privacy-sandbox-demos-dsp.dev/reports)
+4. Navigate to [DSP service report visualization page](https://privacy-sandbox-demos-dsp.dev/reporting/view-reports)
    - On this page you can see the aggregatable report sent by the browser to the DSP. In a production environment, the aggregatable report is
      encrypted by the browser and sent to the DSP. There, they will be batched and sent to the Aggregation Service where they will be aggregated and
      noised to preserve privacy. However for development and testing purposes, you can also send an unencrypted version called **debug report**. This
