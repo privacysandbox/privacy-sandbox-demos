@@ -28,7 +28,7 @@
         Run the Demo
       </h2>
       <p>Open Chrome from the command line using the following <a href="https://www.chromium.org/developers/how-tos/run-chromium-with-flags" target="_blank">feature flags</a>:</p>
-      <pre>google-chrome --disable-features=FledgeEnforceKAnonymity,EnforcePrivacySandboxAttestations --enable-features=BrowsingTopics,BrowsingTopicsParameters:time_period_per_epoch/15s/browsing_topics_max_epoch_introduction_delay/3s,PrivacySandboxAdsAPIsOverride,PrivacySandboxSettings3,OverridePrivacySandboxSettingsLocalTesting</pre>
+      <p><i>google-chrome --disable-features=FledgeEnforceKAnonymity,EnforcePrivacySandboxAttestations --enable-features=BrowsingTopicsParameters:time_period_per_epoch/30s,BrowsingTopicsBypassIPIsPubliclyRoutableCheck</i></p>
       <p>Make sure that chrome://flags/#privacy-sandbox-ads-apis is <strong>disabled</strong>, since the defaults from this will override the command-line flags (in particular, the epoch duration).</p>
       <p>Each of the following sites makes the same <code>fetch()</code> request to the topics server.</p>
       <ul class="list-disc pl-8">
@@ -42,11 +42,7 @@
       <h2 class="font-bold text-xl">
         See Topics Observed
       </h2>
-      <div id="fetch-data">
-        <ul id="observed-topics">
-
-        </ul>
-      </div>
+      <div id="fetch-data"><div id="no-topics">Topics will be displayed here.</div></div>
     </article>
     <%- include('components/aside') %>
   </main>

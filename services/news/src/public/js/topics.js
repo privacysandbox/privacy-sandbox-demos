@@ -1,4 +1,4 @@
-/*
+
 const fetchDataEl = document.getElementById('fetch-data');
 const noTopicsEl = document.getElementById('no-topics');
 
@@ -22,9 +22,7 @@ function makeFetchRequest() {
   });
 }
 
-const intervalId = setInterval(makeFetchRequest, 2000);
-*/
-
+/*
 const topicsList = document.querySelector('#observed-topics')
 
 let currentTopics = '';
@@ -42,5 +40,7 @@ async function makeFetchRequest() {
       currentTopics = topics;
   }
 }
+*/
 
 const intervalId = setInterval(makeFetchRequest, 2000);
+
