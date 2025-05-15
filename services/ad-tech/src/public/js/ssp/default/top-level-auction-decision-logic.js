@@ -23,9 +23,9 @@
  *   in a Protected Audience auction.
  */
 
-const CURR_HOST = '<%= HOSTNAME %>';
-const CURR_ORIGIN = '<%= CURRENT_ORIGIN %>';
-const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> top-level seller decision logic';
+const CURRENT_HOST = '<%= HOSTNAME %>';
+const CURRENT_ORIGIN = '<%= CURRENT_ORIGIN %>';
+const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> top-level seller decision logic:';
 
 // ********************************************************
 // Top-level decision logic functions
@@ -37,53 +37,99 @@ function scoreAd(
   trustedScoringSignals,
   browserSignals,
 ) {
-  console.info(LOG_PREFIX, 'scoreAd() invoked', {
-    adMetadata,
-    bid,
-    auctionConfig,
-    trustedScoringSignals,
-    browserSignals,
-  });
-  return {
-    desirability: bid,
-    allowComponentAuction: true,
-    // incomingBidInSellerCurrency: optional
-  };
+  console.group(
+    `${CURRENT_HOST} top-level scoreAd() for buyer: `.concat(
+      browserSignals.interestGroupOwner,
+    ),
+  );
+  try {
+    console.debug(
+      LOG_PREFIX,
+      'scoreAd() invoked for bid',
+      browserSignals.interestGroupOwner,
+      '\n\n',
+      JSON.stringify({
+        adMetadata,
+        bid,
+        auctionConfig,
+        trustedScoringSignals,
+        browserSignals,
+      }),
+    );
+    const score = {
+      desirability: bid,
+      allowComponentAuction: true,
+      // incomingBidInSellerCurrency: optional
+    };
+    console.info(
+      LOG_PREFIX,
+      browserSignals.interestGroupOwner,
+      'bid scored at top-level\n\n',
+      JSON.stringify(score),
+    );
+    return score;
+  } finally {
+    console.groupEnd();
+  }
 }
 
 function reportResult(auctionConfig, browserSignals) {
-  const winningComponentSeller = browserSignals.componentSeller;
-  const winningComponentAuctionConfig = auctionConfig.componentAuctions.find(
-    (componentAuction) => winningComponentSeller === componentAuction.seller,
+  console.group(
+    `${CURRENT_HOST} top-level reportResult() for buyer: `.concat(
+      browserSignals.interestGroupOwner,
+    ),
   );
-  const reportingContext = {
-    auctionId: winningComponentAuctionConfig.auctionSignals.auctionId,
-    pageURL: winningComponentAuctionConfig.auctionSignals.pageURL,
-    winningComponentSeller,
-    winningBuyer: browserSignals.interestGroupOwner,
-    renderURL: browserSignals.renderURL,
-    bid: browserSignals.bid,
-    bidCurrency: browserSignals.bidCurrency,
-    buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
-    selectedBuyerAndSellerReportingId:
-      browserSignals.selectedBuyerAndSellerReportingId,
-  };
-  let reportUrl = auctionConfig.seller + '/reporting?report=result';
-  for (const [key, value] of Object.entries(reportingContext)) {
-    reportUrl = `${reportUrl}&${key}=${value}`;
+  try {
+    const winningComponentSeller = browserSignals.componentSeller;
+    const winningComponentAuctionConfig = auctionConfig.componentAuctions.find(
+      (componentAuction) => winningComponentSeller === componentAuction.seller,
+    );
+    const reportingContext = {
+      auctionId: winningComponentAuctionConfig.auctionSignals.auctionId,
+      pageURL: winningComponentAuctionConfig.auctionSignals.pageURL,
+      winningComponentSeller,
+      winningBuyer: browserSignals.interestGroupOwner,
+      renderURL: browserSignals.renderURL,
+      bid: browserSignals.bid,
+      bidCurrency: browserSignals.bidCurrency,
+      buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+      selectedBuyerAndSellerReportingId:
+        browserSignals.selectedBuyerAndSellerReportingId,
+    };
+    let reportUrl = auctionConfig.seller + '/reporting?report=result';
+    for (const [key, value] of Object.entries(reportingContext)) {
+      reportUrl = `${reportUrl}&${key}=${value}`;
+    }
+    console.info(
+      LOG_PREFIX,
+      'top-level reportResult() invoked for bid',
+      browserSignals.interestGroupOwner,
+      'and component seller',
+      browserSignals.componentSeller,
+    );
+    console.debug(
+      LOG_PREFIX,
+      'top-level reportResult() invoked for bid',
+      browserSignals.interestGroupOwner,
+      'and component seller',
+      browserSignals.componentSeller,
+      '\n\n',
+      JSON.stringify({
+        auctionConfig,
+        browserSignals,
+        reportingContext,
+        sendReportToUrl: reportUrl,
+      }),
+    );
+    sendReportTo(reportUrl);
+    return {
+      success: true,
+      auctionId: winningComponentAuctionConfig.auctionSignals.auctionId,
+      buyer: browserSignals.interestGroupOwner,
+      reportUrl: auctionConfig.seller + '/reporting',
+      signalsForWinner: {signalForWinner: 1},
+    };
+  } finally {
+    console.groupEnd();
   }
-  console.info(LOG_PREFIX, 'reportResult() invoked', {
-    auctionConfig,
-    browserSignals,
-    reportingContext,
-    sendReportToUrl: reportUrl,
-  });
-  sendReportTo(reportUrl);
-  return {
-    success: true,
-    auctionId: winningComponentAuctionConfig.auctionSignals.auctionId,
-    buyer: browserSignals.interestGroupOwner,
-    reportUrl: auctionConfig.seller + '/reporting',
-    signalsForWinner: {signalForWinner: 1},
-  };
 }
