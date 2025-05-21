@@ -42,7 +42,7 @@ The current release supports the following use cases:
 | Use Case                                                                                                                                             | Privacy Sandbox APIs                                     |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
 | [Basic retargeting / remarketing ads with Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/retargeting-remarketing/)            | Protected Audience, Fenced Frames                        |
-| [Retargeting ads with Protected Audience and Frequency Capping](https://privacy-sandbox-demos-home.dev/docs/demos/frequency-cap/)            | Protected Audience, Fenced Frames                        |
+| [Retargeting ads with Protected Audience and Frequency Capping](https://privacy-sandbox-demos-home.dev/docs/demos/frequency-cap/)                    | Protected Audience, Fenced Frames                        |
 | [Sequential setup of Protected Audience with contextual auction](https://privacy-sandbox-demos-home.dev/docs/demos/sequential-auction-setup/)        | Protected Audience, Fenced Frames                        |
 | [Incorporating publisher ad quality requirements in Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/publisher-ad-quality-req/) | Protected Audience, Fenced Frames                        |
 | [In-stream video ads with Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/instream-video-ad/)                                  | Protected Audience                                       |

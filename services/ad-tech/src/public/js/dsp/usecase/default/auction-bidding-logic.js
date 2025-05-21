@@ -34,18 +34,23 @@ const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> bidding logic:';
 const ONE_MINUTE_MS = 60 * 1000; // 60 seconds * 1000 ms/sec
 const MAX_IMPRESSIONS_PER_MINUTE_PER_AD = 1;
 
-
-function shouldShowAd(prevWinsMs, currentAd) { // currentAd is the ad we're considering showing
+function shouldShowAd(prevWinsMs, currentAd) {
+  // currentAd is the ad we're considering showing
   if (!prevWinsMs || !currentAd) {
-      return true; // No previous wins or no current ad, so show the ad
+    return true; // No previous wins or no current ad, so show the ad
   }
 
-  const recentWinsForCurrentAdOneMin = prevWinsMs.filter(([timeDeltaMs, ad]) => {
-      return timeDeltaMs <= ONE_MINUTE_MS && ad.renderURL === currentAd.renderURL; // Filter by time and ad renderURL
-  });
+  const recentWinsForCurrentAdOneMin = prevWinsMs.filter(
+    ([timeDeltaMs, ad]) => {
+      return (
+        timeDeltaMs <= ONE_MINUTE_MS && ad.renderURL === currentAd.renderURL
+      ); // Filter by time and ad renderURL
+    },
+  );
 
-
-  return recentWinsForCurrentAdOneMin.length < MAX_IMPRESSIONS_PER_MINUTE_PER_AD 
+  return (
+    recentWinsForCurrentAdOneMin.length < MAX_IMPRESSIONS_PER_MINUTE_PER_AD
+  );
 }
 
 /** Returns whether running in debug mode. */
@@ -270,7 +275,7 @@ function getBidForDisplayAd({
   if (!selectedAd) {
     //log("can't select display ad, no matching ad type found", {interestGroup});
     return {bid: '0.0'};
-  } else if (!shouldShowAd(browserSignals.prevWinsMs, selectedAd)) { 
+  } else if (!shouldShowAd(browserSignals.prevWinsMs, selectedAd)) {
     //log('frequency capping', {interestGroup, browserSignals});
     [selectedAd] = interestGroup.ads.filter(
       (ad) => 'DEFAULT' === ad.metadata.adType,

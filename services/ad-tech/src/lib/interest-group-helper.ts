@@ -191,7 +191,7 @@ const getDefaultDisplayAdForRequest = (
   );
   renderUrl.searchParams.append('advertiser', advertiser);
   renderUrl.searchParams.append('itemId', '1f937');
-  
+
   const ad: InterestGroupAd = {
     renderURL: `${renderUrl.toString()}&${MACRO_DISPLAY_RENDER_URL_AD_SIZE}`,
     metadata: {
