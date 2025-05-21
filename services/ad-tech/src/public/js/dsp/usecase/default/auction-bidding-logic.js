@@ -345,10 +345,13 @@ function getBidByAdType(adType, biddingContext) {
   switch (adType) {
     case 'VIDEO':
       bid = getBidForVideoAd(biddingContext);
+      break;
     case 'MULTIPIECE':
       bid = getBidForMultipieceAd(biddingContext);
+      break;
     default: // Default to DISPLAY.
       bid = getBidForDisplayAd(biddingContext);
+      break;
   }
   if (bid) {
     console.info(
