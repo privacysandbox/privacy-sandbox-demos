@@ -145,7 +145,7 @@ export const KNOWN_SHOP_ITEM_TAGS_BY_ID = {
   '1fa74': ['blueShoe'], // Thong sandal
   '1f3bf': ['blueShoe', 'sportsShoe'], // Ski boots
   '26f8': ['sportsShoe'], // Ice skates
-  '1f937': ['Shrug'], // Shrug - Frequency Capping Reached Alert
+  '1f937': ['shrug'], // Shrug - Frequency Capping Reached Alert
 };
 
 // ****************************************************************************
