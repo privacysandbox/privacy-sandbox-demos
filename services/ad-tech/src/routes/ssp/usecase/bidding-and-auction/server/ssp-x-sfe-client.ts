@@ -4,6 +4,7 @@ import protoLoader from '@grpc/proto-loader';
 import grpc, {ChannelCredentials} from '@grpc/grpc-js';
 
 const GRPC_SERVER_ADDRESS = process.env.SSP_X_GRPC;
+const GRPC_SECURE_CONNECTION = process.env.SSP_X_GRPC_SECURE === 'true';
 let client: SellerFrontEnd | null = null;
 
 if (GRPC_SERVER_ADDRESS) {
@@ -35,12 +36,21 @@ if (GRPC_SERVER_ADDRESS) {
         },
       } = packageObject;
 
-      client = new SellerFrontEnd(
-        GRPC_SERVER_ADDRESS,
-        grpc.credentials.createInsecure(),
-      );
+      let credentials;
+      if (GRPC_SECURE_CONNECTION) {
+        console.log(
+          `SFE client for SSP-X: Using secure TLS connection to ${GRPC_SERVER_ADDRESS}`,
+        );
+        credentials = grpc.credentials.createSsl();
+      } else {
+        console.log(
+          `SFE client for SSP-X: Using insecure connection to ${GRPC_SERVER_ADDRESS}`,
+        );
+        credentials = grpc.credentials.createInsecure();
+      }
 
-      console.log('SFE client for SSP-X loaded successfully');
+      client = new SellerFrontEnd(GRPC_SERVER_ADDRESS, credentials);
+      console.log('SFE client for SSP-X gRPC client created.');
     } else {
       console.error(
         'Failed to load SellerFrontEnd service definition from proto.',
