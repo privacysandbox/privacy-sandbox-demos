@@ -181,7 +181,7 @@ const getDisplayAdForRequest = (
   return ad;
 };
 
-/** Returns the interest group default display ad to for the given advertiser when frequenc cap is met. */
+/** Returns the interest group default display ad for the given advertiser when frequency cap is met. */
 const getDefaultDisplayAdForRequest = (
   targetingContext: TargetingContext,
 ): InterestGroupAd => {
