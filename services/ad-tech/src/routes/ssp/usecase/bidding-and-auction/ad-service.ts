@@ -149,9 +149,21 @@ function runProtectedAudienceAuction(
     baOnlyClientSFE.selectAd(
       selectAdRequest,
       metadata,
-      (error: any, response: any) => {
-        if (!response) {
-          console.log(`No response received from SFE.  Error=${error}`);
+      (error: grpc.ServiceError | null, response: any) => {
+        if (error) {
+          console.error(
+            `[ssp-x] Error received from SFE: ${error.message}. Code: ${error.code}, Details: ${error.details}`,
+          );
+          // Send an appropriate HTTP error response to the client of this /unified-auction endpoint
+          res.status(503).json({
+            error: 'SFE service unavailable',
+            sfeErrorDetails: {code: error.code, message: error.message},
+          });
+          return;
+        }
+        if (!response || !response.auction_result_ciphertext) {
+          console.error('[ssp-x] Invalid or empty response from SFE.');
+          res.status(500).json({error: 'Invalid response from SFE service'});
           return;
         }
 
@@ -173,11 +185,24 @@ function runProtectedAudienceAuction(
     mixedModeClientSFE.selectAd(
       selectAdRequest,
       metadata,
-      (error: any, response: any) => {
-        if (!response) {
-          console.log(`No response received from SFE.  Error=${error}`);
+      (error: grpc.ServiceError | null, response: any) => {
+        if (error) {
+          console.error(
+            `[ssp-y] Error received from SFE: ${error.message}. Code: ${error.code}, Details: ${error.details}`,
+          );
+          // Send an appropriate HTTP error response to the client of this /unified-auction endpoint
+          res.status(503).json({
+            error: 'SFE service unavailable',
+            sfeErrorDetails: {code: error.code, message: error.message},
+          });
           return;
         }
+        if (!response || !response.auction_result_ciphertext) {
+          console.error('[ssp-y] Invalid or empty response from SFE.');
+          res.status(500).json({error: 'Invalid response from SFE service'});
+          return;
+        }
+
         const ciphertextShaHash = createHash('sha256')
           .update(response.auction_result_ciphertext, 'base64')
           .digest('base64url');
