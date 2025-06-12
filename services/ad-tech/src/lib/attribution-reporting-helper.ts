@@ -48,10 +48,9 @@ export const getAttributionRedirectUrl = (requestQuery: {
 export const getAttributionTriggerHeaders = (requestQuery: {
   [key: string]: string;
 }): {[key: string]: any} => {
-
   // usecase ara-event-filtering
   const itemId: string = requestQuery['itemId'] as string;
-  const filters = {item_id: [itemId]}
+  const filters = {item_id: [itemId]};
 
   return {
     filters,
@@ -100,7 +99,7 @@ export const getEventLevelAttributionTriggerHeaders = (requestQuery: {
   const itemId: string = requestQuery['itemId'] as string;
 
   // usecase ara-event-filtering
-  const filters = {item_id: [itemId]}
+  const filters = {item_id: [itemId]};
 
   return {
     filters,
@@ -140,9 +139,9 @@ export const getAttributionSourceHeaders = (
   const debug_key = debugKey();
 
   // usecase ara-event-filtering
-  let filter_data:any;
-  if(filter === `1`){
-    filter_data = {item_id: [itemId] };
+  let filter_data: any;
+  if (filter === `1`) {
+    filter_data = {item_id: [itemId]};
   }
 
   return {
