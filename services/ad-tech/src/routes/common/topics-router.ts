@@ -31,5 +31,5 @@ TopicsRouter.get(
   async (req: Request, res: Response) => {
     const browsingTopics = req.get('Sec-Browsing-Topics');
     res.json({topics: browsingTopics});
-  }
+  },
 );
