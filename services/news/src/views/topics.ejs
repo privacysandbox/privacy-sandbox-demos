@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <title><%= TITLE %></title>
+  <link rel="stylesheet"
+        href="/css/global.css" />
+  <link rel="stylesheet"
+        href="/css/unified.css" />
+  <link rel="icon"
+        href="/img/spy.svg" />
+  <script src="/js/main.js"></script>
+  <script src="/js/topics.js"></script>
+</head>
+
+<body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
+  <%- include('components/header') %>
+  <main class="flex flex-col lg:flex-row justify-between gap-6">
+    <article class="flex flex-col gap-6 text-xl leading-6 w-full lg:w-4/6">
+      <h3 class="font-bold text-2xl">
+        Topics Demo
+      </h3>
+      <p>This page has links to simulate user browsing activity in order to show how topics can be marked as observed, and then accessed, by using the headers from a 'fetch()' request.</p>
+      <h2 class="font-bold text-xl">
+        Run the Demo
+      </h2>
+      <p>Open Chrome from the command line using the following <a href="https://www.chromium.org/developers/how-tos/run-chromium-with-flags" target="_blank">feature flags</a>:</p>
+      <p><i>google-chrome --enable-features=BrowsingTopicsParameters:time_period_per_epoch/60s,BrowsingTopicsBypassIPIsPubliclyRoutableCheck</i></p>
+      <p>Make sure that chrome://flags/#privacy-sandbox-ads-apis is <strong>disabled</strong>, since the defaults from this will override the command-line flags (in particular, the epoch duration).</p>
+      <p>Each of the following links slightly changes the hostname in order to record different topics, which is all done using <code>fetch()</code> requests to the topics server.</p>
+      <ul class="list-disc pl-8">
+        <li><a href="https://soccer.privacy-sandbox-demos-news.dev">Soccer</a></li>
+        <li><a href="https://recipes.privacy-sandbox-demos-news.dev">Recipes</a></li>
+        <li><a href="https://insurance.privacy-sandbox-demos-news.dev">Insurance</a></li>
+      </ul>
+      <p>Once each of these open, observed topics will be available to be displayed at the 'Observed Topics' section below after three <a href="https://developer.chrome.com/docs/privacy-sandbox/topics/#how-does-the-topics-api-work" target="_blank">epochs</a> have passed, i.e. after around 3 minutes if you have set the epoch length to 60 seconds, though it may take longer. The observed topics are likely to be those such as <a href="https://github.com/patcg-individual-drafts/topics/blob/main/taxonomy_v1.md#:~:text=325" target="_blank">325</a>(Soccer), <a href="https://github.com/patcg-individual-drafts/topics/blob/main/taxonomy_v1.md#:~:text=332" target="_blank">332</a>(Travel & Transportation), or <a href="https://github.com/patcg-individual-drafts/topics/blob/main/taxonomy_v1.md#:~:text=158" target="_blank">158</a>(Insurance).</p>
+      <p>If no topics are displayed, navigate repeatedly to the pages listed above, e.g. by refreshing each page (not hard-refresh).</p>
+      <p>Note: this demo isn't anything like a real-world implementation, it only serves to show how topics can be marked as observed, and accessed, using headers.</p>
+      <h2 class="font-bold text-xl">
+        Observed Topics
+      </h2>
+      <div id="observed-topics" style="background-color: rgb(248, 237, 185); padding: 20px;"></div>
+    </article>
+    <%- include('components/aside') %>
+  </main>
+  <%- include('components/footer', {HOME_HOST, EXTERNAL_PORT}) %>
+</body>
+
+</html>
