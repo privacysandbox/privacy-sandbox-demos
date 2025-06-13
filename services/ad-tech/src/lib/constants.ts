@@ -30,9 +30,9 @@ export const {
   // Publishers
   NEWS_HOST,
   NEWS_DETAIL,
-  MOTO_NEWS_HOST,
-  SOCCER_NEWS_HOST,
-  GARDENING_NEWS_HOST,
+  NEWS_TOPICS_A_HOST,
+  NEWS_TOPICS_B_HOST,
+  NEWS_TOPICS_C_HOST,
 
   // Ad-techs
   DSP_HOST,
@@ -222,7 +222,7 @@ export const JAVASCRIPT_TEMPLATE_VARIABLES = {
  */
 export const PUBLISHER_IDS: {[hostname: string]: string} = {
   [NEWS_HOST!]: '1000',
-  [MOTO_NEWS_HOST!]: '2000',
-  [SOCCER_NEWS_HOST!]: '3000',
-  [GARDENING_NEWS_HOST!]: '4000',
+  [NEWS_TOPICS_A_HOST!]: '2000',
+  [NEWS_TOPICS_B_HOST!]: '3000',
+  [NEWS_TOPICS_C_HOST!]: '4000',
 };
