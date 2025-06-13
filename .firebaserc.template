@@ -53,14 +53,14 @@
         "service-provider": [
           "privacy-sandbox-demos-services"
         ],
-        "moto-news": [
-          "privacy-sandbox-demos-motorcycles"
+        "news-topics-a": [
+          "privacy-sandbox-demos-soccer-foot"
         ],
-        "soccer-news": [
-          "privacy-sandbox-demos-soccer"
+        "news-topics-b": [
+          "privacy-sandbox-demos-recipes"
         ],
-        "gardening-news": [
-          "privacy-sandbox-demos-gardening"
+        "news-topics-c": [
+          "privacy-sandbox-demos-insurance"
         ],
         "collector": [
           "privacy-sandbox-demos-collector"
