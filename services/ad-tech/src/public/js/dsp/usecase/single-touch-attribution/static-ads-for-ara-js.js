@@ -39,6 +39,7 @@
       urlParams.get('advertiser'),
     );
     registerSourceUrl.searchParams.append('itemId', urlParams.get('itemId'));
+    // usecase ara-event-filtering
     registerSourceUrl.searchParams.append('filter', urlParams.get('filter'));
     const encodedRegisterSourceUrl = encodeURIComponent(registerSourceUrl);
     const destinationUrl = new URL(
