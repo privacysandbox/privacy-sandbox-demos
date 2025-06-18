@@ -34,12 +34,12 @@ const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> bidding logic:';
 const ONE_MINUTE_MS = 60 * 1000; // 60 seconds * 1000 ms/sec
 const MAX_IMPRESSIONS_PER_MINUTE_PER_AD = 1;
 
-function shouldShowAd(prevWinsMs, currentAd) {
+/** Checks whether frequency capping should be triggered. */
+function shouldCapFrequency(prevWinsMs, currentAd) {
   // currentAd is the ad we're considering showing
   if (!prevWinsMs || !currentAd) {
     return true; // No previous wins or no current ad, so show the ad
   }
-
   const recentWinsForCurrentAdOneMin = prevWinsMs.filter(
     ([timeDeltaMs, ad]) => {
       return (
@@ -47,7 +47,6 @@ function shouldShowAd(prevWinsMs, currentAd) {
       ); // Filter by time and ad renderURL
     },
   );
-
   return (
     recentWinsForCurrentAdOneMin.length < MAX_IMPRESSIONS_PER_MINUTE_PER_AD
   );
@@ -271,17 +270,28 @@ function getBidForDisplayAd({
     adType: 'DISPLAY',
     inDebugMode,
   });
-
-  if (!selectedAd) {
-    //log("can't select display ad, no matching ad type found", {interestGroup});
-    return {bid: '0.0'};
-  } else if (!shouldShowAd(browserSignals.prevWinsMs, selectedAd)) {
-    //log('frequency capping', {interestGroup, browserSignals});
+  // Check whether to trigger frequency capping.
+  if (!shouldCapFrequency(browserSignals.prevWinsMs, selectedAd)) {
+    if (inDebugMode) {
+      console.debug(
+        LOG_PREFIX,
+        'capping frequency',
+        {interestGroup, browserSignals},
+      );
+    }
     [selectedAd] = interestGroup.ads.filter(
       (ad) => 'DEFAULT' === ad.metadata.adType,
     );
   }
-
+  // Check if all ads were filtered out.
+  if (!selectedAd) {
+    console.warn(
+      LOG_PREFIX,
+      'no matching display ad found in interest group',
+      interestGroup.name,
+    );
+    return {bid: '0.0'};
+  }
   // Check if any deals are eligible.
   const dealId = selectDealId({selectedAd, auctionSignals, inDebugMode});
   return {
