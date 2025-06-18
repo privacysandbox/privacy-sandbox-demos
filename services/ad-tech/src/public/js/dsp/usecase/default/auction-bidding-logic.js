@@ -30,6 +30,28 @@ const LOG_PREFIX = '[PSDemo] <%= HOSTNAME %> bidding logic:';
 // ********************************************************
 // Helper Functions
 // ********************************************************
+// One minute display limit for demo purpose
+const ONE_MINUTE_MS = 60 * 1000; // 60 seconds * 1000 ms/sec
+const MAX_IMPRESSIONS_PER_MINUTE_PER_AD = 1;
+
+/** Checks whether frequency capping should be triggered. */
+function shouldCapFrequency(prevWinsMs, currentAd) {
+  // currentAd is the ad we're considering showing
+  if (!prevWinsMs || !currentAd) {
+    return true; // No previous wins or no current ad, so show the ad
+  }
+  const recentWinsForCurrentAdOneMin = prevWinsMs.filter(
+    ([timeDeltaMs, ad]) => {
+      return (
+        timeDeltaMs <= ONE_MINUTE_MS && ad.renderURL === currentAd.renderURL
+      ); // Filter by time and ad renderURL
+    },
+  );
+  return (
+    recentWinsForCurrentAdOneMin.length < MAX_IMPRESSIONS_PER_MINUTE_PER_AD
+  );
+}
+
 /** Returns whether running in debug mode. */
 function inDebugMode({auctionSignals, perBuyerSignals, trustedBiddingSignals}) {
   const debugFlag = `DEBUG_${CURRENT_HOST}`;
@@ -243,12 +265,31 @@ function getBidForDisplayAd({
   inDebugMode,
 }) {
   // Select an ad meeting the auction requirements.
-  const [selectedAd] = getAdsByType({
+  let [selectedAd] = getAdsByType({
     interestGroup,
     adType: 'DISPLAY',
     inDebugMode,
   });
+  // Check whether to trigger frequency capping.
+  if (!shouldCapFrequency(browserSignals.prevWinsMs, selectedAd)) {
+    if (inDebugMode) {
+      console.debug(
+        LOG_PREFIX,
+        'capping frequency',
+        {interestGroup, browserSignals},
+      );
+    }
+    [selectedAd] = interestGroup.ads.filter(
+      (ad) => 'DEFAULT' === ad.metadata.adType,
+    );
+  }
+  // Check if all ads were filtered out.
   if (!selectedAd) {
+    console.warn(
+      LOG_PREFIX,
+      'no matching display ad found in interest group',
+      interestGroup.name,
+    );
     return {bid: '0.0'};
   }
   // Check if any deals are eligible.
@@ -453,6 +494,7 @@ function reportWin(
       bidCurrency: browserSignals.bidCurrency,
       buyerReportingId: browserSignals.buyerReportingId,
       buyerAndSellerReportingId: browserSignals.buyerAndSellerReportingId,
+      prevWinsMs: browserSignals.prevWinsMs,
       selectedBuyerAndSellerReportingId:
         browserSignals.selectedBuyerAndSellerReportingId,
     };
