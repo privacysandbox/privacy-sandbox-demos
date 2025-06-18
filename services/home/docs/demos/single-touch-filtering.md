@@ -47,8 +47,9 @@ enabling more efficient allocation of ad spend and a clearer view of campaign RO
 
 - Publisher: Hosts ads
 - Advertiser: Hosts conversion pages, tracks conversions
-- Ad Tech: Implements API, receives cross-site reports </TabItem>
+- Ad Tech: Implements API, receives cross-site reports
 
+</TabItem>
 <TabItem value="design" label="Design">
 
 ## Design
@@ -102,8 +103,9 @@ particular products, thereby providing more accurate insights into campaign retu
     - The browser encrypts this payload and schedules it to be sent to a designated adtech reporting endpoint. The timing of sending these reports is
       also delayed and randomized to enhance privacy.
 
-![journey](./img/single-touch-event-filtering.png) </TabItem>
+![journey](./img/single-touch-event-filtering.png)
 
+</TabItem>
 <TabItem value="demo" label="Demo">
 
 ## Demo
