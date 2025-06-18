@@ -94,7 +94,7 @@ particular products, thereby providing more accurate insights into campaign retu
 8. **Purchase the item**: The user proceeds to buy the item from the cart.
 9. **Trigger Registration (Advertiser)**: The advertiser's website registers an attribution trigger the same way as event level reports with
    `aggregation_keys` and `aggregatable_values`.
-10. **Aggregatable Report Generation (Browser)**: If attribution occurs and the trigger includes` aggregatable_trigger_data`, the browser generates an
+10. **Aggregatable Report Generation (Browser)**: If attribution occurs and the trigger includes`aggregatable_trigger_data`, the browser generates an
     aggregatable report.
     - The browser combines the `aggregation_keys` from the attributed source with the `aggregatable_trigger_data` from the trigger to form an
       encrypted payload.
@@ -190,7 +190,7 @@ The advertiser's website needs to ensure the item_id of the selected product is 
 // Initiate event level report trigger registration
 function addToCart({params}) {
       const registerSourceUrl = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?itemId=1f45e"
-	// ...
+ // ...
       window.fetch(registerSourceUrl, {
         mode: "no-cors",
         keepalive: true,
