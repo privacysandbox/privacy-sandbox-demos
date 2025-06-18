@@ -20,6 +20,7 @@ Looking to run these demos yourself? Check our [guide](https://github.com/privac
 | [Ads Composed of Multiple Pieces](demos/multi-piece-ad.md)                                                 | Protected Audience                                       |
 | [Bidding & Auction Services for Protected Audience](demos/bidding-and-auction.md)                          | Protected Audience, Bidding & Auction Services           |
 | [Event-level reports for single touch attribution](demos/single-touch-event-level-report.md)               | Attribution Reporting                                    |
+| [Filtering attributions for single-touch conversion attribution](demos/single-touch-filtering.md)          | Attribution Reporting                                    |
 | [Reach Measurement](demos/reach-measurement-with-shared-storage.md)                                        | Shared Storage, Private Aggregation                      |
 | [Multi-touch conversion Attribution](demos/multi-touch-conversion-attribution.md)                          | Private Aggregation, Shared Storage, Aggregation Service |
 | [Single-touch conversion attribution](demos/single-touch-conversion-attribution.md)                        | Protected Audience, Fenced Frames, Attribution Reporting |
