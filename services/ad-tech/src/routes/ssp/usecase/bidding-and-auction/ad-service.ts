@@ -94,15 +94,23 @@ function decodeRequest(auctionRequest: string) {
 }
 
 async function runContextualAuction({buyers}: any) {
+  console.log('[B&A Demo] Starting contextual auction...');
   const adServerBids = await Promise.all(
     Object.keys(buyers).map(async (buyer) => {
+      console.log(
+        `[B&A Demo] Fetching bid from buyer: ${buyer}, URL: ${buyers[buyer].bidUrl}`,
+      );
       const response = await fetch(buyers[buyer].bidUrl);
       const result = await response.json();
       result.buyer = buyer;
+      console.log(
+        `[B&A Demo] Received bid from buyer: ${buyer}, Bid: ${result.bid}`,
+      );
       return result;
     }),
   );
 
+  console.log('[B&A Demo] Contextual auction finished.');
   return adServerBids.sort((a, b) => b.bid - a.bid);
 }
 
@@ -113,6 +121,7 @@ function runProtectedAudienceAuction(
   host: any,
   res: Response,
 ) {
+  console.log('[B&A Demo] Starting Protected Audience auction...');
   const [contextualAuctionWinner] = contextualAuctionResult;
   const {auctionRequest} = protectedAudience;
   const perBuyerConfigs = buildPerBuyerConfigs(contextualAuctionResult);
@@ -178,10 +187,10 @@ function runProtectedAudienceAuction(
             response.auction_result_ciphertext,
           ),
         });
+        console.log('[B&A Demo] Unified Auction complete (SSP_X path).');
       },
     );
-  }
-  if (host.includes(SSP_Y_HOST) && mixedModeClientSFE) {
+  } else if (host.includes(SSP_Y_HOST) && mixedModeClientSFE) {
     mixedModeClientSFE.selectAd(
       selectAdRequest,
       metadata,
@@ -223,8 +232,19 @@ function runProtectedAudienceAuction(
             },
           },
         });
+        console.log('[B&A Demo] Unified Auction complete (SSP_Y path).');
       },
     );
+  } else {
+    console.error(
+      `[B&A Demo] No SFE client found for host: ${host}. SSP_X_HOST: ${SSP_X_HOST}, SSP_Y_HOST: ${SSP_Y_HOST}. baOnlyClientSFE: ${!!baOnlyClientSFE}, mixedModeClientSFE: ${!!mixedModeClientSFE}`,
+    );
+    res
+      .status(500)
+      .json({
+        error:
+          'Internal server configuration error: No SFE client available for this host.',
+      });
   }
 }
 
@@ -243,7 +263,10 @@ router.get('/contextual-auction-buyers.json', (req: Request, res: Response) => {
 
 router.post('/unified-auction', async (req: Request, res: Response) => {
   const {contextual, protectedAudience} = req.body;
-  const host = req.headers.host;
+  // Prioritize X-Forwarded-Host if present (set by Firebase Hosting)
+  // Otherwise, fall back to the host header.
+  const forwardedHost = req.header('X-Forwarded-Host');
+  const host = forwardedHost || req.headers.host;
 
   const metadata = new grpc.Metadata();
   metadata.add('X-Accept-Language', req.header('Accept-Language') || '');
@@ -258,7 +281,6 @@ router.post('/unified-auction', async (req: Request, res: Response) => {
     host,
     res,
   );
-  console.log('[B&A Demo] Unified Auction is complete. ');
 });
 
 export default router;
