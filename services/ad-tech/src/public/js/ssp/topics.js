@@ -74,6 +74,7 @@ function getTopicsFromInputString(inputString, taxonomy) {
 let currentTopics = '';
 let list = '';
 const emptyTopics = '();p=P0000000000000000000000000000000';
+const CURRENT_ORIGIN = '<%= CURRENT_ORIGIN %>';
 
 async function initialize() {
   // 1. Await the resolution of the promise to get the actual Map
@@ -81,11 +82,11 @@ async function initialize() {
 
   // 2. Define the fetch function that uses the resolved map
   async function makeFetchRequest() {
+    const url = new URL(CURRENT_ORIGIN);
+    url.pathname = '/topics/observe-browsing-topics';
+
     try {
-      const response = await fetch(
-        'https://privacy-sandbox-demos-dsp-a.dev/topics/observe-browsing-topics',
-        {browsingTopics: true},
-      );
+      const response = await fetch(url, {browsingTopics: true});
       const json = await response.json();
       const topics = json.topics;
 
@@ -107,5 +108,19 @@ async function initialize() {
   setInterval(makeFetchRequest, 2000);
 }
 
-// 4. Call the main initialization function to start the process
-initialize();
+//API availability check
+if (
+  'BrowseTopics' in document &&
+  document.featurePolicy.allowsFeature('Browse-topics')
+) {
+  // The Topics API is supported and enabled in the current context.
+  // You can now proceed with using fetch requests with the BrowseTopics attribute.
+  console.log('Topics API is supported.');
+
+  // 4. Call the main initialization function to start the process
+  initialize();
+} else {
+  // The Topics API is not supported or has been disabled by the user or a permissions policy.
+  // Fallback to a different method for content personalization.
+  console.log('Topics API is not supported.');
+}

@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="/css/unified.css" />
   <link rel="icon" href="/img/spy.svg" />
   <script src="/js/main.js"></script>
-  <script src="/js/topics.js"></script>
   <script>
     // Publishers configure the ad units available on the page.
     window.PSDemo.PAGE_ADS_CONFIG = Object.freeze({
@@ -26,6 +25,8 @@
     });
   </script>
   <script async defer src="<%= SSP_TAG_URL %>"></script>
+  <script async defer src="<%= SSP_TOPICS_URL %>"></script>
+
 
 <body class="container mx-auto flex flex-col gap-6 font-serif sm:w-full md:w-full lg:w-4/5 bg-slate-50 pt-8">
   <%- include('components/header') %>
