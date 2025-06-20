@@ -26,9 +26,9 @@ export const {
   // Publishers
   NEWS_HOST,
   NEWS_DETAIL,
-  MOTO_NEWS_HOST,
-  SOCCER_NEWS_HOST,
-  GARDENING_HOST,
+  NEWS_TOPICS_A_HOST,
+  NEWS_TOPICS_B_HOST,
+  NEWS_TOPICS_C_HOST,
 
   // Ad-techs
   AD_SERVER_HOST,
