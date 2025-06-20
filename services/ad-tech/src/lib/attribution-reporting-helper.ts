@@ -49,7 +49,7 @@ export const getAttributionTriggerHeaders = (requestQuery: {
   [key: string]: string;
 }): {[key: string]: any} => {
   // usecase ara-event-filtering
-  const itemId: string = requestQuery['itemId'] as string ?? '';
+  const itemId: string = (requestQuery['itemId'] as string) ?? '';
   const filters = {item_id: [itemId]};
 
   return {
@@ -94,9 +94,10 @@ export const getAttributionTriggerHeaders = (requestQuery: {
 export const getEventLevelAttributionTriggerHeaders = (requestQuery: {
   [key: string]: string;
 }): {[key: string]: any} => {
-  const conversionType: string = requestQuery['conversionType'] as string ?? '';
+  const conversionType: string =
+    (requestQuery['conversionType'] as string) ?? '';
   const [_data, _priority] = getTriggerData(conversionType);
-  const itemId: string = requestQuery['itemId'] as string ?? '';
+  const itemId: string = (requestQuery['itemId'] as string) ?? '';
 
   // usecase ara-event-filtering
   const filters: {[key: string]: any} = {item_id: [itemId]};
@@ -149,7 +150,7 @@ export const getAttributionSourceHeaders = (
     source_event_id,
     debug_key,
     debug_reporting: true, // Enable verbose debug reports.
-    ...(filter_data && { filter_data }), // only include when available
+    ...(filter_data && {filter_data}), // only include when available
     aggregation_keys: {
       quantity: sourceKeyPiece({
         type: sourceType,
