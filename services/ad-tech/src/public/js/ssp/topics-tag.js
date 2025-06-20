@@ -110,8 +110,8 @@ async function initialize() {
 
 //API availability check
 if (
-  'BrowseTopics' in document &&
-  document.featurePolicy.allowsFeature('Browse-topics')
+  'browsingTopics' in document &&
+  document.featurePolicy.allowsFeature('browsing-topics')
 ) {
   // The Topics API is supported and enabled in the current context.
   // You can now proceed with using fetch requests with the BrowseTopics attribute.
