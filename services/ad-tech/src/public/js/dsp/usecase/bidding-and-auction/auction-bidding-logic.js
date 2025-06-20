@@ -14,6 +14,9 @@
  limitations under the License.
  */
 
+const CURRENT_HOST = '<%= HOSTNAME %>';
+const EXTERNAL_PORT = '<%= EXTERNAL_PORT %>';
+
 function generateBid(
   interestGroup,
   auctionSignals,
@@ -23,8 +26,7 @@ function generateBid(
 ) {
   return {
     bid: Math.ceil(Math.random() * 100),
-    render:
-      'https://privacy-sandbox-demos-dsp-a.dev/html/protected-audience-ad.html',
+    render: `https://${CURRENT_HOST}:${EXTERNAL_PORT}/html/protected-audience-ad.html`,
     allowComponentAuction: !!browserSignals.topLevelSeller,
   };
 }
