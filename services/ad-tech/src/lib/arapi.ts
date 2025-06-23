@@ -171,6 +171,10 @@ export function debugKey(): string {
   return Math.random().toString().substring(2).replace(/^0/, '');
 }
 
+export function getPriority(sourceType: number): string {
+  return sourceType === SOURCE_TYPE.view ? '1' : '2';
+}
+
 function key_from_value(object: any, value: any) {
   const key: string = Object.keys(object).find(
     (key) => object[key] === value,

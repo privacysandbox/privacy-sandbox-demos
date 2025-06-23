@@ -20,6 +20,7 @@ import {
   sourceKeyPiece,
   triggerKeyPiece,
   getTriggerData,
+  getPriority,
   ADVERTISER,
   PUBLISHER,
   DIMENSION,
@@ -126,10 +127,12 @@ export const getAttributionSourceHeaders = (
   const destination = `https://${advertiser}:${EXTERNAL_PORT}`;
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
+  const priority = getPriority(sourceType);
   return {
     destination,
     source_event_id,
     debug_key,
+    priority,
     debug_reporting: true, // Enable verbose debug reports.
     aggregation_keys: {
       quantity: sourceKeyPiece({
