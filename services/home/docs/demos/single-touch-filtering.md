@@ -94,7 +94,7 @@ particular products, thereby providing more accurate insights into campaign retu
    sent to the reporting origins.
 8. **Purchase the item**: The user proceeds to buy the item from the cart.
 9. **Trigger Registration (Advertiser)**: The advertiser's website registers an attribution trigger the same way as event level reports with
-   `aggregation_keys` and `aggregatable_values`.
+   `aggregatable_trigger_data`.
 10. **Aggregatable Report Generation (Browser)**: If attribution occurs and the trigger includes`aggregatable_trigger_data`, the browser generates an
     aggregatable report.
     - The browser combines the `aggregation_keys` from the attributed source with the `aggregatable_trigger_data` from the trigger to form an
