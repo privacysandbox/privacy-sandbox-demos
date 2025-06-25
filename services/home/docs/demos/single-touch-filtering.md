@@ -10,8 +10,7 @@ more_data:
     - Ad Tech
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 # Filtering attributions for single-touch conversion attribution
 
@@ -24,11 +23,21 @@ import TabItem from '@theme/TabItem';
 
 #### Problem Statement
 
-Advertisers with multiple product lines want to attribute conversions to the correct campaign. This is especially important with user journeys involving interactions with multiple items or actions that aren't directly linked to a specific ad exposure. This complexity can lead to inaccurate measurement of ad effectiveness, making it difficult to determine the true return on investment (ROI) for advertising campaigns. The inability to filter out irrelevant engagements results in inefficient campaign optimization, as resources might be misallocated based on misleading conversion data.
+Advertisers with multiple product lines want to attribute conversions to the correct campaign. This is especially important with user journeys
+involving interactions with multiple items or actions that aren't directly linked to a specific ad exposure. This complexity can lead to inaccurate
+measurement of ad effectiveness, making it difficult to determine the true return on investment (ROI) for advertising campaigns. The inability to
+filter out irrelevant engagements results in inefficient campaign optimization, as resources might be misallocated based on misleading conversion
+data.
 
 #### Solution Overview
 
-This use case demonstrates how advertisers can leverage the Privacy Sandbox Attribution Reporting API's filtering capabilities to achieve precise conversion measurement. The core challenge addressed is attributing conversions solely to views or clicks that correspond to the current product or item, effectively filtering out any irrelevant engagements. In this demo, we start by configuring specific filters during the initial ad interaction (source) registration. This ensures that only the subsequent conversion actions that involve this specific advertised item will trigger attribution reports. This granular filtering enables advertisers to gain a more accurate understanding of ad effectiveness by directly linking ad exposure to user engagement with particular products. The ultimate outcome is improved campaign optimization, enabling more efficient allocation of ad spend and a clearer view of campaign ROI.
+This use case demonstrates how advertisers can leverage the Privacy Sandbox Attribution Reporting API's filtering capabilities to achieve precise
+conversion measurement. The core challenge addressed is attributing conversions solely to views or clicks that correspond to the current product or
+item, effectively filtering out any irrelevant engagements. In this demo, we start by configuring specific filters during the initial ad interaction
+(source) registration. This ensures that only the subsequent conversion actions that involve this specific advertised item will trigger attribution
+reports. This granular filtering enables advertisers to gain a more accurate understanding of ad effectiveness by directly linking ad exposure to user
+engagement with particular products. The ultimate outcome is improved campaign optimization, enabling more efficient allocation of ad spend and a
+clearer view of campaign ROI.
 
 ### Privacy Sandbox APIs
 
@@ -48,17 +57,21 @@ This use case demonstrates how advertisers can leverage the Privacy Sandbox Attr
 
 ### Goals
 
-The primary goal of this use case is to demonstrate the filtering feature of the Attribution Reporting API. This demonstration will show how to ensure that any conversion-related events, such as 'add to cart' and 'purchase' actions, are accurately attributed to the attribution sources of that specific product or item. Consequently, these filtered conversions will trigger both event-level and summary reports.
+The primary goal of this use case is to demonstrate the filtering feature of the Attribution Reporting API. This demonstration will show how to ensure
+that any conversion-related events, such as 'add to cart' and 'purchase' actions, are accurately attributed to the attribution sources of that
+specific product or item. Consequently, these filtered conversions will trigger both event-level and summary reports.
 
 ### Assumptions
 
-- The ad tech platform has integrated with the Privacy Sandbox Attribution Reporting API for source and trigger registration, and event level and summary report endpoints.
+- The ad tech platform has integrated with the Privacy Sandbox Attribution Reporting API for source and trigger registration, and event level and
+  summary report endpoints.
 - The advertiser's website can identify the specific item by `itemId`.
 - The ad tech platform can associate specific item identifiers with ad interactions during source registration.
 
 ### Key Exclusions
 
-- This demo will focus solely on the filtering mechanism for event-level reports and summary reports. Other filtering features of the Attribution Reporting API are out of scope.
+- This demo will focus solely on the filtering mechanism for event-level reports and summary reports. Other filtering features of the Attribution
+  Reporting API are out of scope.
 - Complex filter logic beyond exact `itemId` matching will not be covered in this basic demo.
 - Only shows click through conversion events as a showcase.
 
@@ -66,10 +79,17 @@ The primary goal of this use case is to demonstrate the filtering feature of the
 
 #### User Journey
 
-1.  **Source Registration with Filter Data**: When a user clicks the ad, the ad tech registers a source with the browser, sending `filter_data` with the `item_id` for the products shown in the ad.
-2.  **Trigger Registration with Filters**: When the user later adds the advertised item to a cart and proceeds to purchase it, the advertiser's site registers an attribution trigger with the browser. This trigger will include `filters` containing the `item_id` of the item added to the cart or purchased.
-3.  **Browser-Side Filtering and Attribution**: The browser, operating on the user's device, is responsible for matching sources to triggers. For a match to occur regarding filters, for every key present in the trigger's `filters`, that same key must exist in the source's `filter_data`, and their associated values must be identical. If a key in the trigger's filters does not exist in the source's `filter_data`, it does not block attribution, and the browser evaluates other matching conditions.
-4.  **Report Generation and Delivery**: Upon successful attribution that satisfies the filter conditions, the browser generates event-level and/or aggregatable reports and schedules them to be sent to the ad tech platform's designated reporting endpoints.
+1.  **Source Registration with Filter Data**: When a user clicks the ad, the ad tech registers a source with the browser, sending `filter_data` with
+    the `item_id` for the products shown in the ad.
+2.  **Trigger Registration with Filters**: When the user later adds the advertised item to a cart and proceeds to purchase it, the advertiser's site
+    registers an attribution trigger with the browser. This trigger will include `filters` containing the `item_id` of the item added to the cart or
+    purchased.
+3.  **Browser-Side Filtering and Attribution**: The browser, operating on the user's device, is responsible for matching sources to triggers. For a
+    match to occur regarding filters, for every key present in the trigger's `filters`, that same key must exist in the source's `filter_data`, and
+    their associated values must be identical. If a key in the trigger's filters does not exist in the source's `filter_data`, it does not block
+    attribution, and the browser evaluates other matching conditions.
+4.  **Report Generation and Delivery**: Upon successful attribution that satisfies the filter conditions, the browser generates event-level and/or
+    aggregatable reports and schedules them to be sent to the ad tech platform's designated reporting endpoints.
 
 ![journey](./img/single-touch-event-filtering.png)
 
@@ -113,7 +133,9 @@ The primary goal of this use case is to demonstrate the filtering feature of the
 9. Go to the DSP [report page](https://privacy-sandbox-demos-dsp.dev/reporting/view-reports) and click the “Clear Report Cache” button at the bottom.
 10. Go back to the shop site and click the “BANK TRANSFER” button.
 11. Review “Trigger Registration” and “Aggregatable Reports” tab in `chrome://attribution-internals`
-    - Only the trigger for item ID `1f45e` is reported. ![step11-1](./img/single-touch-event-filtering-step11-1.png) ![step11-2](./img/single-touch-event-filtering-step11-2.png) ![step11-3](./img/single-touch-event-filtering-step11-3.png) ![step11-4](./img/single-touch-event-filtering-step11-4.png) ![step11-5](./img/single-touch-event-filtering-step11-5.png)
+    - Only the trigger for item ID `1f45e` is reported. ![step11-1](./img/single-touch-event-filtering-step11-1.png)
+      ![step11-2](./img/single-touch-event-filtering-step11-2.png) ![step11-3](./img/single-touch-event-filtering-step11-3.png)
+      ![step11-4](./img/single-touch-event-filtering-step11-4.png) ![step11-5](./img/single-touch-event-filtering-step11-5.png)
 12. Go back to the DSP [report page](https://privacy-sandbox-demos-dsp.dev/reporting/view-reports) and refresh the page.
 13. Check the summary report from the [report page](https://privacy-sandbox-demos-dsp.dev/reporting/view-reports).
     ![step13](./img/single-touch-event-filtering-step13.png)
@@ -122,7 +144,9 @@ The primary goal of this use case is to demonstrate the filtering feature of the
 
 #### Register a source
 
-The ad tech platform is responsible for ensuring that the correct `item_id` is dynamically included in the `filter_data` during source registration. This `item_id` must correspond precisely to the specific product featured in the ad that the user interacted with, ensuring that only relevant conversions are attributed.
+The ad tech platform is responsible for ensuring that the correct `item_id` is dynamically included in the `filter_data` during source registration.
+This `item_id` must correspond precisely to the specific product featured in the ad that the user interacted with, ensuring that only relevant
+conversions are attributed.
 
 ```javascript
 // Initiate the source registration
@@ -145,8 +169,11 @@ res.set(
   })
 );
 ```
-Refer to the real code for source registration with js [here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/public/js/dsp/usecase/single-touch-attribution/static-ads-for-ara-js.js#L32) and source header creation [here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L145).
 
+Refer to the real code for source registration with js
+[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/public/js/dsp/usecase/single-touch-attribution/static-ads-for-ara-js.js#L32)
+and source header creation
+[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L145).
 
 #### Register a trigger
 
@@ -159,7 +186,7 @@ The advertiser's website needs to ensure the item_id of the selected product is 
 // Initiate event level report trigger registration
 function addToCart() {
       const registerSourceUrl = "https://privacy-sandbox-demos-dsp.dev/attribution/register-event-level-trigger?itemId=1f45e"
-	// ...
+ // ...
       window.fetch(registerSourceUrl, {
         mode: "no-cors",
         keepalive: true,
@@ -188,7 +215,11 @@ res.setHeader(
 );
 
 ```
-Refer to the real code for event level report [here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L103) and aggregatable report [here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L145).
+
+Refer to the real code for event level report
+[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L103)
+and aggregatable report
+[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L145).
 
 </TabItem>
 </Tabs>
