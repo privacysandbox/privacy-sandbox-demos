@@ -48,6 +48,7 @@ The current release supports the following use cases:
 | [Ads Composed of Multiple Pieces](https://privacy-sandbox-demos-home.dev/docs/demos/multi-piece-ad/)                                                 | Protected Audience                                       |
 | [Bidding & Auction Services for Protected Audience](https://privacy-sandbox-demos-home.dev/docs/demos/bidding-and-auction/)                          | Protected Audience, Bidding & Auction Services           |
 | [Event-level reports for single touch attribution](https://privacy-sandbox-demos-home.dev/docs/demos/single-touch-event-level-report/)               | Attribution Reporting                                    |
+| [Filtering attributions for single-touch conversion attribution](https://privacy-sandbox-demos-home.dev/docs/demos/single-touch-filtering)           | Attribution Reporting                                    |
 | [Reach Measurement](https://privacy-sandbox-demos-home.dev/docs/demos/reach-measurement-with-shared-storage/)                                        | Shared Storage, Private Aggregation                      |
 | [Multi-touch conversion Attribution](https://privacy-sandbox-demos-home.dev/docs/demos/multi-touch-conversion-attribution/)                          | Private Aggregation, Shared Storage, Aggregation Service |
 | [Single-touch conversion attribution](https://privacy-sandbox-demos-home.dev/docs/demos/single-touch-conversion-attribution/)                        | Protected Audience, Fenced Frames, Attribution Reporting |
