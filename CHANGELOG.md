@@ -1,12 +1,13 @@
 # Changelog
 
 ## v4.0.0 (2025/6)
+
 - **New Use Cases:**
+
   - Filtering attributions for single-touch conversion attribution ([PR #671](https://github.com/privacysandbox/privacy-sandbox-demos/pull/671))
 
 - **Fixes and Improvements:**
   - Bidding & Auction auction hostname logic for GCP deployment
-
 
 ## v3.1.0 (2025/4/22)
 
