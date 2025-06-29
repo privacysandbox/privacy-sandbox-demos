@@ -47,6 +47,9 @@ app.get('/', async (req: Request, res: Response) => {
     SSP_TAG_URL: new URL(
       `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/run-simple-ad-auction.js`,
     ).toString(),
+    SSP_TOPICS_TAG_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/topics-tag.js`,
+    ).toString(),
   });
 });
 
@@ -77,6 +80,9 @@ app.get('*', async (req: Request, res: Response) => {
     SSP_Y_ORIGIN,
     AD_SERVER_TAG_URL: new URL(
       `https://${AD_SERVER_HOST}:${EXTERNAL_PORT}/js/ssp/ad-server-tag.js`,
+    ).toString(),
+    SSP_TOPICS_TAG_URL: new URL(
+      `https://${SSP_HOST}:${EXTERNAL_PORT}/js/ssp/topics-tag.js`,
     ).toString(),
   });
 });
