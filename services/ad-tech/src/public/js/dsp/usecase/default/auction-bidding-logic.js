@@ -353,21 +353,6 @@ function getBidByAdType(adType, biddingContext) {
       bid = getBidForDisplayAd(biddingContext);
       break;
   }
-  if (bid) {
-    console.info(
-      LOG_PREFIX,
-      'returning bid to seller',
-      biddingContext.browserSignals.seller,
-      '\n\n',
-      JSON.stringify(bid),
-    );
-  } else {
-    console.error(
-      LOG_PREFIX,
-      'did not generate bid for seller',
-      biddingContext.browserSignals.seller,
-    );
-  }
   return bid;
 }
 
@@ -403,9 +388,8 @@ function generateBid(
   trustedBiddingSignals,
   browserSignals,
 ) {
-  console.group(
-    `${CURRENT_HOST} generateBid() for seller: ${browserSignals.seller}`,
-  );
+  const logPrefix = `${LOG_PREFIX} [seller: ${browserSignals.seller}] [ig: ${interestGroup.name}]`;
+  console.log(`${logPrefix} generateBid() started.`);
   try {
     // Prepare for bidding.
     const biddingContext = {
@@ -423,9 +407,19 @@ function generateBid(
       return;
     }
     // Assemble bid for ad slot type.
-    return getBidByAdType(auctionSignals.adType, biddingContext);
+    const bid = getBidByAdType(auctionSignals.adType, biddingContext);
+    if (bid && Number(bid.bid) > 0) {
+      console.info(
+        logPrefix,
+        'returning bid to seller\n\n',
+        JSON.stringify(bid),
+      );
+    } else {
+      console.info(logPrefix, 'not bidding.');
+    }
+    return bid;
   } finally {
-    console.groupEnd();
+    console.log(`${logPrefix} generateBid() finished.`);
   }
 }
 
