@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM nginx:1.27.5-alpine
+FROM nginx:1.29.0-alpine
 
 # Set the default output directory for templating
 ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
