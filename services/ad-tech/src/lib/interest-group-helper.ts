@@ -20,6 +20,8 @@ import {
   MACRO_VIDEO_RENDER_URL_SSP_VAST,
   BIDDING_SIGNALS_DEALS,
   KNOWN_SHOP_ITEM_TAGS_BY_ID,
+  DSP_X_HOST,
+  DSP_Y_HOST,
 } from './constants.js';
 
 // ****************************************************************************
@@ -236,6 +238,30 @@ const getAdComponentsForRequest = (
   return ads;
 };
 
+/** Returns the display ad for Bidding & Auction use case based on DSP hostname. */
+// TODO: Condiering pulling from KV
+const getDisplayAdForBiddingAndAuction = (): InterestGroupAd => {
+  let creative = new URL(
+    `html/protected-audience-ad.html`,
+    `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+  ).toString();
+
+  if (HOSTNAME === DSP_X_HOST) {
+    creative = new URL(
+      `html/protected-audience-ad-x.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  } else if (HOSTNAME === DSP_Y_HOST) {
+    creative = new URL(
+      `html/protected-audience-ad-y.html`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
+    ).toString();
+  }
+  return {
+    adRenderId: '1234', // Consider making this dynamic if needed
+    renderURL: creative,
+  };
+};
 /** Returns the interest group name to use. */
 const getInterestGroupName = (targetingContext: TargetingContext): string => {
   const {advertiser, usecase} = targetingContext;
@@ -303,11 +329,11 @@ export const getInterestGroup = (
       userBiddingSignals[key] = JSON.stringify(values);
     }
   }
-  return {
+  let interestGroup: InterestGroup = {
     name: getInterestGroupName(targetingContext),
     owner: CURRENT_ORIGIN,
     biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/${usecase}/auction-bidding-logic.js`,
+      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/default/auction-bidding-logic.js`,
     ).toString(),
     trustedBiddingSignalsURL: new URL(
       `https://${HOSTNAME}:${EXTERNAL_PORT}/dsp/realtime-signals/bidding-signal.json`,
@@ -328,66 +354,16 @@ export const getInterestGroup = (
     },
     adComponents: getAdComponentsForRequest(targetingContext),
   };
-};
 
-export const getInterestGroupBiddingAndAuction = (
-  targetingContext: TargetingContext,
-): InterestGroup => {
-  const hostString: string = HOSTNAME ?? 'dsp-x';
-  const dspName: string = extractDspName(hostString);
-  const creative: string = buildCreativeURL(hostString);
-  return {
-    name: `${dspName}-ig`,
-    owner: CURRENT_ORIGIN,
-    biddingLogicURL: new URL(
-      `https://${HOSTNAME}:${EXTERNAL_PORT}/js/dsp/usecase/bidding-and-auction/auction-bidding-logic.js`,
-    ).toString(),
-    trustedBiddingSignalsKeys: getBiddingSignalKeys(targetingContext),
-    updateURL: constructInterestGroupUpdateUrl(targetingContext),
-    ads: [
-      {
-        adRenderId: '1234',
-        renderURL: creative,
-      },
-    ],
-    adSizes: {
-      'medium-rectangle-default': {'width': '300px', 'height': '250px'},
-    },
-    sizeGroups: {
-      'medium-rectangle': ['medium-rectangle-default'],
-    },
-    auctionServerRequestFlags: [
+  // Conditionally add auctionServerRequestFlags for server side bidding & auction scenario (dsp-x & dsp-y)
+  if (HOSTNAME === DSP_X_HOST || HOSTNAME === DSP_Y_HOST) {
+    interestGroup.auctionServerRequestFlags = [
       AuctionServerRequestFlags.OMIT_ADS,
       AuctionServerRequestFlags.OMIT_USER_BIDDING_SIGNALS,
-    ],
-  };
-};
-// Regex function to identify which DSP is the origin to set the owner properly
-function extractDspName(str: string): string {
-  const match = str.match(/dsp-[a-z]/); // Matches "dsp-x", "dsp-y", etc. in hostnames
-  if (match) {
-    return match[0];
-  }
-  return 'dsp'; // Fallback for generic dsp or if no match is found
-}
+    ];
 
-// Function to set the creative URL to the correct DSP
-//TODO: Pull from KV
-function buildCreativeURL(hostname: string) {
-  if (extractDspName(hostname).includes('x')) {
-    return new URL(
-      `html/protected-audience-ad-x.html`,
-      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
-    ).toString();
-  } else if (extractDspName(hostname).includes('y')) {
-    return new URL(
-      `html/protected-audience-ad-y.html`,
-      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
-    ).toString();
-  } else {
-    return new URL(
-      `html/protected-audience-ad.html`,
-      `https://${HOSTNAME}:${EXTERNAL_PORT}`,
-    ).toString();
+    interestGroup.ads = [getDisplayAdForBiddingAndAuction()];
   }
-}
+
+  return interestGroup;
+};

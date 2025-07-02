@@ -284,7 +284,6 @@ router.get('/contextual-auction-buyers.json', (req: Request, res: Response) => {
 
 router.post('/unified-auction', async (req: Request, res: Response) => {
   const {contextual, protectedAudience} = req.body;
-  // Prioritize X-Forwarded-Host if present (set by Firebase Hosting)
 
   const metadata = new grpc.Metadata();
   metadata.add('X-Accept-Language', req.header('Accept-Language') || '');
