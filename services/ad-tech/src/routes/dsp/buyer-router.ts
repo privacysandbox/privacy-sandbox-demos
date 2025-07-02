@@ -21,7 +21,6 @@ import {
 import {getEjsTemplateVariables} from '../../lib/common-utils.js';
 import {
   getInterestGroup,
-  getInterestGroupBiddingAndAuction,
   TargetingContext,
 } from '../../lib/interest-group-helper.js';
 
@@ -93,16 +92,9 @@ BuyerRouter.get('/contextual-bid-ba', async (req: Request, res: Response) => {
 /** Returns the interest group to join on an advertiser page. */
 BuyerRouter.get('/interest-group.json', async (req: Request, res: Response) => {
   const targetingContext = assembleTargetingContext(req.query);
-  const baseUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+
   // TODO: Generalize to accommodate additional use cases.
-  if (
-    'bidding-and-auction' === targetingContext.usecase &&
-    (baseUrl.includes('dsp-x') || baseUrl.includes('dsp-y'))
-  ) {
-    res.json(getInterestGroupBiddingAndAuction(targetingContext));
-  } else {
-    res.json(getInterestGroup(targetingContext));
-  }
+  res.json(getInterestGroup(targetingContext));
 });
 
 /** Returns the updated interest group, usually daily, may be overridden. */

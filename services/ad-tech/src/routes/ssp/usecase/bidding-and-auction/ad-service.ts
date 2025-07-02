@@ -35,6 +35,7 @@ type PerBuyerConfigs = {
 
 const {
   EXTERNAL_PORT,
+  HOSTNAME, // The hostname of the current running service instance
   SSP_HOST,
   SSP_X_HOST,
   SSP_Y_HOST,
@@ -94,15 +95,23 @@ function decodeRequest(auctionRequest: string) {
 }
 
 async function runContextualAuction({buyers}: any) {
+  console.log('[B&A Demo] Starting contextual auction...');
   const adServerBids = await Promise.all(
     Object.keys(buyers).map(async (buyer) => {
+      console.log(
+        `[B&A Demo] Fetching bid from buyer: ${buyer}, URL: ${buyers[buyer].bidUrl}`,
+      );
       const response = await fetch(buyers[buyer].bidUrl);
       const result = await response.json();
       result.buyer = buyer;
+      console.log(
+        `[B&A Demo] Received bid from buyer: ${buyer}, Bid: ${result.bid}`,
+      );
       return result;
     }),
   );
 
+  console.log('[B&A Demo] Contextual auction finished.');
   return adServerBids.sort((a, b) => b.bid - a.bid);
 }
 
@@ -110,18 +119,35 @@ function runProtectedAudienceAuction(
   protectedAudience: any,
   contextualAuctionResult: any,
   metadata: any,
-  host: any,
   res: Response,
 ) {
+  console.log('[B&A Demo] Starting Protected Audience auction...');
   const [contextualAuctionWinner] = contextualAuctionResult;
   const {auctionRequest} = protectedAudience;
   const perBuyerConfigs = buildPerBuyerConfigs(contextualAuctionResult);
+
   let SELLER_HOST;
-  if (host.includes(SSP_X_HOST)) {
+  let sfeClientName: 'SSP-X' | 'SSP-Y' | null = null;
+
+  // Determine SELLER_HOST and SFE client based on the current service's HOSTNAME
+  // HOSTNAME is set during Cloud Run deployment (e.g., to the value of SSP_X_HOST for the ssp-x service)
+  if (HOSTNAME === SSP_X_HOST && baOnlyClientSFE) {
     SELLER_HOST = SSP_X_ORIGIN;
-  } else {
+    sfeClientName = 'SSP-X';
+  } else if (HOSTNAME === SSP_Y_HOST && mixedModeClientSFE) {
     SELLER_HOST = SSP_Y_ORIGIN;
+    sfeClientName = 'SSP-Y';
+  } else {
+    console.error(
+      `[B&A Demo] Misconfiguration: No SFE client found for current service HOSTNAME: ${HOSTNAME}. Expected SSP_X_HOST: ${SSP_X_HOST} or SSP_Y_HOST: ${SSP_Y_HOST}. baOnlyClientSFE: ${!!baOnlyClientSFE}, mixedModeClientSFE: ${!!mixedModeClientSFE}`,
+    );
+    res.status(500).json({
+      error:
+        'Internal server configuration error: SFE client misconfiguration for this service instance.',
+    });
+    return;
   }
+
   const selectAdRequest = {
     auction_config: {
       top_level_seller: SSP_ORIGIN,
@@ -145,14 +171,15 @@ function runProtectedAudienceAuction(
     client_type: 'CLIENT_TYPE_BROWSER',
     protected_auction_ciphertext: decodeRequest(auctionRequest),
   };
-  if (host.includes(SSP_X_HOST) && baOnlyClientSFE) {
+
+  if (HOSTNAME === SSP_X_HOST && baOnlyClientSFE) {
     baOnlyClientSFE.selectAd(
       selectAdRequest,
       metadata,
       (error: grpc.ServiceError | null, response: any) => {
         if (error) {
           console.error(
-            `[ssp-x] Error received from SFE: ${error.message}. Code: ${error.code}, Details: ${error.details}`,
+            `[${sfeClientName}] Error received from SFE: ${error.message}. Code: ${error.code}, Details: ${error.details}`,
           );
           // Send an appropriate HTTP error response to the client of this /unified-auction endpoint
           res.status(503).json({
@@ -162,8 +189,12 @@ function runProtectedAudienceAuction(
           return;
         }
         if (!response || !response.auction_result_ciphertext) {
-          console.error('[ssp-x] Invalid or empty response from SFE.');
-          res.status(500).json({error: 'Invalid response from SFE service'});
+          console.error(
+            `[${sfeClientName}] Invalid or empty response from SFE.`,
+          );
+          res.status(500).json({
+            error: `Invalid response from SFE service (${sfeClientName})`,
+          });
           return;
         }
 
@@ -172,23 +203,26 @@ function runProtectedAudienceAuction(
           .digest('base64url');
 
         res.set('Ad-Auction-Result', ciphertextShaHash);
+
         res.json({
           contextualAuctionWinner,
           protectedAudienceAuctionCiphertext: encodeResponse(
             response.auction_result_ciphertext,
           ),
         });
+        console.log(
+          `[B&A Demo] Unified Auction complete (${sfeClientName} path).`,
+        );
       },
     );
-  }
-  if (host.includes(SSP_Y_HOST) && mixedModeClientSFE) {
+  } else if (HOSTNAME === SSP_Y_HOST && mixedModeClientSFE) {
     mixedModeClientSFE.selectAd(
       selectAdRequest,
       metadata,
       (error: grpc.ServiceError | null, response: any) => {
         if (error) {
           console.error(
-            `[ssp-y] Error received from SFE: ${error.message}. Code: ${error.code}, Details: ${error.details}`,
+            `[${sfeClientName}] Error received from SFE: ${error.message}. Code: ${error.code}, Details: ${error.details}`,
           );
           // Send an appropriate HTTP error response to the client of this /unified-auction endpoint
           res.status(503).json({
@@ -198,8 +232,12 @@ function runProtectedAudienceAuction(
           return;
         }
         if (!response || !response.auction_result_ciphertext) {
-          console.error('[ssp-y] Invalid or empty response from SFE.');
-          res.status(500).json({error: 'Invalid response from SFE service'});
+          console.error(
+            `[${sfeClientName}] Invalid or empty response from SFE.`,
+          );
+          res.status(500).json({
+            error: `Invalid response from SFE service (${sfeClientName})`,
+          });
           return;
         }
 
@@ -223,6 +261,9 @@ function runProtectedAudienceAuction(
             },
           },
         });
+        console.log(
+          `[B&A Demo] Unified Auction complete (${sfeClientName} path).`,
+        );
       },
     );
   }
@@ -243,7 +284,6 @@ router.get('/contextual-auction-buyers.json', (req: Request, res: Response) => {
 
 router.post('/unified-auction', async (req: Request, res: Response) => {
   const {contextual, protectedAudience} = req.body;
-  const host = req.headers.host;
 
   const metadata = new grpc.Metadata();
   metadata.add('X-Accept-Language', req.header('Accept-Language') || '');
@@ -255,10 +295,8 @@ router.post('/unified-auction', async (req: Request, res: Response) => {
     protectedAudience,
     contextualAuctionResult,
     metadata,
-    host,
     res,
   );
-  console.log('[B&A Demo] Unified Auction is complete. ');
 });
 
 export default router;

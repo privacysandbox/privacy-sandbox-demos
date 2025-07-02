@@ -77,6 +77,18 @@ class AdAuction {
       }),
     });
 
+    if (!response.ok) {
+      const errorBody = await response.json();
+      console.error(
+        `[SSP-X] Unified auction failed with status ${response.status}:`,
+        errorBody,
+      );
+      // Propagate the error to stop further execution with invalid data
+      throw new Error(
+        `Unified auction failed: ${errorBody.error || response.statusText}`,
+      );
+    }
+
     const {protectedAudienceAuctionCiphertext, contextualAuctionWinner} =
       await response.json();
 

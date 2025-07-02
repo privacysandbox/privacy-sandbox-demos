@@ -160,6 +160,7 @@ sspARouter.get('/', (req, res) => {
 /** Full route: /ssp/usecase/bidding-and-auction/service/ad */
 sspXRouter.use('/service/ad', adService);
 
+/** Full route: /ssp/usecase/bidding-and-auction/service/kv */
 sspXRouter.get('/service/kv', (req, res) => {
   res.setHeader('Ad-Auction-Allowed', 'true');
 
@@ -203,12 +204,8 @@ sspYRouter.get('/service/kv', (req, res) => {
   res.setHeader('Ad-Auction-Allowed', 'true');
   res.json({
     renderUrls: {
-      [`${DSP_A_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad.html`]: [
-        1, 2,
-      ],
-      [`${DSP_B_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad.html`]: [
-        1, 2,
-      ],
+      [`${DSP_A_ORIGIN}:${EXTERNAL_PORT}/ads/display-ads`]: [1, 2],
+      [`${DSP_B_ORIGIN}:${EXTERNAL_PORT}/ads/display-ads`]: [1, 2],
       [`${DSP_X_ORIGIN}:${EXTERNAL_PORT}/html/protected-audience-ad-x.html`]: [
         1, 2,
       ],
