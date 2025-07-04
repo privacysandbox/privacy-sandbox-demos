@@ -102,7 +102,7 @@ sequenceDiagram
     B->>Publisher: Return to publisher tab & press refresh
     Publisher->>ad-tech: Register source (ad view)
     ad-tech->>B: Set Attribution-Reporting-Register-Source header
-    B->>Advertiser: Click 'Ad to cart' in the Advertiser tab
+    B->>Advertiser: Click 'Add to cart' in the Advertiser tab
     Advertiser->>ad-tech: Register trigger
     ad-tech->>B: Set Attribution-Reporting-Register-Trigger header
     B->>Advertiser: Click 'Pay by bank transfer' in the Advertiser tab
