@@ -147,7 +147,7 @@ sequenceDiagram
     Publisher->>ad-tech: Register source (ad view)
     ad-tech->>B: Set Attribution-Reporting-Register-Source header
 
-    B->>Advertiser: Visit advertister site
+    B->>Advertiser: Visit advertiser site
     B->>Advertiser: Select a product
     B->>Advertiser: Click 'Add to cart'
     Advertiser->>ad-tech: Register trigger (cart)
