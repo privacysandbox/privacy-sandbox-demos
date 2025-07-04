@@ -244,7 +244,7 @@ When an ad-tech responds to a source registration, it sends an Attribution-Repor
 res.set(
   "Attribution-Reporting-Register-Source",
   JSON.stringify({
-    destination: "https://privacy-sandbox-demos-shop.dev";
+    destination: "https://privacy-sandbox-demos-shop.dev",
     source_event_id: "1234",
     expiry: "604800",
     priority: "100",
