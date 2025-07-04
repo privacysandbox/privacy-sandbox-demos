@@ -111,7 +111,7 @@ sequenceDiagram
     end
 ```
 
-[Full-sized diagram](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/home/docs/demos/img/prioritizing-sources-and-triggers-in-attribution-reporting-journey-1-flow.png)
+[Full-sized diagram](./img/prioritizing-sources-and-triggers-in-attribution-reporting-journey-1-flow.png)
 
 ### User Journey 2: Trigger priority used to send checkout attribution report
 
@@ -162,7 +162,7 @@ sequenceDiagram
     end
 ```
 
-[Full-sized diagram](https://github.com/privacysandbox/privacy-sandbox-demos/blob/ff68148e0987979ecdac2f0183b9ca2a1b847bcc/services/home/docs/demos/img/prioritizing-sources-and-triggers-in-attribution-reporting-journey-2-flow.png)
+[Full-sized diagram](./img/prioritizing-sources-and-triggers-in-attribution-reporting-journey-2-flow.png)
 
 </TabItem>
 
