@@ -258,17 +258,23 @@ In our codebase, source priority is set in
 [attribution-reporting-helper.ts](https://github.com/privacysandbox/privacy-sandbox-demos/blob/126a7d626c39e9b5c204bc4748819a19ce1f56fd/services/ad-tech/src/lib/attribution-reporting-helper.ts#L129-L150):
 
 ```js
-  const {advertiser, itemId} = requestQuery;
+  const {advertiser, itemId, filter} = requestQuery;
   const destination = `https://${advertiser}:${EXTERNAL_PORT}`;
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
   const priority = getPriority(sourceType);
+  // usecase ara-event-filtering
+  let filter_data: {[key: string]: any} | undefined;
+  if (filter === '1' && itemId) {
+    filter_data = {item_id: [itemId]};
+  }
   return {
     destination,
     source_event_id,
     debug_key,
     priority,
     debug_reporting: true, // Enable verbose debug reports.
+    ...(filter_data && {filter_data}), // only include when available
     aggregation_keys: {
       quantity: sourceKeyPiece({
         type: sourceType,
@@ -296,14 +302,14 @@ When an ad-tech responds to a trigger registration, it sends an Attribution-Repo
 ```js
 res.set(
   "Attribution-Reporting-Register-Trigger",
-JSON.stringify({
-  event_trigger_data: [{
-    trigger_data: "6",
-    priority: "80",
-  }],
-  debug_reporting: true,
-  debug_key: "1115698977"
-});
+  JSON.stringify({
+    event_trigger_data: [{
+      trigger_data: "6",
+      priority: "80",
+    }],
+    debug_reporting: true,
+    debug_key: "1115698977"
+  });
 );
 ```
 
