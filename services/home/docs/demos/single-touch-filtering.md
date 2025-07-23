@@ -171,7 +171,7 @@ res.set(
 ```
 
 Refer to the real code for source registration with js
-[registerAttributonSourceForAdClick](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/public/js/dsp/usecase/single-touch-attribution/static-ads-for-ara-js.js#L32)
+[registerAttributionSourceForAdClick](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/public/js/dsp/usecase/single-touch-attribution/static-ads-for-ara-js.js#L32)
 and source header creation
 [filter_data](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L145).
 

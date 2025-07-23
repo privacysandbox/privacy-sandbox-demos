@@ -29,7 +29,7 @@
   };
 
   /** Registers an attribution source for an ad click. */
-  const registerAttributonSourceForAdClick = () => {
+  const registerAttributionSourceForAdClick = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const registerSourceUrl = new URL(
       '<%= `https://${HOSTNAME}:${EXTERNAL_PORT}/attribution/register-source` %>',
@@ -63,6 +63,6 @@
       'DOMContentLoaded',
       registerAttributionSourceForAdView,
     );
-    window.addEventListener('click', registerAttributonSourceForAdClick);
+    window.addEventListener('click', registerAttributionSourceForAdClick);
   })();
 })();
