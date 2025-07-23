@@ -3,7 +3,6 @@
 ## v4.0.0 (2025/6)
 
 - **New Use Cases:**
-
   - Filtering attributions for single-touch conversion attribution ([PR #671](https://github.com/privacysandbox/privacy-sandbox-demos/pull/671))
 
 - **Fixes and Improvements:**
@@ -12,7 +11,6 @@
 ## v3.1.0 (2025/4/22)
 
 - **New Use Cases:**
-
   - Bidding & Auction Services for Protected Audience (PR #619)
   - Ads Composed of Multiple Pieces (full release)
   - Multi-touch Attribution (PR #620)
@@ -30,12 +28,10 @@ And Others
 ## v3.0.0 (2025/3/14)
 
 - **New Use Cases:**
-
   - **Reach Measurement with Shared Storage:** Added demonstration of reach measurement using Shared Storage. (PR #573)
   - **Multi-piece Ads with Protected Audience:** Introduced demo showcasing multi-piece ads/Protected Audience ad components. (PR #560)
 
 - **Fixes and Improvements:**
-
   - **Infrastructure Updates/Fixes:**
     - Fixed documentation index page to include missing demos.
     - Corrected firebase deployment script with missing project setting command.
@@ -107,7 +103,6 @@ NA
 - Demos
   - Use Case : Single-touch conversion Attribution. Move attribution code from SSP to DSP and update documentation
 - Tools :
-
   - Add [Aggregatable Report Converter](https://github.com/privacysandbox/privacy-sandbox-demos/tree/main/tools/aggregatable_report_converter) to the
     tooling codebase. This tool helps developers to create debug aggregatable reports that can be used for Local Testing and AWS Aggregation Service
     testing.
