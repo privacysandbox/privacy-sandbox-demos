@@ -171,9 +171,9 @@ res.set(
 ```
 
 Refer to the real code for source registration with js
-[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/public/js/dsp/usecase/single-touch-attribution/static-ads-for-ara-js.js#L32)
+[registerAttributonSourceForAdClick](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/public/js/dsp/usecase/single-touch-attribution/static-ads-for-ara-js.js#L32)
 and source header creation
-[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L145).
+[filter_data](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L145).
 
 #### Register a trigger
 
@@ -217,9 +217,9 @@ res.setHeader(
 ```
 
 Refer to the real code for event level report
-[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L103)
+[getEventLevelAttributionTriggerHeaders filters](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L103)
 and aggregatable report
-[here](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L54).
+[getAttributionTriggerHeaders filters](https://github.com/privacysandbox/privacy-sandbox-demos/blob/0095796fcf0ec2451071b662a09d12feb3ece140/services/ad-tech/src/lib/attribution-reporting-helper.ts#L54).
 
 </TabItem>
 </Tabs>
