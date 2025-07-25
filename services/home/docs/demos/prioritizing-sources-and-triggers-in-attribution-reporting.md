@@ -14,7 +14,9 @@ import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';
 
 <Tabs>
 <TabItem value="overview" label="Overview" default>
+
 # Overview
+
 ## Description
 
 Attribution Reporting API event-level reports help measure ad effectiveness while protecting user privacy. The basic features of the reports are
@@ -47,7 +49,9 @@ Although we’re demoing the default limits here, the priority fields can also b
 </TabItem>
 
 <TabItem value="design" label="Design">
+
 # Design
+
 ## Goals
 
 From a business perspective, this demo shows how to optimize the limited number of available reports to capture the most valuable conversion data,
@@ -167,8 +171,11 @@ sequenceDiagram
 </TabItem>
 
 <TabItem value="demo" label="Demo">
+
 # Demo
+
 ## Prerequisites
+
 - Latest stable version of Chrome (Open chrome://version to check your current version)
 - Enable Privacy Sandbox APIs (Open chrome://settings/adPrivacy to enable Ad measurement)
 - Clear your browsing history before you run one of the demo scenarios below (Open chrome://settings/clearBrowserData to delete your browsing history)
