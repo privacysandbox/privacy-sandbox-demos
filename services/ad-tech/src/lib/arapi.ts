@@ -24,6 +24,9 @@ const SOURCE_TYPE: {[index: string]: number} = {
   view: 0b11,
 };
 
+const VIEW_PRIORITY = '1';
+const CLICK_PRIORITY = '2';
+
 // advertiser: 16bit
 const ADVERTISER: {[index: string]: number} = {};
 ADVERTISER[SHOP_HOST as string] = 0b0;
@@ -169,6 +172,10 @@ export function sourceEventId() {
 export function debugKey(): string {
   // 64bit dummy value
   return Math.random().toString().substring(2).replace(/^0/, '');
+}
+
+export function getPriority(sourceType: number): string {
+  return sourceType === SOURCE_TYPE.view ? VIEW_PRIORITY : CLICK_PRIORITY;
 }
 
 function key_from_value(object: any, value: any) {

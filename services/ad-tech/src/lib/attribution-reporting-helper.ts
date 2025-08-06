@@ -20,6 +20,7 @@ import {
   sourceKeyPiece,
   triggerKeyPiece,
   getTriggerData,
+  getPriority,
   ADVERTISER,
   PUBLISHER,
   DIMENSION,
@@ -138,17 +139,17 @@ export const getAttributionSourceHeaders = (
   const destination = `https://${advertiser}:${EXTERNAL_PORT}`;
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
-
+  const priority = getPriority(sourceType);
   // usecase ara-event-filtering
   let filter_data: {[key: string]: any} | undefined;
   if (filter === '1' && itemId) {
     filter_data = {item_id: [itemId]};
   }
-
   return {
     destination,
     source_event_id,
     debug_key,
+    priority,
     debug_reporting: true, // Enable verbose debug reports.
     ...(filter_data && {filter_data}), // only include when available
     aggregation_keys: {
