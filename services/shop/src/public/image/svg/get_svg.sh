@@ -10,3 +10,4 @@ wget https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_u26
 wget https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_u1f6fc.svg
 wget https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_u1fa74.svg
 wget https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_u1f3bf.svg
+wget https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_u1f937.svg

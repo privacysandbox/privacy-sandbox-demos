@@ -15,6 +15,7 @@ Looking to run these demos yourself? Check our [guide](https://github.com/privac
 | :--------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
 | [Basic retargeting / remarketing ads with Protected Audience](demos/retargeting-remarketing.md)            | Protected Audience, Fenced Frames                        |
 | [Sequential setup of Protected Audience with contextual auction](demos/sequential-auction-setup.md)        | Protected Audience, Fenced Frames                        |
+| [Frequency capping with Protected Audience](demos/frequency-cap.md)                                        | Protected Audience, Fenced Frames                        |
 | [Incorporating publisher ad quality requirements in Protected Audience](demos/publisher-ad-quality-req.md) | Protected Audience, Fenced Frames                        |
 | [In-stream video ads with Protected Audience](demos/instream-video-ad.md)                                  | Protected Audience                                       |
 | [Ads Composed of Multiple Pieces](demos/multi-piece-ad.md)                                                 | Protected Audience                                       |
