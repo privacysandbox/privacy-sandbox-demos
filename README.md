@@ -1,3 +1,13 @@
+<p><b>Some Privacy Sandbox technologies are being phased out</b>.</p>
+
+<p>Please see our <a href="https://privacysandbox.com/news/update-on-plans-for-privacy-sandbox-technologies/">Update on Plans for Privacy Sandbox Technologies</a>.</p>
+
+<p><a href="https://privacysandbox.google.com/overview/status">Privacy Sandbox feature status</a> provides more information about the status of individual APIs and platform features.</p>
+
+<p>This repo is scheduled to be archived.</p>
+
+<hr>
+
 # Privacy Sandbox Demos
 
 A use case demo library for the [Privacy Sandbox APIs](https://privacysandbox.google.com) on the web.
