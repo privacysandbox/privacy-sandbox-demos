@@ -143,6 +143,12 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+      stylesheets: [
+        {
+          href: '/css/custom.css',
+          type: 'text/css',
+        },
+      ],
     }),
 };
 
