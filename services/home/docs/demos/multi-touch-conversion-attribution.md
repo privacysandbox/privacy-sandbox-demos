@@ -83,6 +83,7 @@ on their needs.
 
 3. User converts by making a purchase on the "shop site" → Adtech can reference the context stored in Shared Storage to generate a custom attribution
    report using the Private Aggregation API.
+
    - In this demo, the AdTech chooses to represent the impression touch points as singular nodes and each node will be represented in the 128-bit
      aggregation key (aka bucket) along with a campaignId and a Publisher ID.
    - So, the AdTech can reference the impression context in Shared Storage to distribute credit across the impressions. For example, 50% to the most

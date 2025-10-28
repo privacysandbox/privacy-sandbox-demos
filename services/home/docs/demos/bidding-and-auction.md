@@ -278,6 +278,7 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
 ### Steps
 
 1. Navigate to the Advertiser's shop site `privacy-sandbox-demos-shop.dev/items/1f45e?usecase=bidding-and-auction`.
+
    - The advertiser assumes the user is interested in this type of product. The advertiser uses a demand-side platform (DSP) to handle advertising
      needs. The DSP has a tag on this page that will add the user to an interest group for this product category.
    - **NOTE**: In a production deployment, this query parameter would **not** be required. This is for demo purposes only.
@@ -300,6 +301,7 @@ seller_frontend_main.cc:364] privacy_sandbox_system_log: Server listening on 0.0
    - **NOTE**: In a production deployment, this query parameter would **not** be required. This is for demo purposes only.
 7. Open the Chrome Developer Tools console and view the `Console` tab. Here you can see console logs of the auction configurations from each component
    auction, as well as the final multi-seller auction.
+
    - Expanding the log for the `SSP-A` auction will show the auction config for an on-device auction.
    - Expanding the log for the `SSP-X` auction will show the auction config for a B&A only auction.
    - Expanding the log for the `SSP-Y` auction will show the auction config for a mixed-mode auction. Within the mixed mode auction you will see two
