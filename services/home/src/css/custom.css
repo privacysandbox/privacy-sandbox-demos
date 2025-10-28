@@ -54,14 +54,3 @@ div[class^='announcementBar_'] {
     line-height: 1.4;
   }
 }
-
-div[class^='announcementBar_'] .announcementBarContent_xLdY {
-  flex: 1;
-  text-align: center;
-}
-
-div[class^='announcementBar_'] .announcementBarClose_gvF7 {
-  position: relative;
-  top: 0;
-  right: 0;
-}
