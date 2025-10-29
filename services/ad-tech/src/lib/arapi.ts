@@ -240,15 +240,15 @@ function test() {
 // @example
 // getTriggerData('purchase'); // Returns ['1', '100']
 // getTriggerData('unknown-event'); // Returns ['0', '0']
-export function getTriggerData(conversionType: string) {
-  console.log(`[arapi] getTriggerData: ${conversionType}`);
+export function getTriggerData(conversionType?: string): [string, string] {
+  console.log('[arapi] getTriggerData: ' + conversionType);
   switch (conversionType) {
-    case `click-cart-icon`:
-      return [`5`, `60`];
-    case `add-to-cart`:
-      return [`6`, `80`];
-    case `purchase`:
-      return [`1`, `100`];
+    case 'click-cart-icon':
+      return ['5', '60'];
+    case 'add-to-cart':
+      return ['6', '80'];
+    case 'purchase':
+      return ['1', '100'];
     default:
       return ['0', '0'];
   }

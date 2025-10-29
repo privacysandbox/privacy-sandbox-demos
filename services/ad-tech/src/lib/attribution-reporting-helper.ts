@@ -48,7 +48,12 @@ export const getAttributionRedirectUrl = (requestQuery: {
 export const getAttributionTriggerHeaders = (requestQuery: {
   [key: string]: string;
 }): {[key: string]: any} => {
+  // usecase ara-event-filtering
+  const itemId: string = (requestQuery['itemId'] as string) ?? '';
+  const filters = {item_id: [itemId]};
+
   return {
+    filters,
     event_trigger_data: [
       {
         trigger_data: '1',
@@ -89,9 +94,16 @@ export const getAttributionTriggerHeaders = (requestQuery: {
 export const getEventLevelAttributionTriggerHeaders = (requestQuery: {
   [key: string]: string;
 }): {[key: string]: any} => {
-  const conversionType: string = requestQuery['conversionType'] as string;
+  const conversionType: string =
+    (requestQuery['conversionType'] as string) ?? '';
   const [_data, _priority] = getTriggerData(conversionType);
+  const itemId: string = (requestQuery['itemId'] as string) ?? '';
+
+  // usecase ara-event-filtering
+  const filters: {[key: string]: any} = {item_id: [itemId]};
+
   return {
+    filters,
     event_trigger_data: [
       {
         trigger_data: _data,
@@ -122,15 +134,23 @@ export const getAttributionSourceHeaders = (
     );
     return;
   }
-  const {advertiser, itemId} = requestQuery;
+  const {advertiser, itemId, filter} = requestQuery;
   const destination = `https://${advertiser}:${EXTERNAL_PORT}`;
   const source_event_id = sourceEventId();
   const debug_key = debugKey();
+
+  // usecase ara-event-filtering
+  let filter_data: {[key: string]: any} | undefined;
+  if (filter === '1' && itemId) {
+    filter_data = {item_id: [itemId]};
+  }
+
   return {
     destination,
     source_event_id,
     debug_key,
     debug_reporting: true, // Enable verbose debug reports.
+    ...(filter_data && {filter_data}), // only include when available
     aggregation_keys: {
       quantity: sourceKeyPiece({
         type: sourceType,
