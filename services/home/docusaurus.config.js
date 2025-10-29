@@ -73,6 +73,18 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      // Phase out status update
+      announcementBar: {
+        id: 'disclaimer',
+        content:
+          '<b>Some Privacy Sandbox technologies are being phased out</b>. For more details, see the ' +
+          '<a target="_blank" rel="noopener noreferrer" href="https://privacysandbox.com/news/update-on-plans-for-privacy-sandbox-technologies/">Update on Plans for Privacy Sandbox Technologies</a> and the ' +
+          '<a target="_blank" rel="noopener noreferrer" href="https://privacysandbox.google.com/overview/status">Privacy Sandbox feature status</a>. ' +
+          'This demo site and its repository are scheduled to be archived.',
+        backgroundColor: '#cd5c5c',
+        textColor: '#ffffff',
+        isCloseable: true,
+      },
       // Replace with your project's social card
       image: 'img/privacy-sandbox-demos.png',
       navbar: {
