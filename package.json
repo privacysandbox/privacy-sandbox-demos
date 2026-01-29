@@ -18,7 +18,7 @@
     "podman-clean": "podman-compose down --volumes && podman volume prune --force && podman image prune --all --force && podman rmi --all --force"
   },
   "devDependencies": {
-    "firebase-tools": "^11.23.0",
+    "firebase-tools": "^15.4.0",
     "prettier": "^2.8.4"
   }
 }
