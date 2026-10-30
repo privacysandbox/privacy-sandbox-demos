@@ -1,3 +1,8 @@
+
+> **Status: Archived & Deprecated (October 2026)**
+>
+> Following the deprecation of the Privacy Sandbox relevance and measurement APIs, this repository (`privacysandbox/privacy-sandbox-demos`) has been archived and is read-only. The live demo environment (`privacy-sandbox-demos.dev`) has been decommissioned. For the latest official information and updates, visit [https://privacysandbox.google.com/](https://privacysandbox.google.com/).
+
 **Some Privacy Sandbox technologies are being phased out**.
 
 See our [Update on Plans for Privacy Sandbox Technologies](https://privacysandbox.com/news/update-on-plans-for-privacy-sandbox-technologies/).
@@ -5,7 +10,6 @@ See our [Update on Plans for Privacy Sandbox Technologies](https://privacysandbo
 [Privacy Sandbox feature status](https://privacysandbox.google.com/overview/status) provides more information about the status of individual APIs and
 platform features.
 
-This repo is scheduled to be archived.
 
 ---
 
